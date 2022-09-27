@@ -1,0 +1,26 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
+
+    <OverflowToolbar id="_ovfToolBarSalDocDet" design="Transparent" >
+        <HBox>
+            <Title id="IODetCount"/>
+            <Title text="{i18n>IODetail}" class="sapUiTinyMarginBegin"/>
+        </HBox>
+            <Button type="Ghost"  icon="sap-icon://add" tooltip="Add Detail" press="onSalDocDetAdd"/>
+            <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit Detail" press="onSalDocDetEdit"/>
+			<Button type="Ghost"  icon="sap-icon://delete" tooltip="Delete Detail" press="onSalDocDetDelete"/>
+			<Button type="Ghost"  icon="sap-icon://save" tooltip="Save" press="onSalDocDetSave"/>
+            <Button type="Ghost"  icon="sap-icon://decline" tooltip="Cancel" press="onSalDocDetCancel"/>
+
+            <Button type="Ghost" text="Create Style" tooltip="{i18n>CreateStyle}" press="cancelDetailEdit" visible="true"/>
+            <Button type="Ghost" text="Create IO" tooltip="{i18n>CreateIO}" press="cancelDetailEdit" visible="true"/>
+            <Button type="Ghost" text="Create Style/IO" tooltip="{i18n>CreateStyleIO}" press="cancelDetailEdit" visible="true"/>
+    </OverflowToolbar>
+
+    <!-- #### DYNAMIC TABLE #### --> 
+    <Panel class="sapUiTinyMarginTop" height="auto"> 
+            <c:DynamicTable id="IODetDynTable" class="sapUiSizeCompact" selectionMode="None" 
+                        showColumnVisibilityMenu="true">
+            </c:DynamicTable>
+    </Panel>  
+</core:FragmentDefinition>

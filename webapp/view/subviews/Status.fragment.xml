@@ -1,0 +1,27 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
+
+    <OverflowToolbar id="_ovfToolBarStatus" design="Transparent" >
+            <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEditStatus"/>
+    </OverflowToolbar>
+
+    <!-- #### DYNAMIC TABLE #### --> 
+    <!-- <Panel class="sapUiTinyMarginTop" height="auto">  -->
+            <!-- <c:DynamicTable id="DynTableStatus" class="sapUiSizeCompact" selectionMode="None" 
+                        showColumnVisibilityMenu="true">
+            </c:DynamicTable> -->
+            <t:Table id="StatDynTable" 
+                class="sapUiSizeCompact sidePadding" 
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="Single" 
+                selectionBehavior="RowOnly"
+                rowSelectionChange="onRowChange">                
+                <t:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </t:layoutData>  
+            </t:Table>  
+    <!-- </Panel>   -->
+</core:FragmentDefinition>

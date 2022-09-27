@@ -1,0 +1,48 @@
+specVersion: "2.5"
+metadata:
+  name: zuiio2
+type: application
+server:
+  customMiddleware:
+    - name: fiori-tools-proxy
+      afterMiddleware: compression
+      configuration:
+        ignoreCertError: false
+        ui5:
+          path:
+            - /resources
+            - /test-resources
+          url: https://ui5.sap.com
+        backend:
+          - path: /sap
+            url: http://159.138.39.203:8000
+            client: "888"
+            destination: LTD888
+    - name: fiori-tools-appreload
+      afterMiddleware: compression
+      configuration:
+        port: 35729
+        path: webapp
+        delay: 300
+    - name: sap-fe-mockserver
+      beforeMiddleware: csp
+      configuration:
+        mountPath: /
+        services:
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_IO_SRV/
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/mainService/metadata.xml
+            mockdataRootPath: ./webapp/localService/mainService/data
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_COMMON_SRV/
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZGW_3DERP_COMMON_SRV/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZGW_3DERP_COMMON_SRV/mockdata
+          - urlPath: /sap/opu/odata/sap/ZVB_3DERP_IO_FILTER_CDS/
+            metadataPath: ./webapp/localService/ZVB_3DERP_IO_FILTER_CDS/metadata.xml
+            mockdataPath: ./webapp/localService/ZVB_3DERP_IO_FILTER_CDS/mockdata
+            generateMockData: true
+          - urlPath: /sap/opu/odata/sap/ZVB_3DERP_SALDOC_FILTERS_CDS/
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZVB_3DERP_SALDOC_FILTERS_CDS/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZVB_3DERP_SALDOC_FILTERS_CDS/mockdata
+        annotations: []
