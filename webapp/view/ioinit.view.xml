@@ -64,9 +64,9 @@
                             </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
-                    <!-- <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SEASON" mandatory="mandatory" groupId="_BASIC" label="{i18n>SEASON}" preventInitialDataFetchInValueHelpDialog="false" />
-                    </smartfilterbar:controlConfiguration> -->
+                    <smartfilterbar:controlConfiguration>
+                        <smartfilterbar:ControlConfiguration key="SEASON" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASON}" preventInitialDataFetchInValueHelpDialog="false" />
+                    </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false" />
