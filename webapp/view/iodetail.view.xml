@@ -35,12 +35,12 @@
                 <ObjectAttribute title="{i18n>UPDATEDDT}" text="{headerData>/UPDATEDDT}"/>
             </attributes>
         </ObjectHeader>
-
+        
         <IconTabBar
 		id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		expanded="{device>/isNoPhone}"
-		class="sapUiResponsiveContentPadding">
+		class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="false">
 		<items>
 			<IconTabFilter
 				text="IO Header"
