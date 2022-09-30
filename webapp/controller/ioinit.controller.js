@@ -60,7 +60,8 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.text;  //get selected SBU
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.text;  //get selected SBU
+                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: 'IOINIT',
@@ -276,7 +277,7 @@ sap.ui.define([
                 // alert(this.sbu);
                 that._router.navTo("RouteIODetail", {
                     iono: ioNO,
-                    sbu: "VER"//that._sbu
+                    sbu: that._sbu
                 });
             },
 

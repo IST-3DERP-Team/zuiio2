@@ -36,7 +36,7 @@
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="15rem" useToolbar="false" useDateRangeType="true">
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" groupId="_BASIC" label="{i18n>SBU}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
+                        <smartfilterbar:customControl>
                                 <ComboBox id="cboxSBU"
                                     selectedKey="{ui>/sbu}"
                                     change="onSBUChange"
@@ -45,43 +45,98 @@
                                     }">
                                     <core:Item key="{SBU}" text="{SBU}" />
                                 </ComboBox>       
-                            </smartfilterbar:customControl> -->
+                            </smartfilterbar:customControl>
                             </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
                     
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="mandatory" groupId="_BASIC" label="{i18n>SALESGRP}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
+                        <smartfilterbar:customControl>
                                 <ComboBox id="cboxSALESGRP"
                                     selectedKey="{ui>/sbu}"
                                     change="onSALESGRPChange"
                                     items="{
                                         path: '/ZVB_3DERP_SALESGRP_SH'
                                     }">
-                                    <core:Item key="{SALESGRP}" text="{SALESGRP}" />
+                                    <core:Item key="{SALESGRP}" text="{SALESGRP} - {DESCRIPTION}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
+                            </smartfilterbar:customControl>
                             </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false" />
+                        <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:customControl>
+                                <ComboBox id="cboxSEASON"
+                                    selectedKey="{ui>/seasoncd}"
+                                    change="onSEASONChange"
+                                    items="{
+                                        path: '/ZVB_3DERP_SEASONCD_SH'
+                                    }">
+                                    <core:Item key="{SEASONCD}" text="{SEASONCD} - {DESCRIPTION}" />
+                                </ComboBox>                                   
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false" />
+                        <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:customControl>
+                                <ComboBox id="cboxCUSTGRP"
+                                    selectedKey="{ui>/CUSTGRP}"
+                                    change="onCUSTGRPhange"
+                                    items="{
+                                        path: '/ZVB_3DERP_CUSTGRP_SH'
+                                    }">
+                                    <core:Item key="{CUSTGRP}" text="{CUSTGRP} - {DESCRIPTION}" />
+                                </ComboBox>                                   
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false" />
+                        <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:customControl>
+                                <ComboBox id="cboxPLANPLANT"
+                                    selectedKey="{ui>/PLANPLANT}"
+                                    change="onPLANPLANTChange"
+                                    items="{
+                                        path: '/ZVB_3DERP_PLANPLANT_SH'
+                                    }">
+                                    <core:Item key="{PLANPLANT}" text="{PLANPLANT}" />
+                                </ComboBox>                                   
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false" />
+                        <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:customControl>
+                                <ComboBox id="cboxIOTYPE"
+                                    selectedKey="{ui>/IOTYPE}"
+                                    change="onIOTYPEChange"
+                                    items="{
+                                        path: '/ZVB_3DERP_IOTYP_SH'
+                                    }">
+                                    <core:Item key="{IOTYPE}" text="{IOTYPE} - {DESCRIPTION}" />
+                                </ComboBox>                                   
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false" />
+                        <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:customControl>
+                                <ComboBox id="cboxSTYLECD"
+                                    selectedKey="{ui>/STYLECD}"
+                                    change="onSTYLECDChange"
+                                    items="{
+                                        path: '/ZVB_3DERP_STYLECD_SH'
+                                    }">
+                                    <core:Item key="{STYLECD}" text="{STYLECD}" />
+                                </ComboBox>                                   
+                            </smartfilterbar:customControl>
+                        </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:layoutData>
