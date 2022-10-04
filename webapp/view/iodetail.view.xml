@@ -119,7 +119,7 @@
                 <Text text="FA Summary..." />
 			</IconTabFilter>
              <IconTabFilter
-            icon="sap-icon://attachment"  tooltip="Manage Attachments"
+              tooltip="Manage Attachments"
 				text="Attachments"
 				key="itfAttach">
               

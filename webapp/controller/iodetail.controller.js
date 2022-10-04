@@ -91,12 +91,6 @@ sap.ui.define([
                     this.getStatDynamicTableColumns();
                 }, 100);
 
-                 //Attachments
-                 this.bindUploadCollection();
-                 this.getView().getModel("FileModel").refresh();
-                    this.getStatDynamicTableColumns(); 
-                },100);
-
                 //build Dynamic table for Delivery Schedule
                 setTimeout(() => {
                     this.getDlvSchedDynamicTableColumns(); 
@@ -106,6 +100,10 @@ sap.ui.define([
                 setTimeout(() => {
                     this.getIODetDynamicTableColumns(); 
                 },100);
+
+                //Attachments
+                this.bindUploadCollection();
+                this.getView().getModel("FileModel").refresh();
             },
 
             getIODetDynamicTableColumns: function () {
