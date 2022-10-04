@@ -8,21 +8,25 @@
     xmlns:tnt="sap.tnt"
     xmlns:c="zuiio2.control" 
     xmlns:t="sap.ui.table"> 
-        <Panel id="headerPanel" expandable="true" expanded="true" width="auto" class="sapUiSizeCompact">
+        <!-- <Panel id="headerPanel" expandable="true" expanded="true" width="auto" class="sapUiSizeCompact"> -->
 
-            <headerToolbar>
-                <Toolbar id="TB1" height="2rem" style="Clear">
+            <!-- <headerToolbar>
+                <Toolbar id="TB1" height="2rem" style="Clear"> -->
                     <!-- <Title text="{i18n>Header}" /> -->
-                    <ToolbarSpacer />                    
+                    <!-- <ToolbarSpacer />                    
                     <Button type="Ghost" icon="sap-icon://edit" tooltip="{i18n>Editioheader}" press="setHeaderEditMode" visible="true"/>
                 </Toolbar>
-            </headerToolbar>
+            </headerToolbar> -->
+
+            <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
+                <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onEditIO"/>
+            </OverflowToolbar>
 
             <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
             
-            <f:Form id="IOHeaderForm1" editable="false" class="sapUiNoContentPadding">
+                      <f:Form id="IOHeaderForm1" editable="false" class="sapUiNoContentPadding">
                 <f:layout>
-                    <f:ResponsiveGridLayout columnsXL="5" columnsL="4" columnsM="4" singleContainerFullSize="false" />
+                    <f:ResponsiveGridLayout columnsXL="4" columnsL="2" columnsM="1" singleContainerFullSize="false" />
                 </f:layout>
 
                 <f:formContainers>
@@ -58,29 +62,29 @@
                                     <Input id="SALESORG" value="{headerData>/SALESORG}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange" ></Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>  
                             <f:FormElement label="{i18n>ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
                                 <f:fields>
                                     <Input id="ORDQTY" value="{headerData>/ORDQTY}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange" ></Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>  
                             <f:FormElement label="{i18n>ACTUALQTY}" visible="{= ${VisibleFieldsData>/ACTUALQTY} === true ? true : false }">
                                 <f:fields>
                                     <Input id="ACTUALQTY" value="{headerData>/ACTUALQTY}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange" ></Input>
                                 </f:fields>
-                            </f:FormElement> 
+                            </f:FormElement>  
                             <f:FormElement label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                                 <f:fields>
                                     <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange" ></Input>
                                 </f:fields>
-                            </f:FormElement>                      
+                            </f:FormElement>                                                                                                                             
                         </f:formElements>
                     </f:FormContainer> 
                     <f:FormContainer ariaLabelledBy="Grp2">
-                        <f:formElements>
+                        <f:formElements>                                                            
                             <f:FormElement label="{i18n>IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                                 <f:fields>
                                     <Input id="IOTYPE"  value="{headerData>/IOTYPE}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -105,30 +109,29 @@
                                     <Input id="FTYSALESTERM" value="{headerData>/FTYSALESTERM}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange"></Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement> 
                             <f:FormElement label="{i18n>REVORDQTY}" visible="{= ${VisibleFieldsData>/REVORDQTY} === true ? true : false }">
                                 <f:fields>
                                     <Input id="REVORDQTY" value="{headerData>/REVORDQTY}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange"></Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>  
                             <f:FormElement label="{i18n>SHIPQTY}" visible="{= ${VisibleFieldsData>/SHIPQTY} === true ? true : false }">
                                 <f:fields>
                                     <Input id="SHIPQTY" value="{headerData>/SHIPQTY}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange"></Input>
                                 </f:fields>
-                            </f:FormElement> 
+                            </f:FormElement>       
                             <f:FormElement label="{i18n>PRODWK}" visible="{= ${VisibleFieldsData>/PRODWK} === true ? true : false }">
                                 <f:fields>
                                     <Input id="PRODWK" value="{headerData>/PRODWK}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                          change="onHeaderChange" liveChange="onHeaderChange"></Input>
                                 </f:fields>
-                            </f:FormElement> 
-                                                   
+                            </f:FormElement>                                                                                                         
                         </f:formElements>
                     </f:FormContainer>  
                      <f:FormContainer ariaLabelledBy="Grp3">
-                        <f:formElements>
+                        <f:formElements>                            
                             <f:FormElement label="{i18n>IOSUFFIX}" visible="{= ${VisibleFieldsData>/IOSUFFIX} === true ? true : false }">
                                 <f:fields>
                                     <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -152,7 +155,7 @@
                                         change="onHeaderChange" liveChange="onHeaderChange">
                                     </Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement> 
                             <f:FormElement label="{i18n>TRADPLANT}" visible="{= ${VisibleFieldsData>/TRADPLANT} === true ? true : false }">
                                 <f:fields>
                                     <Input id="TRADPLANT" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -160,7 +163,7 @@
                                         change="onHeaderChange" liveChange="onHeaderChange">
                                     </Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>    
                             <f:FormElement label="{i18n>CUSSALETERM}" visible="{= ${VisibleFieldsData>/CUSSALETERM} === true ? true : false }">
                                 <f:fields>
                                     <Input id="CUSSALETERM" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -184,11 +187,11 @@
                                         change="onHeaderChange" liveChange="onHeaderChange">
                                     </Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>                                                                                                                                            
                         </f:formElements>
                     </f:FormContainer> 
                     <f:FormContainer ariaLabelledBy="Grp4">
-                        <f:formElements>
+                        <f:formElements>                            
                             <f:FormElement label="{i18n>REFIONO}" visible="{= ${VisibleFieldsData>/REFIONO} === true ? true : false }">
                                 <f:fields>
                                     <Input id="REFIONO" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -196,7 +199,7 @@
                                         change="onHeaderChange" liveChange="onHeaderChange">
                                     </Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>   
                             <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                                 <f:fields>
                                     <Input id="STYLENO" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
@@ -212,7 +215,7 @@
                                         change="onHeaderChange" liveChange="onHeaderChange">
                                     </Input>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>                                                                                 
                             <f:FormElement label="{i18n>PLANPLANT}"  visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                                 <f:fields>
                                     <Input id="PLANPLANT" value="{headerData>/PLANPLANT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/>
@@ -237,11 +240,16 @@
                                 <f:fields>
                                     <Input id="REMARKS" value="{headerData>/REMARKS}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement>                            
                         </f:formElements>
-                    </f:FormContainer> 
+                    </f:FormContainer>
+                    <f:FormContainer ariaLabelledBy="Grp6">
+                        <f:formElements>
+                            
+                        </f:formElements>
+                    </f:FormContainer>
                 </f:formContainers>
-            </f:Form>            
+            </f:Form>  
             
-        </Panel>
+        <!-- </Panel> -->
 </core:FragmentDefinition>

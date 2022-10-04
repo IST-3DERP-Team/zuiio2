@@ -1,0 +1,49 @@
+<core:FragmentDefinition 
+    xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core" 
+    xmlns:mvc="sap.ui.core.mvc"
+    class="sapUiSizeCompact" 
+    xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" 
+    xmlns:t="sap.ui.table"> 
+        <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiSizeCompact">
+
+            <!-- <headerToolbar> -->
+                <Toolbar id="toolbarDlvSched" height="1.7rem" style="Clear">
+                    <!-- <Title text="{i18n>DeliverySchedule}" /> -->
+                    <Text text="{i18n>DeliverySchedule}" />
+                    <ToolbarSpacer />                    
+                    <Button type="Ghost" text="New" icon="sap-icon://add-document" tooltip="Add new Delivery Schedule" press="onNewDlvSched"/>
+                    <Button type="Ghost" text="Import PO" tooltip="Import Vendor PO" press="onImportPO"/>
+                    <Button type="Ghost" text="Edit" icon="sap-icon://edit"  tooltip="Edit Delivery Schedule" press="onEditDlvSched"/>
+                    <Button type="Ghost" icon="sap-icon://delete"  tooltip="Delete Delivery Schedule" press="onDeleteDlvSched"/>
+                    <Button type="Ghost" text="Copy" icon="sap-icon://copy"  tooltip="Copy Delivery Schedule" press="onCopyDlvSched"/>
+                    <Button type="Ghost" icon="sap-icon://refresh"  tooltip="Refresh Data" press="onRefreshDlvSched"/>
+
+                    <layoutData>
+                    <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
+                    </layoutData>
+                </Toolbar>
+            <!-- </headerToolbar> -->
+
+    <t:Table id="IODlvSchedDynTable" 
+                class="sapUiSizeCompact sidePadding" 
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="Single" 
+                selectionBehavior="RowOnly"
+                rowSelectionChange="onRowChange">
+
+                <t:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </t:layoutData>  
+            </t:Table> 
+
+            <!-- </f:Form>   -->
+            
+        </Panel>
+</core:FragmentDefinition>
