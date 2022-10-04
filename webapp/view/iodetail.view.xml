@@ -96,10 +96,12 @@
 				key="itfFASUMM">
                 <Text text="FA Summary..." />
 			</IconTabFilter>
-            <IconTabFilter
+             <IconTabFilter
+            icon="sap-icon://attachment"  tooltip="Manage Attachments"
 				text="Attachments"
 				key="itfAttach">
-                <Text text="Attachments..." />
+              
+                  <core:Fragment fragmentName="zuiio2.view.subviews.Attachments" type="XML"/>  
 			</IconTabFilter>
 		</items>
 	</IconTabBar>

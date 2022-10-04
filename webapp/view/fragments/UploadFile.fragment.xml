@@ -10,17 +10,17 @@
                 <f:formContainers>
                     <f:FormContainer ariaLabelledBy="Grp3">
                         <f:formElements>
-                            <f:FormElement label="{i18n>DescriptionEN}">
+                            <f:FormElement label="Description EN">
                                 <f:fields>
                                     <Input id="FileDesc1" value=""/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="{i18n>DescriptionCN}">
+                            <f:FormElement label="Description CN">
                                 <f:fields>
                                     <Input id="FileDesc2" value=""/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="{i18n>AttachmentRemarks}">
+                            <f:FormElement label="Remarks">
                                 <f:fields>
                                     <Input id="FileRemarks" value=""/>
                                 </f:fields>
@@ -31,8 +31,8 @@
             </f:Form>
 		</Panel>
 		<buttons>
-			<Button text="{i18n>Save}" press="onStartUploadFile"/>
-			<Button text="{i18n>Cancel}" press="onCancelUploadFile"/>
+			<Button text="Save" press="onStartUploadFile"/>
+			<Button text="Cancel" press="onCancelUploadFile"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

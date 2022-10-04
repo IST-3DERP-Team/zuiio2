@@ -69,7 +69,15 @@
                     ],
                     "localUri": "localService/ZVB_3DERP_SALDOC_FILTERS_CDS/metadata.xml"
                 }
-            }
+            },
+            "ZGW_3DERP_FILES_SRV": {
+				"uri": "/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/",
+				"type": "OData",
+				"settings": {
+					"odataVersion": "2.0",
+					"localUri": "localService/metadata.xml"
+				}
+			}
         }
     },
     "sap.ui": {
@@ -89,7 +97,7 @@
         }
     },
     "sap.ui5": {
-        "flexEnabled": true,
+        "flexEnabled": false,
         "dependencies": {
             "minUI5Version": "1.71.49",
             "libs": {
@@ -146,7 +154,17 @@
                     "defaultCountMode": "Inline",
                     "refreshAfterChange": false
                 }
-            }
+            },
+            "FileModel": {
+				"type": "sap.ui.model.odata.v2.ODataModel",
+				"settings": {
+					"defaultOperationMode": "Server",
+					"defaultBindingMode": "Default",
+					"defaultCountMode": "Request"
+				},
+				"dataSource": "ZGW_3DERP_FILES_SRV",
+				"preload": true
+			}
         },
         "resources": {
             "css": [

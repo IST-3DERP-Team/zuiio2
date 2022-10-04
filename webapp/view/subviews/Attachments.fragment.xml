@@ -5,9 +5,9 @@
         <Toolbar height="2rem" style="Clear">
             <Label text=""/>
             <ToolbarSpacer />
-            <Button text="DeleteSelected" tooltip="Deleteselectedattachment" press="onDeleteFile" visible="true"/>
-            <Button type="Ghost" icon="sap-icon://edit" text="Edit" tooltip="Editattachments" press="setFilesEditMode" visible="true"/>
-            <Button type="Ghost" icon="sap-icon://decline" text="Cancel" tooltip="Canceledit" press="cancelFilesEdit" visible="true"/>
+            <Button text="Delete Selected" tooltip="Delete Selected Attachment" press="onDeleteFile" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
+            <Button type="Ghost" icon="sap-icon://edit" text="Edit" tooltip="Edit Attachment" press="setFilesEditMode" visible="{= ${FilesEditModeModel>/editMode} === true ? false : true }"/>
+            <Button type="Ghost" icon="sap-icon://decline" text="Cancel" tooltip="Cancel Attachment" press="cancelFilesEdit" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
         </Toolbar>
         
         <!-- Attachments -->
