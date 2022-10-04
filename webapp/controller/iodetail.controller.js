@@ -74,6 +74,143 @@ sap.ui.define([
                 setTimeout(() => {
                     this.getStatDynamicTableColumns(); 
                 },100);
+
+                //build Dynamic table for Delivery Schedule
+                setTimeout(() => {
+                    this.getDlvSchedDynamicTableColumns(); 
+                },100);
+
+                // //build Dynamic table for Delivery Details
+                // setTimeout(() => {
+                //     this.getDlvDetDynamicTableColumns(); 
+                // },100);
+            },
+
+            getDlvSchedDynamicTableColumns: function () {
+                var me = this;
+
+                //get dynamic columns based on saved layout or ZERP_CHECK
+                var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
+                this.oJSONModel = new sap.ui.model.json.JSONModel();
+                
+                // this._SBU = this.getView().byId("SmartFilterBar").getFilterData().SBU;  //get selected SBU
+                // this._sbu = 'VER'
+                this._Model3.setHeaders({
+                    sbu: this._sbu,
+                    type: 'IODLV',
+                    tabname: 'ZDV_3DERP_IODLV'
+                    // userid: this._userid
+                    // userid: 'BAS_CONN'
+                });
+
+                this._Model3.read("/ColumnsSet", {
+                    success: function (oData, oResponse) { 
+                        oJSONColumnsModel.setData(oData);
+                        me.oJSONModel.setData(oData);
+                        me.getView().setModel(oJSONColumnsModel, "DlvSchedDynColumns");  //set the view model
+                        console.log(me.getView().setModel(oJSONColumnsModel, "DlvSchedDynColumns"));  //set the view model
+                        setTimeout(() => {
+                            me.getDlvSchedDynamicTableData(oData.results); 
+                        },100);                        
+                    },
+                    error: function (err) { }
+                })
+                ;
+            },
+
+            getDlvSchedDynamicTableData: function (columns) {
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var oJSONDataModel = new sap.ui.model.json.JSONModel();
+
+                var ioNo = this._ioNo;  
+
+                var oText = this.getView().byId("DlvSchedCount");
+                
+                oModel.read("/IODLVSet", {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + ioNo + "'"
+                    },
+                    success: function (oData, oResponse) { 
+                        // oText.setText(oData.Results.length + "");
+
+                        // oData.results.forEach(item => {
+                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);                            
+                        // })
+
+                        console.log(oData);
+
+                        oJSONDataModel.setData(oData);
+                        me.getView().setModel(oJSONDataModel, "DlvSchedDataModel");
+                        // console.log(me.getView().setModel(oJSONDataModel, "DataModel"));
+                        setTimeout(() => {
+                            me.setDlvSchedTableData();
+                        },100);                           
+                        me.setChangeStatus(false);
+                    },
+                    error: function (err) { }
+                });
+            },
+            
+            setDlvSchedTableData: function () {
+                var me = this;
+
+                //the selected dynamic columns
+                var oDetColumnsModel = this.getView().getModel("DlvSchedDynColumns");
+                var oDetDataModel = this.getView().getModel("DlvSchedDataModel");
+
+                //the selected styles data
+                var oDetColumnsData = oDetColumnsModel.getProperty('/results');
+                var oDetData = oDetDataModel.getProperty('/results');
+
+                // //add column for copy button
+                // oColumnsData.unshift({
+                //     "ColumnName": "Copy",
+                //     "ColumnType": "COPY",
+                //     "Visible": false
+                // });
+ 
+                // //add column for manage button
+                // oDetColumnsData.unshift({
+                //     "ColumnName": "ManageStat",
+                //     "ColumnType": "SEL"
+                // });
+
+                //set the column and data model
+                var oModel = new JSONModel();
+                oModel.setData({
+                    columns: oDetColumnsData,
+                    rows: oDetData
+                });
+
+                var oDetTableDlvSched = this.getView().byId("IODlvSchedDynTable");
+                oDetTableDlvSched.setModel(oModel);
+                
+                //bind the dynamic column to the table
+                oDetTableDlvSched.bindColumns("/columns", function (index, context) {
+                    var sColumnId = context.getObject().ColumnName;
+                    var sColumnLabel = context.getObject().ColumnLabel;
+                    var sColumnType = context.getObject().ColumnType;
+                    var sColumnWidth = context.getObject().ColumnWidth;
+                    var sColumnVisible = context.getObject().Visible;
+                    var sColumnSorted = context.getObject().Sorted;
+                    var sColumnSortOrder = context.getObject().SortOrder;
+                    return new sap.ui.table.Column({
+                        // id: sColumnId,
+                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        template: me.columnTemplate(sColumnId, sColumnType,"DlvSched"),
+                        width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
+                        sortProperty: sColumnId,
+                        filterProperty: sColumnId,
+                        autoResizable: true,
+                        visible: sColumnVisible ,
+                        sorted: sColumnSorted,
+                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending" )
+                    });
+                });
+
+                //bind the data to the table
+                oDetTableDlvSched.bindRows("/rows");
             },
 
             getStatDynamicTableColumns: function () {
@@ -222,7 +359,7 @@ sap.ui.define([
                     success: function (oData, oResponse) { 
                         oJSONColumnsModel.setData(oData);
                         me.oJSONModel.setData(oData);
-                        me.getView().setModel(oJSONColumnsModel, "DynColumns");  //set the view model
+                        me.getView().setModel(oJSONColumnsModel, "AttribDynColumns");  //set the view model
                         setTimeout(() => {
                             me.getAttribDynamicTableData(oData.results);
                         },100);                        
@@ -254,7 +391,9 @@ sap.ui.define([
                         // })
 
                         oJSONDataModel.setData(oData);
-                        me.getView().setModel(oJSONDataModel, "DataModel");
+                        me.getView().setModel(oJSONDataModel, "AttribDataModel");
+                        console.log("attrib data");
+                        console.log(me.getView().setModel(oJSONDataModel, "DataModel"));
                         setTimeout(() => {
                             me.setAttribTableData();
                         },100);
@@ -269,8 +408,8 @@ sap.ui.define([
                 var me = this;
 
                 //the selected dynamic columns
-                var oDetColumnsModel = this.getView().getModel("DynColumns");
-                var oDetDataModel = this.getView().getModel("DataModel");
+                var oDetColumnsModel = this.getView().getModel("AttribDynColumns");
+                var oDetDataModel = this.getView().getModel("AttribDataModel");
 
                 //the selected styles data
                 var oDetColumnsData = oDetColumnsModel.getProperty('/results');
@@ -345,21 +484,32 @@ sap.ui.define([
                     } else if(sSource === "Stat") {
                         tToolTip = "Manage this Status"
                         sKey ="STATUSCD"
+                    } else if(sSource === "DlvSched") {
+                        tToolTip = "Manage this Status"
+                        sKey ="DLVSEQ"
                     }
                     oDetColumnTemplate = new sap.m.Button({
                         text: "",
                         icon: "sap-icon://detail-view",
-                        type: "Ghost",
-                        // press: this.goToDetail,                        
-                        tooltip: tToolTip
+                        type: "Ghost"
+                        // ,press: this.goToDetail 
+                        ,tooltip: tToolTip
                     });
-                    oDetColumnTemplate.data("VERNO", "{}"); //custom data to hold style number
+                    oDetColumnTemplate.data(sKey, "{}"); //custom data to hold key id
                 } 
-                else {
-                    oDetColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}" }); //default text
-                }
+                // else {
+                //     oDetColumnTemplate = new sap.m.Text({ 
+                //         text: "{" + sColumnId + "}"
+                //         , wrapping: false 
+                //         // , tooltip: "{" + sColumnId + "}"
+                //     }); //default text
+                // }
                 
-                oDetColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}" }); //default text
+                oDetColumnTemplate = new sap.m.Text({ 
+                    text: "{" + sColumnId + "}"
+                    ,wrapping: false
+                    // ,tooltip: "{" + sColumnId + "}"
+                }); //default text
                 return oDetColumnTemplate;
             },
 

@@ -1,0 +1,40 @@
+<core:FragmentDefinition 
+    xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core" 
+    class="sapUiSizeCompact" 
+    xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" 
+    xmlns:t="sap.ui.table"
+    xmlns:layout="sap.ui.layout">
+    <Toolbar>
+    <Title text="{i18n>DeliverySchedule}" class="sapUiTinyMarginBegin"/>
+				<ToolbarSpacer id="_IDGenToolbarSpacer1"/>  
+                <Button type="Ghost" text="New" icon="sap-icon://add-document" tooltip="Add new Delivery SChedule" press="onNewDlvSched"/>
+                <Button type="Ghost" text="Import PO" tooltip="Import Vendor PO" press="onImportPO"/>
+                <Button type="Ghost" text="Edit" icon="sap-icon://edit"  tooltip="Edit Delivery Schedule" press="onEditDlvSched"/>
+                <Button type="Ghost" icon="sap-icon://delete"  tooltip="Delete Delivery Schedule" press="onDeleteDlvSched"/>
+                <Button type="Ghost" text="Copy" icon="sap-icon://copy"  tooltip="Copy Delivery Schedule" press="onCopyDlvSched"/>
+                <Button type="Ghost" icon="sap-icon://refresh"  tooltip="Refresh Data" press="onRefreshDlvSched"/>
+    
+        <layoutData>
+            <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
+        </layoutData>
+    </Toolbar>
+
+    <t:Table id="IODlvSchedDynTable" 
+                class="sapUiSizeCompact sidePadding" 
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="Single" 
+                selectionBehavior="RowOnly"
+                rowSelectionChange="onRowChange">
+
+                <t:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </t:layoutData>  
+            </t:Table>  
+</core:FragmentDefinition>

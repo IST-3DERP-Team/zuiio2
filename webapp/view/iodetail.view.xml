@@ -40,7 +40,7 @@
 		id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		expanded="{device>/isNoPhone}"
-		class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="false">
+		class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="true">
 		<items>
 			<IconTabFilter
 				text="IO Header"
@@ -52,6 +52,7 @@
                 <IconTabBar
                 id="idIconTabBarInlineMode2"
                 headerMode="Inline"
+                expandable="false"
                 expanded="{device>/isNoPhone}"
                 class="sapUiResponsiveContentPadding">
                     <items>
@@ -78,8 +79,23 @@
 			</IconTabFilter>
 			<IconTabFilter
 				text="Order Details"
-				key="itfORDERDET">
-                <Text text="Order Details..." />
+				key="itfDLVSCHED">
+                <!-- add delivery schedule fragment here -->
+                <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/>
+                <IconTabBar
+                id="idIconTabBarInlineModeDlvSched"
+                headerMode="Inline"
+                expandable="false"
+                expanded="{device>/isNoPhone}"
+                class="sapUiResponsiveContentPadding">
+                    <items>
+                        <IconTabFilter
+                            text="Order Details"
+                            key="itfIOORDERDET">
+                            <!-- add delivery detail fragment here -->
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
 			</IconTabFilter>
 			<IconTabFilter
 				text="Material List"
