@@ -52,7 +52,7 @@ sap.ui.define([
                 setTimeout(() => {
                     this.getDynamicTableColumns();
                 },100);
-                                
+
                 // this.getStyleStats(); //style statistics
             },
 
@@ -169,7 +169,6 @@ sap.ui.define([
                 
                 //different component based on field
                 if (sColumnId === "STATUS") { //display infolabel for Status Code
-                    // console.log(sColumnId);
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
                         colorScheme: "{= ${" + sColumnId + "} === 'CMP' ? 8 : ${" + sColumnId + "} === 'CRT' ? 3 : ${" + sColumnId + "} === 'REL' ? 8 : ${" + sColumnId + "} === 'EXT' ? 5 : 1}"

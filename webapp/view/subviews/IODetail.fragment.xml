@@ -8,27 +8,27 @@
     xmlns:tnt="sap.tnt"
     xmlns:c="zuiio2.control" 
     xmlns:t="sap.ui.table"> 
-        <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiSizeCompact">
+        <Panel id="IODetPanel" expandable="false" expanded="true" width="auto" class="sapUiSizeCompact">
 
-            <!-- <headerToolbar> -->
-                <Toolbar id="toolbarDlvSched" height="1.7rem" style="Clear">
+            <headerToolbar>
+                <Toolbar id="toolbarIODET" height="2rem" style="Clear">
                     <!-- <Title text="{i18n>DeliverySchedule}" /> -->
-                    <Text text="{i18n>DeliverySchedule}" />
+                    <Text text="{i18n>IODetail}" />
                     <ToolbarSpacer />                    
-                    <Button type="Ghost" text="New" icon="sap-icon://add-document" tooltip="Add new Delivery Schedule" press="onNewDlvSched"/>
-                    <Button type="Ghost" text="Import PO" tooltip="Import Vendor PO" press="onImportPO"/>
-                    <Button type="Ghost" text="Edit" icon="sap-icon://edit"  tooltip="Edit Delivery Schedule" press="onEditDlvSched"/>
-                    <Button type="Ghost" icon="sap-icon://delete"  tooltip="Delete Delivery Schedule" press="onDeleteDlvSched"/>
-                    <Button type="Ghost" text="Copy" icon="sap-icon://copy"  tooltip="Copy Delivery Schedule" press="onCopyDlvSched"/>
-                    <Button type="Ghost" icon="sap-icon://refresh"  tooltip="Refresh Data" press="onRefreshDlvSched"/>
+                    <Button type="Ghost" text="New" icon="sap-icon://add-document" tooltip="Add new Detail" press="onNewIODet"/>
+                    <Button type="Ghost" text="Edit" icon="sap-icon://edit"  tooltip="Edit Detail" press="onEditIODet"/>
+                    <Button type="Ghost" icon="sap-icon://delete"  tooltip="Delete Detail" press="onDeleteIODet"/>
+                    <Button type="Ghost" text="Copy" icon="sap-icon://copy"  tooltip="Copy Detail" press="onCopyIODet"/>
+                    <Button type="Ghost" icon="sap-icon://refresh"  tooltip="Refresh Data" press="onRefreshIODet"/>
 
                     <layoutData>
                     <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
                     </layoutData>
-                </Toolbar>
-            <!-- </headerToolbar> -->
 
-    <t:Table id="IODlvSchedDynTable" 
+                </Toolbar>
+            </headerToolbar>
+
+    <t:Table id="IODetDynTable" 
                 class="sapUiSizeCompact sidePadding" 
                 visibleRowCountMode="Auto"
                 showColumnVisibilityMenu="true" 

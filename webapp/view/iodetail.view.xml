@@ -42,61 +42,67 @@
 		expanded="{device>/isNoPhone}"
 		class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="true">
 		<items>
+            <!-- IO HEADER DETAILS ICON TAB BAR -->
 			<IconTabFilter
 				text="IO Header"
 				key="itfIOHDR">
-                <!-- HEADER -->
-                <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML"/>
-                
-                <!-- IO HEADER DETAILS ICON TAB BAR -->
+                <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML"/>                
                 <IconTabBar
-                id="idIconTabBarInlineMode2"
+                id="idIconTabBarInlineIOHdr"
                 headerMode="Inline"
                 expandable="false"
                 expanded="{device>/isNoPhone}"
                 class="sapUiResponsiveContentPadding">
                     <items>
+                        <!-- ATTRIBUTES -->
                         <IconTabFilter
                             text="Attributes"
                             key="itfIOATTRIB">
-                            <!-- ATTRIBUTES -->
                             <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/>
                         </IconTabFilter>
+                        <!-- STATUS -->
                          <IconTabFilter
                             text="Status"
                             key="itfIOSTATUS">
-                            <!-- STATUS -->
                             <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/>
                         </IconTabFilter>
                     </items>
                 </IconTabBar>
 
 			</IconTabFilter>
+
+            <!-- STYLE -->
 			<IconTabFilter
 				text="Style"
 				key="itfSTYLE">
                 <Text text="Style..." />
 			</IconTabFilter>
+
+            <!-- DELIVERY SCHEDULE -->
 			<IconTabFilter
 				text="Order Details"
 				key="itfDLVSCHED">
-                <!-- add delivery schedule fragment here -->
                 <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/>
-                <IconTabBar
-                id="idIconTabBarInlineModeDlvSched"
+                <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
+                <!-- <IconTabBar
+                id="idIconTabBarInlineIODet"
                 headerMode="Inline"
                 expandable="false"
                 expanded="{device>/isNoPhone}"
                 class="sapUiResponsiveContentPadding">
-                    <items>
-                        <IconTabFilter
+                    <items> -->
+                        <!-- ORDER DETAILS -->
+                        <!-- <IconTabFilter
                             text="Order Details"
-                            key="itfIOORDERDET">
-                            <!-- add delivery detail fragment here -->
-                        </IconTabFilter>
+                            key="itfIODET">
+                            <Text text="Order Details" />
+                            <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
+                        </IconTabFilter>                        
                     </items>
-                </IconTabBar>
+                </IconTabBar> -->
 			</IconTabFilter>
+
+            <!-- MATERIAL LIST -->
 			<IconTabFilter
 				text="Material List"
 				key="itfMATLIST">
