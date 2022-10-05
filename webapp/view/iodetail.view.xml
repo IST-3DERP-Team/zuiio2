@@ -14,9 +14,11 @@
     xmlns:plugins="sap.ui.table.plugins"
     xmlns:fb="sap.ui.comp.filterbar"
     xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
-    height="100%"
->
-    <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" showNavButton="true" navButtonPress="onNavBack">
+	height="100%">
+    <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false"
+		titleLevel="H3" class="iodet"
+        showNavButton="true"  navButtonPress="onNavBack">
+
         <!-- OBJECT HEADER -->
         <!--intro="{i18n>CurrentVersion}: {headerData>/Verno}" -->
         <ObjectHeader
@@ -39,9 +41,39 @@
                 <ObjectAttribute title="{i18n>UPDATEDDT}" text="{headerData>/UPDATEDDT}" />
             </attributes>
         </ObjectHeader>
+		id="idIconTabBarInlineMode"
+		headerMode="Inline"
+		expanded="{device>/isNoPhone}"
+		class="sapUiNoContentPadding" expandable="false" applyContentPadding="false">
+		<items>
+            <!-- IO HEADER DETAILS ICON TAB BAR -->
+			<IconTabFilter
+				text="IO Header"
+				key="itfIOHDR">
+                <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML"/>                
+                <IconTabBar
+                id="idIconTabBarInlineIOHdr"
+                headerMode="Inline"
+                expandable="false"
+                expanded="{device>/isNoPhone}"
+                class="sapUiResponsiveContentPadding">
+                    <items>
+                        <!-- ATTRIBUTES -->
+                        <IconTabFilter
+                            text="Attributes"
+                            key="itfIOATTRIB">
+                            <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/>
+                        </IconTabFilter>
+                        <!-- STATUS -->
+                         <IconTabFilter
+                            text="Status"
+                            key="itfIOSTATUS">
+                            <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/>
+                        </IconTabFilter>
+                    </items>
+                </IconTabBar>
 
         <IconTabBar id="idIconTabBarInlineMode" headerMode="Inline" expanded="{device>/isNoPhone}" class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="true">
-            <items>
                 <!-- IO HEADER DETAILS ICON TAB BAR -->
                 <IconTabFilter text="IO Header" key="itfIOHDR">
                     <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
@@ -59,10 +91,12 @@
                     </IconTabBar>
                 </IconTabFilter>
 
-                <!-- STYLE -->
-                <IconTabFilter text="Style" key="itfSTYLE">
-                    <Text text="Style..." />
-                </IconTabFilter>
+            <!-- STYLE -->
+			<IconTabFilter
+				text="Style"
+				key="itfSTYLE">
+                <core:Fragment fragmentName="zuiio2.view.subviews.Style" type="XML"/>
+			</IconTabFilter>
 
                 <!-- DELIVERY SCHEDULE -->
                 <IconTabFilter text="Order Details" key="itfDLVSCHED">

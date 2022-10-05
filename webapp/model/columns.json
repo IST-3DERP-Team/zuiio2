@@ -1,0 +1,18 @@
+{
+    "color": [
+        {"ColumnName": "CPOATRIB",
+            "ValueHelp": {"show": true, "items": {"path": "CUSTCOLOR_MODEL", "value": "CUSTCOLOR", "text": "CUSTCOLOR"},
+            "SuggestionItems": {"path": "CUSTCOLOR_MODEL>/", "text": "{CUSTCOLOR_MODEL>CUSTCOLOR}"}}}
+        ],
+    "process": [
+        {"ColumnName": "VASTYP", 
+            "ValueHelp": {"show": true, "items": {"path": "VASTYPE_MODEL", "value": "PROCESSCD", "text": "PROCESSCD"},
+            "SuggestionItems": {"path": "VASTYPE_MODEL>/", "text": "{VASTYPE_MODEL>PROCESSCD}", "additionalText": "{VASTYPE_MODEL>DESC1}"}}},
+        {"ColumnName": "ATTRIBTYP", 
+            "ValueHelp": {"show": true, "items": {"path": "ATTRIBTYPE_MODEL", "value": "ATTRIBTYP", "text": "ATTRIBTYP"},
+            "SuggestionItems": {"path": "ATTRIBTYPE_MODEL>/", "text": "{ATTRIBTYPE_MODEL>ATTRIBTYP}"}}},
+        {"ColumnName": "ATTRIBCD", 
+            "ValueHelp": {"show": true, "items": {"path": "ATTRIBCODE_MODEL", "value": "ATTRIBCD", "text": "ATTRIBCD"},
+            "SuggestionItems": {"path": "ATTRIBCODE_MODEL>/", "text": "{ATTRIBCODE_MODEL>ATTRIBCD}", "additionalText": "{ATTRIBCODE_MODEL>DESC1}"}}}
+    ]    
+}

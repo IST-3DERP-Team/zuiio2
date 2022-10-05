@@ -1,3 +1,51 @@
+/* Enter your custom styles here */
+.iodet .sapMITBHead {
+    margin-top: 0 !important;
+    padding: 0 !important;
+}
+
+.iostyle .sapMITBHead {
+    margin-top: 0 !important;
+    padding: 0 !important;
+}
+
+.iostyle .sapMILI {
+    height: 1.5rem !important;
+}
+
+.iostyle .stylHdrPadding{
+    padding: 0 1rem !important;
+}
+
+.iostyle .sapMPanelContent:not(.sapMPanelBGTransparent) {
+    border-bottom: none !important;
+}
+
+.iostyle .sapMITBContent {
+    border-bottom: none !important;
+}
+
+.iostyle .hdrValBB {
+    vertical-align: middle !important;
+    float: left;
+    /* min-width: 10rem !important;
+    max-width: 20rem !important; */
+}
+
+.iostyle .sapMILILabel {
+    width: 50% !important;
+    max-width: 50% !important;
+    min-width: 50% !important;
+}
+
+.iostyle .sapMILIDiv {
+    width: 50% !important;
+}
+
+.iostyle .hideOverflow {
+    overflow: hidden !important;
+}
+
 .sapUiRespGrid{
 
     padding-top: 0rem !important;
@@ -9,6 +57,7 @@
     padding-left: 2rem;*/
 
 }
+
 .sapMOHR{
     padding-top: 0.5rem !important;
     padding-left: 0.5rem !important;

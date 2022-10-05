@@ -70,6 +70,24 @@
                     "localUri": "localService/ZVB_3DERP_SALDOC_FILTERS_CDS/metadata.xml"
                 }
             },
+            "ZGW_3DERP_IOSTYLE_SRV": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_IOSTYLE_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [],
+                    "localUri": "localService/ZGW_3DERP_IOSTYLE_SRV/metadata.xml"
+                }
+            },
+            "ZGW_3DERP_SRV": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [],
+                    "localUri": "localService/ZGW_3DERP_SRV/metadata.xml"
+                }
+            },
             "ZGW_3DERP_FILES_SRV": {
 				"uri": "/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/",
 				"type": "OData",
@@ -148,6 +166,27 @@
             },
             "ZVB_3DERP_SALDOC_FILTERS_CDS": {
                 "dataSource": "ZVB_3DERP_SALDOC_FILTERS_CDS",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
+            },
+            "ZGW_3DERP_IOSTYLE_SRV": {
+                "dataSource": "ZGW_3DERP_IOSTYLE_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
+            },
+            "CAPTION_MSGS_MODEL": {
+                "type": "sap.ui.model.json.JSONModel"
+            },
+            "ZGW_3DERP_SRV": {
+                "dataSource": "ZGW_3DERP_SRV",
                 "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",

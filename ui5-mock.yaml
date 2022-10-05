@@ -45,4 +45,12 @@ server:
             generateMockData: true
             metadataXmlPath: ./webapp/localService/ZVB_3DERP_SALDOC_FILTERS_CDS/metadata.xml
             mockdataRootPath: ./webapp/localService/ZVB_3DERP_SALDOC_FILTERS_CDS/mockdata
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_IOSTYLE_SRV/
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZGW_3DERP_IOSTYLE_SRV/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZGW_3DERP_IOSTYLE_SRV/mockdata
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_SRV/
+            metadataPath: ./webapp/localService/ZGW_3DERP_SRV/metadata.xml
+            mockdataPath: ./webapp/localService/ZGW_3DERP_SRV/mockdata
+            generateMockData: true
         annotations: []
