@@ -10,7 +10,7 @@
     height="100%"
     xmlns:c="zuiio2.control" 
     xmlns:t="sap.ui.table"> 
-    <l:Splitter class="iostyle" height="550px">
+    <l:Splitter class="iostyle" height="540px">
         <Panel class="sapUiNoContentPadding stylHdrPadding">
             <Toolbar class="noPadding">
                 <Label text="Style Header" design="Bold" />
@@ -38,7 +38,7 @@
             </Panel>
             <layoutData><l:SplitterLayoutData size="400px" /></layoutData> 
         </Panel>
-        <Panel width="100%" height="550px" class="sapUiNoContentPadding">
+        <Panel width="100%" height="540px" class="sapUiNoContentPadding">
             <IconTabBar id="itbStyleDetail"
                 expanded="{device>/isNoPhone}" 
                 expandable="false" 

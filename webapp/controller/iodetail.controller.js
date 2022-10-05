@@ -107,6 +107,8 @@ sap.ui.define([
                 //Attachments
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
+
+                console.log("iodet");
             },
 
             getIODetDynamicTableColumns: function () {
@@ -1536,7 +1538,7 @@ sap.ui.define([
                 var me = this;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true);
                 var iEdited = 0;
-                console.log(arg)
+
                 if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         aEditedRows.forEach(item => {
@@ -1559,7 +1561,7 @@ sap.ui.define([
                             entitySet += ")";
 
                             Common.openProcessingDialog(me, "Processing...");
-                            console.log(entitySet, param)
+                            
                             setTimeout(() => {
                                 this._oModelStyle.update(entitySet, param, {
                                     method: "PUT",
@@ -1586,11 +1588,11 @@ sap.ui.define([
 
                                             var oIconTabBarStyle = me.byId("itbStyleDetail");
                                             oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
-
+                                            
                                             me.byId(arg + "Tab").getModel().getData().rows.forEach((row,index) => {
-                                                me.byId(arg + "Tab").getModel().setProperty('/' + index + '/EDITED', false);
+                                                me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
                                             })
-                                            console.log()
+                                            
                                             me._dataMode = "READ";
                                         }
                                     },
@@ -1666,7 +1668,7 @@ sap.ui.define([
                         })
                 })
     
-                var vIONo = _ioNo; //"1000115";
+                var vIONo = this._ioNo; //"1000115";
 
                 if (arg === "color") {
                     this._oModelStyle.read('/CustColorSet', { 
@@ -1826,7 +1828,8 @@ sap.ui.define([
                         this._inputSource.setValue(oSelectedItem.getTitle());
         
                         if (this._inputValue !== oSelectedItem.getTitle()) {                                
-                            var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;                            
+                            var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;    
+                            console.log(sRowPath)                        
                             this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                             this._bColorChanged = true;
                         }
@@ -1927,41 +1930,42 @@ sap.ui.define([
 
             onManageStyle: function(oEvent) {
                 var vStyle = this._styleNo;
-                // var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+                var me = this;
+                var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
-                // var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-                //     target: {
-                //         semanticObject: "ZUI_3DERP",
-                //         action: "manage&/RouteStyleDetail/"
-                //     },
-                //     params: {
-                //         "styleno": vStyle,
-                //         "sbu": "VER"
-                //     }
-                // })) || ""; // generate the Hash to display style
+                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+                    target: {
+                        semanticObject: "ZUI_3DERP",
+                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu
+                    }
+                    // params: {
+                    //     "styleno": vStyle,
+                    //     "sbu": "VER"
+                    // }
+                })) || ""; // generate the Hash to display style
 
-                // oCrossAppNavigator.toExternal({
-                //     target: {
-                //         shellHash: hash
-                //     }
-                // }); // navigate to Supplier application
+                oCrossAppNavigator.toExternal({
+                    target: {
+                        shellHash: hash
+                    }
+                }); // navigate to Supplier application
 
-                sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then( function (oService) {
-                    oService.hrefForExternalAsync({
-                        target : {
-                            semanticObject: "ZUI_3DERP",
-                            action: "manage&/RouteStyleDetail/"
-                        },
-                        params: {
-                            "styleno": vStyle,
-                            "sbu": this._sbu
-                        }
-                    }).then( function(sHref) {
-                        console.log("test");
-                        console.log(sHref);
-                        // Place sHref somewhere in the DOM
-                    });
-                 });
+                // sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then( function (oService) {
+                //     oService.hrefForExternalAsync({
+                //         target : {
+                //             semanticObject: "ZUI_3DERP",
+                //             action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu
+                //         }
+                //         // params: {
+                //         //     "styleno": vStyle,
+                //         //     "sbu": me._sbu
+                //         // }
+                //     }).then( function(sHref) {
+                //         console.log("test");
+                //         console.log(sHref);
+                //         // Place sHref somewhere in the DOM
+                //     });
+                //  });
 
             },
 
@@ -1969,17 +1973,18 @@ sap.ui.define([
                 // var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 // oRouter.navTo("RouteStyles");
                 // console.log()
+                var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/"
-                    },
-                    params: {
-                        "styleno": "NEW",
-                        "sbu": this._sbu
+                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu
                     }
+                    // params: {
+                    //     "styleno": "NEW",
+                    //     "sbu": me._sbu
+                    // }
                 })) || ""; // generate the Hash to display style
 
                 oCrossAppNavigator.toExternal({
