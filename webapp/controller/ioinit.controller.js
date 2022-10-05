@@ -97,7 +97,6 @@ sap.ui.define([
 
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
-<<<<<<< HEAD
                     success: function (oData, oResponse) {                        
                         oData.results.forEach(item => {
                             item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
@@ -110,11 +109,9 @@ sap.ui.define([
                             item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
                             item.PRODSTART = dateFormat.format(item.PLANDLVDT);
                             item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
+                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);   
                         })
-=======
-                    success: function (oData, oResponse) {
->>>>>>> 261de1fdeccbdb752e5e5b6bddaa3317d7b5ef36
+
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DataModel");

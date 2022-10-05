@@ -13,13 +13,8 @@ sap.ui.define([
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-<<<<<<< HEAD
     function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control) {
         "use strict"; 
-=======
-    function (Controller, Filter, Common, Utils, JSONModel, jQuery, HashChanger, MessageStrip, control) {
-        "use strict";
->>>>>>> 261de1fdeccbdb752e5e5b6bddaa3317d7b5ef36
 
         var that;
 
@@ -104,9 +99,6 @@ sap.ui.define([
                     this.getDlvSchedDynamicTableColumns(); 
                 },100);
 
-<<<<<<< HEAD
-                this.initStyle();
-=======
                 //build Dynamic table for Delivery Details
                 setTimeout(() => {
                     this.getIODetDynamicTableColumns(); 
@@ -313,7 +305,6 @@ sap.ui.define([
 
                 //bind the data to the table
                 oDetTableDlvSched.bindRows("/rows");
->>>>>>> 261de1fdeccbdb752e5e5b6bddaa3317d7b5ef36
             },
 
             getStatDynamicTableColumns: function () {
@@ -780,7 +771,6 @@ sap.ui.define([
             },
 
             //******************************************* */
-<<<<<<< HEAD
             // STYLE
             //******************************************* */
 
@@ -2030,7 +2020,6 @@ sap.ui.define([
 
             
 
-=======
             // Attachments
             //******************************************* */
 
@@ -2245,6 +2234,5 @@ sap.ui.define([
                 that.getView().getModel("FileModel").refresh();
                 oUploadCollection.removeAllItems();
             },
->>>>>>> 261de1fdeccbdb752e5e5b6bddaa3317d7b5ef36
         });
     });
