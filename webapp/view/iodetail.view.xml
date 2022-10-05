@@ -40,7 +40,7 @@
 		id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		expanded="{device>/isNoPhone}"
-		class="sapUiResponsiveContentPadding" expandable="false" applyContentPadding="true">
+		class="sapUiNoContentPadding" expandable="false" applyContentPadding="true">
 		<items>
             <!-- IO HEADER DETAILS ICON TAB BAR -->
 			<IconTabFilter
@@ -52,7 +52,7 @@
                 headerMode="Inline"
                 expandable="false"
                 expanded="{device>/isNoPhone}"
-                class="sapUiNoContentPadding">
+                class="sapUiResponsiveContentPadding">
                     <items>
                         <!-- ATTRIBUTES -->
                         <IconTabFilter
