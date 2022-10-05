@@ -49,7 +49,10 @@ sap.ui.define([
             },
 
             onSearch: function () {
-                this.getDynamicTableColumns();
+                setTimeout(() => {
+                    this.getDynamicTableColumns();
+                },100);
+
                 // this.getStyleStats(); //style statistics
             },
 
@@ -60,7 +63,8 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.text;  //get selected SBU
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.text;  //get selected SBU
+                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: 'IOINIT',
@@ -90,23 +94,27 @@ sap.ui.define([
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
-                // console.log(oModel);
+
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
+<<<<<<< HEAD
                     success: function (oData, oResponse) {                        
-                        // oData.results.forEach(item => {
-                        //     item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
-                        //     item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
-                        //     item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
-                        //     item.MATETA = dateFormat.format(item.MATETA);
-                        //     item.MAINMATETA = dateFormat.format(item.MAINMATETA);
-                        //     item.SUBMATETA = dateFormat.format(item.SUBMATETA);
-                        //     item.CUTMATETA = dateFormat.format(item.CUTMATETA);
-                        //     item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
-                        //     item.PRODSTART = dateFormat.format(item.PLANDLVDT);
-                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
-                        // })
+                        oData.results.forEach(item => {
+                            item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
+                            item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
+                            item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
+                            item.MATETA = dateFormat.format(item.MATETA);
+                            item.MAINMATETA = dateFormat.format(item.MAINMATETA);
+                            item.SUBMATETA = dateFormat.format(item.SUBMATETA);
+                            item.CUTMATETA = dateFormat.format(item.CUTMATETA);
+                            item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
+                            item.PRODSTART = dateFormat.format(item.PLANDLVDT);
+                            item.CREATEDDT = dateFormat.format(item.CREATEDDT);
+                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
+                        })
+=======
+                    success: function (oData, oResponse) {
+>>>>>>> 261de1fdeccbdb752e5e5b6bddaa3317d7b5ef36
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DataModel");
@@ -127,13 +135,6 @@ sap.ui.define([
                 //the selected styles data
                 var oColumnsData = oColumnsModel.getProperty('/results');
                 var oData = oDataModel.getProperty('/results');
-
-                // //add column for copy button
-                // oColumnsData.unshift({
-                //     "ColumnName": "Copy",
-                //     "ColumnType": "COPY",
-                //     "Visible": false
-                // });
 
                 //add column for manage button
                 oColumnsData.unshift({
@@ -185,7 +186,6 @@ sap.ui.define([
                 
                 //different component based on field
                 if (sColumnId === "STATUS") { //display infolabel for Status Code
-                    // console.log(sColumnId);
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
                         colorScheme: "{= ${" + sColumnId + "} === 'CMP' ? 8 : ${" + sColumnId + "} === 'CRT' ? 3 : ${" + sColumnId + "} === 'REL' ? 8 : ${" + sColumnId + "} === 'EXT' ? 5 : 1}"
@@ -276,7 +276,7 @@ sap.ui.define([
                 // alert(this.sbu);
                 that._router.navTo("RouteIODetail", {
                     iono: ioNO,
-                    sbu: "VER"//that._sbu
+                    sbu: that._sbu
                 });
             },
 

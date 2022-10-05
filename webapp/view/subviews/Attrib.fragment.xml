@@ -1,5 +1,12 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:tnt="sap.tnt"
-    xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
+<core:FragmentDefinition 
+    xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core" 
+    class="sapUiSizeCompact" 
+    xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" 
+    xmlns:t="sap.ui.table">
 
     <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent" >
             <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEditAttrib"/>

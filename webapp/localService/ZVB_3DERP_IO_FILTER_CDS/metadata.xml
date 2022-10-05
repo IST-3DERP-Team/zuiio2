@@ -21,15 +21,15 @@
                 <Key>
                     <PropertyRef Name="CUSTGRP"/>
                 </Key>
-                <Property Name="CUSTGRP" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="Description" sap:label="Customer Group"/>
-                <Property Name="Description" Type="Edm.String" MaxLength="20" sap:label="Name"/>
+                <Property Name="CUSTGRP" Type="Edm.String" Nullable="false" MaxLength="2" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Customer Group"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="20" sap:label="Name"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_IOTYP_SHType" sap:label="3DERP : IO Type Search Help" sap:value-list="true" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="IOTYPE"/>
                 </Key>
-                <Property Name="IOTYPE" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="Description" sap:label="IO Type"/>
-                <Property Name="Description" Type="Edm.String" MaxLength="50" sap:label="Description"/>
+                <Property Name="IOTYPE" Type="Edm.String" Nullable="false" MaxLength="3" sap:text="DESCRIPTION" sap:label="IO Type"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="50" sap:label="Description"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_IO_FILTERType" sap:label="IO : Filter List" sap:content-version="1">
                 <Key>
@@ -37,7 +37,7 @@
                 </Key>
                 <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="1" sap:value-list="standard"/>
                 <Property Name="SALESGRP" Type="Edm.String" MaxLength="10" sap:value-list="standard"/>
-                <Property Name="SEASON" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Season Code" sap:quickinfo="ERP Season Code" sap:value-list="standard"/>
+                <Property Name="SEASONCD" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Season Code" sap:quickinfo="ERP Season Code" sap:value-list="standard"/>
                 <Property Name="PLANPLANT" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Season Code" sap:quickinfo="ERP Season Code" sap:value-list="standard"/>
                 <Property Name="CUSTGRP" Type="Edm.String" MaxLength="10" sap:value-list="standard"/>
                 <Property Name="IOTYPE" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="IO Type" sap:quickinfo="Data Element for 3DERP IO Type" sap:value-list="standard"/>
@@ -53,7 +53,8 @@
                 <Key>
                     <PropertyRef Name="SALESGRP"/>
                 </Key>
-                <Property Name="SALESGRP" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="SALESGRP" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Sales group"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="20" sap:label="Description"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_SBU_SHType" sap:label="3DERP: SBU" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -61,12 +62,12 @@
                 </Key>
                 <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:display-format="UpperCase" sap:label="SBU" sap:quickinfo="ERP SBU"/>
             </EntityType>
-            <EntityType Name="ZVB_3DERP_SEASON_SHType" sap:label="3DERP: Season" sap:value-list="true" sap:content-version="1">
+            <EntityType Name="ZVB_3DERP_SEASONCD_SHType" sap:label="3DERP : Season Code Search Help" sap:value-list="true" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="Season"/>
+                    <PropertyRef Name="SEASONCD"/>
                 </Key>
-                <Property Name="Season" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="Description" sap:label="Season Code" sap:quickinfo="ERP Season Code"/>
-                <Property Name="Description" Type="Edm.String" MaxLength="50" sap:label="Description"/>
+                <Property Name="SEASONCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Season Code" sap:quickinfo="ERP Season Code"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="50" sap:label="Description"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_STYLECD_SHType" sap:label="3DERP : Style Code Search Help" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -81,7 +82,7 @@
                 <EntitySet Name="ZVB_3DERP_PLANPLANT_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_PLANPLANT_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_SALESGRP_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_SALESGRP_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_SBU_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_SBU_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
-                <EntitySet Name="ZVB_3DERP_SEASON_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_SEASON_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+                <EntitySet Name="ZVB_3DERP_SEASONCD_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_SEASONCD_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
                 <EntitySet Name="ZVB_3DERP_STYLECD_SH" EntityType="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_STYLECD_SHType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
             </EntityContainer>
             <Annotations Target="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_IO_FILTERType/SBU" xmlns="http://docs.oasis-open.org/odata/ns/edm">
@@ -113,25 +114,28 @@
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="SALESGRP"/>
                                     <PropertyValue Property="ValueListProperty" String="SALESGRP"/>
                                 </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                </Record>
                             </Collection>
                         </PropertyValue>
                     </Record>
                 </Annotation>
             </Annotations>
-            <Annotations Target="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_IO_FILTERType/SEASON" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotations Target="ZVB_3DERP_IO_FILTER_CDS.ZVB_3DERP_IO_FILTERType/SEASONCD" xmlns="http://docs.oasis-open.org/odata/ns/edm">
                 <Annotation Term="Common.ValueList">
                     <Record>
-                        <PropertyValue Property="Label" String="3DERP: Season"/>
-                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_SEASON_SH"/>
+                        <PropertyValue Property="Label" String="3DERP : Season Code Search Help"/>
+                        <PropertyValue Property="CollectionPath" String="ZVB_3DERP_SEASONCD_SH"/>
                         <PropertyValue Property="SearchSupported" Bool="false"/>
                         <PropertyValue Property="Parameters">
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
-                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SEASON"/>
-                                    <PropertyValue Property="ValueListProperty" String="Season"/>
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="SEASONCD"/>
+                                    <PropertyValue Property="ValueListProperty" String="SEASONCD"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
@@ -168,7 +172,7 @@
                                     <PropertyValue Property="ValueListProperty" String="CUSTGRP"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
@@ -188,7 +192,7 @@
                                     <PropertyValue Property="ValueListProperty" String="IOTYPE"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="Description"/>
+                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>
