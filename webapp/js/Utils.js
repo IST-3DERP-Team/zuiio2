@@ -411,7 +411,7 @@ sap.ui.define([
             var fileName;
 
             var columns = oTable.getColumns();
-
+            console.log(oTable.getModel())
             for (var i = 0; i < columns.length; i++) {
                 aCols.push({
                     label: columns[i].mProperties.filterProperty,
@@ -422,7 +422,7 @@ sap.ui.define([
 
             var property;
 
-            if (tabName === 'bomDetailedTable') {
+            if (tabName === 'styleDetldBOMTab') {
                 property = '/results/items';
                 aParent = oTable.getModel('DataModel').getProperty(property);
 
@@ -445,7 +445,12 @@ sap.ui.define([
                     } catch(err) {}
                 }
                 
-            } else {
+            } 
+            else if (tabName === "styleMatListTab") {
+                property = '/rows';
+                aRows = oTable.getModel().getProperty(property);
+            }
+            else {
                 property = '/results';
                 aRows = oTable.getModel('DataModel').getProperty(property);
             }

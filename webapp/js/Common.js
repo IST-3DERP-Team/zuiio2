@@ -79,6 +79,21 @@ sap.ui.define([
 
 		closeLoadingDialog: function(doc) {
 			doc._LoadingDialog.close();
-		}
+		},
+
+        openProcessingDialog(doc, msg) {
+            if (!doc._ProcessingDialog) {
+                doc._ProcessingDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ProcessingDialog", doc);
+                doc.getView().addDependent(doc._ProcessingDialog);
+            }
+            jQuery.sap.syncStyleClass("sapUiSizeCompact", doc.getView(), doc._ProcessingDialog);
+            
+            doc._ProcessingDialog.setTitle(msg);
+            doc._ProcessingDialog.open();
+        },
+
+        closeProcessingDialog(doc) {
+            doc._ProcessingDialog.close();
+        },        
 	};
 });

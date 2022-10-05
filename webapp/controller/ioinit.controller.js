@@ -93,20 +93,20 @@ sap.ui.define([
                 // console.log(oModel);
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
-                    success: function (oData, oResponse) {
-                        oData.results.forEach(item => {
-                            item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
-                            item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
-                            item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
-                            item.MATETA = dateFormat.format(item.MATETA);
-                            item.MAINMATETA = dateFormat.format(item.MAINMATETA);
-                            item.SUBMATETA = dateFormat.format(item.SUBMATETA);
-                            item.CUTMATETA = dateFormat.format(item.CUTMATETA);
-                            item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
-                            item.PRODSTART = dateFormat.format(item.PLANDLVDT);
-                            item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
-                        })
+                    success: function (oData, oResponse) {                        
+                        // oData.results.forEach(item => {
+                        //     item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
+                        //     item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
+                        //     item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
+                        //     item.MATETA = dateFormat.format(item.MATETA);
+                        //     item.MAINMATETA = dateFormat.format(item.MAINMATETA);
+                        //     item.SUBMATETA = dateFormat.format(item.SUBMATETA);
+                        //     item.CUTMATETA = dateFormat.format(item.CUTMATETA);
+                        //     item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
+                        //     item.PRODSTART = dateFormat.format(item.PLANDLVDT);
+                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
+                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
+                        // })
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DataModel");
