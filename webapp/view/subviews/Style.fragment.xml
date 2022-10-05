@@ -28,10 +28,10 @@
                     visible="true"/>                                        
             </Toolbar>
             <Panel class="sapUiNoContentPadding">
-                <List items="{styleHeader>/}">
-                    <items>
+                <List items="{styleHeader>/}" class="hideOverflow">
+                    <items> 
                         <InputListItem label="{styleHeader>LABEL}" visible="{styleHeader>VISIBLE}">
-                            <Text text="{styleHeader>VALUE}" width="10rem" class="hdrValBB" />
+                            <Text text="{styleHeader>VALUE}" class="hdrValBB" wrapping="false" tooltip="{styleHeader>VALUE}" textAlign="Begin" />
                         </InputListItem>
                     </items>
                 </List>

@@ -11,7 +11,7 @@
     xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
 	height="100%">
     <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false"
-		titleLevel="H3"
+		titleLevel="H3" class="iodet"
         showNavButton="true"  navButtonPress="onNavBack">
 
         <!-- OBJECT HEADER -->
@@ -40,7 +40,7 @@
 		id="idIconTabBarInlineMode"
 		headerMode="Inline"
 		expanded="{device>/isNoPhone}"
-		class="sapUiNoContentPadding" expandable="false" applyContentPadding="true">
+		class="sapUiNoContentPadding" expandable="false" applyContentPadding="false">
 		<items>
             <!-- IO HEADER DETAILS ICON TAB BAR -->
 			<IconTabFilter

@@ -1,31 +1,12 @@
 /* Enter your custom styles here */
 .iodet .sapMITBHead {
     margin-top: 0 !important;
-}
-
-.iodet .sapMOHR {
-    padding: 0.5rem 1.5rem !important;
-}
-
-.iodet .sapMITH .sapMITBScrollContainer {
-    margin: 0 1rem !important;
-}
-
-.iodet .sapUiFormResGrid>div {
-    padding: 0 0.75rem !important;
-}
-
-.iodet .sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont>div {
-    padding-top: 0.1rem !important;
-    padding-bottom: 0 !important;
-}
-
-.iodet .sidePadding {
-    padding: 0 1rem !important;
+    padding: 0 !important;
 }
 
 .iostyle .sapMITBHead {
     margin-top: 0 !important;
+    padding: 0 !important;
 }
 
 .iostyle .sapMILI {
@@ -42,6 +23,27 @@
 
 .iostyle .sapMITBContent {
     border-bottom: none !important;
+}
+
+.iostyle .hdrValBB {
+    vertical-align: middle !important;
+    float: left;
+    /* min-width: 10rem !important;
+    max-width: 20rem !important; */
+}
+
+.iostyle .sapMILILabel {
+    width: 50% !important;
+    max-width: 50% !important;
+    min-width: 50% !important;
+}
+
+.iostyle .sapMILIDiv {
+    width: 50% !important;
+}
+
+.iostyle .hideOverflow {
+    overflow: hidden !important;
 }
 
 .sapUiRespGrid{

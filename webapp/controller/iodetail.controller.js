@@ -716,6 +716,8 @@ sap.ui.define([
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
+
+                        me.initStyle();
                     },
                     error: function () {
                         Common.closeLoadingDialog(that);
@@ -804,10 +806,10 @@ sap.ui.define([
                     }));
 
                 this.byId("styleMatListTab")
-                .setModel(new JSONModel({
-                    columns: [],
-                    rows: []
-                }));
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
 
                 //pivot arrays
                 this._colors;
@@ -815,11 +817,8 @@ sap.ui.define([
                 this._styleVer = "";
 
                 this.getStyleHeaderData();
-                this.getStyleDetailedBOM();
-                this.getStyleMaterialList();
-                this.getStyleColors();
 
-                var vIONo = "1000115";
+                var vIONo = this._ioNo; //"1000115";
                 this._oModelStyle.read('/AttribSet', { 
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
@@ -919,15 +918,13 @@ sap.ui.define([
                         }
                     });                    
                 }, 100);
-
-                console.log(this.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV"))
             },
 
             getStyleHeaderData() {
                 var me = this;
                 var aStyleHdr = [];
                 var oJSONModel = new JSONModel();
-                var vStyle = "1000000272";
+                var vStyle = this._styleNo; //"1000000272";
                 
                 setTimeout(() => {
                     this._oModelStyle.read('/HeaderSet', { 
@@ -936,9 +933,13 @@ sap.ui.define([
                         },
                         success: function (oData, response) {
                             me._styleVer = oData.results[0].VERNO;
-
+                            
+                            me.getStyleDetailedBOM();
+                            me.getStyleMaterialList();
+                            me.getStyleColors();
+            
                             var oModel = me.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
-                            var vSBU = "VER"; //this.getView().getModel("ui").getData().sbu;
+                            var vSBU = me._sbu; //"VER"; 
                             // console.log(oData)
                             oModel.setHeaders({
                                 sbu: vSBU,
@@ -1013,7 +1014,7 @@ sap.ui.define([
                 var sTabId = arg3;
                 var oLocColProp = arg4;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
-                var vSBU = "VER"; //this.getView().getModel("ui").getData().sbu;
+                var vSBU = this._sbu; //"VER"; //this.getView().getModel("ui").getData().sbu;
 
                 oModel.setHeaders({
                     sbu: vSBU,
@@ -1092,11 +1093,13 @@ sap.ui.define([
                     items: []
                 };
                 var data = {results: rowData};
-                oModel.setHeaders({
-                    styleno: "1000000272", //this._styleNo,
-                    verno: "1" //this._version
-                });
                 var entitySet = "/StyleDetailedBOMSet"
+                
+                oModel.setHeaders({
+                    styleno: this._styleNo, //"1000000272",
+                    verno: this._styleVer //"1"
+                });
+                console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         var aData = [];
@@ -1185,10 +1188,10 @@ sap.ui.define([
                 var me = this;
 
                 oModel.setHeaders({
-                    styleno: "1000000272", //this._styleNo,
-                    verno: "1" //this._version
+                    styleno: this._styleNo, //"1000000272",
+                    verno: this._styleVer //"1"
                 });
-
+                console.log(this._styleNo, this._styleVer);
                 oModel.read('/StyleMaterialListSet', { 
                     success: function (oData, response) {
                         // console.log(oData)
@@ -1216,9 +1219,11 @@ sap.ui.define([
                 //get color attributes
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+
                 oModel.setHeaders({
-                    styleno: "1000000272" //this._styleNo
+                    styleno: this._styleNo //"1000000272"
                 });
+
                 oModel.read("/StyleAttributesColorSet", {
                     success: function (oData, oResponse) {
                         me._colors = oData.results;
@@ -1232,16 +1237,15 @@ sap.ui.define([
                 //get sizes attributes
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+
                 oModel.setHeaders({
-                    styleno: "1000000272" //this._styleNo
+                    styleno: this._styleNo //"1000000272"
                 });
+
                 oModel.read("/StyleAttributesSizeSet", {
                     success: function (oData, oResponse) {
                         me._sizes = oData.results;
                         me.getStyleBOMUV();
-                        // setTimeout(() => {
-                        //     me.getStyleDynamicColumns("IOSTYLBOMUV", "ZERP_STYLBOMUV", "styleBOMUVTab", {});
-                        // }, 100); 
                     },
                     error: function (err) { }
                 });
@@ -1255,7 +1259,7 @@ sap.ui.define([
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
                 // console.log(usageClass)
                 oModelUV.setHeaders({
-                    sbu: "VER", //this._sbu,
+                    sbu: this._sbu, //"VER",
                     type: "IOSTYLBOMUV",
                     usgcls: usageClass
                 });
@@ -1270,7 +1274,6 @@ sap.ui.define([
                 //get dynamic columns of BOM by UV
                 oModelUV.read("/DynamicColumnsSet", {
                     success: function (oData, oResponse) {
-                        // console.log(oData.results)
                         var columns = oData.results;
                         var pivotRow;
                         //find the column to pivot
@@ -1330,14 +1333,15 @@ sap.ui.define([
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
 
                 oModel.setHeaders({
-                    styleno: "1000000272", //this._styleNo,
-                    verno: "1", //this._version,
+                    styleno: this._styleNo, //"1000000272",
+                    verno: this._styleVer, //"1",
                     usgcls: usageClass
                 });
+                console.log(this._styleNo, this._styleVer, usageClass);
                 oModel.read("/StyleBOMUVSet", {
                     success: function (oData, oResponse) {
                         var rowData = oData.results;
-                        // console.log(rowData)
+                        console.log(rowData)
                         //Get unique items of BOM by UV
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
@@ -1430,7 +1434,6 @@ sap.ui.define([
                 }
                 else desc = oColumn.ColumnLabel;
                 
-
                 return desc;
             },
 
@@ -1441,17 +1444,6 @@ sap.ui.define([
 
                 oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });  
                 return oColumnTemplate;
-            },
-
-            getStyleColumnSize: function (oColumn) {
-                //column width of fields
-                var mSize = '8rem';
-                if (oColumn.ColumnName === "GMCDESC") {
-                    mSize = '28rem';
-                } else if (oColumn.ColumnName === "PARTDESC") {
-                    mSize = '16rem';
-                }
-                return mSize;
             },
 
             onEdit(arg) {
@@ -1674,8 +1666,7 @@ sap.ui.define([
                         })
                 })
     
-                // this.getView().getModel(arg).getData().forEach(item => item.EDITED = false);
-                var vIONo = "1000115";
+                var vIONo = _ioNo; //"1000115";
 
                 if (arg === "color") {
                     this._oModelStyle.read('/CustColorSet', { 
@@ -1888,12 +1879,6 @@ sap.ui.define([
                         if (sInputField === "CPOATRIB") { 
                             sKey = "CUSTCOLOR";
                         }
-                        // else if (sInputField === "PAYTERMS") { 
-                        //     sKey = "INCO1";
-                        // }
-                        // else if (sInputField === "DESTINATION") {
-                        //     sKey = "INCO2";
-                        // }
                         
                         oInput.bindAggregation("suggestionItems", {
                             path: "CUSTCOLOR_MODEL>/",
@@ -1941,7 +1926,7 @@ sap.ui.define([
             },
 
             onManageStyle: function(oEvent) {
-                var vStyle = "1000000272";
+                var vStyle = this._styleNo;
                 // var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
                 // var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
@@ -1969,7 +1954,7 @@ sap.ui.define([
                         },
                         params: {
                             "styleno": vStyle,
-                            "sbu": "VER"
+                            "sbu": this._sbu
                         }
                     }).then( function(sHref) {
                         console.log("test");
@@ -1993,7 +1978,7 @@ sap.ui.define([
                     },
                     params: {
                         "styleno": "NEW",
-                        "sbu": "VER"
+                        "sbu": this._sbu
                     }
                 })) || ""; // generate the Hash to display style
 
