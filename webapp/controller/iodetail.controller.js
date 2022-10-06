@@ -783,6 +783,9 @@ sap.ui.define([
                 this._aColumns = {};
                 this._aDataBeforeChange = [];
                 var me = this;
+                
+                if (this._styleNo.trim() === "") this.byId("btnCreateStyle").setVisible(true);
+                else this.byId("btnCreateStyle").setVisible(false);
 
                 this.byId("colorTab")
                     .setModel(new JSONModel({
@@ -819,6 +822,11 @@ sap.ui.define([
                 this._styleVer = "";
 
                 this.getStyleHeaderData();
+
+                // this._oModelStyle.update("/CreateIOStyleSet('1000118')", { IONO: "1000118", STYLENO: "1000000461"  }, {
+                //     success: function (oData, response) {},
+                //     error: function (err) { }
+                // })
 
                 var vIONo = this._ioNo; //"1000115";
                 this._oModelStyle.read('/AttribSet', { 
@@ -902,6 +910,8 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "INFO_CHECK_INVALID_ENTRIES"}); 
                 oDDTextParam.push({CODE: "INFO_NO_DATA_MODIFIED"}); 
                 oDDTextParam.push({CODE: "INFO_DATA_SAVE"}); 
+                oDDTextParam.push({CODE: "SAVELAYOUT"});
+                oDDTextParam.push({CODE: "INFO_LAYOUT_SAVE"});
                 
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
@@ -1101,7 +1111,7 @@ sap.ui.define([
                     styleno: this._styleNo, //"1000000272",
                     verno: this._styleVer //"1"
                 });
-                console.log(this._styleNo, this._styleVer);
+                // console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         var aData = [];
@@ -1193,7 +1203,7 @@ sap.ui.define([
                     styleno: this._styleNo, //"1000000272",
                     verno: this._styleVer //"1"
                 });
-                console.log(this._styleNo, this._styleVer);
+                // console.log(this._styleNo, this._styleVer);
                 oModel.read('/StyleMaterialListSet', { 
                     success: function (oData, response) {
                         // console.log(oData)
@@ -1339,11 +1349,11 @@ sap.ui.define([
                     verno: this._styleVer, //"1",
                     usgcls: usageClass
                 });
-                console.log(this._styleNo, this._styleVer, usageClass);
+                // console.log(this._styleNo, this._styleVer, usageClass);
                 oModel.read("/StyleBOMUVSet", {
                     success: function (oData, oResponse) {
                         var rowData = oData.results;
-                        console.log(rowData)
+                        // console.log(rowData)
                         //Get unique items of BOM by UV
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
@@ -1936,7 +1946,7 @@ sap.ui.define([
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu
+                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": vStyle,
@@ -1979,7 +1989,7 @@ sap.ui.define([
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu
+                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": "NEW",
@@ -1994,12 +2004,86 @@ sap.ui.define([
                 }); // navigate to Supplier application
             },
 
-            onLeaveAppExtension: function (bIsDestroyed) {
-                Log.info("onLeaveAppExtension called!");
-                var fnReactivate = function () {
-                    sap.m.MessageToast("onLeaveAppExtension is called here").show();
-                };
-                return fnReactivate;
+            onSaveTableLayout(arg) {
+                if (arg === "style") {
+                    //saving of the layout of table
+                    var me = this;                    
+                    var aTables = [];
+
+                    aTables.push({
+                        TYPE: "IOCOLOR",
+                        TABNAME: "ZERP_IOATTRIB",
+                        TABID: "colorTab"
+                    },
+                    {
+                        TYPE: "IOPROCESS",
+                        TABNAME: "ZERP_IOPROC",
+                        TABID: "processTab"
+                    },
+                    {
+                        TYPE: "IOSIZE",
+                        TABNAME: "ZERP_IOATTRIB",
+                        TABID: "sizeTab"
+                    },
+                    {
+                        TYPE: "IOSTYLDTLDBOM",
+                        TABNAME: "ZERP_S_STYLBOM",
+                        TABID: "styleDetldBOMTab"
+                    },
+                    // {
+                    //     TYPE: "IOSTYLBOMUV",
+                    //     TABNAME: "ZERP_S_STYLBOMUV",
+                    //     TABID: "styleBOMUVTab"
+                    // },
+                    {
+                        TYPE: "IOSTYLMATLIST",
+                        TABNAME: "ZERP_S_STYLMATLST",
+                        TABID: "styleMatListTab"
+                    })
+
+                    aTables.forEach(item => {
+                        setTimeout(() => {
+                            var oTable = this.getView().byId(item.TABID);
+                            var oColumns = oTable.getColumns();
+                            var ctr = 1;
+
+                            var oParam = {
+                                "SBU": this._sbu,
+                                "TYPE": item.TYPE,
+                                "TABNAME": item.TABNAME,
+                                "TableLayoutToItems": []
+                            };
+
+                            //get information of columns, add to payload
+                            oColumns.forEach((column) => {
+                                oParam.TableLayoutToItems.push({
+                                    COLUMNNAME: column.mProperties.sortProperty,
+                                    ORDER: ctr.toString(),
+                                    SORTED: column.mProperties.sorted,
+                                    SORTORDER: column.mProperties.sortOrder,
+                                    SORTSEQ: "1",
+                                    VISIBLE: column.mProperties.visible,
+                                    WIDTH: column.mProperties.width
+                                });
+
+                                ctr++;
+                            });
+                            // console.log(oParam)
+                            //call the layout save
+                            var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+
+                            oModel.create("/TableLayoutSet", oParam, {
+                                method: "POST",
+                                success: function(data, oResponse) {
+                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_LAYOUT_SAVE"]);
+                                },
+                                error: function(err) {
+                                    sap.m.MessageBox.error(err);
+                                }
+                            });  
+                        }, 100);
+                    })                
+                }
             },
 
             //******************************************* */

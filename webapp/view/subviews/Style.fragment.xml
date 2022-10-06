@@ -18,14 +18,17 @@
                 <Button id="btnManageStyle"                                         
                     icon="sap-icon://detail-view"
                     press="onManageStyle"
-                    tooltip="{ddtext>/MANAGESTYLE}"
-                    visible="true"/>
+                    tooltip="{ddtext>/MANAGESTYLE}" />
                 <Button id="btnCreateStyle"
                     icon="sap-icon://add-document"
                     press="onNewStyle"
                     text="{ddtext>/NEW}"
                     tooltip="{ddtext>/NEW}"
-                    visible="true"/>                                        
+                    visible="true" />
+                <!-- <Button id="btnTabLayout"
+                    icon="sap-icon://grid" 
+                    tooltip="{ddtext>/SAVELAYOUT}" 
+                    press="onSaveTableLayout('style')" />   -->
             </Toolbar>
             <Panel class="sapUiNoContentPadding">
                 <List items="{styleHeader>/}" class="hideOverflow">
@@ -149,8 +152,8 @@
                             selectionMode="None">                                   
                             <uiT:extension>
                                 <Toolbar>
-                                    <Label text="{ddtext>/USGCLS}"/>
-                                    <ComboBox id="UsageClassCB" items="{UVModel>/results}" class="sapUiTinyMarginBegin sapUiTinyMarginTopBottom" selectedKey="AUV"
+                                    <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin"/>
+                                    <ComboBox id="UsageClassCB" items="{UVModel>/results}" class="sapUiTinyMarginTopBottom" selectedKey="AUV"
                                         showSecondaryValues="true" filterSecondaryValues= "true" change="getStyleBOMUV">
                                         <core:ListItem key="{UVModel>USGCLS}" text="{UVModel>UCDESC}" additionalText="{UVModel>USGCLS}"/>
                                     </ComboBox>                                
