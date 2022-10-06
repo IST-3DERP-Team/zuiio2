@@ -9,202 +9,49 @@
     xmlns:tnt="sap.tnt"
     height="100%"
     xmlns:c="zuiio2.control" 
-    xmlns:t="sap.ui.table"> 
-    <l:Splitter class="iostyle" height="540px">
-        <Panel class="sapUiNoContentPadding stylHdrPadding">
-            <Toolbar class="noPadding">
-                <Label text="Style Header" design="Bold" />
-                <ToolbarSpacer />
-                <Button id="btnManageStyle"                                         
-                    icon="sap-icon://detail-view"
-                    press="onManageStyle"
-                    tooltip="{ddtext>/MANAGESTYLE}" />
-                <Button id="btnCreateStyle"
-                    icon="sap-icon://add-document"
-                    press="onNewStyle"
-                    text="{ddtext>/NEW}"
-                    tooltip="{ddtext>/NEW}"
-                    visible="true" />
-                <!-- <Button id="btnTabLayout"
-                    icon="sap-icon://grid" 
-                    tooltip="{ddtext>/SAVELAYOUT}" 
-                    press="onSaveTableLayout('style')" />   -->
-            </Toolbar>
-            <Panel class="sapUiNoContentPadding">
-                <List items="{styleHeader>/}" class="hideOverflow">
-                    <items> 
-                        <InputListItem label="{styleHeader>LABEL}" visible="{styleHeader>VISIBLE}">
-                            <Text text="{styleHeader>VALUE}" class="hdrValBB" wrapping="false" tooltip="{styleHeader>VALUE}" textAlign="Begin" />
-                        </InputListItem>
-                    </items>
-                </List>
-            </Panel>
-            <layoutData><l:SplitterLayoutData size="400px" /></layoutData> 
-        </Panel>
-        <Panel width="100%" height="540px" class="sapUiNoContentPadding">
-            <IconTabBar id="itbStyleDetail"
-                expanded="{device>/isNoPhone}" 
-                expandable="false" 
-                class="tabColor" 
-                select="onSelectTab"
-                headerBackgroundDesign="Transparent" 
-                stretchContentHeight="true" 
-                applyContentPadding="false">
-                <items>
-                    <IconTabFilter text="{ddtext>/COLORS}" key="color">
-                        <uiT:Table id="colorTab"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly"> 
-                            <uiT:rowSettingsTemplate>
-                                <uiT:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                            </uiT:rowSettingsTemplate>                                    
-                            <uiT:extension>
-                                <Toolbar>
-                                    <ToolbarSpacer/>
-                                    <Button id="btnEditColor" 
-                                        icon="sap-icon://edit"
-                                        press="onEdit('color')"
-                                        tooltip="{ddtext>/EDIT}"
-                                        visible="true" />
-                                    <Button id="btnSaveColor" 
-                                        icon="sap-icon://save"
-                                        press="onSave('color')" 
-                                        tooltip="{ddtext>/SAVE}"
-                                        visible="false" />
-                                    <Button id="btnCancelColor" 
-                                        icon="sap-icon://sys-cancel"
-                                        press="onCancel('color')" 
-                                        tooltip="{ddtext>/CANCEL}"
-                                        visible="false" /> 
-                                </Toolbar>
-                            </uiT:extension>
-                        </uiT:Table>
-                    </IconTabFilter>
-                    <IconTabFilter text="{ddtext>/PROCESSES}" key="process">
-                        <uiT:Table id="processTab"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly"> 
-                            <uiT:rowSettingsTemplate>
-                                <uiT:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                            </uiT:rowSettingsTemplate>                                    
-                            <uiT:extension>
-                                <Toolbar>
-                                    <ToolbarSpacer/>
-                                    <Button id="btnEditProcess" 
-                                        icon="sap-icon://edit"
-                                        press="onEdit('process')"
-                                        tooltip="{ddtext>/EDIT}"
-                                        visible="true" />
-                                    <Button id="btnSaveProcess" 
-                                        icon="sap-icon://save"
-                                        press="onSave('process')" 
-                                        tooltip="{ddtext>/SAVE}"
-                                        visible="false" />
-                                    <Button id="btnCancelProcess" 
-                                        icon="sap-icon://sys-cancel"
-                                        press="onCancel('process')" 
-                                        tooltip="{ddtext>/CANCEL}"
-                                        visible="false" /> 
-                                </Toolbar>
-                            </uiT:extension>
-                        </uiT:Table>
-                    </IconTabFilter>
-                    <IconTabFilter text="{ddtext>/SIZE}" key="size">
-                        <uiT:Table id="sizeTab"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly"> 
-                        </uiT:Table>                                        
-                    </IconTabFilter>
-                    <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
-                        <uiT:TreeTable id="styleDetldBOMTab"
-                            rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly">                                   
-                            <!-- <uiT:extension>
-                                <Toolbar>
-                                    <ToolbarSpacer/>
-                                    <Button
-                                        icon="sap-icon://excel-attachment"
-                                        press="onExport"
-                                        tooltip="{ddtext>/EXCELEXPORT}">
-                                        <customData>
-                                            <core:CustomData key="TableName" value="styleDetldBOMTab"/>
-                                        </customData>                                        
-                                    </Button>                                        
-                                </Toolbar>
-                            </uiT:extension> -->
-                        </uiT:TreeTable>
-                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleDetailedBOM" type="XML"/> -->
-                    </IconTabFilter>
-                    <IconTabFilter text="{ddtext>/BOMBYUV}" key="uv">
-                        <uiT:Table id="styleBOMUVTab"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly">                                   
-                            <uiT:extension>
-                                <Toolbar>
-                                    <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin"/>
-                                    <ComboBox id="UsageClassCB" items="{UVModel>/results}" class="sapUiTinyMarginTopBottom" selectedKey="AUV"
-                                        showSecondaryValues="true" filterSecondaryValues= "true" change="getStyleBOMUV">
-                                        <core:ListItem key="{UVModel>USGCLS}" text="{UVModel>UCDESC}" additionalText="{UVModel>USGCLS}"/>
-                                    </ComboBox>                                
-                                    <!-- <ToolbarSpacer/>
-                                    <Button
-                                        icon="sap-icon://excel-attachment"
-                                        press="onExport"
-                                        tooltip="{ddtext>/EXCELEXPORT}">
-                                        <customData>
-                                            <core:CustomData key="TableName" value="styleBOMUVTab"/>
-                                        </customData>                                        
-                                    </Button> -->
-                                </Toolbar>
-                            </uiT:extension>
-                        </uiT:Table>                    
-                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleBOMbyUV" type="XML"/> -->
-                    </IconTabFilter>
-                    <IconTabFilter text="{ddtext>/MATLIST}" key="matlist">
-                        <uiT:Table id="styleMatListTab"
-                            visibleRowCountMode="Auto"
-                            showColumnVisibilityMenu="true"
-                            enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly">                                   
-                            <!-- <uiT:extension>
-                                <Toolbar>
-                                    <ToolbarSpacer/>
-                                    <Button
-                                        icon="sap-icon://excel-attachment"
-                                        press="onExport"
-                                        tooltip="{ddtext>/EXCELEXPORT}">
-                                        <customData>
-                                            <core:CustomData key="TableName" value="styleMatListTab"/>
-                                        </customData>                                        
-                                    </Button>
-                                </Toolbar>
-                            </uiT:extension> -->
-                        </uiT:Table>
-                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleMaterialList" type="XML"/> -->
-                    </IconTabFilter>
-                </items>
-                <!-- <layoutData>
-                    <FlexItemData growFactor="1" baseSize="0%"/>
-                </layoutData>                         -->
-            </IconTabBar> 
-            <layoutData><l:SplitterLayoutData size="auto" /></layoutData>
-        </Panel>
-    </l:Splitter>
+    xmlns:t="sap.ui.table">
+    <VBox fitContainer="true">
+	<l:ResponsiveSplitter defaultPane="default">
+		<l:PaneContainer>
+			<l:SplitPane requiredParentWidth="400" id="default">
+				<Panel headerText="Minimum parent width 400" height="100%">
+					<List headerText="Products" items="{ path: '/ProductCollection' }">
+						<StandardListItem title="{Name}" counter="{Quantity}"/>
+					</List>
+				</Panel>
+			</l:SplitPane>
+			<l:PaneContainer orientation="Vertical">
+				<l:SplitPane  requiredParentWidth="600">
+					<Panel headerText="Minimum parent width 600">
+						<Select forceSelection="false" selectedKey="1239102" 
+							items="{
+								path: '/ProductCollection',
+								sorter: { path: 'Name' }
+							}">
+							<core:Item key="{ProductId}" text="{Name}" />
+						</Select>
+					</Panel>
+				</l:SplitPane>
+				<l:SplitPane  requiredParentWidth="800">
+					<Page title="Minimum parent width 800">
+						<footer>
+							<OverflowToolbar id="otb3">
+								<Label text="Buttons:" />
+								<ToolbarSpacer />
+								<Button text="New" type="Transparent"/>
+								<Button text="Open" type="Transparent"/>
+								<Button text="Save" type="Transparent"/>
+								<Button text="Save as" type="Transparent"/>
+								<Button text="Cut" type="Transparent"/>
+								<Button text="Copy" type="Transparent"/>
+								<Button text="Paste" type="Transparent"/>
+								<Button text="Undo" type="Transparent"/>
+							</OverflowToolbar>
+						</footer>
+					</Page>
+				</l:SplitPane>
+			</l:PaneContainer>
+		</l:PaneContainer>
+	</l:ResponsiveSplitter>  
+    </VBox>
 </core:FragmentDefinition>
