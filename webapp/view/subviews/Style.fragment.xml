@@ -56,7 +56,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None"> 
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly"> 
                             <uiT:rowSettingsTemplate>
                                 <uiT:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </uiT:rowSettingsTemplate>                                    
@@ -87,7 +88,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None"> 
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly"> 
                             <uiT:rowSettingsTemplate>
                                 <uiT:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </uiT:rowSettingsTemplate>                                    
@@ -118,7 +120,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None"> 
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly"> 
                         </uiT:Table>                                        
                     </IconTabFilter>
                     <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
@@ -127,7 +130,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None">                                   
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly">                                   
                             <!-- <uiT:extension>
                                 <Toolbar>
                                     <ToolbarSpacer/>
@@ -149,7 +153,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None">                                   
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly">                                   
                             <uiT:extension>
                                 <Toolbar>
                                     <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin"/>
@@ -176,7 +181,8 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="None">                                   
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly">                                   
                             <!-- <uiT:extension>
                                 <Toolbar>
                                     <ToolbarSpacer/>
