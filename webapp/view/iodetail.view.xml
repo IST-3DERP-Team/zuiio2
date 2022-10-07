@@ -116,7 +116,6 @@
                                     expanded="{device>/isNoPhone}" 
                                     expandable="false" 
                                     select="onSelectTab"
-                                    headerBackgroundDesign="Transparent" 
                                     stretchContentHeight="true" 
                                     applyContentPadding="false">
                                     <items>
