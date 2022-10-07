@@ -31,7 +31,7 @@ sap.ui.define([
                 oModel.loadData("/sap/bc/ui2/start_up").then(() => {
                     this._userid = oModel.oData.id;
                 })
-
+                this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
                 this._Model2 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._Model3 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -82,7 +82,7 @@ sap.ui.define([
 
                 //Load header
                 this.getHeaderConfig(); //get visible header fields
-                this.getHeaderData(); //get header data
+                this.getHeaderData(); //get header data                
 
                 // build Dynamic table for Attributes
                 setTimeout(() => {
@@ -94,21 +94,157 @@ sap.ui.define([
                     this.getStatDynamicTableColumns();
                 }, 100);
 
-                //build Dynamic table for Delivery Schedule
-                setTimeout(() => {
-                    this.getDlvSchedDynamicTableColumns(); 
-                },100);
+                this._aIOColumns = {};
+                this._aIODataBeforeChange = [];
+                var me = this;
 
-                //build Dynamic table for Delivery Details
-                setTimeout(() => {
-                    this.getIODetDynamicTableColumns(); 
-                },100);
+                this.byId("IODLVTab")
+                .setModel(new JSONModel({
+                    columns: [],
+                    rows: []
+                }));
+
+                this.byId("IODETTab")
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
+
+                    var ioNo = this._ioNo;  
+
+                this._oModel.read('/IODLVSet', { 
+                    urlParameters: {
+                        "$filter": "IONO eq '" + ioNo + "'"
+                    },
+                    success: function (oData, response) {
+                        me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
+                        me.byId("IODLVTab").bindRows("/rows");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModel.read('/IODETSet', { 
+                    urlParameters: {
+                        "$filter": "IONO eq '" + ioNo + "'"
+                    },
+                    success: function (oData, response) {
+                        me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
+                        me.byId("IODETTab").bindRows("/rows");
+                    },
+                    error: function (err) { }
+                })
+
+                //get column value help prop
+                this.getIOColumnProp();
+
+                // //build Dynamic table for Delivery Schedule
+                // setTimeout(() => {
+                //     this.getDlvSchedDynamicTableColumns(); 
+                // },100);
+
+                // //build Dynamic table for Delivery Details
+                // setTimeout(() => {
+                //     this.getIODetDynamicTableColumns(); 
+                // },100);
 
                 //Attachments
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
+            },
 
-                console.log("iodet");
+            getIOColumnProp: async function() {
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+    
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+    
+                var oColumns = oModelColumns.getData();
+                // console.log(oColumns)
+                //get dynamic columns based on saved layout or ZERP_CHECK
+                this.getIODynamicColumns("IODLV", "ZDV_3DERP_IODLV", "IODLVTab", oColumns);
+
+                setTimeout(() => {
+                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                }, 100);
+            },
+
+            getIODynamicColumns(arg1, arg2, arg3, arg4) {
+                var me = this;
+                var sType = arg1;
+                var sTabName = arg2;
+                var sTabId = arg3;
+                var oLocColProp = arg4;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                // var vSBU = "VER"; //this.getView().getModel("ui").getData().sbu;
+                var vSBU = this._sbu;
+
+                oModel.setHeaders({
+                    sbu: vSBU,
+                    type: sType,
+                    tabname: sTabName
+                });
+
+                oModel.read("/ColumnsSet", {
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0) {
+
+                            if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                                oData.results.forEach(item => {
+                                    oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                                        .forEach(col => item.ValueHelp = col.ValueHelp )
+                                })
+                            }
+
+                            me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
+                            me.setIOTableColumns(sTabId, oData.results);
+                            // Common.closeLoadingDialog();
+                        }
+                    },
+                    error: function (err) {
+                        // Common.closeLoadingDialog();
+                    }
+                });
+            },
+
+            setIOTableColumns(arg1, arg2) {
+                var me = this;
+                var sTabId = arg1;
+                var oColumns = arg2;
+                var oTable = this.getView().byId(sTabId);
+
+                oTable.getModel().setProperty("/columns", oColumns);
+
+                //bind the dynamic column to the table
+                oTable.bindColumns("/columns", function (index, context) {
+                    var sColumnId = context.getObject().ColumnName;
+                    var sColumnLabel = context.getObject().ColumnLabel;
+                    var sColumnWidth = context.getObject().ColumnWidth;
+                    var sColumnVisible = context.getObject().Visible;
+                    var sColumnSorted = context.getObject().Sorted;
+                    var sColumnSortOrder = context.getObject().SortOrder;
+                    var sColumnDataType = context.getObject().DataType;
+
+                    if (sColumnWidth === 0) sColumnWidth = 100;
+
+                    return new sap.ui.table.Column({
+                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                        label: sColumnLabel,
+                        template: new sap.m.Text({ 
+                            text: "{" + sColumnId + "}", 
+                            wrapping: false
+                            // , 
+                            // tooltip: "{" + sColumnId + "}"
+                        }),
+                        width: sColumnWidth + "px",
+                        sortProperty: sColumnId,
+                        filterProperty: sColumnId,
+                        autoResizable: true,
+                        visible: sColumnVisible,
+                        sorted: sColumnSorted,
+                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending" )
+                    });
+                });
             },
 
             getIODetDynamicTableColumns: function () {
@@ -180,7 +316,7 @@ sap.ui.define([
                     rows: oDetData
                 });
 
-                var oDetTableIODet = this.getView().byId("IODetDynTable");
+                var oDetTableIODet = this.getView().byId("IODetTab");
                 oDetTableIODet.setModel(oModel);
                 
                 //bind the dynamic column to the table
@@ -279,7 +415,7 @@ sap.ui.define([
                     rows: oDetData
                 });
 
-                var oDetTableDlvSched = this.getView().byId("IODlvSchedDynTable");
+                var oDetTableDlvSched = this.getView().byId("IODlvTab");
                 oDetTableDlvSched.setModel(oModel);
                 
                 //bind the dynamic column to the table
