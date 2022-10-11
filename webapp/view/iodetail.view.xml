@@ -277,55 +277,58 @@
                         </layout:Splitter>                                               
                     </IconTabFilter>
 
-            <!-- DELIVERY SCHEDULE -->
-            <IconTabFilter
-                text="Order Details"
-                key="itfDLVSCHED">
-                <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/>
-                <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
-                <!-- <IconTabBar
-                id="idIconTabBarInlineIODet"
-                headerMode="Inline"
-                expandable="false"
-                expanded="{device>/isNoPhone}"
-                class="sapUiResponsiveContentPadding">
-                    <items> -->
-                        <!-- ORDER DETAILS -->
-                        <!-- <IconTabFilter
-                            text="Order Details"
-                            key="itfIODET">
-                            <Text text="Order Details" />
-                            <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
-                        </IconTabFilter>                        
-                    </items>
-                </IconTabBar> -->
-            </IconTabFilter>
-                
-            <!-- MATERIAL LIST -->
-			<IconTabFilter
-				text="Material List"
-				key="itfMATLIST">
-                <Text text="Material List..." />
-			</IconTabFilter>
-            <IconTabFilter
-				text="Costing"
-				key="itfCOSTING">
-                <Text text="Costing..." />
-			</IconTabFilter>
-            <IconTabFilter
-				text="FA Summary"
-				key="itfFASUMM">
-                <core:Fragment fragmentName="zuiio2.view.subviews.FASummary" type="XML"/>
-			</IconTabFilter>
-             <IconTabFilter
-              tooltip="Manage Attachments"
-				text="Attachments"
-				key="itfAttach">
-              
-                  <core:Fragment fragmentName="zuiio2.view.subviews.Attachments" type="XML"/>  
-			</IconTabFilter>
-		</items>
-	</IconTabBar>
+                    <!-- DELIVERY SCHEDULE -->
+                    <IconTabFilter
+                        text="Order Details"
+                        key="itfDLVSCHED">
+                        <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/>
+                        <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
+                        <!-- <IconTabBar
+                        id="idIconTabBarInlineIODet"
+                        headerMode="Inline"
+                        expandable="false"
+                        expanded="{device>/isNoPhone}"
+                        class="sapUiResponsiveContentPadding">
+                            <items> -->
+                                <!-- ORDER DETAILS -->
+                                <!-- <IconTabFilter
+                                    text="Order Details"
+                                    key="itfIODET">
+                                    <Text text="Order Details" />
+                                    <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
+                                </IconTabFilter>                        
+                            </items>
+                        </IconTabBar> -->
+                    </IconTabFilter>
+                        
+                    <!-- MATERIAL LIST -->
+                    <IconTabFilter
+                        text="Material List"
+                        key="itfMATLIST">
+                        <Text text="Material List..." />
+                    </IconTabFilter>
+                    <IconTabFilter
+                        text="Costing"
+                        key="itfCOSTING">
+                        <Text text="Costing..." />
+                    </IconTabFilter>
+                    <IconTabFilter
+                        text="FA Summary"
+                        key="itfFASUMM">
+                            <core:Fragment fragmentName="zuiio2.view.subviews.FASummary" type="XML"/>
+                    </IconTabFilter>
+                    <IconTabFilter
+                    tooltip="Manage Attachments"
+                        text="Attachments"
+                        key="itfAttach">
+                    
+                        <core:Fragment fragmentName="zuiio2.view.subviews.Attachments" type="XML"/>  
+                    </IconTabFilter>
+                </items>
+                <layoutData>
+                    <FlexItemData id="fidTab" growFactor="1" baseSize="0%"/>
+                </layoutData>
+            </IconTabBar>
         </VBox>
     </Page>
 </mvc:View>

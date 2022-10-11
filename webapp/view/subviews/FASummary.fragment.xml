@@ -7,8 +7,7 @@
     height="100%">
         <VBox fitContainer="true">
             <uiT:Table id="faSummaryTab" 
-                visibleRowCountMode="Fixed"
-                visibleRowCount="15"
+                visibleRowCountMode="Auto"
                 showColumnVisibilityMenu="true"
                 enableColumnFreeze="true"
                 enableCellFilter="true"
@@ -23,21 +22,23 @@
                         <ToolbarSpacer/>
                         <Button id="btnDCReceiveDtl" 
                             icon="sap-icon://sys-last-page"
-                            text="DC Receiving Details"
+                            text="{ddtextFASummary>/FADCRCVDTL}"
                             press="onFADCReceiveDtl"
                             visible="true"/> 
                         <Button id="btnDCSendDtl" 
                             icon="sap-icon://sys-first-page"
-                            text="DC Sending Details"
+                            text="{ddtextFASummary>/FADCSENDDTL}"
                             press="onFADCSendDtl"
                             visible="true"/> 
                         <Button id="btnExport" 
                             icon="sap-icon://excel-attachment"
                             press="onExportFASummary"
+                            tooltip="{ddtextFASummary>/EXPORTTOEXCEL}"
                             visible="true"/> 
                         <Button id="btnRefresh" 
                             icon="sap-icon://refresh"
                             press="onRefreshFASummary"
+                            tooltip="{ddtextFASummary>/REFRESH}"
                             visible="true"/> 
                         <Button id="btnFullScreen" 
                             icon="sap-icon://full-screen"

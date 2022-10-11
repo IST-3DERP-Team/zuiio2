@@ -8,11 +8,14 @@ sap.ui.define([
     "sap/ui/table/library",
     "sap/m/TablePersoController",
     "sap/ui/export/Spreadsheet",
-], function (JSONModel, MessageBox, Filter, FilterOperator, Sorter, Device, library, TablePersoController, Spreadsheet) {
+    "../../js/Common",
+], function (JSONModel, MessageBox, Filter, FilterOperator, Sorter, Device, library, TablePersoController, Spreadsheet, Common) {
     "use strict";
 
     var _this;
     var _thisMain;
+
+    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "MM/dd/yyyy" });
 
     return {
         onInit(pThis) {
@@ -61,6 +64,11 @@ sap.ui.define([
                 })
             )
             _thisMain.getView().addDependent(_thisMain._FADCReceiveDetailDialog);
+
+            // Get Captions
+            setTimeout(() => {
+                this.getCaption();
+            }, 100);
         },
 
         getColumnProp: async function() {
@@ -158,22 +166,50 @@ sap.ui.define([
         },
 
         getFASummary() {
-            var oModel = _thisMain.getOwnerComponent().getModel();
+            Common.openLoadingDialog(_thisMain);
 
+            var oModel = _thisMain.getOwnerComponent().getModel();
             oModel.read('/FASUMMARYSet', { 
                 urlParameters: {
                     "$filter": "IONO eq '" + _thisMain._ioNo + "'"
                 },
-                success: function (oData, response) {
-                    console.log("getFASummary", oData)
-                    _thisMain.byId("faSummaryTab").getModel().setProperty("/rows", oData.results);
+                success: function (data, response) {
+                    //console.log("getFASummary", data)
+
+                    data.results.forEach(item => {
+                        if (item.PODATE !== null) item.PODATE = dateFormat.format(item.PODATE);
+                        if (item.DELIVERYDT !== null) item.DELIVERYDT = dateFormat.format(item.DELIVERYDT);
+                    })
+
+                    var aFilters = [];
+                    if (_thisMain.getView().byId("faSummaryTab").getBinding("rows")) {
+                        aFilters = _thisMain.getView().byId("faSummaryTab").getBinding("rows").aFilters;
+                    }
+
+                    _thisMain.byId("faSummaryTab").getModel().setProperty("/rows", data.results);
                     _thisMain.byId("faSummaryTab").bindRows("/rows");
+
+                    _this.onRefreshFilter("faSummary", aFilters);
+
+                    if (data.results.length > 0) {
+                        var sPONo = data.results[0].PONO;
+                        var sPOItem = data.results[0].POITEM;
+                        
+                        _thisMain.getView().getModel("uiFASummary").setProperty("/activePONo", sPONo);
+                        _thisMain.getView().getModel("uiFASummary").setProperty("/activePOItem", sPOItem);
+                    }
+
+                    Common.closeLoadingDialog(_thisMain);
                 },
-                error: function (err) { }
+                error: function (err) { 
+                    Common.closeLoadingDialog(_thisMain);
+                }
             })
         },
 
         onFADCReceiveDtl() {
+            Common.openLoadingDialog(_thisMain);
+
             var oModel = _thisMain.getOwnerComponent().getModel();
             var sPONo = _thisMain.getView().getModel("uiFASummary").getData().activePONo;
             var sPOItem = _thisMain.getView().getModel("uiFASummary").getData().activePOItem;
@@ -182,21 +218,28 @@ sap.ui.define([
                 urlParameters: {
                     "$filter": "PONO eq '" + sPONo + "' and POITEM eq '" + sPOItem + "'"
                 },
-                success: function (oData, response) {
-                    console.log("onFADCReceiveDtl", oData)
-                    var data = oData.results;
-                    var rowCount = oData.results.length;
+                success: function (data, response) {
+                    //console.log("onFADCReceiveDtl", data)
 
-                    _thisMain._FADCReceiveDetailDialog.getModel().setProperty("/items", data);
-                    _thisMain._FADCReceiveDetailDialog.getModel().setProperty("/rowCount", rowCount);
+                    data.results.forEach(item => {
+                        if (item.POSTDT !== null) item.POSTDT = dateFormat.format(item.POSTDT);
+                        if (item.ACTDLVDT !== null) item.ACTDLVDT = dateFormat.format(item.ACTDLVDT);
+                        if (item.REFDOCDT !== null) item.REFDOCDT = dateFormat.format(item.REFDOCDT);
+                    })
+
+                    _thisMain._FADCReceiveDetailDialog.getModel().setProperty("/items", data.results);
+                    _thisMain._FADCReceiveDetailDialog.getModel().setProperty("/rowCount", data.results.length);
                     _thisMain._FADCReceiveDetailDialog.open();
 
                     setTimeout(() => {
                         _this.getDynamicColumns("FADCRCVMOD", "ZDV_FADCRCVDTL", "faDCReceiveDetailTab", {});
                     }, 100);
+
+                    Common.closeLoadingDialog(_thisMain);
                 },
                 error: function (err) { 
                     console.log("onFADCReceiveDtl error", err)
+                    Common.closeLoadingDialog(_thisMain);
                 }
             })
         },
@@ -206,6 +249,8 @@ sap.ui.define([
         },
 
         onFADCSendDtl() {
+            Common.openLoadingDialog(_thisMain);
+
             var oModel = _thisMain.getOwnerComponent().getModel();
             var sPONo = _thisMain.getView().getModel("uiFASummary").getData().activePONo;
             var sPOItem = _thisMain.getView().getModel("uiFASummary").getData().activePOItem;
@@ -214,21 +259,30 @@ sap.ui.define([
                 urlParameters: {
                     "$filter": "PONO eq '" + sPONo + "' and POITEM eq '" + sPOItem + "'"
                 },
-                success: function (oData, response) {
-                    console.log("onFADCSendDtl", oData)
-                    var data = oData.results;
-                    var rowCount = oData.results.length;
+                success: function (data, response) {
+                    //console.log("onFADCSendDtl", data)
 
-                    _thisMain._FADCSendDetailDialog.getModel().setProperty("/items", data);
-                    _thisMain._FADCSendDetailDialog.getModel().setProperty("/rowCount", rowCount);
+                    data.results.forEach(item => {
+                        if (item.POSTDT !== null) item.POSTDT = dateFormat.format(item.POSTDT);
+                        if (item.ACTDLVDT !== null) item.ACTDLVDT = dateFormat.format(item.ACTDLVDT);
+                        if (item.REFDOCDT !== null) item.REFDOCDT = dateFormat.format(item.REFDOCDT);
+                        if (item.ETD !== null) item.ETD = dateFormat.format(item.ETD);
+                        if (item.ETA !== null) item.ETA = dateFormat.format(item.ETA);
+                    })
+
+                    _thisMain._FADCSendDetailDialog.getModel().setProperty("/items", data.results);
+                    _thisMain._FADCSendDetailDialog.getModel().setProperty("/rowCount", data.results.length);
                     _thisMain._FADCSendDetailDialog.open();
 
                     setTimeout(() => {
                         _this.getDynamicColumns("FADCSENDMOD", "ZDV_FADCSENDDTL", "faDCSendDetailTab", {});
                     }, 100);
+
+                    Common.closeLoadingDialog(_thisMain);
                 },
                 error: function (err) { 
-                    console.log("onFADCSendDtl error", err)
+                    console.log("onFADCSendDtl error", err);
+                    Common.closeLoadingDialog(_thisMain);
                 }
             })
         },
@@ -244,7 +298,7 @@ sap.ui.define([
             _thisMain.getView().getModel("uiFASummary").setProperty("/activePONo", sPONo);
             _thisMain.getView().getModel("uiFASummary").setProperty("/activePOItem", sPOItem);
 
-            console.log("onCellClickFASummary", _thisMain.getView().getModel("uiFASummary"));
+            //console.log("onCellClickFASummary", _thisMain.getView().getModel("uiFASummary"));
         },
 
         onExportFASummary() {
@@ -319,6 +373,52 @@ sap.ui.define([
                 .finally(function () {
                     oSheet.destroy();
                 });
+        },
+
+        onRefreshFASummary() {
+            _this.getFASummary();
+        },
+
+        onRefreshFilter(pModel, pFilters) {
+            console.log("onRefreshFilter", pFilters)
+            if (pFilters.length > 0) {
+                pFilters.forEach(item => {
+                    var iColIdx = _this._aColumns[pModel].findIndex(x => x.ColumnName == item.sPath);
+                    console.log("pFilterspath", iColIdx, _this._aColumns[pModel], item.sPath)
+                    _thisMain.getView().byId(pModel + "Tab").filter(_thisMain.getView().byId(pModel + "Tab").getColumns()[iColIdx], 
+                        item.oValue1);
+                });
+            }
+        },
+
+        getCaption() {
+            var oJSONModel = new JSONModel();
+            var oDDTextParam = [];
+            var oDDTextResult = {};
+            var oModel = _thisMain.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+            
+            // Label
+            oDDTextParam.push({CODE: "FADCRCVDTL"});
+            oDDTextParam.push({CODE: "FADCSENDDTL"});
+            oDDTextParam.push({CODE: "EXPORTTOEXCEL"});
+            oDDTextParam.push({CODE: "CLOSE"});
+            oDDTextParam.push({CODE: "REFRESH"});
+            console.log("getCaption", { CaptionMsgItems: oDDTextParam  })
+            oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
+                method: "POST",
+                success: function(oData, oResponse) {
+                    console.log("getCaption", oData.CaptionMsgItems.results)
+                    oData.CaptionMsgItems.results.forEach(item => {
+                        oDDTextResult[item.CODE] = item.TEXT;
+                    })
+
+                    oJSONModel.setData(oDDTextResult);
+                    _thisMain.getView().setModel(oJSONModel, "ddtextFASummary");
+                },
+                error: function(err) {
+                    console.log("getCaption error", err)
+                }
+            });
         }
     };
 });
