@@ -8,12 +8,13 @@ sap.ui.define([
     'jquery.sap.global',
     'sap/ui/core/routing/HashChanger',
     'sap/m/MessageStrip',
-    "../control/DynamicTable"
+    "../control/DynamicTable",
+    "./fragments/FASummary"
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control, FASummary) {
         "use strict"; 
 
         var that;
@@ -55,7 +56,6 @@ sap.ui.define([
                 data.editMode = false;
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "FilesEditModeModel");
-
             },
 
             _routePatternMatched: function (oEvent) {
@@ -107,6 +107,10 @@ sap.ui.define([
                 //Attachments
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
+
+                // FA Summary
+                FASummary.onInit(this);
+                //console.log("fadcsend2", sap.ui.getCore().byId("dcSendDetailTab"), this.getView().byId("dcSendDetailTab"))
 
                 console.log("iodet");
             },
@@ -2008,8 +2012,20 @@ sap.ui.define([
 
             onExport: Utils.onExport,
 
-            
 
+            //******************************************* */
+            // FA Summary
+            //******************************************* */
+
+            onFADCReceiveDtl: FASummary.onFADCReceiveDtl,
+            onFADCSendDtl: FASummary.onFADCSendDtl,
+            onExportFASummary: FASummary.onExportFASummary,
+            onRefreshFASummary: FASummary.onRefreshFASummary,
+            onCellClickFASummary: FASummary.onCellClickFASummary,
+            onFADCReceiveDetailClose: FASummary.onFADCReceiveDetailClose,
+            onFADCSendDetailClose: FASummary.onFADCSendDetailClose,
+
+            //******************************************* */
             // Attachments
             //******************************************* */
 

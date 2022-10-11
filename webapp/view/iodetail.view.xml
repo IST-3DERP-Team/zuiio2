@@ -13,7 +13,7 @@
     <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false"
 		titleLevel="H3" class="iodet"
         showNavButton="true"  navButtonPress="onNavBack">
-
+    
         <!-- OBJECT HEADER -->
     <!--intro="{i18n>CurrentVersion}: {headerData>/Verno}" -->
         <ObjectHeader id="objectHeader" 
@@ -116,7 +116,7 @@
             <IconTabFilter
 				text="FA Summary"
 				key="itfFASUMM">
-                <Text text="FA Summary..." />
+                <core:Fragment fragmentName="zuiio2.view.subviews.FASummary" type="XML"/>
 			</IconTabFilter>
              <IconTabFilter
               tooltip="Manage Attachments"
@@ -127,6 +127,5 @@
 			</IconTabFilter>
 		</items>
 	</IconTabBar>
-
     </Page>
 </mvc:View>

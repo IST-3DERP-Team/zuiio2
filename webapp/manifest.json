@@ -89,13 +89,13 @@
                 }
             },
             "ZGW_3DERP_FILES_SRV": {
-				"uri": "/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/",
-				"type": "OData",
-				"settings": {
-					"odataVersion": "2.0",
-					"localUri": "localService/metadata.xml"
-				}
-			}
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "localUri": "localService/metadata.xml"
+                }
+            }
         }
     },
     "sap.ui": {
@@ -195,15 +195,15 @@
                 }
             },
             "FileModel": {
-				"type": "sap.ui.model.odata.v2.ODataModel",
-				"settings": {
-					"defaultOperationMode": "Server",
-					"defaultBindingMode": "Default",
-					"defaultCountMode": "Request"
-				},
-				"dataSource": "ZGW_3DERP_FILES_SRV",
-				"preload": true
-			}
+                "type": "sap.ui.model.odata.v2.ODataModel",
+                "settings": {
+                    "defaultOperationMode": "Server",
+                    "defaultBindingMode": "Default",
+                    "defaultCountMode": "Request"
+                },
+                "dataSource": "ZGW_3DERP_FILES_SRV",
+                "preload": true
+            }
         },
         "resources": {
             "css": [
