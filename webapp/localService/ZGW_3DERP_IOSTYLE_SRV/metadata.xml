@@ -37,12 +37,10 @@
             </EntityType>
             <EntityType Name="Attrib" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="MANDT"/>
                     <PropertyRef Name="IONO"/>
                     <PropertyRef Name="ATTRIBTYP"/>
                     <PropertyRef Name="ATTRIBCD"/>
                 </Key>
-                <Property Name="MANDT" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Client" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Version" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBTYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Attrib Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -62,7 +60,6 @@
                 <Key>
                     <PropertyRef Name="IONO"/>
                     <PropertyRef Name="SEQNO"/>
-                    <PropertyRef Name="PROCESSCD"/>
                 </Key>
                 <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -108,6 +105,21 @@
                 <Property Name="ATTRIBCD" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attrib Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="UV" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="USGCLS"/>
+                </Key>
+                <Property Name="UVDESC" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="UCDESC" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="USGCLS" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="CreateIOStyle" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                </Key>
+                <Property Name="STYLENO" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityContainer Name="ZGW_3DERP_IOSTYLE_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="HeaderSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.Header" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="AttribSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.Attrib" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -116,6 +128,8 @@
                 <EntitySet Name="VASTypeSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.VASType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="AttribTypeSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.AttribType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="AttribCodeSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.AttribCode" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="UVSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.UV" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="CreateIOStyleSet" EntityType="ZGW_3DERP_IOSTYLE_SRV.CreateIOStyle" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IOSTYLE_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IOSTYLE_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
