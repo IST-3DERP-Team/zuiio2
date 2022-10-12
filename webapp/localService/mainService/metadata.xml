@@ -127,17 +127,29 @@
             </EntityType>
             <EntityType Name="IOSTAT" sap:content-version="1">
                 <Key>
+<<<<<<< HEAD
                     <PropertyRef Name="Iono"/>
+=======
+                    <PropertyRef Name="Mandt"/>
+>>>>>>> mca
                 </Key>
                 <Property Name="Mandt" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Client" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Iono" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Statuscd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="STATUSCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Updatedby" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Updated By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+<<<<<<< HEAD
                 <Property Name="Updateddt" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Last Change" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Updatedtm" Type="Edm.Time" Nullable="false" Precision="0" sap:unicode="false" sap:label="Updated Time" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Forecastedqty" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Forecasted Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Orderqty" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Order Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Shippedqty" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Shipped Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+=======
+                <Property Name="Updateddt" Type="Edm.DateTime" Precision="7" sap:unicode="false" sap:label="Last Change" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Updatedtm" Type="Edm.Time" Nullable="false" Precision="0" sap:unicode="false" sap:label="Updated Time" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FORECASTQTY" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Forecasted Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ORDERQTY" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Order Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SHIPQTY" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Shipped Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+>>>>>>> mca
             </EntityType>
             <EntityType Name="IODLV" sap:content-version="1">
                 <Key>
@@ -243,6 +255,29 @@
                 <Property Name="REFDOCDT" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Ref Doc Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VENDORBATCH" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Vend Batch" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+<<<<<<< HEAD
+=======
+            <EntityType Name="IOCOPY" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Iono"/>
+                </Key>
+                <Property Name="Iono" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Iotype" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="IO Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Iodesc" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="IO Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Styleno" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style No" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Seasoncd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Season Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Purplant" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="Plant" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Znewiono" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Znewiodesc" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="New IO Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Znewstyleno" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style No" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Znewseasoncd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="New Season" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Znewpurplant" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="Plant" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcheckstyle" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Check Style" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcheckcolor" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Check Color" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcheckbom" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Check BOM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Zcheckcost" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Check Cost" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+>>>>>>> mca
             <EntityContainer Name="ZGW_3DERP_IO_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="IOHDRSet" EntityType="ZGW_3DERP_IO_SRV.IOHDR" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IODETSet" EntityType="ZGW_3DERP_IO_SRV.IODET" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -252,6 +287,10 @@
                 <EntitySet Name="FASUMMARYSet" EntityType="ZGW_3DERP_IO_SRV.FASUMMARY" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="FADCSENDDTLSet" EntityType="ZGW_3DERP_IO_SRV.FADCSENDDTL" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="FADCRCVDTLSet" EntityType="ZGW_3DERP_IO_SRV.FADCRCVDTL" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+<<<<<<< HEAD
+=======
+                <EntitySet Name="IOCOPYSet" EntityType="ZGW_3DERP_IO_SRV.IOCOPY" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+>>>>>>> mca
             </EntityContainer>
             <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
