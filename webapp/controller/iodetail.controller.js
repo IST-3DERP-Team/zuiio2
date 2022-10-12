@@ -2322,7 +2322,9 @@ sap.ui.define([
                 this.enableOtherTabs();
             },
 
-            
+             //******************************************* */
+            // Common Functions
+            //******************************************* */
 
             onCloseDialog: function(oEvent) {
                 oEvent.getSource().getParent().close();
