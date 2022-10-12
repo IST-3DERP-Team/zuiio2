@@ -5,7 +5,7 @@
     xmlns:c="zuiio2.control"
     xmlns:smartFilterBar="sap.ui.comp.smartfilterbar"
     xmlns:smartTable="sap.ui.comp.smarttable"
-    xmlns:sv="sap.ui.comp.smartvariants"
+    xmlns:sv="sap.ui.comp.smartvariants" 
     xmlns:layout="sap.ui.layout"
     xmlns:t="sap.ui.table" xmlns:plugins="sap.ui.table.plugins" xmlns:fb="sap.ui.comp.filterbar" 
     xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
@@ -13,120 +13,479 @@
     <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false"
 		titleLevel="H3" class="iodet"
         showNavButton="true"  navButtonPress="onNavBack">
-
-        <!-- OBJECT HEADER -->
-    <!--intro="{i18n>CurrentVersion}: {headerData>/Verno}" -->
-        <ObjectHeader id="objectHeader" 
-            responsive="true" 
-            fullScreenOptimized="true"  
-            backgroundDesign="Solid" 
-            icon="sap-icon://multiselect-none"
-		    class="sapUiResponsivePadding--header" 
-		    title="IO# {headerData>/IOPREFIX}-{headerData>/IONO}-{headerData>/IOSUFFIX}     ({headerData>/IODESC})"
-            intro="{i18n>STYLENO} : {headerData>/STYLENO}"
-            number="{headerData>/STATUSCD}" 
-            numberUnit="{i18n>Status}" 
-            numberState="{= ${headerData>/STATUSCD} === 'REL' ? 'Success' : ${headerData>/STATUSCD} === 'EXT' ? 'Error' : 'Warning'}"
-        >
-            <attributes>
-                <ObjectAttribute title="{i18n>CREATEDBY}" text="{headerData>/CREATEDBY}"/>
-                <ObjectAttribute title="{i18n>CREATEDDT}" text="{headerData>/CREATEDDT}"/>
-                <ObjectAttribute title="{i18n>UPDATEDBY}" text="{headerData>/UPDATEDBY}"/>
-                <ObjectAttribute title="{i18n>UPDATEDDT}" text="{headerData>/UPDATEDDT}"/>
-            </attributes>
-        </ObjectHeader>
-        
-        <IconTabBar
-		id="idIconTabBarInlineMode"
-		headerMode="Inline"
-		expanded="{device>/isNoPhone}"
-		class="sapUiNoContentPadding" expandable="false" applyContentPadding="false">
-		<items>
-            <!-- IO HEADER DETAILS ICON TAB BAR -->
-			<IconTabFilter
-				text="IO Header"
-				key="itfIOHDR">
-                <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML"/>                
-                <IconTabBar
-                id="idIconTabBarInlineIOHdr"
+        <VBox fitContainer="true">
+            <!-- OBJECT HEADER -->
+            <!--intro="{i18n>CurrentVersion}: {headerData>/Verno}" -->
+            <ObjectHeader id="objectHeader" 
+                responsive="true" 
+                fullScreenOptimized="true"  
+                backgroundDesign="Solid" 
+                icon="sap-icon://multiselect-none"
+                class="sapUiResponsivePadding--header" 
+                title="IO# {headerData>/IOPREFIX}-{headerData>/IONO}-{headerData>/IOSUFFIX}     ({headerData>/IODESC})"
+                intro="{i18n>STYLENO} : {headerData>/STYLENO}"
+                number="{headerData>/STATUSCD}" 
+                numberUnit="{i18n>Status}" 
+                numberState="{= ${headerData>/STATUSCD} === 'REL' ? 'Success' : ${headerData>/STATUSCD} === 'EXT' ? 'Error' : 'Warning'}"
+            >
+                <attributes>
+                    <ObjectAttribute title="{i18n>CREATEDBY}" text="{headerData>/CREATEDBY}"/>
+                    <ObjectAttribute title="{i18n>CREATEDDT}" text="{headerData>/CREATEDDT}"/>
+                    <ObjectAttribute title="{i18n>UPDATEDBY}" text="{headerData>/UPDATEDBY}"/>
+                    <ObjectAttribute title="{i18n>UPDATEDDT}" text="{headerData>/UPDATEDDT}"/>
+                </attributes>
+                <layoutData>
+                    <FlexItemData growFactor="0" />
+                </layoutData>
+            </ObjectHeader>
+            
+            <IconTabBar
+                id="idIconTabBarInlineMode"
                 headerMode="Inline"
-                expandable="false"
                 expanded="{device>/isNoPhone}"
-                class="sapUiResponsiveContentPadding">
-                    <items>
-                        <!-- ATTRIBUTES -->
-                        <IconTabFilter
-                            text="Attributes"
-                            key="itfIOATTRIB">
-                            <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/>
-                        </IconTabFilter>
-                        <!-- STATUS -->
-                         <IconTabFilter
-                            text="Status"
-                            key="itfIOSTATUS">
-                            <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/>
-                        </IconTabFilter>
-                    </items>
-                </IconTabBar>
+                stretchContentHeight="true" 
+                class="sapUiNoContentPadding" expandable="false" applyContentPadding="false">
+                <items>
+                    <!-- IO HEADER DETAILS ICON TAB BAR -->
+                    <IconTabFilter
+                        text="IO Header"
+                        key="itfIOHDR">
+                        <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML"/>                
+                        <IconTabBar
+                        id="idIconTabBarInlineIOHdr"
+                        headerMode="Inline"
+                        expandable="false"
+                        expanded="{device>/isNoPhone}"
+                        class="sapUiResponsiveContentPadding">
+                            <items>
+                                <!-- ATTRIBUTES -->
+                                <IconTabFilter
+                                    text="Attributes"
+                                    key="itfIOATTRIB">
+                                    <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/>
+                                </IconTabFilter>
+                                <!-- STATUS -->
+                                <IconTabFilter
+                                    text="Status"
+                                    key="itfIOSTATUS">
+                                    <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/>
+                                </IconTabFilter>
+                            </items>
+                        </IconTabBar>
 
-			</IconTabFilter>
+                    </IconTabFilter>
 
-            <!-- STYLE -->
-			<IconTabFilter
-				text="Style"
-				key="itfSTYLE">
-                <core:Fragment fragmentName="zuiio2.view.subviews.Style" type="XML"/>
-			</IconTabFilter>
+                    <!-- STYLE -->
+                    <IconTabFilter
+                        text="Style"
+                        key="itfSTYLE">
+                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Style" type="XML"/> -->
+                        <layout:Splitter class="iostyle">
+                            <Panel class="sapUiNoContentPadding stylHdrPadding">
+                                <Toolbar class="noPadding">
+                                    <Label text="Style Header" design="Bold" class="hdrLabel" />
+                                    <ToolbarSpacer />
+                                    <Button id="btnManageStyle"                                         
+                                        icon="sap-icon://detail-view"
+                                        press="onManageStyle"
+                                        tooltip="{ddtext>/MANAGESTYLE}" />
+                                    <Button id="btnCreateStyle"
+                                        icon="sap-icon://add-document"
+                                        press="onNewStyle"
+                                        text="{ddtext>/NEW}"
+                                        tooltip="{ddtext>/NEW}"
+                                        visible="true" />
+                                    <!-- <Button id="btnTabLayout"
+                                        icon="sap-icon://grid" 
+                                        tooltip="{ddtext>/SAVELAYOUT}" 
+                                        press="onSaveTableLayout('style')" />   -->
+                                </Toolbar>
+                                <Panel class="sapUiNoContentPadding">
+                                    <List items="{styleHeader>/}" class="hideOverflow">
+                                        <items> 
+                                            <InputListItem label="{styleHeader>LABEL}" visible="{styleHeader>VISIBLE}">
+                                                <Text text="{styleHeader>VALUE}" class="hdrValBB" wrapping="false" tooltip="{styleHeader>VALUE}" textAlign="Begin" />
+                                            </InputListItem>
+                                        </items>
+                                    </List>
+                                </Panel>
+                                <layoutData><layout:SplitterLayoutData size="400px" /></layoutData> 
+                            </Panel>
+                            <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+                                <IconTabBar id="itbStyleDetail"
+                                    expanded="{device>/isNoPhone}" 
+                                    expandable="false" 
+                                    select="onSelectTab"
+                                    stretchContentHeight="true" 
+                                    applyContentPadding="false">
+                                    <items>
+                                        <IconTabFilter text="{ddtext>/COLORS}" key="color">
+                                            <t:Table id="colorTab"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly"> 
+                                                <t:rowSettingsTemplate>
+                                                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                                </t:rowSettingsTemplate>                                    
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button id="btnEditColor" 
+                                                            icon="sap-icon://edit"
+                                                            press="onEdit('color')"
+                                                            tooltip="{ddtext>/EDIT}"
+                                                            visible="true" />
+                                                        <Button id="btnSaveColor" 
+                                                            icon="sap-icon://save"
+                                                            press="onSave('color')" 
+                                                            tooltip="{ddtext>/SAVE}"
+                                                            visible="false" />
+                                                        <Button id="btnCancelColor" 
+                                                            icon="sap-icon://sys-cancel"
+                                                            press="onCancel('color')" 
+                                                            tooltip="{ddtext>/CANCEL}"
+                                                            visible="false" /> 
+                                                    </Toolbar>
+                                                </t:extension>
+                                            </t:Table>
+                                        </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/PROCESSES}" key="process">
+                                            <t:Table id="processTab"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly"> 
+                                                <t:rowSettingsTemplate>
+                                                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                                </t:rowSettingsTemplate>                                    
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button id="btnEditProcess" 
+                                                            icon="sap-icon://edit"
+                                                            press="onEdit('process')"
+                                                            tooltip="{ddtext>/EDIT}"
+                                                            visible="true" />
+                                                        <Button id="btnSaveProcess" 
+                                                            icon="sap-icon://save"
+                                                            press="onSave('process')" 
+                                                            tooltip="{ddtext>/SAVE}"
+                                                            visible="false" />
+                                                        <Button id="btnCancelProcess" 
+                                                            icon="sap-icon://sys-cancel"
+                                                            press="onCancel('process')" 
+                                                            tooltip="{ddtext>/CANCEL}"
+                                                            visible="false" /> 
+                                                    </Toolbar>
+                                                </t:extension>
+                                            </t:Table>
+                                        </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/SIZE}" key="size">
+                                            <t:Table id="sizeTab"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly"> 
+                                            </t:Table>                                        
+                                        </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
+                                            <t:TreeTable id="styleDetldBOMTab"
+                                                rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly">                                   
+                                                <!-- <uiT:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button
+                                                            icon="sap-icon://excel-attachment"
+                                                            press="onExport"
+                                                            tooltip="{ddtext>/EXCELEXPORT}">
+                                                            <customData>
+                                                                <core:CustomData key="TableName" value="styleDetldBOMTab"/>
+                                                            </customData>                                        
+                                                        </Button>                                        
+                                                    </Toolbar>
+                                                </uiT:extension> -->
+                                            </t:TreeTable>
+                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleDetailedBOM" type="XML"/> -->
+                                        </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/BOMBYUV}" key="uv">
+                                            <t:Table id="styleBOMUVTab"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly">                                   
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin"/>
+                                                        <ComboBox id="UsageClassCB" items="{UVModel>/results}" class="sapUiTinyMarginTopBottom" selectedKey="AUV"
+                                                            showSecondaryValues="true" filterSecondaryValues= "true" change="getStyleBOMUV">
+                                                            <core:ListItem key="{UVModel>USGCLS}" text="{UVModel>UCDESC}" additionalText="{UVModel>USGCLS}"/>
+                                                        </ComboBox>                                
+                                                        <!-- <ToolbarSpacer/>
+                                                        <Button
+                                                            icon="sap-icon://excel-attachment"
+                                                            press="onExport"
+                                                            tooltip="{ddtext>/EXCELEXPORT}">
+                                                            <customData>
+                                                                <core:CustomData key="TableName" value="styleBOMUVTab"/>
+                                                            </customData>                                        
+                                                        </Button> -->
+                                                    </Toolbar>
+                                                </t:extension>
+                                            </t:Table>                    
+                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleBOMbyUV" type="XML"/> -->
+                                        </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/MATLIST}" key="matlist">
+                                            <t:Table id="styleMatListTab"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly">                                   
+                                                <!-- <uiT:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button
+                                                            icon="sap-icon://excel-attachment"
+                                                            press="onExport"
+                                                            tooltip="{ddtext>/EXCELEXPORT}">
+                                                            <customData>
+                                                                <core:CustomData key="TableName" value="styleMatListTab"/>
+                                                            </customData>                                        
+                                                        </Button>
+                                                    </Toolbar>
+                                                </uiT:extension> -->
+                                            </t:Table>
+                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleMaterialList" type="XML"/> -->
+                                        </IconTabFilter>
+                                    </items>
+                                    <!-- <layoutData>
+                                        <FlexItemData growFactor="1" baseSize="0%"/>
+                                    </layoutData>                         -->
+                                </IconTabBar> 
+                                <layoutData><layout:SplitterLayoutData size="auto" /></layoutData>              
+                            </Panel> 
+                        </layout:Splitter>                                               
+                    </IconTabFilter>
 
-            <!-- DELIVERY SCHEDULE -->
-			<IconTabFilter
-				text="Order Details"
-				key="itfDLVSCHED">
-                <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/>
-                <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
-                <!-- <IconTabBar
-                id="idIconTabBarInlineIODet"
-                headerMode="Inline"
-                expandable="false"
-                expanded="{device>/isNoPhone}"
-                class="sapUiResponsiveContentPadding">
-                    <items> -->
-                        <!-- ORDER DETAILS -->
-                        <!-- <IconTabFilter
-                            text="Order Details"
-                            key="itfIODET">
-                            <Text text="Order Details" />
-                            <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
-                        </IconTabFilter>                        
-                    </items>
-                </IconTabBar> -->
-			</IconTabFilter>
+                    <!-- DELIVERY SCHEDULE -->
+                    <IconTabFilter
+                        text="Order Details"
+                        key="itfDLVSCHED">
+                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/> -->
+                        <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
 
-            <!-- MATERIAL LIST -->
-			<IconTabFilter
-				text="Material List"
-				key="itfMATLIST">
-                <Text text="Material List..." />
-			</IconTabFilter>
-            <IconTabFilter
-				text="Costing"
-				key="itfCOSTING">
-                <Text text="Costing..." />
-			</IconTabFilter>
-            <IconTabFilter
-				text="FA Summary"
-				key="itfFASUMM">
-                <Text text="FA Summary..." />
-			</IconTabFilter>
-             <IconTabFilter
-              tooltip="Manage Attachments"
-				text="Attachments"
-				key="itfAttach">
-              
-                  <core:Fragment fragmentName="zuiio2.view.subviews.Attachments" type="XML"/>  
-			</IconTabFilter>
-		</items>
-	</IconTabBar>
+    <t:Table id="IODLVTab" 
+                class="sapUiSizeCompact sidePadding" 
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="Single" 
+                selectionBehavior="RowOnly">
 
+                <t:rowSettingsTemplate>
+                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                </t:rowSettingsTemplate>                                    
+                <t:extension>
+                    <Toolbar>
+                    <Text text="{i18n>DeliverySchedule}" />
+                    <ToolbarSpacer/>
+                        <Button id="btnNewDlvSched" 
+                            type="Ghost"
+                            text="New"
+                            icon="sap-icon://add-document"
+                            press="onEdit('dlvsched')"
+                            tooltip="New"
+                            visible="true" />
+                        <Button id="btnImportPODlvSched" 
+                            type="Ghost"
+                            text="Import PO"
+                            press="onImportPO('dlvsched')"
+                            tooltip="Edit"
+                            visible="true" />
+                        <Button id="btnEditDlvSched" 
+                            type="Ghost"
+                            text="Edit"
+                            icon="sap-icon://edit"
+                            press="onEdit('dlvsched')"
+                            tooltip="Edit"
+                            visible="true" />
+                        <Button id="btnDeleteDlvSched" 
+                            type="Ghost"
+                            text="Delete"
+                            icon="sap-icon://delete"
+                            press="onDelete('dlvsched')"
+                            tooltip="Delete"
+                            visible="true" />
+                        <Button id="btnCopyDlvSched" 
+                            type="Ghost"
+                            text="Copy"
+                            icon="sap-icon://delete"
+                            press="onCopy('dlvsched')"
+                            tooltip="Copy"
+                            visible="true" />
+                        <Button id="btnRefreshDlvSched" 
+                            type="Ghost"
+                            icon="sap-icon://refresh"
+                            press="onRefresh('dlvsched')"
+                            tooltip="Refresh"
+                            visible="true" />
+                        <Button id="btnSaveDlvSched" 
+                            type="Ghost"
+                            text="Save"
+                            icon="sap-icon://save"
+                            press="onSave('dlvsched')" 
+                            tooltip="{ddtext>/SAVE}"
+                            visible="false" />
+                        <Button id="btnCancelDlvSched" 
+                            type="Ghost"
+                            text="Cancel"
+                            icon="sap-icon://sys-cancel"
+                            press="onCancel('dlvsched')" 
+                            tooltip="{ddtext>/CANCEL}"
+                            visible="false" /> 
+                        <!-- <Button id="btnNewDlvSched" 
+                            icon="sap-icon://edit"
+                            press="onEdit('dlvsched')"
+                            tooltip="{ddtext>/EDIT}"
+                            visible="true" /> -->
+                    </Toolbar>
+                </t:extension> 
+            </t:Table> 
+
+            <!-- </f:Form>   -->
+            
+        </Panel>
+                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/> -->
+                        <t:Table id="IODETTab" 
+                class="sapUiSizeCompact sidePadding" 
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="Single" 
+                selectionBehavior="RowOnly">
+
+                <t:rowSettingsTemplate>
+                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                </t:rowSettingsTemplate> 
+
+                <t:extension>
+                    <Toolbar>
+                    <Text text="{i18n>IODetail}" />
+                    <ToolbarSpacer/>
+                        <Button id="btnNewIODet"
+                            type="Ghost"
+                            text="New"
+                            icon="sap-icon://add-document"
+                            press="onEdit('iodet')"
+                            tooltip="New"
+                            visible="true" />
+                        <Button id="btnEditIODet" 
+                            type="Ghost"
+                            text="Edit"
+                            icon="sap-icon://edit"
+                            press="onEdit('iodet')"
+                            tooltip="Edit"
+                            visible="true" />
+                        <Button id="btnDeleteIODet" 
+                            type="Ghost"
+                            text="Delete"
+                            icon="sap-icon://delete"
+                            press="onDelete('iodet')"
+                            tooltip="Delete"
+                            visible="true" />
+                        <Button id="btnCopyIODet" 
+                            type="Ghost"
+                            text="Copy"
+                            icon="sap-icon://delete"
+                            press="onCopy('iodet')"
+                            tooltip="Copy"
+                            visible="true" />
+                        <Button id="btnRefreshIODet" 
+                            type="Ghost"
+                            icon="sap-icon://refresh"
+                            press="onRefresh('iodet')"
+                            tooltip="Refresh"
+                            visible="true" />
+                        <Button id="btnSaveIODet" 
+                            type="Ghost"
+                            text="Save"
+                            icon="sap-icon://save"
+                            press="onSave('iodet')" 
+                            tooltip="{ddtext>/SAVE}"
+                            visible="false" />
+                        <Button id="btnCancelIODet" 
+                            type="Ghost"
+                            text="Cancel"
+                            icon="sap-icon://sys-cancel"
+                            press="onCancel('iodet')" 
+                            tooltip="{ddtext>/CANCEL}"
+                            visible="false" /> 
+                        <!-- <Button id="btnNewDlvSched" 
+                            icon="sap-icon://edit"
+                            press="onEdit('dlvsched')"
+                            tooltip="{ddtext>/EDIT}"
+                            visible="true" /> -->
+                    </Toolbar>
+                </t:extension> 
+            </t:Table>
+                        <!-- <IconTabBar
+                        id="idIconTabBarInlineIODet"
+                        headerMode="Inline"
+                        expandable="false"
+                        expanded="{device>/isNoPhone}"
+                        class="sapUiResponsiveContentPadding">
+                            <items> -->
+                                <!-- ORDER DETAILS -->
+                                <!-- <IconTabFilter
+                                    text="Order Details"
+                                    key="itfIODET">
+                                    <Text text="Order Details" />
+                                    <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
+                                </IconTabFilter>                        
+                            </items>
+                        </IconTabBar> -->
+                    </IconTabFilter>
+                        
+                    <!-- MATERIAL LIST -->
+                    <IconTabFilter
+                        text="Material List"
+                        key="itfMATLIST">
+                        <Text text="Material List..." />
+                    </IconTabFilter>
+                    <IconTabFilter
+                        text="Costing"
+                        key="itfCOSTING">
+                        <Text text="Costing..." />
+                    </IconTabFilter>
+                    <IconTabFilter
+                        text="FA Summary"
+                        key="itfFASUMM">
+                            <core:Fragment fragmentName="zuiio2.view.subviews.FASummary" type="XML"/>
+                    </IconTabFilter>
+                    <IconTabFilter
+                    tooltip="Manage Attachments"
+                        text="Attachments"
+                        key="itfAttach">
+                    
+                        <core:Fragment fragmentName="zuiio2.view.subviews.Attachments" type="XML"/>  
+                    </IconTabFilter>
+                </items>
+                <layoutData>
+                    <FlexItemData id="fidTab" growFactor="1" baseSize="0%"/>
+                </layoutData>
+            </IconTabBar>
+        </VBox>
     </Page>
 </mvc:View>

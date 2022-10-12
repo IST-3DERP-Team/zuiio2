@@ -34,7 +34,7 @@
             </smartFilterBar:controlConfiguration>                      
         </smartFilterBar:SmartFilterBar> -->
 
-        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="10rem" useToolbar="false" useDateRangeType="true">
+        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="7rem" useToolbar="false" useDateRangeType="true">
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" groupId="_BASIC" label="{i18n>SBU}" preventInitialDataFetchInValueHelpDialog="false">
                         <smartfilterbar:customControl>
@@ -52,7 +52,7 @@
                     
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="mandatory" groupId="_BASIC" label="{i18n>SALESGRP}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxSALESGRP"
                                     selectedKey="{ui>/sbu}"
                                     change="onSALESGRPChange"
@@ -61,13 +61,13 @@
                                     }">
                                     <core:Item key="{SALESGRP}" text="{SALESGRP} - {DESCRIPTION}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                             </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxSEASON"
                                     selectedKey="{ui>/seasoncd}"
                                     change="onSEASONChange"
@@ -76,13 +76,13 @@
                                     }">
                                     <core:Item key="{SEASONCD}" text="{SEASONCD} - {DESCRIPTION}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxCUSTGRP"
                                     selectedKey="{ui>/CUSTGRP}"
                                     change="onCUSTGRPhange"
@@ -91,13 +91,13 @@
                                     }">
                                     <core:Item key="{CUSTGRP}" text="{CUSTGRP} - {DESCRIPTION}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxPLANPLANT"
                                     selectedKey="{ui>/PLANPLANT}"
                                     change="onPLANPLANTChange"
@@ -106,13 +106,13 @@
                                     }">
                                     <core:Item key="{PLANPLANT}" text="{PLANPLANT}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxIOTYPE"
                                     selectedKey="{ui>/IOTYPE}"
                                     change="onIOTYPEChange"
@@ -121,13 +121,13 @@
                                     }">
                                     <core:Item key="{IOTYPE}" text="{IOTYPE} - {DESCRIPTION}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxSTYLECD"
                                     selectedKey="{ui>/STYLECD}"
                                     change="onSTYLECDChange"
@@ -136,7 +136,7 @@
                                     }">
                                     <core:Item key="{STYLECD}" text="{STYLECD}" />
                                 </ComboBox>                                   
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                         </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
 
@@ -147,15 +147,15 @@
 
         <Toolbar>
                 <GenericTag id="_IDGenGenericTag1" text="Forecast" design="StatusIconHidden" status="Warning">
-					<ObjectNumber id="_IDGenObjectNumber1" state="Warning" emphasized="false" number="5000" />
+					<ObjectNumber id="_IDGenObjectNumber1" state="Warning" emphasized="false"/>
 				</GenericTag>
 
 				<GenericTag id="_IDGenGenericTag3" text="Order"  design="StatusIconHidden" status="Error">
-					<ObjectNumber id="_IDGenObjectNumber3" state="Error" emphasized="false" number="4500" />
+					<ObjectNumber id="_IDGenObjectNumber3" state="Error" emphasized="false"/>
 				</GenericTag>
 
 				<GenericTag id="_IDGenGenericTag4" text="Shipped"  design="StatusIconHidden" status="Success">
-					<ObjectNumber id="_IDGenObjectNumber4" state="Success" emphasized="false" number="2000" />
+					<ObjectNumber id="_IDGenObjectNumber4" state="Success" emphasized="false"/>
 				</GenericTag>
             </Toolbar>
             <Toolbar>
@@ -165,8 +165,8 @@
                 <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document">
 			        <menu>
 				        <Menu id="_IDGenMenu1">
-                            <MenuItem id="_IDGenMenuItem1" text="Manually" press="onPress"/>
-                            <MenuItem id="_IDGenMenuItem2" text="From Sales Document" />
+                            <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateManualIO"/>
+                            <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateManualIO"/>
 				            <MenuItem id="_IDGenMenuItem3" text="From Style" />
                         </Menu>
 			        </menu>                    
@@ -181,14 +181,16 @@
             </Toolbar>
 
             <t:Table id="IODynTable" 
-                class="sapUiSizeCompact sidePadding" 
+                class="sapUiTinyMarginBottom sapUiTinyMarginBegin sapUiTinyMarginEnd"
                 visibleRowCountMode="Auto"
                 showColumnVisibilityMenu="true" 
                 enableColumnFreeze="true"
                 enableCellFilter="true"
                 selectionMode="Single" 
                 selectionBehavior="RowOnly"
-                rowSelectionChange="onRowChange">
+                rowSelectionChange="onRowChange"
+                alternateRowColors="true"
+                sort="onSorted">
 
                 <t:layoutData>
                     <FlexItemData growFactor="1" baseSize="0%"/>

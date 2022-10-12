@@ -4,6 +4,14 @@
     padding: 0 !important;
 }
 
+.iodet .sapMOHRTitleNumberDiv {
+    max-width: 100% !important;
+}
+
+.iodet .sapMOHRStates {
+    max-width: 100% !important;
+}
+
 .iostyle .sapMITBHead {
     margin-top: 0 !important;
     padding: 0 !important;
@@ -46,6 +54,12 @@
     overflow: hidden !important;
 }
 
+.iostyle .hdrLabel {
+    background-color: bisque;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.5rem;
+}
+
 .sapUiRespGrid{
 
     padding-top: 0rem !important;
@@ -60,8 +74,8 @@
 
 .sapMOHR{
     padding-top: 0.5rem !important;
-    padding-left: 0.5rem !important;
-    padding-right: 0.5rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
     padding-bottom: 0.5rem !important;    
 }
 
