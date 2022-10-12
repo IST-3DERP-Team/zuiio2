@@ -51,10 +51,10 @@
             </EntityType>
             <EntityType Name="ZVB_3DERP_SALESGRP_SHType" sap:label="3DERP : Sales Group Search Help" sap:value-list="true" sap:content-version="1">
                 <Key>
-                    <PropertyRef Name="SALESGRP"/>
+                    <PropertyRef Name="Salesgrp"/>
                 </Key>
-                <Property Name="SALESGRP" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:text="DESCRIPTION" sap:label="Sales group"/>
-                <Property Name="DESCRIPTION" Type="Edm.String" MaxLength="20" sap:label="Description"/>
+                <Property Name="Salesgrp" Type="Edm.String" Nullable="false" MaxLength="3" sap:display-format="UpperCase" sap:text="Description" sap:label="Sales group"/>
+                <Property Name="Description" Type="Edm.String" MaxLength="20" sap:label="Description"/>
             </EntityType>
             <EntityType Name="ZVB_3DERP_SBU_SHType" sap:label="3DERP: SBU" sap:value-list="true" sap:content-version="1">
                 <Key>
@@ -112,10 +112,10 @@
                             <Collection>
                                 <Record Type="Common.ValueListParameterInOut">
                                     <PropertyValue Property="LocalDataProperty" PropertyPath="SALESGRP"/>
-                                    <PropertyValue Property="ValueListProperty" String="SALESGRP"/>
+                                    <PropertyValue Property="ValueListProperty" String="Salesgrp"/>
                                 </Record>
                                 <Record Type="Common.ValueListParameterDisplayOnly">
-                                    <PropertyValue Property="ValueListProperty" String="DESCRIPTION"/>
+                                    <PropertyValue Property="ValueListProperty" String="Description"/>
                                 </Record>
                             </Collection>
                         </PropertyValue>

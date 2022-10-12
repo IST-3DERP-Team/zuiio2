@@ -24,7 +24,7 @@
 
             <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
             
-                      <f:Form id="IOHeaderForm1" editable="false" class="sapUiNoContentPadding">
+                      <f:Form id="IOHeaderForm1" editable="false">
                 <f:layout>
                     <f:ResponsiveGridLayout columnsXL="4" columnsL="2" columnsM="1" singleContainerFullSize="false" />
                 </f:layout>

@@ -75,7 +75,7 @@ sap.ui.define([
                     this.getDynamicTableColumns();
                 },100);
 
-                this.getStatistics("/IOSTATSet"); //style statistics
+                this.getStatistics("/IOSTATISTICSSet"); //style statistics
             },
 
             getDynamicTableColumns: function () {
@@ -113,7 +113,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                console.log(aFilters);
+                // console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -374,6 +374,7 @@ sap.ui.define([
             getStatistics: function (EntitySet) {
                 //select the style statistics
                 var vEntitySet = EntitySet;
+                var oModel = this.getOwnerComponent().getModel();
                 var oForecast = this.getView().byId("forecastNumber");
                 var oOrder = this.getView().byId("orderNumber");
                 var oShipped = this.getView().byId("shippedNumber");
@@ -382,9 +383,10 @@ sap.ui.define([
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
                 // this.addDateFilters(aFilters);
 
+                console.log(vEntitySet);
                 console.log(aFilters);
 
-                this._Model.read(vEntitySet, {
+                oModel.read(vEntitySet, {
                     filters: aFilters,
                     success: function (oData) {
                         // console.log("Statistics oData");
