@@ -133,16 +133,19 @@
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
                                                         <Button id="btnEditColor" 
+                                                            text="{ddtext>/EDIT}"
                                                             icon="sap-icon://edit"
                                                             press="onEdit('color')"
                                                             tooltip="{ddtext>/EDIT}"
                                                             visible="true" />
                                                         <Button id="btnSaveColor" 
+                                                            text="{ddtext>/SAVE}"
                                                             icon="sap-icon://save"
                                                             press="onSave('color')" 
                                                             tooltip="{ddtext>/SAVE}"
                                                             visible="false" />
                                                         <Button id="btnCancelColor" 
+                                                            text="{ddtext>/CANCEL}"
                                                             icon="sap-icon://sys-cancel"
                                                             press="onCancel('color')" 
                                                             tooltip="{ddtext>/CANCEL}"
@@ -165,16 +168,19 @@
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
                                                         <Button id="btnEditProcess" 
+                                                            text="{ddtext>/EDIT}"
                                                             icon="sap-icon://edit"
                                                             press="onEdit('process')"
                                                             tooltip="{ddtext>/EDIT}"
                                                             visible="true" />
                                                         <Button id="btnSaveProcess" 
+                                                            text="{ddtext>/SAVE}"
                                                             icon="sap-icon://save"
                                                             press="onSave('process')" 
                                                             tooltip="{ddtext>/SAVE}"
                                                             visible="false" />
                                                         <Button id="btnCancelProcess" 
+                                                            text="{ddtext>/CANCEL}"
                                                             icon="sap-icon://sys-cancel"
                                                             press="onCancel('process')" 
                                                             tooltip="{ddtext>/CANCEL}"
@@ -192,7 +198,7 @@
                                                 selectionBehavior="RowOnly"> 
                                             </t:Table>                                        
                                         </IconTabFilter>
-                                        <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
+                                        <!-- <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
                                             <t:TreeTable id="styleDetldBOMTab"
                                                 rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
                                                 visibleRowCountMode="Auto"
@@ -200,22 +206,8 @@
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
                                                 selectionBehavior="RowOnly">                                   
-                                                <!-- <uiT:extension>
-                                                    <Toolbar>
-                                                        <ToolbarSpacer/>
-                                                        <Button
-                                                            icon="sap-icon://excel-attachment"
-                                                            press="onExport"
-                                                            tooltip="{ddtext>/EXCELEXPORT}">
-                                                            <customData>
-                                                                <core:CustomData key="TableName" value="styleDetldBOMTab"/>
-                                                            </customData>                                        
-                                                        </Button>                                        
-                                                    </Toolbar>
-                                                </uiT:extension> -->
                                             </t:TreeTable>
-                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleDetailedBOM" type="XML"/> -->
-                                        </IconTabFilter>
+                                        </IconTabFilter> -->
                                         <IconTabFilter text="{ddtext>/BOMBYUV}" key="uv">
                                             <t:Table id="styleBOMUVTab"
                                                 visibleRowCountMode="Auto"
@@ -244,6 +236,54 @@
                                             </t:Table>                    
                                             <!-- <core:Fragment fragmentName="zuiio2.view.subviews.StyleBOMbyUV" type="XML"/> -->
                                         </IconTabFilter>
+                                        <IconTabFilter text="{ddtext>/FABBOM}" key="fab">
+                                            <t:TreeTable id="styleFabBOMTab"
+                                                rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly">   
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button
+                                                            text="{ddtext>/GENSTYLEMATLIST}"
+                                                            icon="sap-icon://generate-shortcut"
+                                                            press="onGenMatList('FAB')"
+                                                            tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                            <customData>
+                                                                <core:CustomData key="TableName" value="styleFabBOMTab"/>
+                                                            </customData>                                        
+                                                        </Button>
+                                                    </Toolbar>
+                                                </t:extension>                                                                                
+                                            </t:TreeTable>                    
+                                        </IconTabFilter>                                        
+                                        <IconTabFilter text="{ddtext>/ACCBOM}" key="acc">
+                                            <t:TreeTable id="styleAccBOMTab"
+                                                rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
+                                                visibleRowCountMode="Auto"
+                                                showColumnVisibilityMenu="true"
+                                                enableColumnFreeze="true"
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly">   
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer/>
+                                                        <Button
+                                                            text="{ddtext>/GENSTYLEMATLIST}"
+                                                            icon="sap-icon://generate-shortcut"
+                                                            press="onGenMatList('ACC')"
+                                                            tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                            <customData>
+                                                                <core:CustomData key="TableName" value="styleAccBOMTab"/>
+                                                            </customData>                                        
+                                                        </Button>
+                                                    </Toolbar>
+                                                </t:extension>                                                                                
+                                            </t:TreeTable>  
+                                        </IconTabFilter>                                        
                                         <IconTabFilter text="{ddtext>/MATLIST}" key="matlist">
                                             <t:Table id="styleMatListTab"
                                                 visibleRowCountMode="Auto"

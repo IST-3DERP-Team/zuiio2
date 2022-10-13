@@ -63,6 +63,7 @@ sap.ui.define([
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
                 this._styleNo = "";
                 this._dataMode = "READ";
+                this._styleVer = "";
 
                 //set all as no changes at first load
                 this._headerChanged = false;
@@ -697,7 +698,7 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-
+                        me._styleVer = oData.VERNO;
                         // oData.results.forEach(item => {
                         //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
                         //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
@@ -805,7 +806,17 @@ sap.ui.define([
                         rows: []
                     }));
 
-                this.byId("styleDetldBOMTab")
+                // this.byId("styleDetldBOMTab")
+                //     .setModel(new JSONModel({
+                //         columns: []
+                //     }));
+
+                this.byId("styleFabBOMTab")
+                    .setModel(new JSONModel({
+                        columns: []
+                    }));
+
+                this.byId("styleAccBOMTab")
                     .setModel(new JSONModel({
                         columns: []
                     }));
@@ -818,8 +829,7 @@ sap.ui.define([
 
                 //pivot arrays
                 this._colors;
-                this._sizes;
-                this._styleVer = "";
+                this._sizes;                
 
                 this.getStyleHeaderData();
 
@@ -912,6 +922,12 @@ sap.ui.define([
                 oDDTextParam.push({CODE: "INFO_DATA_SAVE"}); 
                 oDDTextParam.push({CODE: "SAVELAYOUT"});
                 oDDTextParam.push({CODE: "INFO_LAYOUT_SAVE"});
+                oDDTextParam.push({CODE: "FABBOM"});
+                oDDTextParam.push({CODE: "ACCBOM"});
+                oDDTextParam.push({CODE: "GENSTYLEMATLIST"});
+                oDDTextParam.push({CODE: "INFO_IOMATLIST_GENERATED"});
+                oDDTextParam.push({CODE: "INFO_NO_IOMATLIST_GENERATED"});
+                oDDTextParam.push({CODE: "INFO_NO_DATA_TO_PROC"});
                 
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
@@ -944,7 +960,7 @@ sap.ui.define([
                             "$filter": "STYLENO eq '" + vStyle + "'"
                         },
                         success: function (oData, response) {
-                            me._styleVer = oData.results[0].VERNO;
+                            // me._styleVer = oData.results[0].VERNO;
                             
                             me.getStyleDetailedBOM();
                             me.getStyleMaterialList();
@@ -1014,9 +1030,17 @@ sap.ui.define([
                     this.getStyleDynamicColumns("IOSTYLMATLIST", "ZERP_S_STYLMATLST", "styleMatListTab", oColumns);
                 }, 100);  
 
+                // setTimeout(() => {
+                //     this.getStyleDynamicColumns("IOSTYLDTLDBOM", "ZERP_S_STYLBOM", "styleDetldBOMTab", oColumns);
+                // }, 100);
+
                 setTimeout(() => {
-                    this.getStyleDynamicColumns("IOSTYLDTLDBOM", "ZERP_S_STYLBOM", "styleDetldBOMTab", oColumns);
+                    this.getStyleDynamicColumns("IOSTYLDTLDBOM", "ZERP_S_STYLBOM", "styleFabBOMTab", oColumns);
                 }, 100);
+                
+                setTimeout(() => {
+                    this.getStyleDynamicColumns("IOSTYLDTLDBOM", "ZERP_S_STYLBOM", "styleAccBOMTab", oColumns);
+                }, 100);                
             },
 
             getStyleDynamicColumns(arg1, arg2, arg3, arg4) {
@@ -1079,9 +1103,9 @@ sap.ui.define([
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                         label: new sap.m.Text({text: sColumnLabel}),
                         template: new sap.m.Text({ 
-                            text: sTabId === "styleDetldBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}", 
+                            text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}", 
                             wrapping: false, 
-                            tooltip: sTabId === "styleDetldBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
+                            tooltip: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
                         }),
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -1099,14 +1123,16 @@ sap.ui.define([
                 //get detailed bom data
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
-                var oJSONModel = new JSONModel();
-                var oTable = this.getView().byId("styleDetldBOMTab");
-                var rowData = {
-                    items: []
-                };
-                var data = {results: rowData};
+                var oJSONModelFAB = new JSONModel();
+                var oJSONModelACC = new JSONModel();
+                var oTableFAB = this.getView().byId("styleFabBOMTab");
+                var oTableACC = this.getView().byId("styleAccBOMTab");
+                var rowDataFAB = { items: [] };
+                var rowDataACC = { items: [] };
+                var dataFAB = {results: rowDataFAB};
+                var dataACC = {results: rowDataACC};
                 var entitySet = "/StyleDetailedBOMSet"
-                
+                console.log(this._styleVer)
                 oModel.setHeaders({
                     styleno: this._styleNo, //"1000000272",
                     verno: this._styleVer //"1"
@@ -1114,81 +1140,168 @@ sap.ui.define([
                 // console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        var aData = [];
-                        // console.log(oData)
-                        oData.results.forEach(item => {
-                            var oTmpData = {};
+                        me._oModelStyle.read('/MatTypeSet', { 
+                            success: function (oDataMT, response) {
+                                var aFAB = oDataMT.results.filter(fItem => fItem.Mattypgrp === "FAB");
+                                var aACC = oDataMT.results.filter(fItem => fItem.Mattypgrp === "ACC");
 
-                            Object.keys(oData.results[0]).forEach(key => {
-                                oTmpData[key.toUpperCase()] = item[key];
-                            })
+                                var aFABBOM = [];
+                                var aACCBOM = [];
 
-                            aData.push(oTmpData);
-                        })
-                        // console.log(aData)
-                        //build the tree table based on selected data
-                        var style, gmc, partcd;
-                        var item = {};
-                        var item2 = {};
-                        var items = [];
-                        var items2 = [];
+                                aFAB.forEach(item => {
+                                    oData.results.filter(fItem => fItem.Mattyp === item.Mattyp).forEach(e => aFABBOM.push(e))
+                                });
 
-                        for (var i = 0; i < aData.length; i++) {
-                            if (aData[i].BOMITMTYP === Constants.STY) { //highest level is STY
+                                aACC.forEach(item => {
+                                    oData.results.filter(fItem => fItem.Mattyp === item.Mattyp).forEach(e => aACCBOM.push(e))
+                                });
 
-                                item = aData[i];
-                                items = [];
-                                style = aData[i].BOMSTYLE;
+                                var aDataFAB = [];
 
-                                //add GMC items under the Style, add as child
-                                for (var j = 0; j < aData.length; j++) {
-                                    if (aData[j].BOMITMTYP === Constants.GMC && aData[j].BOMSTYLE === style) {
-                                        
-                                        items2 = [];
-                                        item2 = aData[j];
-                                        gmc = aData[j].GMC;
-                                        partcd = aData[j].PARTCD;
-
-                                        //add MAT items under the GMC, add as child
-                                        for (var k = 0; k < aData.length; k++) {
-                                            if (aData[k].BOMITMTYP === Constants.MAT && oDataaData[k].GMC === gmc && aData[k].PARTCD === partcd) {
-                                                items2.push(aData[k]);
+                                aFABBOM.forEach(item => {
+                                    var oTmpData = {};
+        
+                                    Object.keys(oData.results[0]).forEach(key => {
+                                        oTmpData[key.toUpperCase()] = item[key];
+                                    })
+        
+                                    aDataFAB.push(oTmpData);
+                                })
+                                
+                                //build the tree table based on selected data
+                                var style, gmc, partcd;
+                                var item = {};
+                                var item2 = {};
+                                var items = [];
+                                var items2 = [];
+        
+                                for (var i = 0; i < aDataFAB.length; i++) {
+                                    if (aDataFAB[i].BOMITMTYP === Constants.STY) { //highest level is STY
+        
+                                        item = aDataFAB[i];
+                                        items = [];
+                                        style = aDataFAB[i].BOMSTYLE;
+        
+                                        //add GMC items under the Style, add as child
+                                        for (var j = 0; j < aDataFAB.length; j++) {
+                                            if (aDataFAB[j].BOMITMTYP === Constants.GMC && aDataFAB[j].BOMSTYLE === style) {
+                                                
+                                                items2 = [];
+                                                item2 = aDataFAB[j];
+                                                gmc = aDataFAB[j].GMC;
+                                                partcd = aDataFAB[j].PARTCD;
+        
+                                                //add MAT items under the GMC, add as child
+                                                for (var k = 0; k < aDataFAB.length; k++) {
+                                                    if (aDataFAB[k].BOMITMTYP === Constants.MAT && aDataFAB[k].GMC === gmc && aDataFAB[k].PARTCD === partcd) {
+                                                        items2.push(aDataFAB[k]);
+                                                    }
+                                                }
+        
+                                                item2.items = items2;
+                                                items.push(item2);
                                             }
                                         }
-
-                                        item2.items = items2;
-                                        items.push(item2);
+        
+                                        item.items = items;
+                                        rowDataFAB.items.push(item);
+        
+                                    } else if (aDataFAB[i].BOMITMTYP === Constants.GMC && aDataFAB[i].BOMSTYLE === '') { 
+                                        //for GMC type, immediately add item
+                                        items = [];
+                                        item = aDataFAB[i];
+                                        gmc = aDataFAB[i].GMC;
+                                        partcd = aDataFAB[i].PARTCD;
+        
+                                        //add MAT items under the GMC, add as child
+                                        for (var k = 0; k < aDataFAB.length; k++) {
+                                            if (aDataFAB[k].BOMITMTYP === Constants.MAT && aDataFAB[k].GMC === gmc && aDataFAB[k].PARTCD === partcd) {
+                                                items.push(aDataFAB[k]);
+                                            }
+                                        }
+        
+                                        item.items = items;
+                                        rowDataFAB.items.push(item);
                                     }
                                 }
 
-                                item.items = items;
-                                rowData.items.push(item);
+                                oJSONModelFAB.setData(dataFAB);
+                                oTableFAB.setModel(oJSONModelFAB, "DataModel");
 
-                            } else if (aData[i].BOMITMTYP === Constants.GMC && aData[i].BOMSTYLE === '') { 
-                                //for GMC type, immediately add item
+                                var aDataACC = [];
+
+                                aACCBOM.forEach(item => {
+                                    var oTmpData = {};
+        
+                                    Object.keys(oData.results[0]).forEach(key => {
+                                        oTmpData[key.toUpperCase()] = item[key];
+                                    })
+        
+                                    aDataACC.push(oTmpData);
+                                })
+                                
+                                //build the tree table based on selected data
+                                style = "", gmc = "", partcd = "";
+                                item = {};
+                                item2 = {};
                                 items = [];
-                                item = aData[i];
-                                gmc = aData[i].GMC;
-                                partcd = aData[i].PARTCD;
-
-                                //add MAT items under the GMC, add as child
-                                for (var k = 0; k < aData.length; k++) {
-                                    if (aData[k].BOMITMTYP === Constants.MAT && aData[k].GMC === gmc && aData[k].PARTCD === partcd) {
-                                        items.push(aData[k]);
+                                items2 = [];
+        
+                                for (var i = 0; i < aDataACC.length; i++) {
+                                    if (aDataACC[i].BOMITMTYP === Constants.STY) { //highest level is STY
+        
+                                        item = aDataACC[i];
+                                        items = [];
+                                        style = aDataACC[i].BOMSTYLE;
+        
+                                        //add GMC items under the Style, add as child
+                                        for (var j = 0; j < aDataACC.length; j++) {
+                                            if (aDataACC[j].BOMITMTYP === Constants.GMC && aDataACC[j].BOMSTYLE === style) {
+                                                
+                                                items2 = [];
+                                                item2 = aDataACC[j];
+                                                gmc = aDataFaDataACCAB[j].GMC;
+                                                partcd = aDataACC[j].PARTCD;
+        
+                                                //add MAT items under the GMC, add as child
+                                                for (var k = 0; k < aDataACC.length; k++) {
+                                                    if (aDataACC[k].BOMITMTYP === Constants.MAT && aDataACC[k].GMC === gmc && aDataACC[k].PARTCD === partcd) {
+                                                        items2.push(aDataACC[k]);
+                                                    }
+                                                }
+        
+                                                item2.items = items2;
+                                                items.push(item2);
+                                            }
+                                        }
+        
+                                        item.items = items;
+                                        rowDataACC.items.push(item);
+        
+                                    } else if (aDataACC[i].BOMITMTYP === Constants.GMC && aDataACC[i].BOMSTYLE === '') { 
+                                        //for GMC type, immediately add item
+                                        items = [];
+                                        item = aDataACC[i];
+                                        gmc = aDataACC[i].GMC;
+                                        partcd = aDataACC[i].PARTCD;
+        
+                                        //add MAT items under the GMC, add as child
+                                        for (var k = 0; k < aDataACC.length; k++) {
+                                            if (aDataACC[k].BOMITMTYP === Constants.MAT && aDataACC[k].GMC === gmc && aDataACC[k].PARTCD === partcd) {
+                                                items.push(aDataACC[k]);
+                                            }
+                                        }
+        
+                                        item.items = items;
+                                        rowDataACC.items.push(item);
                                     }
                                 }
 
-                                item.items = items;
-                                rowData.items.push(item);
-                            }
-                        }
-                        // console.log(rowData)
-                        // console.log(data)
-                        oJSONModel.setData(data);
-                        oTable.setModel(oJSONModel, "DataModel");
-
-                        // me.byId("styleDetldBOMTab").getModel().setProperty("/rows", data);
-                        // me.byId("styleDetldBOMTab").bindRows("/rows");
+                                oJSONModelACC.setData(dataACC);
+                                oTableACC.setModel(oJSONModelACC, "DataModel");
+                            },
+                            error: function (err) { }
+                        })
                     },
                     error: function () { 
                     }
@@ -1839,9 +1952,11 @@ sap.ui.define([
         
                         if (this._inputValue !== oSelectedItem.getTitle()) {                                
                             var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;    
-                            console.log(sRowPath)                        
+                            // console.log(sRowPath)                        
                             this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
-                            this._bColorChanged = true;
+                            // this._bColorChanged = true;
+                            if (this._sTableModel === "color") this._bColorChanged = true;
+                            if (this._sTableModel === "process") this._bProcessChanged = true;
                         }
                     }
     
@@ -2083,6 +2198,47 @@ sap.ui.define([
                             });  
                         }, 100);
                     })                
+                }
+            },
+
+            onGenMatList(arg) {
+                var me = this;
+                var iRowCount = 0;
+
+                if (arg === "ACC") {
+                    // console.log(this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length)
+                    iRowCount = this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length;
+                }
+                else if (arg === "FAB") {
+                    // console.log(this.byId("styleFabBOMTab").getModel("DataModel").getData().results.items.length)
+                    iRowCount = this.byId("styleFabBOMTab").getModel("DataModel").getData().results.items.length
+                }
+
+                if (iRowCount > 0) {
+                    var oParam = {
+                        "SBU": this._sbu,
+                        "IONO": this._ioNo
+                    };
+    
+                    this._oModelStyle.create("/GenIOMatListSet", oParam, {
+                        method: "POST",
+                        success: function(data, oResponse) {
+                            var oMessage = JSON.parse(oResponse.headers["sap-message"]);
+    
+                            if (oMessage.message === "0") {
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
+                            }
+                            else if (oMessage.message === "0") {
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                            }
+                        },
+                        error: function(err) {
+                            // sap.m.MessageBox.error(err);
+                        }
+                    });
+                }
+                else {
+                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
             },
 
