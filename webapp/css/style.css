@@ -116,6 +116,16 @@
 }
 
 .sapUiFormResGrid>div {
-    padding: 0rem 0rem !important;
+    padding: 0.5rem 0.5rem !important;
     box-sizing: border-box !important;
+}
+
+.sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont>div {
+    padding-top: 1px !important;
+    padding-bottom: 1px !important;
+    font-size: 1px !important;
+}
+
+.sapUiSizeCompact .sapMInputBaseHeightMargin {
+    margin: 0rem 0 !important;
 }

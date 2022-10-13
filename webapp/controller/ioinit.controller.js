@@ -15,6 +15,7 @@ sap.ui.define([
 
         var that;
         var sbu;
+        var IONOtxt;
 
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "MM/dd/yyyy" });
 
@@ -35,10 +36,31 @@ sap.ui.define([
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this.setSmartFilterModel();  
             },
+
+            onAfterRendering:function(){
+                 //double click event
+                var oModel = new JSONModel();
+                var oTable = this.getView().byId("IODynTable");
+                oTable.setModel(oModel);
+                oTable.attachBrowserEvent('dblclick', function (e) {
+                    e.preventDefault();
+                    that.setChangeStatus(false); //remove change flag
+                    that.navToDetail(IONOtxt); //navigate to detail page
+
+                });
+            },
             setSmartFilterModel: function () {
                 var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER_CDS");
                 var oSmartFilter = this.getView().byId("smartFilterBar");
                 oSmartFilter.setModel(oModel);
+            },
+            
+            onRowChange: function(oEvent) {
+                var sPath = oEvent.getParameter("rowContext").getPath();
+                var oTable = this.getView().byId("IODynTable");
+                var model = oTable.getModel();
+                var data = model.getProperty(sPath);
+                IONOtxt = data['IONO'];
             },
 
             setChangeStatus: function(changed) {
@@ -53,7 +75,7 @@ sap.ui.define([
                     this.getDynamicTableColumns();
                 },100);
 
-                // this.getStyleStats(); //style statistics
+                this.getStatistics("/IOSTATISTICSSet"); //style statistics
             },
 
             getDynamicTableColumns: function () {
@@ -63,7 +85,8 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.text;  //get selected SBU
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text();  //get selected SBU
+                // console.log(this._sbu);
                 this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 this._Model.setHeaders({
                     sbu: this._sbu,
@@ -90,7 +113,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                console.log(aFilters);
+                // console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -136,7 +159,8 @@ sap.ui.define([
                 //add column for manage button
                 oColumnsData.unshift({
                     "ColumnName": "Manage",
-                    "ColumnType": "SEL"
+                    "ColumnType": "SEL",
+                    "Visible": false
                 });
 
                 //set the column and data model
@@ -145,6 +169,18 @@ sap.ui.define([
                     columns: oColumnsData,
                     rows: oData
                 });
+
+                var oDelegateKeyUp = {
+                    onkeyup: function (oEvent) {
+                        that.onKeyUp(oEvent);
+                    },
+
+                    onsapenter: function (oEvent) {
+                        that.onSapEnter(oEvent);
+                    }
+                };
+
+                this.byId("IODynTable").addEventDelegate(oDelegateKeyUp);
 
                 var oTable = this.getView().byId("IODynTable");
                 oTable.setModel(oModel);
@@ -254,6 +290,29 @@ sap.ui.define([
                 return mSize;
             },
 
+            onKeyUp(oEvent) {
+                //console.log("onKeyUp!");
+
+                // var _dataMode = this.getView().getModel("undefined").getData().dataMode;
+                // _dataMode = _dataMode === undefined ? "READ" : _dataMode;
+
+                // if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows" && _dataMode === "READ") {
+                if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
+                    var oTable = this.getView().byId("IODynTable");
+                    var model = oTable.getModel();
+
+                    var sRowPath = this.byId(oEvent.srcControl.sId).oBindingContexts["undefined"].sPath;
+                    var index = sRowPath.split("/");
+                    oTable.setSelectedIndex(parseInt(index[2]));
+                }
+            },
+
+            onSapEnter(oEvent) {
+                that.setChangeStatus(false); //remove change flag
+                console.log(this._sbu);
+                that.navToDetail(IONOtxt, this._sbu); //navigate to detail page
+            },
+
             goToDetail: function (oEvent) {
                 var oButton = oEvent.getSource();
                 var ioNO = oButton.data("IONO").IONO; //get the styleno binded to manage button
@@ -291,6 +350,53 @@ sap.ui.define([
                 jQuery.sap.syncStyleClass("sapUiSizeCompact", that.getView(), that._LoadingDialog);
                 that._CopyIODialog.addStyleClass("sapUiSizeCompact");
                 that._CopyIODialog.open();
+            },
+
+            // onSalesDocReader: function () {
+            //     var oModel = this.getOwnerComponent().getModel();
+            //     var oForecast = this.getView().byId("forecastNumber");
+            //     var oOrder = this.getView().byId("orderNumber");
+            //     var oShipped = this.getView().byId("shippedNumber");
+
+            //     var aFilters = this.getView().byId("smartFilterBar").getFilters();
+
+            //     this._Model.read("/SalDocStatsSet", {
+            //         filters: aFilters,
+            //         success: function (oData) {
+            //             oForecast.setNumber(oData.results[0].FORECAST);
+            //             oOrder.setNumber(oData.results[0].ORDER);
+            //             oShipped.setNumber(oData.results[0].SHIPPED);
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
+            
+            getStatistics: function (EntitySet) {
+                //select the style statistics
+                var vEntitySet = EntitySet;
+                var oModel = this.getOwnerComponent().getModel();
+                var oForecast = this.getView().byId("forecastNumber");
+                var oOrder = this.getView().byId("orderNumber");
+                var oShipped = this.getView().byId("shippedNumber");
+
+                //get the smartfilterbar filters for odata filter
+                var aFilters = this.getView().byId("smartFilterBar").getFilters();
+                // this.addDateFilters(aFilters);
+
+                console.log(vEntitySet);
+                console.log(aFilters);
+
+                oModel.read(vEntitySet, {
+                    filters: aFilters,
+                    success: function (oData) {
+                        // console.log("Statistics oData");
+                        // console.log(oData);
+                        oForecast.setNumber(oData.results[0].FORECASTQTY);
+                        oOrder.setNumber(oData.results[0].ORDERQTY);
+                        oShipped.setNumber(oData.results[0].SHIPQTY);
+                    },
+                    error: function (err) { }
+                });
             },
 
             pad: Common.pad
