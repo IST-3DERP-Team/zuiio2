@@ -44,7 +44,8 @@
                 headerMode="Inline"
                 expanded="{device>/isNoPhone}"
                 stretchContentHeight="true" 
-                class="sapUiNoContentPadding" expandable="false" applyContentPadding="false">
+                applyContentPadding="false"
+                class="sapUiNoContentPadding" expandable="false">
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter

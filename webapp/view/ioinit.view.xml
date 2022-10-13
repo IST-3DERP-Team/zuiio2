@@ -51,7 +51,7 @@
                     </smartfilterbar:controlConfiguration>
                     
                     <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="mandatory" groupId="_BASIC" label="{i18n>SALESGRP}" preventInitialDataFetchInValueHelpDialog="false">
+                        <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="mandatory" groupId="_BASIC" label="{i18n>SALESGRP}" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
                         <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxSALESGRP"
                                     selectedKey="{ui>/sbu}"
