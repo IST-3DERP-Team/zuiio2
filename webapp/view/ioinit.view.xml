@@ -37,7 +37,7 @@
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="7rem" useToolbar="false" useDateRangeType="true">
                     <smartfilterbar:controlConfiguration>
                         <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" groupId="_BASIC" label="{i18n>SBU}" preventInitialDataFetchInValueHelpDialog="false">
-                        <smartfilterbar:customControl>
+                        <!-- <smartfilterbar:customControl>
                                 <ComboBox id="cboxSBU"
                                     selectedKey="{ui>/sbu}"
                                     change="onSBUChange"
@@ -46,7 +46,7 @@
                                     }">
                                     <core:Item key="{SBU}" text="{SBU}" />
                                 </ComboBox>       
-                            </smartfilterbar:customControl>
+                            </smartfilterbar:customControl> -->
                             </smartfilterbar:ControlConfiguration>
                     </smartfilterbar:controlConfiguration>
                     
@@ -147,15 +147,15 @@
 
         <Toolbar>
                 <GenericTag id="_IDGenGenericTag1" text="Forecast" design="StatusIconHidden" status="Warning">
-					<ObjectNumber id="_IDGenObjectNumber1" state="Warning" emphasized="false"/>
+					<ObjectNumber id="forecastNumber" state="Warning" emphasized="false"/>
 				</GenericTag>
 
 				<GenericTag id="_IDGenGenericTag3" text="Order"  design="StatusIconHidden" status="Error">
-					<ObjectNumber id="_IDGenObjectNumber3" state="Error" emphasized="false"/>
+					<ObjectNumber id="orderNumber" state="Error" emphasized="false"/>
 				</GenericTag>
 
 				<GenericTag id="_IDGenGenericTag4" text="Shipped"  design="StatusIconHidden" status="Success">
-					<ObjectNumber id="_IDGenObjectNumber4" state="Success" emphasized="false"/>
+					<ObjectNumber id="shippedNumber" state="Success" emphasized="false"/>
 				</GenericTag>
             </Toolbar>
             <Toolbar>

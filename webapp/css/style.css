@@ -120,6 +120,7 @@
     box-sizing: border-box !important;
 }
 
+/*IO Header Form input Box minimized spacing*/
 .sapUiFormM:not(.sapUiFormEdit) .sapUiFormResGridCont>div {
     padding-top: 1px !important;
     padding-bottom: 1px !important;
@@ -128,4 +129,24 @@
 
 .sapUiSizeCompact .sapMInputBaseHeightMargin {
     margin: 0rem 0 !important;
+}
+
+/* IconTabBar spacing adjustment */
+.sapMITB.sapUiResponsiveContentPadding>.sapMITBContainerContent>.sapMITBContent {
+    padding: 0rem !important;
+    box-sizing: border-box;
+}
+
+/* Icon Filter Tab height adjustment */
+.sapMITBInLine .sapMITBFilter>.sapMITBText {
+    margin: 0.3em 0 0.1875rem 0 !important;
+}
+
+.sapMITBInLine.sapMITBTextOnly>.sapMITBVertical {
+    height: 1.6rem !important;
+}
+
+/*Icon Tab Filter : underline for selected Tab*/
+.sapMITBInLine.sapMITBTextOnly>.sapMITBVertical.sapMITBFilter>.sapMITBText + .sapMITBContentArrow {
+    height: 0.1rem;
 }

@@ -94,15 +94,15 @@ sap.ui.define([
                     this.getStatDynamicTableColumns();
                 }, 100);
 
-                //build Dynamic table for Delivery Schedule
-                setTimeout(() => {
-                    this.getDlvSchedDynamicTableColumns();
-                }, 100);
+                // //build Dynamic table for Delivery Schedule
+                // setTimeout(() => {
+                //     this.getDlvSchedDynamicTableColumns();
+                // }, 100);
 
-                //build Dynamic table for Delivery Details
-                setTimeout(() => {
-                    this.getIODetDynamicTableColumns();
-                }, 100);
+                // //build Dynamic table for Delivery Details
+                // setTimeout(() => {
+                //     this.getIODetDynamicTableColumns();
+                // }, 100);
                 this._aIOColumns = {};
                 this._aIODataBeforeChange = [];
                 var me = this;
