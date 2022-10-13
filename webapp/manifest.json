@@ -95,6 +95,15 @@
                     "odataVersion": "2.0",
                     "localUri": "localService/metadata.xml"
                 }
+            },
+            "ZGW_3DERP_IOMATLIST_SRV": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_IOMATLIST_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [],
+                    "localUri": "localService/ZGW_3DERP_IOMATLIST_SRV/metadata.xml"
+                }
             }
         }
     },
@@ -203,6 +212,15 @@
                 },
                 "dataSource": "ZGW_3DERP_FILES_SRV",
                 "preload": true
+            },
+            "ZGW_3DERP_IOMATLIST_SRV": {
+                "dataSource": "ZGW_3DERP_IOMATLIST_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
             }
         },
         "resources": {
