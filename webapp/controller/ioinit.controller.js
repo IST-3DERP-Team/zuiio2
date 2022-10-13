@@ -75,7 +75,9 @@ sap.ui.define([
                     this.getDynamicTableColumns();
                 },100);
 
+                setTimeout(() => {
                 this.getStatistics("/IOSTATISTICSSet"); //style statistics
+                },100);
             },
 
             getDynamicTableColumns: function () {
@@ -87,7 +89,8 @@ sap.ui.define([
 
                 // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text();  //get selected SBU
                 // console.log(this._sbu);
-                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                this._sbu = 'VER';
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: 'IOINIT',
@@ -386,15 +389,24 @@ sap.ui.define([
                 console.log(vEntitySet);
                 console.log(aFilters);
 
+                // var lv_createdDateFilter = new sap.ui.model.Filter({
+                //     path: "SBU",
+                //     operator: sap.ui.model.FilterOperator.EQ,
+                //     value1: this._sbu
+                // });
+
+                // aFilters.push(lv_createdDateFilter);
+
                 oModel.read(vEntitySet, {
                     filters: aFilters,
                     success: function (oData) {
                         // console.log("Statistics oData");
-                        // console.log(oData);
+                        console.log(oData);
                         oForecast.setNumber(oData.results[0].FORECASTQTY);
                         oOrder.setNumber(oData.results[0].ORDERQTY);
                         oShipped.setNumber(oData.results[0].SHIPQTY);
-                    },
+                    }
+                    ,
                     error: function (err) { }
                 });
             },
