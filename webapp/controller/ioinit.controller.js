@@ -35,6 +35,8 @@ sap.ui.define([
 
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this.setSmartFilterModel();  
+
+                this.onSearch();
             },
 
             onAfterRendering:function(){
@@ -409,6 +411,65 @@ sap.ui.define([
                     ,
                     error: function (err) { }
                 });
+            },
+
+            onCopyIO: function (oEvent) {
+                var me = this;
+                var oTable = this.byId("IODynTable");
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var oTmpSelectedIndices = [];
+                var aData = oTable.getModel().getData().rows;
+                var oParamData = [];
+                var oParam = {};
+                var bProceed = true;
+                // var vSBU = this.getView().getModel("ui").getData().sbu;
+                var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "";
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach(item => {
+                        sIONo = aData.at(item).IONO;
+                        sIODesc = aData.at(item).IODESC;
+                        sStyleCd = aData.at(item).STYLECD;
+                        sSeason = aData.at(item).SEASONCD;
+                        sPlant = aData.at(item).PLANPLANT;
+
+                        if (sIONo === "" ) {
+                            bProceed = false;
+                        }
+                    })
+                    if (!bProceed)
+                    {
+                        me.closeLoadingDialog();
+                    } else
+                    {
+                        // alert(sIONo);
+                        if (!this._CopyIODialog) {
+                            this._CopyIODialog = sap.ui.xmlfragment("zuiio2.view.fragments.CopyIO", this);        
+                            this.getView().addDependent(this._CopyIODialog);       
+                        }         
+                        this._CopyIODialog.open();
+                        sap.ui.getCore().byId("iIONo").setValue(sIONo);
+                        sap.ui.getCore().byId("iIODesc").setValue(sIODesc);
+                        sap.ui.getCore().byId("iStyleCd").setValue(sStyleCd);
+                        sap.ui.getCore().byId("iSeasonCd").setValue(sSeason);
+                        sap.ui.getCore().byId("iPlant").setValue(sPlant);
+                    }                    
+                }
+            },
+            
+            onfragmentCopyIO: function() {
+                
+            }
+            ,
+
+            onCloseDialog: function (oEvent) {
+                oEvent.getSource().getParent().close();
             },
 
             pad: Common.pad

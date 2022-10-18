@@ -150,3 +150,19 @@
 .sapMITBInLine.sapMITBTextOnly>.sapMITBVertical.sapMITBFilter>.sapMITBText + .sapMITBContentArrow {
     height: 0.1rem;
 }
+
+.sapUiSizeCompact .sapMCb {
+    height: 1.5rem !important;
+    line-height: 1.5rem !important;
+    padding-left: 1.5rem !important;
+}
+
+.sapUiVlt.sapUiContentPadding {
+    padding: 0.2rem !important;
+    box-sizing: border-box;
+}
+
+.sapUiVlt.sapUiContentPadding>.sapuiVltCell:not(:last-child) {
+    padding-bottom: 0rem !important;
+    box-sizing: border-box;
+}
