@@ -2693,6 +2693,16 @@ sap.ui.define([
             enableOtherTabs: function () {
                 var oIconTabBar = this.byId("idIconTabBarInlineMode");
                 oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+            },
+
+            onDelete: function(TableName) {
+                var sTableName = TableName;
+                Common.showMessage(sTableName);
+                if (!this._ConfirmMarkAsDelete) {
+                    this._ConfirmMarkAsDelete = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ConfirmMarkAsDelete", this);        
+                    this.getView().addDependent(this._ConfirmMarkAsDelete);       
+                }         
+                this._ConfirmMarkAsDelete.open();
             }
         });
     });

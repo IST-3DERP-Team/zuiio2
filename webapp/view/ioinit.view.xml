@@ -166,14 +166,18 @@
 			        <menu>
 				        <Menu id="_IDGenMenu1">
                             <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateManualIO"/>
-                            <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateManualIO"/>
-				            <MenuItem id="_IDGenMenuItem3" text="From Style" />
+                            <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIOfromSalesDoc"/>
+				            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIOfromStyle" />
                         </Menu>
 			        </menu>                    
 		        </MenuButton>
                 <Button text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO"/>
-                <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport"/>
-                <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSave"/>
+                <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport">
+                    <customData>
+                        <core:CustomData key="TableName" value="IODynTable" />
+                    </customData>
+                </Button>
+                <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveTableLayout"/>
 
                 <layoutData>
                     <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>

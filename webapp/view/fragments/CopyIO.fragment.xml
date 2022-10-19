@@ -53,12 +53,20 @@
                             </f:FormElement>
                             <f:FormElement label="New Season">
                                 <f:fields>
-                                    <Input id="newSeasonCd" type="Text"/>
+                                    <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" suggestionItems="{SeasonsModel>/results}">
+                                        <suggestionItems>
+                                            <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
+                                        </suggestionItems>
+                                    </Input>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="New Plant">
                                 <f:fields>
-                                    <Input id="newPlant"/>
+                                    <Input id="newPlant" type="Text" editable="true" showSuggestion="true" suggestionItems="{PlantModel>/results}">
+                                    <suggestionItems>
+                                            <core:ListItem text="{PlantModel>PLANTCD}"/>
+                                        </suggestionItems>
+                                    </Input>
                                 </f:fields>
                             </f:FormElement>
                             <!-- <f:FormElement label="{i18n>SourceStyleCode}">
@@ -105,7 +113,7 @@
                         <f:formElements>
                             <f:FormElement label="New Style">
                                 <f:fields>
-                                    <CheckBox id="NewStyleCD" selected="true" />
+                                    <CheckBox id="StyleCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="Color">

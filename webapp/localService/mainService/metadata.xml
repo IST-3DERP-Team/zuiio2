@@ -279,6 +279,23 @@
                 <Property Name="ORDERQTY" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Order Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="SHIPQTY" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Shipped Qty" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="SEASON" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SEASONCD"/>
+                    <PropertyRef Name="SBU"/>
+                </Key>
+                <Property Name="SEASONCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Season Cd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="SBU" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="PLANT" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="PLANTCD"/>
+                    <PropertyRef Name="SBU"/>
+                </Key>
+                <Property Name="PLANTCD" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="Plant" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="SBU" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityContainer Name="ZGW_3DERP_IO_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="IOHDRSet" EntityType="ZGW_3DERP_IO_SRV.IOHDR" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IODETSet" EntityType="ZGW_3DERP_IO_SRV.IODET" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -290,6 +307,8 @@
                 <EntitySet Name="FADCRCVDTLSet" EntityType="ZGW_3DERP_IO_SRV.FADCRCVDTL" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IOCOPYSet" EntityType="ZGW_3DERP_IO_SRV.IOCOPY" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="IOSTATISTICSSet" EntityType="ZGW_3DERP_IO_SRV.IOSTATISTICS" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
+                <EntitySet Name="SEASONSet" EntityType="ZGW_3DERP_IO_SRV.SEASON" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="PLANTSet" EntityType="ZGW_3DERP_IO_SRV.PLANT" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
