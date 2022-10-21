@@ -120,7 +120,7 @@ sap.ui.define([
                         rows: []
                     }));
 
-                    var ioNo = this._ioNo;  
+                var ioNo = this._ioNo;  
 
                 this._oModel.read('/IODLVSet', { 
                     urlParameters: {
@@ -160,6 +160,9 @@ sap.ui.define([
                 //Attachments
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
+
+                //IO Material List
+                this.initIOMatList();
             },
 
             getIOColumnProp: async function() {
@@ -1116,6 +1119,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_DATA_SAVE" });
                 oDDTextParam.push({ CODE: "SAVELAYOUT" });
                 oDDTextParam.push({ CODE: "INFO_LAYOUT_SAVE" });
+                oDDTextParam.push({ CODE: "SUBMITMRP" });
+                oDDTextParam.push({ CODE: "ASSIGNMATNO" });
+                oDDTextParam.push({ CODE: "FULLSCREEN" });
+                oDDTextParam.push({ CODE: "EXITFULLSCREEN" });
 
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
@@ -2432,6 +2439,125 @@ sap.ui.define([
             //******************************************* */
             // MATERIAL LIST
             //******************************************* */            
+
+            initIOMatList: function(oEvent) {
+                this._oModelIOMatList = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                // this._aColumns = {};
+                // this._aDataBeforeChange = [];
+                var me = this;
+
+                this.byId("ioMatListTab")
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
+
+                var vIONo = this._ioNo; //"1000115";
+                this._oModelIOMatList.read('/MainSet', {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + vIONo + "'"
+                    },
+                    success: function (oData, response) {
+                        console.log(oData)
+                        me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
+                        me.byId("ioMatListTab").bindRows("/rows");
+                    },
+                    error: function (err) { }
+                })
+
+                //get column value help prop
+                this.getIOMatListColumnProp();               
+            },
+
+            getIOMatListColumnProp: async function () {
+                // var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                // var oModelColumns = new JSONModel();
+                // await oModelColumns.loadData(sPath);
+
+                var oColumns = []; //oModelColumns.getData();
+
+                //get dynamic columns based on saved layout or ZERP_CHECK
+                setTimeout(() => {
+                    this.getIOMatListDynamicColumns("IOMATLIST", "ZDV_3DERP_MATLST", "ioMatListTab", oColumns);
+                }, 100);
+            },
+
+            getIOMatListDynamicColumns(arg1, arg2, arg3, arg4) {
+                var me = this;
+                var sType = arg1;
+                var sTabName = arg2;
+                var sTabId = arg3;
+                var oLocColProp = arg4;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                var vSBU = this._sbu; //"VER"; //this.getView().getModel("ui").getData().sbu;
+
+                oModel.setHeaders({
+                    sbu: vSBU,
+                    type: sType,
+                    tabname: sTabName
+                });
+
+                oModel.read("/ColumnsSet", {
+                    success: function (oData, oResponse) {
+                        // console.log(sTabId, oData)
+                        if (oData.results.length > 0) {
+
+                            if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                                oData.results.forEach(item => {
+                                    oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                                        .forEach(col => item.ValueHelp = col.ValueHelp)
+                                })
+                            }
+
+                            me._aColumns[sTabId.replace("Tab", "")] = oData.results;
+                            me.setIOMatListTableColumns(sTabId, oData.results);
+                        }
+                    },
+                    error: function (err) {
+                    }
+                });
+            },
+
+            setIOMatListTableColumns(arg1, arg2) {
+                var me = this;
+                var sTabId = arg1;
+                var oColumns = arg2;
+                var oTable = this.getView().byId(sTabId);
+
+                oTable.getModel().setProperty("/columns", oColumns);
+
+                //bind the dynamic column to the table
+                oTable.bindColumns("/columns", function (index, context) {
+                    var sColumnId = context.getObject().ColumnName;
+                    var sColumnLabel = me.getStyleColumnDesc(sTabId, context.getObject()); //context.getObject().ColumnLabel;
+                    var sColumnWidth = context.getObject().ColumnWidth;
+                    var sColumnVisible = context.getObject().Visible;
+                    var sColumnSorted = context.getObject().Sorted;
+                    var sColumnSortOrder = context.getObject().SortOrder;
+                    var sColumnDataType = context.getObject().DataType;
+
+                    if (sColumnWidth === 0) sColumnWidth = 100;
+
+                    return new sap.ui.table.Column({
+                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                        label: new sap.m.Text({text: sColumnLabel}),
+                        template: new sap.m.Text({ 
+                            text: "{" + sColumnId + "}", 
+                            wrapping: false, 
+                            tooltip: "{" + sColumnId + "}"
+                        }),
+                        width: sColumnWidth + "px",
+                        sortProperty: sColumnId,
+                        filterProperty: sColumnId,
+                        autoResizable: true,
+                        visible: sColumnVisible,
+                        sorted: sColumnSorted,
+                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    });
+                });
+            },
 
             onExport: Utils.onExport,
 
