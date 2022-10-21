@@ -325,162 +325,162 @@
                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/> -->
                         <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
 
-    <t:Table id="IODLVTab" 
-                class="sapUiSizeCompact sidePadding" 
-                visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true" 
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single" 
-                selectionBehavior="RowOnly">
+                        <t:Table id="IODLVTab" 
+                                    class="sapUiSizeCompact sidePadding" 
+                                    visibleRowCountMode="Auto"
+                                    showColumnVisibilityMenu="true" 
+                                    enableColumnFreeze="true"
+                                    enableCellFilter="true"
+                                    selectionMode="Single" 
+                                    selectionBehavior="RowOnly">
 
-                <t:rowSettingsTemplate>
-                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                </t:rowSettingsTemplate>                                    
-                <t:extension>
-                    <Toolbar>
-                    <Text text="{i18n>DeliverySchedule}" />
-                    <ToolbarSpacer/>
-                        <Button id="btnNewDlvSched" 
-                            type="Ghost"
-                            text="New"
-                            icon="sap-icon://add-document"
-                            press="onEdit('IODLVTab')"
-                            tooltip="New"
-                            visible="true" />
-                        <Button id="btnImportPODlvSched" 
-                            type="Ghost"
-                            text="Import PO"
-                            press="onImportPO('IODLVTab')"
-                            tooltip="Edit"
-                            visible="true" />
-                        <Button id="btnEditDlvSched" 
-                            type="Ghost"
-                            text="Edit"
-                            icon="sap-icon://edit"
-                            press="onEdit('IODLVTab')"
-                            tooltip="Edit"
-                            visible="true" />
-                        <Button id="btnDeleteDlvSched" 
-                            type="Ghost"
-                            text="Delete"
-                            icon="sap-icon://delete"
-                            press="onDelete('IODLVTab')"
-                            tooltip="Delete"
-                            visible="true" />
-                        <Button id="btnCopyDlvSched" 
-                            type="Ghost"
-                            text="Copy"
-                            icon="sap-icon://delete"
-                            press="onCopy('IODLVTab')"
-                            tooltip="Copy"
-                            visible="true" />
-                        <Button id="btnRefreshDlvSched" 
-                            type="Ghost"
-                            icon="sap-icon://refresh"
-                            press="onRefresh('IODLVTab')"
-                            tooltip="Refresh"
-                            visible="true" />
-                        <Button id="btnSaveDlvSched" 
-                            type="Ghost"
-                            text="Save"
-                            icon="sap-icon://save"
-                            press="onSave('IODLVTab')" 
-                            tooltip="{ddtext>/SAVE}"
-                            visible="false" />
-                        <Button id="btnCancelDlvSched" 
-                            type="Ghost"
-                            text="Cancel"
-                            icon="sap-icon://sys-cancel"
-                            press="onCancel('IODLVTab')" 
-                            tooltip="{ddtext>/CANCEL}"
-                            visible="false" /> 
-                        <!-- <Button id="btnNewDlvSched" 
-                            icon="sap-icon://edit"
-                            press="onEdit('dlvsched')"
-                            tooltip="{ddtext>/EDIT}"
-                            visible="true" /> -->
-                    </Toolbar>
-                </t:extension> 
-            </t:Table> 
+                                    <t:rowSettingsTemplate>
+                                        <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                    </t:rowSettingsTemplate>                                    
+                                    <t:extension>
+                                        <Toolbar>
+                                        <Text text="{i18n>DeliverySchedule}" />
+                                        <ToolbarSpacer/>
+                                            <Button id="btnNewDlvSched" 
+                                                type="Ghost"
+                                                text="New"
+                                                icon="sap-icon://add-document"
+                                                press="onEdit('IODLVTab')"
+                                                tooltip="New"
+                                                visible="true" />
+                                            <Button id="btnImportPODlvSched" 
+                                                type="Ghost"
+                                                text="Import PO"
+                                                press="onImportPO('IODLVTab')"
+                                                tooltip="Edit"
+                                                visible="true" />
+                                            <Button id="btnEditDlvSched" 
+                                                type="Ghost"
+                                                text="Edit"
+                                                icon="sap-icon://edit"
+                                                press="onEdit('IODLVTab')"
+                                                tooltip="Edit"
+                                                visible="true" />
+                                            <Button id="btnDeleteDlvSched" 
+                                                type="Ghost"
+                                                text="Delete"
+                                                icon="sap-icon://delete"
+                                                press="onDelete('IODLVTab')"
+                                                tooltip="Delete"
+                                                visible="true" />
+                                            <Button id="btnCopyDlvSched" 
+                                                type="Ghost"
+                                                text="Copy"
+                                                icon="sap-icon://delete"
+                                                press="onCopy('IODLVTab')"
+                                                tooltip="Copy"
+                                                visible="true" />
+                                            <Button id="btnRefreshDlvSched" 
+                                                type="Ghost"
+                                                icon="sap-icon://refresh"
+                                                press="onRefresh('IODLVTab')"
+                                                tooltip="Refresh"
+                                                visible="true" />
+                                            <Button id="btnSaveDlvSched" 
+                                                type="Ghost"
+                                                text="Save"
+                                                icon="sap-icon://save"
+                                                press="onSave('IODLVTab')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelDlvSched" 
+                                                type="Ghost"
+                                                text="Cancel"
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('IODLVTab')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
+                                            <!-- <Button id="btnNewDlvSched" 
+                                                icon="sap-icon://edit"
+                                                press="onEdit('dlvsched')"
+                                                tooltip="{ddtext>/EDIT}"
+                                                visible="true" /> -->
+                                        </Toolbar>
+                                    </t:extension> 
+                                </t:Table> 
 
             <!-- </f:Form>   -->
             
-        </Panel>
+                    </Panel>
                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/> -->
                         <t:Table id="IODETTab" 
-                class="sapUiSizeCompact sidePadding" 
-                visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true" 
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single" 
-                selectionBehavior="RowOnly">
+                            class="sapUiSizeCompact sidePadding" 
+                            visibleRowCountMode="Auto"
+                            showColumnVisibilityMenu="true" 
+                            enableColumnFreeze="true"
+                            enableCellFilter="true"
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly">
 
-                <t:rowSettingsTemplate>
-                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                </t:rowSettingsTemplate> 
+                            <t:rowSettingsTemplate>
+                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                            </t:rowSettingsTemplate> 
 
-                <t:extension>
-                    <Toolbar>
-                    <Text text="{i18n>IODetail}" />
-                    <ToolbarSpacer/>
-                        <Button id="btnNewIODet"
-                            type="Ghost"
-                            text="New"
-                            icon="sap-icon://add-document"
-                            press="onEdit('IODETTab')"
-                            tooltip="New"
-                            visible="true" />
-                        <Button id="btnEditIODet" 
-                            type="Ghost"
-                            text="Edit"
-                            icon="sap-icon://edit"
-                            press="onEdit('IODETTab')"
-                            tooltip="Edit"
-                            visible="true" />
-                        <Button id="btnDeleteIODet" 
-                            type="Ghost"
-                            text="Delete"
-                            icon="sap-icon://delete"
-                            press="onDelete('IODETTab')"
-                            tooltip="Delete"
-                            visible="true" />
-                        <Button id="btnCopyIODet" 
-                            type="Ghost"
-                            text="Copy"
-                            icon="sap-icon://delete"
-                            press="onCopy('IODETTab')"
-                            tooltip="Copy"
-                            visible="true" />
-                        <Button id="btnRefreshIODet" 
-                            type="Ghost"
-                            icon="sap-icon://refresh"
-                            press="onRefresh('IODETTab')"
-                            tooltip="Refresh"
-                            visible="true" />
-                        <Button id="btnSaveIODet" 
-                            type="Ghost"
-                            text="Save"
-                            icon="sap-icon://save"
-                            press="onSave('IODETTab')" 
-                            tooltip="{ddtext>/SAVE}"
-                            visible="false" />
-                        <Button id="btnCancelIODet" 
-                            type="Ghost"
-                            text="Cancel"
-                            icon="sap-icon://sys-cancel"
-                            press="onCancel('IODETTab')" 
-                            tooltip="{ddtext>/CANCEL}"
-                            visible="false" /> 
-                        <!-- <Button id="btnNewDlvSched" 
-                            icon="sap-icon://edit"
-                            press="onEdit('dlvsched')"
-                            tooltip="{ddtext>/EDIT}"
-                            visible="true" /> -->
-                    </Toolbar>
-                </t:extension> 
-            </t:Table>
+                            <t:extension>
+                                <Toolbar>
+                                <Text text="{i18n>IODetail}" />
+                                <ToolbarSpacer/>
+                                    <Button id="btnNewIODet"
+                                        type="Ghost"
+                                        text="New"
+                                        icon="sap-icon://add-document"
+                                        press="onEdit('IODETTab')"
+                                        tooltip="New"
+                                        visible="true" />
+                                    <Button id="btnEditIODet" 
+                                        type="Ghost"
+                                        text="Edit"
+                                        icon="sap-icon://edit"
+                                        press="onEdit('IODETTab')"
+                                        tooltip="Edit"
+                                        visible="true" />
+                                    <Button id="btnDeleteIODet" 
+                                        type="Ghost"
+                                        text="Delete"
+                                        icon="sap-icon://delete"
+                                        press="onDelete('IODETTab')"
+                                        tooltip="Delete"
+                                        visible="true" />
+                                    <Button id="btnCopyIODet" 
+                                        type="Ghost"
+                                        text="Copy"
+                                        icon="sap-icon://delete"
+                                        press="onCopy('IODETTab')"
+                                        tooltip="Copy"
+                                        visible="true" />
+                                    <Button id="btnRefreshIODet" 
+                                        type="Ghost"
+                                        icon="sap-icon://refresh"
+                                        press="onRefresh('IODETTab')"
+                                        tooltip="Refresh"
+                                        visible="true" />
+                                    <Button id="btnSaveIODet" 
+                                        type="Ghost"
+                                        text="Save"
+                                        icon="sap-icon://save"
+                                        press="onSave('IODETTab')" 
+                                        tooltip="{ddtext>/SAVE}"
+                                        visible="false" />
+                                    <Button id="btnCancelIODet" 
+                                        type="Ghost"
+                                        text="Cancel"
+                                        icon="sap-icon://sys-cancel"
+                                        press="onCancel('IODETTab')" 
+                                        tooltip="{ddtext>/CANCEL}"
+                                        visible="false" /> 
+                                    <!-- <Button id="btnNewDlvSched" 
+                                        icon="sap-icon://edit"
+                                        press="onEdit('dlvsched')"
+                                        tooltip="{ddtext>/EDIT}"
+                                        visible="true" /> -->
+                                </Toolbar>
+                            </t:extension> 
+                        </t:Table>
                         <!-- <IconTabBar
                         id="idIconTabBarInlineIODet"
                         headerMode="Inline"
