@@ -326,6 +326,7 @@
                         <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
 
                         <t:Table id="IODLVTab" 
+<<<<<<< HEAD
                                     class="sapUiSizeCompact sidePadding" 
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true" 
@@ -333,6 +334,15 @@
                                     enableCellFilter="true"
                                     selectionMode="Single" 
                                     selectionBehavior="RowOnly">
+=======
+                            class="sapUiSizeCompact sidePadding" 
+                            visibleRowCountMode="Auto"
+                            showColumnVisibilityMenu="true" 
+                            enableColumnFreeze="true"
+                            enableCellFilter="true"
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly">
+>>>>>>> main
 
                                     <t:rowSettingsTemplate>
                                         <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -404,9 +414,13 @@
                                     </t:extension> 
                                 </t:Table> 
 
-            <!-- </f:Form>   -->
+                        <!-- </f:Form>   -->
             
+<<<<<<< HEAD
                     </Panel>
+=======
+                        </Panel>
+>>>>>>> main
                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/> -->
                         <t:Table id="IODETTab" 
                             class="sapUiSizeCompact sidePadding" 
@@ -503,7 +517,73 @@
                     <IconTabFilter
                         text="Material List"
                         key="itfMATLIST">
-                        <Text text="Material List..." />
+                        <t:Table id="ioMatListTab"
+                            visibleRowCountMode="Auto"
+                            showColumnVisibilityMenu="true"
+                            enableColumnFreeze="true"
+                            selectionMode="Single" 
+                            selectionBehavior="RowOnly"> 
+                            <t:rowSettingsTemplate>
+                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                            </t:rowSettingsTemplate>                                    
+                            <t:extension>
+                                <Toolbar>
+                                    <ToolbarSpacer/>
+                                    <Button id="btnSubmitMRP" 
+                                        text="{ddtext>/SUBMITMRP}"
+                                        icon="sap-icon://action"
+                                        press="onSubmitMRP('iomatlist')"
+                                        tooltip="{ddtext>/SUBMITMRP}"
+                                        visible="true" />
+                                    <Button id="btnAssignMatNo" 
+                                        text="{ddtext>/ASSIGNMATNO}"
+                                        icon="sap-icon://multiselect-all"
+                                        press="onAssignMatNo('iomatlist')"
+                                        tooltip="{ddtext>/ASSIGNMATNO}"
+                                        visible="true" />
+                                    <Button id="btnEditIOMatList" 
+                                        icon="sap-icon://edit"
+                                        press="onEdit('iomatlist')"
+                                        tooltip="{ddtext>/EDIT}"
+                                        visible="true" />
+                                    <Button id="btnSaveIOMatList" 
+                                        text="{ddtext>/SAVE}"
+                                        icon="sap-icon://save"
+                                        press="onSave('iomatlist')" 
+                                        tooltip="{ddtext>/SAVE}"
+                                        visible="false" />
+                                    <Button id="btnCancelIOMatList" 
+                                        icon="sap-icon://sys-cancel"
+                                        press="onCancel('iomatlist')" 
+                                        tooltip="{ddtext>/CANCEL}"
+                                        visible="false" /> 
+                                    <Button id="btnRefreshIOMatList" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefresh('iomatlist')" 
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true" /> 
+                                    <Button id="btnExportIOMatList" 
+                                        icon="sap-icon://excel-attachment"
+                                        press="onExport('iomatlist')" 
+                                        tooltip="{ddtext>/EXCELEXPORT}"
+                                        visible="true"> 
+                                        <customData>
+                                            <core:CustomData key="TableName" value="ioMatListTab"/>
+                                        </customData>
+                                    </Button>                                           
+                                    <Button id="btnFullScreenIOMatList" 
+                                        icon="sap-icon://full-screen"
+                                        press="onTableResize('iomatlist', 'max')" 
+                                        tooltip="{ddtext>/FULLSCREEN}"
+                                        visible="true" /> 
+                                    <Button id="btnExitFullScreenIOMatList" 
+                                        icon="sap-icon://exit-full-screen"
+                                        press="onTableResize('iomatlist', 'min')" 
+                                        tooltip="{ddtext>/EXITFULLSCREEN}"
+                                        visible="false" />
+                                </Toolbar>
+                            </t:extension>
+                        </t:Table>
                     </IconTabFilter>
                     <IconTabFilter
                         text="Costing"
