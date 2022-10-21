@@ -427,6 +427,8 @@ sap.ui.define([
                 // var vSBU = this.getView().getModel("ui").getData().sbu;
                 // var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
 
+                //reset variables
+                sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
                 if (oSelectedIndices.length > 0) {
                     oSelectedIndices.forEach(item => {
                         oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
@@ -470,6 +472,11 @@ sap.ui.define([
             },
             
             onfragmentCopyIO: function() {
+                var newIONO;
+                //reset variables
+                var _this=this;
+                newIODesc = "", newStyleCd = "", newSeasonCd = "";
+                StyleCB = false, ColorCB = false, BOMCB = false, CostingCB = false;
 
                 //capture data of Inputs at Copy Style Fragment
                 var newIODesc = sap.ui.getCore().byId("newIODesc").getValue();
@@ -494,12 +501,12 @@ sap.ui.define([
                     "Iono": sIONo,
                     "Iotype": sIOType,
                     "Iodesc": sIODesc,
-                    "StyleNo": sStyleCd,
+                    "Stylecd": sStyleCd,
                     "Seasoncd": sSeason,
                     "Purplant": sPlant,
                     // "Znewiono": "",
                     "Znewiodesc": newIODesc,
-                    "Znewstyleno": newStyleCd,
+                    "Znewstylecd": newStyleCd,
                     "Znewseasoncd": newSeasonCd,
                     "Znewpurplant": newPlant,
                     "Zcheckstyle": StyleCB,
@@ -514,21 +521,22 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                console.log(oParam);
-                return;
                 oCopyIOModel.create("/IOCOPYSet", oParam,{
                     method: "POST",
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "CopyIOModel");
-                        sap.m.MessageBox.information("Copy IO Success.");
-                        bSuccess = true;
+
+                        //capture new IONO
+                        newIONO = oData.Znewiono;
+                        Common.showMessage("Successfully create IO# " + newIONO);
+                        _this._CopyIODialog.close();
+                        that.navToDetail(newIONO);
+                        
                     },
                     error: function (err) { }
                 });
-
-                //if bSuccess, go to IO Details view, load the newly created IO
-                //******** */
+                   
             },
 
             getSeasonsSet: function() {

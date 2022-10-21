@@ -19,6 +19,8 @@ sap.ui.define([
 
         var that;
 
+        var sIONo = "", sDlvItem = "", sDlvSeq = "", sTableName = "";
+
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
 
         var Core = sap.ui.getCore();
@@ -64,6 +66,8 @@ sap.ui.define([
                 this._styleNo = "";
                 this._dataMode = "READ";
                 this._styleVer = "";
+
+                alert(this._ioNo);
 
                 //set all as no changes at first load
                 this._headerChanged = false;
@@ -865,7 +869,8 @@ sap.ui.define([
 
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
-                        // console.log(oView);
+                        console.log("headerData");
+                        console.log(oView);
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
@@ -2696,13 +2701,121 @@ sap.ui.define([
             },
 
             onDelete: function(TableName) {
-                var sTableName = TableName;
-                Common.showMessage(sTableName);
-                if (!this._ConfirmMarkAsDelete) {
-                    this._ConfirmMarkAsDelete = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ConfirmMarkAsDelete", this);        
-                    this.getView().addDependent(this._ConfirmMarkAsDelete);       
-                }         
-                this._ConfirmMarkAsDelete.open();
+                sTableName = TableName;
+                // Common.showMessage(sTableName);
+
+                var me = this;
+                var oTable = this.byId(sTableName);
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var oTmpSelectedIndices = [];
+                var aData = oTable.getModel().getData().rows;
+                var bProceed = true;
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    if(sTableName === "IODLVTab")
+                    {
+                        oSelectedIndices.forEach(item => {
+                            sIONo = aData.at(item).IONO;
+                            sDlvSeq = aData.at(item).DLVSEQ;
+
+                            if (sIONo === "" ) {
+                                bProceed = false;
+                            }
+                        })
+                    }
+
+                    if(sTableName === "IODETTab")
+                    {
+                        oSelectedIndices.forEach(item => {
+                            sIONo = aData.at(item).IONO;
+                            sDlvItem = aData.at(item).DLVITEM;
+
+                            if (sIONo === "" ) {
+                                bProceed = false;
+                            }
+                        })
+                    }
+
+                    if (!bProceed)
+                    {
+                        Common.showMessage("No Row Selected");
+                        me.closeLoadingDialog();
+                    } else {
+
+                    if (!this._ConfirmMarkAsDelete) {
+                        this._ConfirmMarkAsDelete = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ConfirmMarkAsDelete", this);
+                        this.getView().addDependent(this._ConfirmMarkAsDelete);
+                    }
+                    jQuery.sap.syncStyleClass("sapUiSizeCompact", this.getView(), this._LoadingDialog);
+                    this._ConfirmMarkAsDelete.addStyleClass("sapUiSizeCompact");
+                    this._ConfirmMarkAsDelete.open();
+                    }
+                }
+            },
+
+            onConfirmMarkAsDelete: function() {
+                // alert(sDlvSeq);
+                var bSuccess = false;
+                var oParam;
+                var sEntitySet;
+                var sMessage;
+
+                if(sTableName === "IODLVTab") {
+                    sEntitySet = "/IODLVSet";
+
+                    oParam = {
+                        "IONO": sIONo,
+                        "DLVSEQ": sDlvSeq,
+                        "DELETED": "X"
+                    };
+                }
+
+                if(sTableName === "IODETTab") {
+                    sEntitySet = "/IODETSet";
+
+                    oParam = {
+                        "IONO": sIONo,
+                        "DLVITEM": sDlvItem,
+                        "DELETED": "X"
+                    };
+                }
+
+                var oMarkAsDeletedModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+
+                console.log(oParam);
+
+                oMarkAsDeletedModel.update(sEntitySet, oParam,{
+                    method: "PUT",
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "MarkAsDeletedModel");
+                        if(sTableName === "IODLVTab") 
+                        { sMessage = "Delivery Seq " + sDlvSeq + " marked as deleted";}
+                        else if(sTableName === "IODETTab")
+                        { sMessage = "Delivery Item " + sDlvItem + " marked as deleted";}
+
+                        sap.m.MessageBox.information(sMessage);
+                        bSuccess = true;
+                    },
+                    error: function (err) { }
+                });
+
+                if(bSuccess === true)
+                {
+                    me._ConfirmMarkAsDelete.close();
+                }
+            },
+
+            onReleaseIO: function() {
+                sap.m.MessageBox.information("Execute ZFM_ERP_CREATEMATERIAL - IO Release Logic");
             }
         });
     });
