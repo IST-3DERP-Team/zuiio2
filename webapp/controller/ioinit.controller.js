@@ -17,6 +17,8 @@ sap.ui.define([
         var sbu;
         var IONOtxt;
 
+        var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({pattern : "MM/dd/yyyy" });
 
         return Controller.extend("zuiio2.controller.ioinit", {
@@ -35,6 +37,8 @@ sap.ui.define([
 
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this.setSmartFilterModel();  
+
+                this.onSearch();
             },
 
             onAfterRendering:function(){
@@ -339,21 +343,21 @@ sap.ui.define([
                 });
             },
 
-            onCopyIO: function(oEvent) {
-                // var oButton = oEvent.getSource();
-                // var ioNO = oButton.data("IONO").IONO;   
+            // onCopyIO: function(oEvent) {
+            //     // var oButton = oEvent.getSource();
+            //     // var ioNO = oButton.data("IONO").IONO;   
                 
-                alert("Copy IO");
+            //     alert("Copy IO");
                 
-                 //open the copy style dialog
-                 if (!that._CopyIODialog) {
-                    that._CopyIODialog = sap.ui.xmlfragment("zuiio2.view.fragments.CopyIO", that);
-                    that.getView().addDependent(that._CopyIODialog);
-                }
-                jQuery.sap.syncStyleClass("sapUiSizeCompact", that.getView(), that._LoadingDialog);
-                that._CopyIODialog.addStyleClass("sapUiSizeCompact");
-                that._CopyIODialog.open();
-            },
+            //      //open the copy style dialog
+            //      if (!that._CopyIODialog) {
+            //         that._CopyIODialog = sap.ui.xmlfragment("zuiio2.view.fragments.CopyIO", that);
+            //         that.getView().addDependent(that._CopyIODialog);
+            //     }
+            //     jQuery.sap.syncStyleClass("sapUiSizeCompact", that.getView(), that._LoadingDialog);
+            //     that._CopyIODialog.addStyleClass("sapUiSizeCompact");
+            //     that._CopyIODialog.open();
+            // },
 
             // onSalesDocReader: function () {
             //     var oModel = this.getOwnerComponent().getModel();
@@ -386,8 +390,8 @@ sap.ui.define([
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
                 // this.addDateFilters(aFilters);
 
-                console.log(vEntitySet);
-                console.log(aFilters);
+                // console.log(vEntitySet);
+                // console.log(aFilters);
 
                 // var lv_createdDateFilter = new sap.ui.model.Filter({
                 //     path: "SBU",
@@ -408,6 +412,237 @@ sap.ui.define([
                     }
                     ,
                     error: function (err) { }
+                });
+            },
+
+            onCopyIO: function (oEvent) {
+                var me = this;
+                var oTable = this.byId("IODynTable");
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var oTmpSelectedIndices = [];
+                var aData = oTable.getModel().getData().rows;
+                var oParamData = [];
+                var oParam = {};
+                var bProceed = true;
+                // var vSBU = this.getView().getModel("ui").getData().sbu;
+                // var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+
+                //reset variables
+                sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach(item => {
+                        sIONo = aData.at(item).IONO;
+                        sIOType = aData.at(item).IOTYPE;
+                        sIODesc = aData.at(item).IODESC;
+                        sStyleCd = aData.at(item).STYLECD;
+                        sSeason = aData.at(item).SEASONCD;
+                        sPlant = aData.at(item).PLANPLANT;
+
+                        if (sIONo === "" ) {
+                            bProceed = false;
+                        }
+                    })
+                    if (!bProceed)
+                    {
+                        me.closeLoadingDialog();
+                    } else
+                    {
+                        this.getSeasonsSet();   //SeasonsModel
+                        this.getPlantSet();     //PlantModel                        
+
+                        // alert(sIONo);
+                        if (!this._CopyIODialog) {
+                            this._CopyIODialog = sap.ui.xmlfragment("zuiio2.view.fragments.CopyIO", this);        
+                            this.getView().addDependent(this._CopyIODialog);       
+                        }         
+                        this._CopyIODialog.open();
+                        sap.ui.getCore().byId("iIONo").setValue(sIONo);
+                        sap.ui.getCore().byId("iIODesc").setValue(sIODesc);
+                        sap.ui.getCore().byId("iStyleCd").setValue(sStyleCd);
+                        sap.ui.getCore().byId("iSeasonCd").setValue(sSeason);
+                        sap.ui.getCore().byId("iPlant").setValue(sPlant);
+                    }                    
+                }
+            },
+            
+            onfragmentCopyIO: function() {
+                var newIONO;
+                //reset variables
+                var _this=this;
+                newIODesc = "", newStyleCd = "", newSeasonCd = "";
+                StyleCB = false, ColorCB = false, BOMCB = false, CostingCB = false;
+
+                //capture data of Inputs at Copy Style Fragment
+                var newIODesc = sap.ui.getCore().byId("newIODesc").getValue();
+                var newStyleCd = sap.ui.getCore().byId("newStyleCd").getValue();
+                var newSeasonCd = sap.ui.getCore().byId("newSeasonCd").getValue();
+                var newPlant = sap.ui.getCore().byId("newPlant").getValue();
+                var StyleCB = sap.ui.getCore().byId("StyleCB").getSelected();
+                var ColorCB = sap.ui.getCore().byId("ColorCB").getSelected();
+                var BOMCB = sap.ui.getCore().byId("BOMCB").getSelected();
+                var CostingCB = sap.ui.getCore().byId("CostingCB").getSelected();
+
+                //check: if New Style Checkbox value is true, require New Style Code entry.
+                if(StyleCB === true && newStyleCd === "")
+                {
+                    // alert("New Style Code entry required.");
+                    Common.showMessage("New Style is selected. New Style Code entry required.");
+                    return;
+                }
+
+                //build Parameters to be used into IOCOPYSet Entity
+                var oParam = {
+                    "Iono": sIONo,
+                    "Iotype": sIOType,
+                    "Iodesc": sIODesc,
+                    "Stylecd": sStyleCd,
+                    "Seasoncd": sSeason,
+                    "Purplant": sPlant,
+                    // "Znewiono": "",
+                    "Znewiodesc": newIODesc,
+                    "Znewstylecd": newStyleCd,
+                    "Znewseasoncd": newSeasonCd,
+                    "Znewpurplant": newPlant,
+                    "Zcheckstyle": StyleCB,
+                    "Zcheckcolor": ColorCB,
+                    "Zcheckbom": BOMCB,
+                    "Zcheckcost": CostingCB
+                };
+
+                var bSuccess = false;
+
+                var oCopyIOModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+
+                oCopyIOModel.create("/IOCOPYSet", oParam,{
+                    method: "POST",
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "CopyIOModel");
+
+                        //capture new IONO
+                        newIONO = oData.Znewiono;
+                        Common.showMessage("Successfully create IO# " + newIONO);
+                        _this._CopyIODialog.close();
+                        that.navToDetail(newIONO);
+                        
+                    },
+                    error: function (err) { }
+                });
+                   
+            },
+
+            getSeasonsSet: function() {
+                var oSHModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+                // oSHModel.setHeaders({
+                //     sbu: this._sbu
+                // });
+                oSHModel.read("/SEASONSet", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + this._sbu + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "SeasonsModel");
+                        console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                    },
+                    error: function (err) { }
+                });
+            },
+
+            getPlantSet: function() {
+                var oSHModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+                // oSHModel.setHeaders({
+                //     sbu: this._sbu
+                // });
+                oSHModel.read("/PLANTSet", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + this._sbu + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "PlantModel");
+                        console.log(oView.setModel(oJSONModel, "PlantModel"));
+                    },
+                    error: function (err) { }
+                });
+            },
+
+            onCloseDialog: function (oEvent) {
+                oEvent.getSource().getParent().close();
+            },
+
+            onCreateManualIO: function() {
+                Common.showMessage("Create IO Manually");
+            },
+
+            onCreateIOfromSalesDoc: function() {
+                Common.showMessage("Create IO from Sales Document");
+            },
+
+            onCreateIOfromStyle: function() {
+                Common.showMessage("Create IO from Style");
+            },
+
+            //export to spreadsheet utility
+            onExport: Utils.onExport
+            ,
+
+            onSaveTableLayout: function (oEvent) {
+                //saving of the layout of table
+                var me = this;
+                var ctr = 1;
+
+                var oTable = this.getView().byId("IODynTable");
+                var oColumns = oTable.getColumns();
+                var vSBU = this._sbu;
+
+                var oParam = {
+                    "SBU": vSBU,
+                    "TYPE": "IOINIT",
+                    "TABNAME": "ZERP_IOHDR",
+                    "TableLayoutToItems": []
+                };
+
+                //get information of columns, add to payload
+                oColumns.forEach((column) => {
+                    if (column.sId !== "Manage" && column.sId !== "Copy") {
+                        oParam.TableLayoutToItems.push({
+                            // COLUMNNAME: column.sId,
+                            COLUMNNAME: column.mProperties.sortProperty,
+                            ORDER: ctr.toString(),
+                            SORTED: column.mProperties.sorted,
+                            SORTORDER: column.mProperties.sortOrder,
+                            SORTSEQ: "1",
+                            VISIBLE: column.mProperties.visible,
+                            WIDTH: column.mProperties.width.replace('px', '')
+                        });
+
+                        ctr++;
+                    }
+                });
+                //call the layout save
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                oModel.create("/TableLayoutSet", oParam, {
+                    method: "POST",
+                    success: function (data, oResponse) {
+                        sap.m.MessageBox.information("Layout saved.");
+                    },
+                    error: function (err) {
+                        console.log(err);
+                        sap.m.MessageBox.error(err);
+                    }
                 });
             },
 

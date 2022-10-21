@@ -50,7 +50,7 @@
                             type="Ghost"
                             text="Delete"
                             icon="sap-icon://delete"
-                            press="onDelete('dlvsched')"
+                            press="onDelete('IODLVTab')"
                             tooltip="Delete"
                             visible="true" />
                         <Button id="btnCopyDlvSched" 

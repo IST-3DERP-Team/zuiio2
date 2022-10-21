@@ -20,6 +20,7 @@
 
             <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
                 <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onEditIO"/>
+                <Button type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onReleaseIO"/>
             </OverflowToolbar>
 
             <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
