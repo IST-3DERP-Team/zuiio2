@@ -129,3 +129,18 @@
 .sapUiSizeCompact .sapMInputBaseHeightMargin {
     margin: 0rem 0 !important;
 }
+
+.ioassmat .title {
+    background-color: bisque !important;
+    padding: 0.15rem 0.5rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: bold !important;    
+}
+
+.activeRow {
+    background-color: #e1ebf3 !important;
+}
+
+span[data-row-active-class=X] {
+    background-color: #c9fcd5 !important
+}

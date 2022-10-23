@@ -88,7 +88,7 @@ sap.ui.define([
             }
             jQuery.sap.syncStyleClass("sapUiSizeCompact", doc.getView(), doc._ProcessingDialog);
             
-            doc._ProcessingDialog.setTitle(msg);
+            doc._ProcessingDialog.setTitle(msg === undefined ? "Processing..." : msg);
             doc._ProcessingDialog.open();
         },
 

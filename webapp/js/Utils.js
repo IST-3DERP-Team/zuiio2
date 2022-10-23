@@ -446,7 +446,7 @@ sap.ui.define([
                 }
                 
             } 
-            else if (tabName === "styleMatListTab") {
+            else if (tabName === "styleMatListTab" || tabName === "ioMatListTab") {
                 property = '/rows';
                 aRows = oTable.getModel().getProperty(property);
             }

@@ -264,7 +264,7 @@
                                         <IconTabFilter text="{ddtext>/ACCBOM}" key="acc">
                                             <t:TreeTable id="styleAccBOMTab"
                                                 rows="{path:'DataModel>/results', parameters: {arrayNames:['items']}}"
-                                                visibleRowCountMode="Auto"
+                                                visibleRowCountMode="Auto" 
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
@@ -507,50 +507,52 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
-                            selectionMode="Single" 
-                            selectionBehavior="RowOnly"> 
+                            selectionMode="MultiToggle"
+                            firstVisibleRowChanged="onFirstVisibleRowChanged"
+                            cellClick="onCellClick"
+                            sort="onSort"
+                            filter="onFilter"> 
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                            </t:rowSettingsTemplate>                                    
+                            </t:rowSettingsTemplate>
                             <t:extension>
                                 <Toolbar>
                                     <ToolbarSpacer/>
                                     <Button id="btnSubmitMRP" 
                                         text="{ddtext>/SUBMITMRP}"
                                         icon="sap-icon://action"
-                                        press="onSubmitMRP('iomatlist')"
+                                        press="onSubmitMRP"
                                         tooltip="{ddtext>/SUBMITMRP}"
                                         visible="true" />
                                     <Button id="btnAssignMatNo" 
                                         text="{ddtext>/ASSIGNMATNO}"
                                         icon="sap-icon://multiselect-all"
-                                        press="onAssignMatNo('iomatlist')"
+                                        press="onAssignMatNo"
                                         tooltip="{ddtext>/ASSIGNMATNO}"
                                         visible="true" />
                                     <Button id="btnEditIOMatList" 
                                         icon="sap-icon://edit"
-                                        press="onEdit('iomatlist')"
+                                        press="onEdit('ioMatList')"
                                         tooltip="{ddtext>/EDIT}"
                                         visible="true" />
                                     <Button id="btnSaveIOMatList" 
-                                        text="{ddtext>/SAVE}"
                                         icon="sap-icon://save"
-                                        press="onSave('iomatlist')" 
+                                        press="onSave('ioMatList')" 
                                         tooltip="{ddtext>/SAVE}"
                                         visible="false" />
                                     <Button id="btnCancelIOMatList" 
                                         icon="sap-icon://sys-cancel"
-                                        press="onCancel('iomatlist')" 
+                                        press="onCancel('ioMatList')" 
                                         tooltip="{ddtext>/CANCEL}"
                                         visible="false" /> 
                                     <Button id="btnRefreshIOMatList" 
                                         icon="sap-icon://refresh"
-                                        press="onRefresh('iomatlist')" 
+                                        press="onRefresh('ioMatList')" 
                                         tooltip="{ddtext>/REFRESH}"
                                         visible="true" /> 
                                     <Button id="btnExportIOMatList" 
                                         icon="sap-icon://excel-attachment"
-                                        press="onExport('iomatlist')" 
+                                        press="onExport" 
                                         tooltip="{ddtext>/EXCELEXPORT}"
                                         visible="true"> 
                                         <customData>
@@ -559,12 +561,12 @@
                                     </Button>                                           
                                     <Button id="btnFullScreenIOMatList" 
                                         icon="sap-icon://full-screen"
-                                        press="onTableResize('iomatlist', 'max')" 
+                                        press="onTableResize('ioMatList', 'max')" 
                                         tooltip="{ddtext>/FULLSCREEN}"
                                         visible="true" /> 
                                     <Button id="btnExitFullScreenIOMatList" 
                                         icon="sap-icon://exit-full-screen"
-                                        press="onTableResize('iomatlist', 'min')" 
+                                        press="onTableResize('ioMatList', 'min')" 
                                         tooltip="{ddtext>/EXITFULLSCREEN}"
                                         visible="false" />
                                 </Toolbar>
