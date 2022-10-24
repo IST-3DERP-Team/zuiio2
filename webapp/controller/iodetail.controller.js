@@ -58,6 +58,14 @@ sap.ui.define([
                 data.editMode = false;
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "FilesEditModeModel");
+
+                var oDelegateKeyUp = {
+                    onkeyup: function(oEvent){
+                        that.onKeyUp(oEvent);
+                    }
+                };
+
+                this.byId("ioMatListTab").addEventDelegate(oDelegateKeyUp);
             },
 
             _routePatternMatched: function (oEvent) {
@@ -2919,7 +2927,7 @@ sap.ui.define([
             },
 
             onTableResize(arg1, arg2) {
-                console.log(arg1, arg2)
+                // console.log(arg1, arg2)
                 if (arg1 === "ioMatList") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
@@ -2935,62 +2943,56 @@ sap.ui.define([
             },
 
             onCellClick: function(oEvent) {
-                var oTable = this.byId("ioMatListTab");
-                var iCurrRow = +oEvent.getParameters().rowBindingContext.sPath.replace("/rows/", "");
-                var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
-                console.log(oTable.getBinding("rows"));
-                oTable.getRows().forEach(row => row.removeStyleClass("activeRow"))
-                oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
-                
-                if (oTable.getBinding("rows").aIndices.length > 0) {
-                    var iRowIndex = -1;
-
-                    oTable.getBinding("rows").aIndices.forEach((item, index) => {
-                        if (item === iCurrRow) iRowIndex = index;
+                if (oEvent.getParameters().rowBindingContext) {
+                    var oTable = this.byId("ioMatListTab");
+                    var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+    
+                    oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                    oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                    
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow")
                     })
-
-                    oTable.getRows()[iStartIndex === 0 ? iRowIndex : iRowIndex - iStartIndex].addStyleClass("activeRow");
                 }
-                else oTable.getRows()[iStartIndex === 0 ? iCurrRow : iCurrRow - iStartIndex].addStyleClass("activeRow");
-                
-                oTable.getModel().setProperty(oEvent.getParameters().rowBindingContext.sPath + "/ACTIVE", "X");
             },
             
             onSort: function(oEvent) {
-                setTimeout(() => {
-                    var oTable = this.byId("ioMatListTab");
-                    var oData = oTable.getBinding("rows").oList;
-                    // var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
-                    var iLength = oTable.getBinding("rows").iLength;
-                    
-                    for (var i = 0; i < iLength; i++) {
-                        var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
+                var oTable = this.byId("ioMatListTab");
 
-                        if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[i].addStyleClass("activeRow");
-                        else oTable.getRows()[i].removeStyleClass("activeRow");
-                    }
-                }, 5);
+                setTimeout(() => {
+                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
+               
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow")
+                    })
+                }, 1);
             },
 
             onFilter: function(oEvent) {
-                setTimeout(() => {
-                    var oTable = this.byId("ioMatListTab");
-                    var oData = oTable.getBinding("rows").oList;
-                    // var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
-                    var iLength = oTable.getBinding("rows").iLength;
-                    
-                    for (var i = 0; i < iLength; i++) {
-                        var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
+                var oTable = this.byId("ioMatListTab"); 
 
-                        if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[i].addStyleClass("activeRow");
-                        else oTable.getRows()[i].removeStyleClass("activeRow");
-                    }
-                }, 5);
+                setTimeout(() => {
+                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
+               
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow")
+                    })
+                }, 1);
             },
 
             onFirstVisibleRowChanged: function (oEvent) {
+                var oTable = this.byId("ioMatListTab");
+                
                 setTimeout(() => {
-                    var oTable = this.byId("ioMatListTab");
                     var oData = oTable.getBinding("rows").oList;
                     var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
                     var iLength = oTable.getBinding("rows").iLastLength + iStartIndex;
@@ -3009,7 +3011,42 @@ sap.ui.define([
                             else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
                         }
                     }
-                }, 5);
+                }, 1);
+            },
+
+            onKeyUp(oEvent) {
+                if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
+                    var oTable = this.byId("ioMatListTab");
+
+                    if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
+                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
+                    
+                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                        oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                        
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        })
+                    }
+                }
+            },
+
+            onColumnUpdated: function (oEvent) {
+                var oTable = this.byId("ioMatListTab");
+
+                setTimeout(() => {
+                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
+                    
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow");
+                    })                    
+                }, 1);
             },
 
             onExport: Utils.onExport,

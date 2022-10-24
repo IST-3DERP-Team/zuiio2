@@ -511,7 +511,12 @@
                             firstVisibleRowChanged="onFirstVisibleRowChanged"
                             cellClick="onCellClick"
                             sort="onSort"
-                            filter="onFilter"> 
+                            filter="onFilter"
+                            columnFreeze="onColumnUpdated"
+                            columnMove="onColumnUpdated"
+                            columnResize="onColumnUpdated"
+                            columnSelect="onColumnUpdated"
+                            columnVisibility="onColumnUpdated"> 
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </t:rowSettingsTemplate>
