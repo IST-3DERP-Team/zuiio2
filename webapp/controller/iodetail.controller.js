@@ -67,7 +67,7 @@ sap.ui.define([
                 this._dataMode = "READ";
                 this._styleVer = "";
 
-                alert(this._ioNo);
+                // alert(this._ioNo);
 
                 //set all as no changes at first load
                 this._headerChanged = false;
@@ -2631,15 +2631,15 @@ sap.ui.define([
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
                         me.byId("ioMatListTab").bindRows("/rows");
 
-                        if (oData.results.length > 0) {
-                            var oInterval = setInterval(() => {
-                                if (me.byId("ioMatListTab").getRows()[0] !== undefined) {
-                                    // console.log(me.byId("ioMatListTab").getRows()[0])
-                                    me.byId("ioMatListTab").getRows()[0].addStyleClass("activeRow");
-                                    clearInterval(oInterval);
-                                }
-                            }, 1000);
-                        }
+                        // if (oData.results.length > 0) {
+                        //     var oInterval = setInterval(() => {
+                        //         if (me.byId("ioMatListTab").getRows()[0] !== undefined) {
+                        //             // console.log(me.byId("ioMatListTab").getRows()[0])
+                        //             me.byId("ioMatListTab").getRows()[0].addStyleClass("activeRow");
+                        //             clearInterval(oInterval);
+                        //         }
+                        //     }, 1000);
+                        // }
                     },
                     error: function (err) { }
                 })
@@ -2868,6 +2868,9 @@ sap.ui.define([
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
                     }                    
                 }
+                else {
+                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
             },
 
             extendMaterial(arg) {
@@ -2906,9 +2909,9 @@ sap.ui.define([
                             me.byId(arg + "Tab").getModel().setProperty("/rows", oData.results);
                             me.byId(arg + "Tab").bindRows("/rows");
 
-                            setTimeout(() => {
-                                me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
-                            }, 50);
+                            // setTimeout(() => {
+                            //     me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
+                            // }, 50);
                         },
                         error: function (err) { }
                     })                    
@@ -2932,47 +2935,81 @@ sap.ui.define([
             },
 
             onCellClick: function(oEvent) {
-                // var oTable = this.byId("ioMatListTab");
-                // var iCurrRow = +oEvent.getParameters().rowBindingContext.sPath.replace("/rows/", "");
-                // var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                var oTable = this.byId("ioMatListTab");
+                var iCurrRow = +oEvent.getParameters().rowBindingContext.sPath.replace("/rows/", "");
+                var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                console.log(oTable.getBinding("rows"));
+                oTable.getRows().forEach(row => row.removeStyleClass("activeRow"))
+                oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
                 
-                // oTable.getRows().forEach(row => row.removeStyleClass("activeRow"))
-                // oTable.getRows()[iStartIndex === 0 ? iCurrRow : iCurrRow - iStartIndex].addStyleClass("activeRow");
-                // oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
-                // oTable.getModel().setProperty(oEvent.getParameters().rowBindingContext.sPath + "/ACTIVE", "X");
-                // console.log(oTable.getBinding("rows"));
+                if (oTable.getBinding("rows").aIndices.length > 0) {
+                    var iRowIndex = -1;
+
+                    oTable.getBinding("rows").aIndices.forEach((item, index) => {
+                        if (item === iCurrRow) iRowIndex = index;
+                    })
+
+                    oTable.getRows()[iStartIndex === 0 ? iRowIndex : iRowIndex - iStartIndex].addStyleClass("activeRow");
+                }
+                else oTable.getRows()[iStartIndex === 0 ? iCurrRow : iCurrRow - iStartIndex].addStyleClass("activeRow");
+                
+                oTable.getModel().setProperty(oEvent.getParameters().rowBindingContext.sPath + "/ACTIVE", "X");
             },
             
             onSort: function(oEvent) {
-                // setTimeout(() => {
-                //     var oTable = this.byId("ioMatListTab");
-                //     var oData = oTable.getBinding("rows").oList;
-                //     var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
-                //     var iLength = oTable.getBinding("rows").iLastLength;
-                //     console.log(oTable.getBinding("rows"))
-                //     for (var i = iStartIndex; i < iLength; i++) {
-                //         if (oData[i].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
-                //         else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
-                //     } 
-                // }, 5);
+                setTimeout(() => {
+                    var oTable = this.byId("ioMatListTab");
+                    var oData = oTable.getBinding("rows").oList;
+                    // var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                    var iLength = oTable.getBinding("rows").iLength;
+                    
+                    for (var i = 0; i < iLength; i++) {
+                        var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
+
+                        if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[i].addStyleClass("activeRow");
+                        else oTable.getRows()[i].removeStyleClass("activeRow");
+                    }
+                }, 5);
             },
 
             onFilter: function(oEvent) {
+                setTimeout(() => {
+                    var oTable = this.byId("ioMatListTab");
+                    var oData = oTable.getBinding("rows").oList;
+                    // var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                    var iLength = oTable.getBinding("rows").iLength;
+                    
+                    for (var i = 0; i < iLength; i++) {
+                        var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
 
+                        if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[i].addStyleClass("activeRow");
+                        else oTable.getRows()[i].removeStyleClass("activeRow");
+                    }
+                }, 5);
             },
 
             onFirstVisibleRowChanged: function (oEvent) {
-                // setTimeout(() => {
-                //     var oTable = this.byId("ioMatListTab");
-                //     var oData = oTable.getBinding("rows").oList;
-                //     var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
-                //     var iLength = oTable.getBinding("rows").iLastLength;
-                //     console.log(oTable.getBinding("rows"))
-                //     for (var i = iStartIndex; i < iLength; i++) {
-                //         if (oData[i].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
-                //         else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
-                //     } 
-                // }, 5);
+                setTimeout(() => {
+                    var oTable = this.byId("ioMatListTab");
+                    var oData = oTable.getBinding("rows").oList;
+                    var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                    var iLength = oTable.getBinding("rows").iLastLength + iStartIndex;
+
+                    if (oTable.getBinding("rows").aIndices.length > 0) {
+                        for (var i = iStartIndex; i < iLength; i++) {
+                            var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
+    
+                            if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
+                            else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
+                        }
+                    }
+                    else {
+                        for (var i = iStartIndex; i < iLength; i++) {
+                            if (oData[i].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
+                            else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
+                        }
+                    }
+                }, 5);
             },
 
             onExport: Utils.onExport,

@@ -131,7 +131,6 @@
     margin: 0rem 0 !important;
 }
 
-<<<<<<< HEAD
 .ioassmat .title {
     background-color: bisque !important;
     padding: 0.15rem 0.5rem !important;
@@ -145,7 +144,8 @@
 
 span[data-row-active-class=X] {
     background-color: #c9fcd5 !important
-=======
+
+}
 /* IconTabBar spacing adjustment */
 .sapMITB.sapUiResponsiveContentPadding>.sapMITBContainerContent>.sapMITBContent {
     padding: 0rem !important;
@@ -180,5 +180,4 @@ span[data-row-active-class=X] {
 .sapUiVlt.sapUiContentPadding>.sapuiVltCell:not(:last-child) {
     padding-bottom: 0rem !important;
     box-sizing: border-box;
->>>>>>> c1f679c619f1c7bc21c9749dbaeac21b0c392086
 }
