@@ -233,7 +233,7 @@ sap.ui.define([
                 }else if (sColumnId === "STATUSCD") { //display infolabel for Status Code
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CMP' ? 8 : ${" + sColumnId + "} === 'CRT' ? 3 : ${" + sColumnId + "} === 'REL' ? 8 : ${" + sColumnId + "} === 'EXT' ? 5 : 1}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 8 : ${" + sColumnId + "} === 'REL' ? 9 : 1}"
                     })
                 } else if (sColumnType === "SEL") { //Manage button
                     oColumnTemplate = new sap.m.Button({
@@ -467,6 +467,11 @@ sap.ui.define([
                         sap.ui.getCore().byId("iStyleCd").setValue(sStyleCd);
                         sap.ui.getCore().byId("iSeasonCd").setValue(sSeason);
                         sap.ui.getCore().byId("iPlant").setValue(sPlant);
+
+                        sap.ui.getCore().byId("newIODesc").setValue("");
+                        sap.ui.getCore().byId("newStyleCd").setValue("");
+                        sap.ui.getCore().byId("newSeasonCd").setValue("");
+                        sap.ui.getCore().byId("newPlant").setValue("");
                     }                    
                 }
             },
@@ -531,7 +536,7 @@ sap.ui.define([
                         newIONO = oData.Znewiono;
                         Common.showMessage("Successfully create IO# " + newIONO);
                         _this._CopyIODialog.close();
-                        that.navToDetail(newIONO);
+                        _this.navToDetail(newIONO);
                         
                     },
                     error: function (err) { }
@@ -583,16 +588,11 @@ sap.ui.define([
                 oEvent.getSource().getParent().close();
             },
 
-            onCreateManualIO: function() {
-                Common.showMessage("Create IO Manually");
-            },
-
-            onCreateIOfromSalesDoc: function() {
-                Common.showMessage("Create IO from Sales Document");
-            },
-
-            onCreateIOfromStyle: function() {
-                Common.showMessage("Create IO from Style");
+            onCreateIO: function(createTyp) {
+                var screateTyp = createTyp;
+                // Common.showMessage("Create IO : " + screateTyp);
+                that.setChangeStatus(false); //remove change flag
+                that.navToDetail("NEW"); //navigate to detail page
             },
 
             //export to spreadsheet utility

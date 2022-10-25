@@ -53,7 +53,7 @@
                             </f:FormElement>
                             <f:FormElement label="New Season">
                                 <f:fields>
-                                    <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" suggestionItems="{SeasonsModel>/results}">
+                                    <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" showValueHelp="true" suggestionItems="{SeasonsModel>/results}">
                                         <suggestionItems>
                                             <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
                                         </suggestionItems>
