@@ -20,186 +20,181 @@
     <Page id="page" title="{i18n>title}" showHeader="false">
         <content>
         <VBox fitContainer="true">
-                
-                <!-- test mca branch -->
-        <!-- ### SMART FILTER ### -->
-        <!-- <smartFilterBar:SmartFilterBar id="smartFilterBar" entitySet="IOHDRSet" search="onSearch" filterContainerWidth="15rem" useToolbar="false" useDateRangeType="true">
-            <smartFilterBar:controlConfiguration>
-                <smartFilterBar:ControlConfiguration id="IONO" visibleInAdvancedArea="true" label="IO No" key="IONO"> -->
-                    <!-- <smartFilterBar:defaultFilterValues>
-				        <smartFilterBar:SelectOption low="VER">
-					    </smartFilterBar:SelectOption>
-				    </smartFilterBar:defaultFilterValues> -->
-				<!-- </smartFilterBar:ControlConfiguration>
-            </smartFilterBar:controlConfiguration>                      
-        </smartFilterBar:SmartFilterBar> -->
 
+        <!-- SMART FILTER BAR-->                
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="7rem" useToolbar="false" useDateRangeType="true">
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SBU" groupId="_BASIC" label="{i18n>SBU}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxSBU"
-                                    selectedKey="{ui>/sbu}"
-                                    change="onSBUChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_SBU_SH'
-                                    }">
-                                    <core:Item key="{SBU}" text="{SBU}" />
-                                </ComboBox>       
-                            </smartfilterbar:customControl> -->
-                            </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="SBU" groupId="_BASIC" label="{i18n>SBU}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxSBU"
+                                selectedKey="{ui>/sbu}"
+                                change="onSBUChange"
+                                items="{
+                                    path: '/ZVB_3DERP_SBU_SH'
+                                }">
+                                <core:Item key="{SBU}" text="{SBU}" />
+                            </ComboBox>       
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
                     
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SALESGRP" groupId="_BASIC" label="{i18n>SALESGRP}" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxSALESGRP"
-                                    selectedKey="{ui>/sbu}"
-                                    change="onSALESGRPChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_SALESGRP_SH'
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="SALESGRP" groupId="_BASIC" label="{i18n>SALESGRP}" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxSALESGRP"
+                                selectedKey="{ui>/sbu}"
+                                change="onSALESGRPChange"
+                                items="{
+                                    path: '/ZVB_3DERP_SALESGRP_SH'
+                                }">
+                                <core:Item key="{SALESGRP}" text="{SALESGRP} - {DESCRIPTION}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
+
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxSEASON"
+                                selectedKey="{ui>/seasoncd}"
+                                change="onSEASONChange"
+                                items="{
+                                    path: '/ZVB_3DERP_SEASONCD_SH'
+                                }">
+                                  <core:Item key="{SEASONCD}" text="{SEASONCD} - {DESCRIPTION}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
+
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxCUSTGRP"
+                                selectedKey="{ui>/CUSTGRP}"
+                                change="onCUSTGRPhange"
+                                items="{
+                                    path: '/ZVB_3DERP_CUSTGRP_SH'
                                     }">
-                                    <core:Item key="{SALESGRP}" text="{SALESGRP} - {DESCRIPTION}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                            </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+                                <core:Item key="{CUSTGRP}" text="{CUSTGRP} - {DESCRIPTION}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
 
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxSEASON"
-                                    selectedKey="{ui>/seasoncd}"
-                                    change="onSEASONChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_SEASONCD_SH'
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxPLANPLANT"
+                                selectedKey="{ui>/PLANPLANT}"
+                                change="onPLANPLANTChange"
+                                items="{
+                                    path: '/ZVB_3DERP_PLANPLANT_SH'
                                     }">
-                                    <core:Item key="{SEASONCD}" text="{SEASONCD} - {DESCRIPTION}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                        </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+                                <core:Item key="{PLANPLANT}" text="{PLANPLANT}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
 
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxCUSTGRP"
-                                    selectedKey="{ui>/CUSTGRP}"
-                                    change="onCUSTGRPhange"
-                                    items="{
-                                        path: '/ZVB_3DERP_CUSTGRP_SH'
-                                    }">
-                                    <core:Item key="{CUSTGRP}" text="{CUSTGRP} - {DESCRIPTION}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                        </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxIOTYPE"
+                                selectedKey="{ui>/IOTYPE}"
+                                change="onIOTYPEChange"
+                                items="{
+                                    path: '/ZVB_3DERP_IOTYP_SH'
+                                }">
+                                <core:Item key="{IOTYPE}" text="{IOTYPE} - {DESCRIPTION}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
 
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxPLANPLANT"
-                                    selectedKey="{ui>/PLANPLANT}"
-                                    change="onPLANPLANTChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_PLANPLANT_SH'
-                                    }">
-                                    <core:Item key="{PLANPLANT}" text="{PLANPLANT}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                        </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+            <smartfilterbar:controlConfiguration>
+                <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                            <ComboBox id="cboxSTYLECD"
+                                selectedKey="{ui>/STYLECD}"
+                                change="onSTYLECDChange"
+                                items="{
+                                    path: '/ZVB_3DERP_STYLECD_SH'
+                                }">
+                                <core:Item key="{STYLECD}" text="{STYLECD}" />
+                            </ComboBox>                                   
+                        </smartfilterbar:customControl> -->
+                </smartfilterbar:ControlConfiguration>
+            </smartfilterbar:controlConfiguration>
 
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxIOTYPE"
-                                    selectedKey="{ui>/IOTYPE}"
-                                    change="onIOTYPEChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_IOTYP_SH'
-                                    }">
-                                    <core:Item key="{IOTYPE}" text="{IOTYPE} - {DESCRIPTION}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                        </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+            <!-- SMART FILTER BAR LAYOUT DATA-->
+            <smartfilterbar:layoutData>
+                <FlexItemData growFactor="0"/>
+            </smartfilterbar:layoutData>
 
-                    <smartfilterbar:controlConfiguration>
-                        <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
-                        <!-- <smartfilterbar:customControl>
-                                <ComboBox id="cboxSTYLECD"
-                                    selectedKey="{ui>/STYLECD}"
-                                    change="onSTYLECDChange"
-                                    items="{
-                                        path: '/ZVB_3DERP_STYLECD_SH'
-                                    }">
-                                    <core:Item key="{STYLECD}" text="{STYLECD}" />
-                                </ComboBox>                                   
-                            </smartfilterbar:customControl> -->
-                        </smartfilterbar:ControlConfiguration>
-                    </smartfilterbar:controlConfiguration>
+        </smartfilterbar:SmartFilterBar>
 
-                    <smartfilterbar:layoutData>
-                        <FlexItemData growFactor="0"/>
-                    </smartfilterbar:layoutData>
-                </smartfilterbar:SmartFilterBar>
-
+        <!-- STATISTICS TOOLBAR-->
         <Toolbar>
-                <GenericTag id="_IDGenGenericTag1" text="Forecast" design="StatusIconHidden" status="Warning">
-					<ObjectNumber id="forecastNumber" state="Warning" emphasized="false"/>
-				</GenericTag>
+            <GenericTag id="_IDGenGenericTag1" text="Forecast" design="StatusIconHidden" status="Warning">
+				<ObjectNumber id="forecastNumber" state="Warning" emphasized="false"/>
+			</GenericTag>
 
-				<GenericTag id="_IDGenGenericTag3" text="Order"  design="StatusIconHidden" status="Error">
-					<ObjectNumber id="orderNumber" state="Error" emphasized="false"/>
-				</GenericTag>
+			<GenericTag id="_IDGenGenericTag3" text="Order"  design="StatusIconHidden" status="Error">
+				<ObjectNumber id="orderNumber" state="Error" emphasized="false"/>
+			</GenericTag>
 
-				<GenericTag id="_IDGenGenericTag4" text="Shipped"  design="StatusIconHidden" status="Success">
-					<ObjectNumber id="shippedNumber" state="Success" emphasized="false"/>
-				</GenericTag>
-            </Toolbar>
-            <Toolbar>
-                <Title id="IOCount"/>
-                <Title text="{i18n>IONo}" class="sapUiTinyMarginBegin"/>
-				<ToolbarSpacer id="_IDGenToolbarSpacer1"/>                    
-                <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document">
-			        <menu>
-				        <Menu id="_IDGenMenu1">
-                            <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateManualIO"/>
-                            <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIOfromSalesDoc"/>
-				            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIOfromStyle" />
-                        </Menu>
-			        </menu>                    
+			<GenericTag id="_IDGenGenericTag4" text="Shipped"  design="StatusIconHidden" status="Success">
+				<ObjectNumber id="shippedNumber" state="Success" emphasized="false"/>
+			</GenericTag>
+        </Toolbar>
+
+        <!-- MENU TOOLBAR-->
+        <Toolbar>
+            <Title id="IOCount"/>
+            <Title text="{i18n>IONo}" class="sapUiTinyMarginBegin"/>
+			<ToolbarSpacer id="_IDGenToolbarSpacer1"/>                    
+            <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document">
+			    <menu>
+			        <Menu id="_IDGenMenu1">
+                        <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateIO('Manual')"/>
+                        <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIO('SalesDoc')"/>
+			            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIO('Style')" />
+                    </Menu>
+			    </menu>                    
 		        </MenuButton>
-                <Button text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO"/>
-                <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport">
-                    <customData>
-                        <core:CustomData key="TableName" value="IODynTable" />
-                    </customData>
-                </Button>
+                    <Button text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO"/>
+                    <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport">
+                        <customData>
+                            <core:CustomData key="TableName" value="IODynTable" />
+                        </customData>
+                    </Button>
                 <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveTableLayout"/>
 
-                <layoutData>
-                    <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
-                </layoutData>
-            </Toolbar>
+            <layoutData>
+                <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
+            </layoutData>
+        </Toolbar>
 
-            <t:Table id="IODynTable" 
-                class="sapUiTinyMarginBottom sapUiTinyMarginBegin sapUiTinyMarginEnd"
-                visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true" 
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single" 
-                selectionBehavior="RowOnly"
-                rowSelectionChange="onRowChange"
-                alternateRowColors="true"
-                sort="onSorted">
+        <!-- IO INITIAL TABLE -->
+        <t:Table id="IODynTable" 
+            class="sapUiTinyMarginBottom sapUiTinyMarginBegin sapUiTinyMarginEnd"
+            visibleRowCountMode="Auto"
+            showColumnVisibilityMenu="true" 
+            enableColumnFreeze="true"
+            enableCellFilter="true"
+            selectionMode="Single" 
+            selectionBehavior="RowOnly"
+            rowSelectionChange="onRowChange"
+            alternateRowColors="true"
+            sort="onSorted">
 
-                <t:layoutData>
-                    <FlexItemData growFactor="1" baseSize="0%"/>
-                </t:layoutData>  
-            </t:Table>    
+            <!-- TABLE LAYOUT DATA -->
+            <t:layoutData>
+                <FlexItemData growFactor="1" baseSize="0%"/>
+            </t:layoutData>  
+        </t:Table>    
 
         </VBox>
         </content>
