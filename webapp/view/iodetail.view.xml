@@ -126,7 +126,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly"> 
+                                                selectionBehavior="RowSelector"> 
                                                 <t:rowSettingsTemplate>
                                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                                 </t:rowSettingsTemplate>                                    
@@ -161,7 +161,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly"> 
+                                                selectionBehavior="RowSelector"> 
                                                 <t:rowSettingsTemplate>
                                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                                 </t:rowSettingsTemplate>                                    
@@ -196,7 +196,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly"> 
+                                                selectionBehavior="RowSelector"> 
                                             </t:Table>                                        
                                         </IconTabFilter>
                                         <!-- <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
@@ -215,7 +215,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly">                                   
+                                                selectionBehavior="RowSelector">                                   
                                                 <t:extension>
                                                     <Toolbar>
                                                         <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin"/>
@@ -244,7 +244,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly">   
+                                                selectionBehavior="RowSelector">   
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
@@ -268,7 +268,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly">   
+                                                selectionBehavior="RowSelector">   
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
@@ -291,7 +291,7 @@
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly">                                   
+                                                selectionBehavior="RowSelector">                                   
                                                 <!-- <uiT:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
