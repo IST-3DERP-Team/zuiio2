@@ -9,7 +9,7 @@
     xmlns:t="sap.ui.table">
 
     <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent" >
-            <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEditAttrib"/>
+            <Button id="onIOAttribEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEdit('IOATTRIB')"/>
     </OverflowToolbar>
 
     <!-- #### DYNAMIC TABLE #### --> 

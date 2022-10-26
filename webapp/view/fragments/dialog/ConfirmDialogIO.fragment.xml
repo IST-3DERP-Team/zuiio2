@@ -1,0 +1,11 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+	<Dialog>
+		<Panel>
+			<Text text="{/Text}"/>
+		</Panel>
+		<buttons>
+			<Button text="{i18n>Yes}" press="onConfirmMarkAsDelete({/tSource})"/>
+			<Button text="{i18n>Cancel}" press="onCloseDialog({/tSource})"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
