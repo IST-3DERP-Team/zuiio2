@@ -105,6 +105,15 @@
                     "localUri": "localService/ZGW_3DERP_IOMATLIST_SRV/metadata.xml"
                 }
             },
+            "ZGW_3DERP_SH_SRV": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_SH_SRV/",
+                "type": "OData",
+                "settings": {
+                    "odataVersion": "2.0",
+                    "annotations": [],
+                    "localUri": "localService/ZGW_3DERP_SH_SRV/metadata.xml"
+                }
+            },
             "ZGW_3DERP_RFC_SRV": {
                 "uri": "/sap/opu/odata/sap/ZGW_3DERP_RFC_SRV/",
                 "type": "OData",
@@ -235,6 +244,18 @@
                     "refreshAfterChange": false
                 }
             },
+            "ASSIGNMATNO_MODEL": {
+                "type": "sap.ui.model.json.JSONModel"
+            },
+            "ZGW_3DERP_SH_SRV": {
+                "dataSource": "ZGW_3DERP_SH_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
+            },
             "ZGW_3DERP_RFC_SRV": {
                 "dataSource": "ZGW_3DERP_RFC_SRV",
                 "preload": true,
@@ -277,6 +298,14 @@
                     "target": [
                         "TargetIODetail"
                     ]
+                },
+                {
+                    "name": "RouteIOAssignMaterial",
+                    "pattern": "RouteIOAssignMaterial/{iono}/{sbu}",
+                    "greedy": false,
+                    "target": [
+                        "TargetIOAssignMaterial"
+                    ]
                 }
             ],
             "targets": {
@@ -293,6 +322,13 @@
                     "clearControlAggregation": false,
                     "viewId": "iodetail",
                     "viewName": "iodetail"
+                },
+                "TargetIOAssignMaterial": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "AssignMaterial",
+                    "viewName": "AssignMaterial"
                 }
             }
         },

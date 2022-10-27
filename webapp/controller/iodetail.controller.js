@@ -60,13 +60,17 @@ sap.ui.define([
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "FilesEditModeModel");
 
-                var oDelegateKeyUp = {
+                var oTableEventDelegate = {
                     onkeyup: function(oEvent){
                         that.onKeyUp(oEvent);
+                    },
+
+                    onAfterRendering: function(oEvent) {
+                        that.onAfterTableRendering(oEvent);
                     }
                 };
 
-                this.byId("ioMatListTab").addEventDelegate(oDelegateKeyUp);
+                this.byId("ioMatListTab").addEventDelegate(oTableEventDelegate);                
             },
 
             _routePatternMatched: function (oEvent) {
@@ -75,6 +79,8 @@ sap.ui.define([
                 this._styleNo = "";
                 this._dataMode = "READ";
                 this._styleVer = "";
+                this._prodplant = "";
+                this._tableRendered = "";
 
                 // alert(this._ioNo);
 
@@ -1113,6 +1119,7 @@ sap.ui.define([
                         // console.log("Header Data");
                         // console.log(oData);
                         me._styleVer = oData.VERNO;
+                        me._prodplant = oData.PRODPLANT;
                         // oData.results.forEach(item => {
                         //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
                         //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
@@ -1351,6 +1358,7 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
                     },
                     success: function (oData, response) {
+                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("colorTab").getModel().setProperty("/rows", oData.results);
                         me.byId("colorTab").bindRows("/rows");
                     },
@@ -1362,6 +1370,7 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "'"
                     },
                     success: function (oData, response) {
+                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
                     },
@@ -1373,6 +1382,7 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
                     },
                     success: function (oData, response) {
+                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
                     },
@@ -1721,13 +1731,14 @@ sap.ui.define([
 
                                 var aDataFAB = [];
 
-                                aFABBOM.forEach(item => {
+                                aFABBOM.forEach((item, index) => {
                                     var oTmpData = {};
         
                                     Object.keys(oData.results[0]).forEach(key => {
                                         oTmpData[key.toUpperCase()] = item[key];
                                     })
         
+                                    oTmpData["ACTIVE"] = index === 0 ? "X" : "";
                                     aDataFAB.push(oTmpData);
                                 })
                                 
@@ -1793,13 +1804,14 @@ sap.ui.define([
 
                                 var aDataACC = [];
 
-                                aACCBOM.forEach(item => {
+                                aACCBOM.forEach((item, index) => {
                                     var oTmpData = {};
         
                                     Object.keys(oData.results[0]).forEach(key => {
                                         oTmpData[key.toUpperCase()] = item[key];
                                     })
         
+                                    oTmpData["ACTIVE"] = index === 0 ? "X" : "";
                                     aDataACC.push(oTmpData);
                                 })
                                 
@@ -1883,13 +1895,14 @@ sap.ui.define([
                         // console.log(oData)
                         var aData = [];
 
-                        oData.results.forEach(item => {
+                        oData.results.forEach((item, index) => {
                             var oTmpData = {};
 
                             Object.keys(oData.results[0]).forEach(key => {
                                 oTmpData[key.toUpperCase()] = item[key];
                             })
 
+                            oTmpData["ACTIVE"] = index === 0 ? "X" : "";
                             aData.push(oTmpData);
                         })
 
@@ -2054,6 +2067,8 @@ sap.ui.define([
 
                         //set the table columns/rows
                         rowData = oData.results;
+                        unique.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+
                         var oJSONModel = new JSONModel();
                         oJSONModel.setData({
                             results: unique,
@@ -2166,6 +2181,7 @@ sap.ui.define([
                     this._validationErrors = [];
                     this._sTableModel = arg;
                     this._dataMode = "EDIT";
+                    this.setActiveRowHighlightByTableId(arg + "Tab");
 
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
@@ -2230,6 +2246,7 @@ sap.ui.define([
                     this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
                     this.byId(arg + "Tab").bindRows("/rows");
                     this._dataMode = "READ";
+                    this.setActiveRowHighlightByTableId(arg + "Tab");
 
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
@@ -2321,6 +2338,8 @@ sap.ui.define([
                                                 me.byId("btnSaveIOMatList").setVisible(false);
                                                 me.byId("btnCancelIOMatList").setVisible(false);
                                             }
+
+                                            me.setActiveRowHighlightByTableId(arg + "Tab");
 
                                             var oIconTabBar = me.byId("idIconTabBarInlineMode");
                                             oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
@@ -2740,7 +2759,8 @@ sap.ui.define([
                     this.setRowReadMode(this._sTableModel);
                     this.byId(this._sTableModel + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
                     this.byId(this._sTableModel + "Tab").bindRows("/rows");
-                    this._dataMode = "EDIT";
+                    this._dataMode = "READ";
+                    this.setActiveRowHighlightByTableId(this._sTableModel + "Tab");
 
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
@@ -2965,24 +2985,21 @@ sap.ui.define([
                     }));
 
                 var vIONo = this._ioNo; //"1000115";
+
+                this._oModelIOMatList.setHeaders({
+                    SBU: this._sbu,
+                    PRODPLANT: this._prodplant
+                });
+                
                 this._oModelIOMatList.read('/MainSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
                     },
                     success: function (oData, response) {
-                        oData.results.forEach((row, idx) => row.ACTIVE = idx === 0 ? "X" : "");
+                        oData.results.forEach((row, index) => row.ACTIVE = index === 0 ? "X" : "");
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
                         me.byId("ioMatListTab").bindRows("/rows");
-
-                        // if (oData.results.length > 0) {
-                        //     var oInterval = setInterval(() => {
-                        //         if (me.byId("ioMatListTab").getRows()[0] !== undefined) {
-                        //             // console.log(me.byId("ioMatListTab").getRows()[0])
-                        //             me.byId("ioMatListTab").getRows()[0].addStyleClass("activeRow");
-                        //             clearInterval(oInterval);
-                        //         }
-                        //     }, 1000);
-                        // }
+                        me._tableRendered = "ioMatListTab";                        
                     },
                     error: function (err) { }
                 })
@@ -3046,26 +3063,26 @@ sap.ui.define([
                 var sTabId = arg1;
                 var oColumns = arg2;
                 // console.log(oColumns)
-                oColumns.push({
-                    ColumnLabel: "Active",
-                    ColumnName: "ACTIVE",
-                    ColumnType: "STRING",
-                    ColumnWidth: 100,
-                    Creatable: false,
-                    DataType: "STRING",
-                    Decimal: 0,
-                    DictType: "",
-                    Editable: false,
-                    Key: "",
-                    Length: 1,
-                    Mandatory: false,
-                    Order: "000",
-                    Pivot: "",
-                    SortOrder: "",
-                    SortSeq: "",
-                    Sorted: false,
-                    Visible: false
-                })
+                // oColumns.push({
+                //     ColumnLabel: "Active",
+                //     ColumnName: "ACTIVE",
+                //     ColumnType: "STRING",
+                //     ColumnWidth: 100,
+                //     Creatable: false,
+                //     DataType: "STRING",
+                //     Decimal: 0,
+                //     DictType: "",
+                //     Editable: false,
+                //     Key: "",
+                //     Length: 1,
+                //     Mandatory: false,
+                //     Order: "000",
+                //     Pivot: "",
+                //     SortOrder: "",
+                //     SortSeq: "",
+                //     Sorted: false,
+                //     Visible: false
+                // })
                 var oTable = this.getView().byId(sTabId);
 
                 oTable.getModel().setProperty("/columns", oColumns);
@@ -3244,13 +3261,21 @@ sap.ui.define([
                 var me = this;
                 
                 if (arg === "ioMatList") {
+                    this._oModelIOMatList.setHeaders({
+                        SBU: this._sbu,
+                        PRODPLANT: this._prodplant
+                    });
+
                     this._oModelIOMatList.read('/MainSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + this._ioNo + "'"
                         },
                         success: function (oData, response) {
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            
                             me.byId(arg + "Tab").getModel().setProperty("/rows", oData.results);
                             me.byId(arg + "Tab").bindRows("/rows");
+                            me._tableRendered = (arg + "Tab");
 
                             // setTimeout(() => {
                             //     me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
@@ -3263,6 +3288,8 @@ sap.ui.define([
 
             onTableResize(arg1, arg2) {
                 // console.log(arg1, arg2)
+                this._tableRendered = "";
+
                 if (arg1 === "ioMatList") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
@@ -3274,12 +3301,14 @@ sap.ui.define([
                         this.byId("btnFullScreenIOMatList").setVisible(true);
                         this.byId("btnExitFullScreenIOMatList").setVisible(false);
                     }
+
+                    this._tableRendered = "ioMatListTab";
                 }
             },
 
             onCellClick: function(oEvent) {
                 if (oEvent.getParameters().rowBindingContext) {
-                    var oTable = this.byId("ioMatListTab");
+                    var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
     
                     oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
@@ -3295,40 +3324,20 @@ sap.ui.define([
             },
             
             onSort: function(oEvent) {
-                var oTable = this.byId("ioMatListTab");
-
-                setTimeout(() => {
-                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
-               
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow")
-                    })
-                }, 1);
+                var oTable = oEvent.getSource();                    
+                this.setActiveRowHighlightByTable(oTable);
             },
 
             onFilter: function(oEvent) {
-                var oTable = this.byId("ioMatListTab"); 
-
-                setTimeout(() => {
-                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
-               
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow")
-                    })
-                }, 1);
+                var oTable = oEvent.getSource(); 
+                this.setActiveRowHighlightByTable(oTable);
             },
 
             onFirstVisibleRowChanged: function (oEvent) {
-                var oTable = this.byId("ioMatListTab");
-                
+                var oTable = oEvent.getSource();
+
                 setTimeout(() => {
-                    var oData = oTable.getBinding("rows").oList;
+                    var oData = oTable.getModel().getData().rows;
                     var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
                     var iLength = oTable.getBinding("rows").iLastLength + iStartIndex;
 
@@ -3349,10 +3358,15 @@ sap.ui.define([
                 }, 1);
             },
 
+            onColumnUpdated: function (oEvent) {
+                var oTable = oEvent.getSource();
+                setActiveRowHighlightByTable(oTable);
+            },
+
             onKeyUp(oEvent) {
                 if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
-                    var oTable = this.byId("ioMatListTab");
-
+                    var oTable = this.byId(oEvent.srcControl.sId).oParent;
+                    
                     if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
                         var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
                     
@@ -3369,12 +3383,34 @@ sap.ui.define([
                 }
             },
 
-            onColumnUpdated: function (oEvent) {
-                var oTable = this.byId("ioMatListTab");
+            onAfterTableRendering: function(oEvent) {
+                if (this._tableRendered !== "") {
+                    this.setActiveRowHighlightByTableId(this._tableRendered);
+                    this._tableRendered = "";
+                } 
+            },
 
+            setActiveRowHighlightByTable(arg) {
+                var oTable = arg;
+                
                 setTimeout(() => {
-                    var iActiveRowIndex = oTable.getBinding("rows").oList.findIndex(item => item.ACTIVE === "X");
-                    
+                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow");
+                    })                    
+                }, 1);
+            },
+
+            setActiveRowHighlightByTableId(arg) {
+                var oTable = this.byId(arg);
+                
+                setTimeout(() => {
+                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+
                     oTable.getRows().forEach(row => {
                         if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
                             row.addStyleClass("activeRow");

@@ -57,6 +57,13 @@ server:
             generateMockData: true
             metadataXmlPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/metadata.xml
             mockdataRootPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/mockdata
+<<<<<<< HEAD
+=======
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_SH_SRV/
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZGW_3DERP_SH_SRV/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZGW_3DERP_SH_SRV/mockdata
+>>>>>>> main
           - urlPath: /sap/opu/odata/sap/ZGW_3DERP_RFC_SRV/
             metadataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/metadata.xml
             mockdataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/mockdata
