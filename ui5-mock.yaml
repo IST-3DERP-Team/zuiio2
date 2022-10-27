@@ -30,9 +30,9 @@ server:
         mountPath: /
         services:
           - urlPath: /sap/opu/odata/sap/ZGW_3DERP_IO_SRV/
-            metadataPath: ./webapp/localService/mainService/metadata.xml
-            mockdataPath: ./webapp/localService/mainService/data
             generateMockData: true
+            metadataXmlPath: ./webapp/localService/mainService/metadata.xml
+            mockdataRootPath: ./webapp/localService/mainService/data
           - urlPath: /sap/opu/odata/sap/ZGW_3DERP_COMMON_SRV/
             generateMockData: true
             metadataXmlPath: ./webapp/localService/ZGW_3DERP_COMMON_SRV/metadata.xml
@@ -54,7 +54,11 @@ server:
             metadataXmlPath: ./webapp/localService/ZGW_3DERP_SRV/metadata.xml
             mockdataRootPath: ./webapp/localService/ZGW_3DERP_SRV/mockdata
           - urlPath: /sap/opu/odata/sap/ZGW_3DERP_IOMATLIST_SRV/
-            metadataPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/metadata.xml
-            mockdataPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/mockdata
+            generateMockData: true
+            metadataXmlPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/metadata.xml
+            mockdataRootPath: ./webapp/localService/ZGW_3DERP_IOMATLIST_SRV/mockdata
+          - urlPath: /sap/opu/odata/sap/ZGW_3DERP_RFC_SRV/
+            metadataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/metadata.xml
+            mockdataPath: ./webapp/localService/ZGW_3DERP_RFC_SRV/mockdata
             generateMockData: true
         annotations: []
