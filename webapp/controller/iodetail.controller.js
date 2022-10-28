@@ -69,7 +69,14 @@ sap.ui.define([
                     }
                 };
 
-                this.byId("ioMatListTab").addEventDelegate(oTableEventDelegate);                
+                this.byId("ioMatListTab").addEventDelegate(oTableEventDelegate);
+                this.byId("colorTab").addEventDelegate(oTableEventDelegate);
+                this.byId("processTab").addEventDelegate(oTableEventDelegate);
+                this.byId("sizeTab").addEventDelegate(oTableEventDelegate);
+                this.byId("styleBOMUVTab").addEventDelegate(oTableEventDelegate);
+                this.byId("styleFabBOMTab").addEventDelegate(oTableEventDelegate);
+                this.byId("styleAccBOMTab").addEventDelegate(oTableEventDelegate);
+                this.byId("styleMatListTab").addEventDelegate(oTableEventDelegate);
             },
 
             _routePatternMatched: function (oEvent) {
@@ -175,7 +182,6 @@ sap.ui.define([
                 //get column value help prop
                 this.getIOColumnProp();
 
-<<<<<<< HEAD
                 // //build Dynamic table for Delivery Schedule
                 // setTimeout(() => {
                 //     this.getDlvSchedDynamicTableColumns(); 
@@ -192,8 +198,6 @@ sap.ui.define([
                 var oIconTabBarStyle = this.byId("itbStyleDetail");
                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
 
-=======
->>>>>>> mca
                 //Attachments
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
@@ -1113,6 +1117,7 @@ sap.ui.define([
                         oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("colorTab").getModel().setProperty("/rows", oData.results);
                         me.byId("colorTab").bindRows("/rows");
+                        me._tableRendered = "colorTab";
                     },
                     error: function (err) { }
                 })
@@ -1125,6 +1130,7 @@ sap.ui.define([
                         oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
+                        me._tableRendered = "processTab";
                     },
                     error: function (err) { }
                 })
@@ -1137,6 +1143,7 @@ sap.ui.define([
                         oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
+                        me._tableRendered = "sizeTab";
                     },
                     error: function (err) { }
                 })
@@ -1661,6 +1668,7 @@ sap.ui.define([
                         // me.byId("styleMatListTab").setVisibleRowCount(aData.length);
                         me.byId("styleMatListTab").getModel().setProperty("/rows", aData);
                         me.byId("styleMatListTab").bindRows("/rows");
+                        me._tableRendered = "styleMatListTab";
                     },
                     error: function (err) { }
                 })
@@ -2751,7 +2759,7 @@ sap.ui.define([
                         oData.results.forEach((row, index) => row.ACTIVE = index === 0 ? "X" : "");
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
                         me.byId("ioMatListTab").bindRows("/rows");
-                        me._tableRendered = "ioMatListTab";                        
+                        me._tableRendered = "ioMatListTab";
                     },
                     error: function (err) { }
                 })
@@ -3062,21 +3070,46 @@ sap.ui.define([
                 if (oEvent.getParameters().rowBindingContext) {
                     var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
-    
-                    oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
-                    oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                    var sTableId = oTable.getId();
                     
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow")
-                    })
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        oTable.getModel("DataModel").getData().results.forEach(row => row.ACTIVE = "");
+                        oTable.getModel("DataModel").setProperty(sRowPath + "/ACTIVE", "X"); 
+                        
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && row.getBindingContext("DataModel").sPath.replace("/results/", "") === sRowPath.replace("/results/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        })                        
+                    }
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        oTable.getModel("DataModel").getData().results.items.forEach(row => row.ACTIVE = "");
+                        oTable.getModel("DataModel").setProperty(sRowPath + "/ACTIVE", "X"); 
+                        
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === sRowPath.replace("/results/items/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        }) 
+                    }
+                    else {
+                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                        oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                        
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow")
+                        })
+                    }
                 }
             },
             
             onSort: function(oEvent) {
-                var oTable = oEvent.getSource();                    
+                var oTable = oEvent.getSource();
                 this.setActiveRowHighlightByTable(oTable);
             },
 
@@ -3087,9 +3120,15 @@ sap.ui.define([
 
             onFirstVisibleRowChanged: function (oEvent) {
                 var oTable = oEvent.getSource();
+                var sTableId = oTable.getId();
 
                 setTimeout(() => {
-                    var oData = oTable.getModel().getData().rows;
+                    var oData = [];
+
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) oData = oTable.getModel("DataModel").getData().results;
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) oData = oTable.getModel("DataModel").getData().results.items;
+                    else oData = oTable.getModel().getData().rows;
+                    
                     var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
                     var iLength = oTable.getBinding("rows").iLastLength + iStartIndex;
 
@@ -3112,25 +3151,58 @@ sap.ui.define([
 
             onColumnUpdated: function (oEvent) {
                 var oTable = oEvent.getSource();
-                setActiveRowHighlightByTable(oTable);
+                this.setActiveRowHighlightByTable(oTable);
             },
 
             onKeyUp(oEvent) {
                 if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
                     var oTable = this.byId(oEvent.srcControl.sId).oParent;
-                    
-                    if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
-                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
-                    
-                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
-                        oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                    var sTableId = oTable.getId();
+
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        if (this.byId(oEvent.srcControl.sId).getBindingContext("DataModel")) {
+                            var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext("DataModel").sPath;
                         
-                        oTable.getRows().forEach(row => {
-                            if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
-                                row.addStyleClass("activeRow");
-                            }
-                            else row.removeStyleClass("activeRow")
-                        })
+                            oTable.getModel("DataModel").getData().results.forEach(row => row.ACTIVE = "");
+                            oTable.getModel("DataModel").setProperty(sRowPath + "/ACTIVE", "X"); 
+                            
+                            oTable.getRows().forEach(row => {
+                                if (row.getBindingContext("DataModel") && row.getBindingContext("DataModel").sPath.replace("/results/", "") === sRowPath.replace("/results/", "")) {
+                                    row.addStyleClass("activeRow");
+                                }
+                                else row.removeStyleClass("activeRow")
+                            })
+                        }
+                    } 
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        if (this.byId(oEvent.srcControl.sId).getBindingContext("DataModel")) {
+                            var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext("DataModel").sPath;
+                        
+                            oTable.getModel("DataModel").getData().results.items.forEach(row => row.ACTIVE = "");
+                            oTable.getModel("DataModel").setProperty(sRowPath + "/ACTIVE", "X"); 
+                            
+                            oTable.getRows().forEach(row => {
+                                if (row.getBindingContext("DataModel") && row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === sRowPath.replace("/results/items/", "")) {
+                                    row.addStyleClass("activeRow");
+                                }
+                                else row.removeStyleClass("activeRow")
+                            })
+                        } 
+                    }
+                    else {
+                        if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
+                            var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
+                        
+                            oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                            oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
+                            
+                            oTable.getRows().forEach(row => {
+                                if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                                    row.addStyleClass("activeRow");
+                                }
+                                else row.removeStyleClass("activeRow")
+                            })
+                        }
                     }
                 }
             },
@@ -3144,16 +3216,39 @@ sap.ui.define([
 
             setActiveRowHighlightByTable(arg) {
                 var oTable = arg;
+                var sTableId = oTable.getId();
                 
                 setTimeout(() => {
-                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
 
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow");
-                    })                    
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })                    
+                    }
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.items.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })  
+                    }
+                    else {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }                    
                 }, 1);
             },
 
@@ -3162,7 +3257,7 @@ sap.ui.define([
                 
                 setTimeout(() => {
                     var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-
+                    console.log(iActiveRowIndex)
                     oTable.getRows().forEach(row => {
                         if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
                             row.addStyleClass("activeRow");
