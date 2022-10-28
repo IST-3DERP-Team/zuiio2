@@ -80,11 +80,11 @@
                             press="onCancel('dlvsched')" 
                             tooltip="{ddtext>/CANCEL}"
                             visible="false" /> 
-                        <!-- <Button id="btnNewDlvSched" 
+                        <Button id="btnFullscreenDlvSched" 
                             icon="sap-icon://edit"
-                            press="onEdit('dlvsched')"
-                            tooltip="{ddtext>/EDIT}"
-                            visible="true" /> -->
+                            press="onFullscreen('dlvsched')"
+                            tooltip="view in Full Screen"
+                            visible="true" />
                     </Toolbar>
                 </t:extension> 
             </t:Table> 
