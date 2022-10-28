@@ -9,12 +9,14 @@ sap.ui.define([
     'sap/ui/core/routing/HashChanger',
     'sap/m/MessageStrip',
     "../control/DynamicTable",
-    "./fragments/FASummary"
+    "./fragments/FASummary",
+    "sap/m/MessageBox",
+    "sap/ui/core/routing/History"
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control, FASummary) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control, FASummary,MessageBox,History) {
         "use strict"; 
 
         var that;
@@ -73,6 +75,18 @@ sap.ui.define([
                 this.byId("ioMatListTab").addEventDelegate(oTableEventDelegate);                
             },
 
+            onNavBack: function () {
+                var oHistory = History.getInstance();
+                var sPreviousHash = oHistory.getPreviousHash();
+    
+                if (sPreviousHash !== undefined) {
+                    window.history.go(-1);
+                } else {
+                    var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                    oRouter.navTo("Routeioinit", {}, true);
+                }
+            },
+
             _routePatternMatched: function (oEvent) {
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
@@ -92,12 +106,22 @@ sap.ui.define([
 
                 if (this._ioNo === "NEW") {
                     //get reference Tabular Suggestions;
-                    this.getIOTypeSet();
-                    this.getProdTypeSet();
-                    this.getProdScenSet();
-                    this.getSeasonsSet();
-                    this.getStyleNoSet();
-                    this.getUOMSet();
+                    // this.getIOTypeSet();
+                    // this.getProdTypeSet();
+                    // this.getProdScenSet();
+                    // this.getSeasonsSet();                    
+                    // this.getStyleNoSet();
+                    // this.getUOMSet();
+
+                    //get Value Help for fields of IO Header
+                    this.getVHSet("/IOTYPSet","IOTypeModel", false);
+                    this.getVHSet("/PRODTYPvhSet","ProdTypeModel", true);
+                    this.getVHSet("/PRODSCENvhSet","ProdScenModel", false);
+                    this.getVHSet("/SEASONSet","SeasonsModel", true);
+                    this.getVHSet("/STYLENOvhSet","StyleNoModel", false);
+                    this.getVHSet("/UOMvhSet","UOMModel", false);
+                    this.getVHSet("/SALESORGvhSet","SalesOrgModel", false);
+                    this.getVHSet("/SALESGRPvhSet","SalesGrpModel", false);
 
                     //create new - only header is editable at first
                     this.setHeaderEditMode();
@@ -954,6 +978,66 @@ sap.ui.define([
                 try {
                     sap.ushell.Container.setDirtyFlag(changed);
                 } catch (err) { }
+            },            
+
+            getVHSet: function(EntitySet, ModelName, SBUFilter) {
+                var oSHModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+
+                var sEntitySet = EntitySet;
+                var sModelName = ModelName;
+                var bSBUFilter = SBUFilter;
+
+                //  /SEASONSet , SeasonsModel
+                if(bSBUFilter){
+                    oSHModel.read(sEntitySet, {
+                        urlParameters: {
+                            "$filter": "SBU eq '" + this._sbu + "'"
+                        },
+                        success: function (oData, oResponse) {
+                            oJSONModel.setData(oData);
+                            oView.setModel(oJSONModel, sModelName);
+                            // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                        },
+                        error: function (err) { }
+                    });
+                } else
+                {
+                    oSHModel.read(sEntitySet, {
+                        urlParameters: {
+                            
+                        },
+                        success: function (oData, oResponse) {
+                            oJSONModel.setData(oData);
+                            oView.setModel(oJSONModel, sModelName);
+                            if(sModelName === "SalesGrpModel"){
+                                console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                            }
+                        },
+                        error: function (err) { }
+                    });
+                }
+            },
+
+            getSALESORGSet: function() {
+                var oSHModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+                // oSHModel.setHeaders({
+                //     sbu: this._sbu
+                // });
+                oSHModel.read("/SALESORGvhSet", {
+                    urlParameters: {
+                        
+                    },
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "SALESORGModel");
+                        // console.log(oView.setModel(oJSONModel, "UOMModel"));
+                    },
+                    error: function (err) { }
+                });
             },
 
             getUOMSet: function() {
@@ -1028,7 +1112,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "ProdScenModel");
-                        console.log(oView.setModel(oJSONModel, "ProdScenModel"));
+                        // console.log(oView.setModel(oJSONModel, "ProdScenModel"));
                     },
                     error: function (err) { }
                 });
@@ -1150,6 +1234,55 @@ sap.ui.define([
                 })
             },
 
+            reloadHeaderData: function (iono) {
+                var me = this;
+                var ioNo = iono;
+                var oModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var oView = this.getView();
+
+                Common.openLoadingDialog(that);
+
+                //read Style header data
+                // console.log("IO NO");
+                // console.log(ioNo);
+                var entitySet = "/IOHDRSet('" + ioNo + "')"
+                oModel.read(entitySet, {
+                    success: function (oData, oResponse) {
+                        // console.log("Header Data");
+                        // console.log(oData);
+                        me._styleVer = oData.VERNO;
+                        me._prodplant = oData.PRODPLANT;
+                        // oData.results.forEach(item => {
+                        //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
+                        //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
+                        //     // item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
+                        //     // item.MATETA = dateFormat.format(item.MATETA);
+                        //     // item.MAINMATETA = dateFormat.format(item.MAINMATETA);
+                        //     // item.SUBMATETA = dateFormat.format(item.SUBMATETA);
+                        //     // item.CUTMATETA = dateFormat.format(item.CUTMATETA);
+                        //     // item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
+                        //     // item.PRODSTART = dateFormat.format(item.PLANDLVDT);
+                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
+                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);                           
+                        // })
+
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "headerData");
+                        // console.log("headerData");
+                        // console.log(oView);
+                        Common.closeLoadingDialog(that);
+                        me.setChangeStatus(false);
+                        // me._styleNo = oData.STYLENO;
+
+                        // me.initStyle();
+                    },
+                    error: function () {
+                        Common.closeLoadingDialog(that);
+                    }
+                })
+            },
+
             setHeaderEditMode: function () {
                 //unlock editable fields of style header
                 var oJSONModel = new JSONModel();
@@ -1223,19 +1356,80 @@ sap.ui.define([
             },
 
             onIOSave: function(source) {
+                var me = this;
+                var newIONO = "";
                 var sSource = source;
                 if(sSource === "IOHDR")
                 {
+                    // alert("Save IO Header");
                     //prompt Dialog for Cancel
-                    // Common.showMessage("Save IO");
+                    // Common.showMessage("Save IO");                    
+
+                    var sErrMsg = "";
+                    if(this.getView().byId("IOTYPE").getValue() === "") sErrMsg = "IO Type";
+                    else if(this.getView().byId("PRODSCEN").getValue() === "") sErrMsg = "Production Scenario";
+                    else if(this._sbu.Length <= 0) sErrMsg = "SBU";                    
+
+                    if(sErrMsg.length > 0) {
+                        sErrMsg += " is required."
+                        sap.m.MessageBox.warning(sErrMsg);
+                        return;
+                    }
 
                     //get IO Prefix and IO Description
                     this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
-                    
-                    var oParam = {
-                        
-                    }
-                    return;
+
+                    var oParamIOHeaderData = {                        
+                        STYLECD:this.getView().byId("STYLECD").getValue(),
+                        PRODTYPE:this.getView().byId("PRODTYPE").getValue(),
+                        PRODSCEN:this.getView().byId("PRODSCEN").getValue(),
+                        SALESORG:this.getView().byId("SALESORG").getValue(),
+                        ORDQTY:this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
+                        ACTUALQTY:this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
+                        PLANMONTH:this.getView().byId("PLANMONTH").getValue(),
+                        IOTYPE:this.getView().byId("IOTYPE").getValue(),
+                        SBU:this._sbu,
+                        SALESGRP:this.getView().byId("SALESGRP").getValue(),
+                        PRODPLANT:this.getView().byId("PRODPLANT").getValue(),
+                        FTYSALTERM:this.getView().byId("FTYSALTERM").getValue(),
+                        REVORDQTY:this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
+                        SHIPQTY:this.getView().byId("SHIPQTY").getValue() === "" ? "0" : this.getView().byId("SHIPQTY").getValue(),
+                        PRODWK:this.getView().byId("PRODWK").getValue() === "" ? 0 : this.getView().byId("PRODWK").getValue(),
+                        IOSUFFIX:this.getView().byId("IOSUFFIX").getValue(),
+                        SEASONCD:this.getView().byId("SEASONCD").getValue(),
+                        CUSTGRP:this.getView().byId("CUSTGRP").getValue(),
+                        TRADPLANT:this.getView().byId("TRADPLANT").getValue(),
+                        CUSSALTERM:this.getView().byId("CUSSALTERM").getValue(),
+                        BASEUOM:this.getView().byId("BASEUOM").getValue(),
+                        PLANDLVDT:this.getView().byId("PLANDLVDT").getValue(),
+                        REFIONO:this.getView().byId("REFIONO").getValue(),
+                        STYLENO:this.getView().byId("STYLENO").getValue(),
+                        VERNO:this.getView().byId("VERNO").getValue(),
+                        PLANPLANT:this.getView().byId("PLANPLANT").getValue(),
+                        CUSTDLVDT:this.getView().byId("CUSTDLVDT").getValue(),
+                        PLANQTY:this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
+                        PRODSTART:this.getView().byId("PRODSTART").getValue(),
+                        REMARKS:this.getView().byId("REMARKS").getValue()
+                    };
+
+                    console.log(oParamIOHeaderData);
+
+                    setTimeout(() => {
+                    var oModel = this.getOwnerComponent().getModel();
+                    oModel.create("/IOHDRSet", oParamIOHeaderData, {
+                        method: "POST",
+                        success: function(oData, oResponse) {
+                            newIONO = oData.IONO;
+                            // alert(newIONO);
+                            Common.showMessage("IO# " + newIONO + " generated.");
+                        },
+                        error: function(err) {
+
+                        }
+                    });
+                }, 100);
+
+                    // return;
                     
                     //Set Button Visibility for Read Mode
                     this.byId("onIOEdit").setVisible(true);
@@ -1254,6 +1448,10 @@ sap.ui.define([
                     // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
+                    
+                    Common.closeLoadingDialog(that);
+
+                    this.reloadHeaderData(newIONO);
                 }
             },
 
@@ -1282,6 +1480,8 @@ sap.ui.define([
                     // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
+
+                    this.onNavBack();
                 }
             },
 
