@@ -35,55 +35,69 @@
                 <f:formElements>
                     <f:FormElement label="{i18n>IONO}" visible="{= ${VisibleFieldsData>/IONO} === true ? true : false }">
                         <f:fields>
-                            <Input id="IONO" value="{headerData>/IONO}" editable="false" valueStateText="Required">
+                            <Input id="IONO" value="{headerData>/IONO}" showSuggestion="true" showValueHelp="true"
+                            editable="{= ${EditableFieldsData>/IONO} === true ? true : false }" valueStateText="Required">
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement label="{i18n>STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
                         <f:fields>
-                            <Input id="STYLECD" value="{headerData>/STYLECD}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="STYLECD" value="{headerData>/STYLECD}" showSuggestion="true" showValueHelp="true"
+                            editable="{= ${EditableFieldsData>/STYLECD} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>   
                     <f:FormElement label="{i18n>PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODTYPE" value="{headerData>/PRODTYPE}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                            <Input id="PRODTYPE"  value="{headerData>/PRODTYPE}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/PRODTYPE} === true ? true : false }" valueStateText="Required"
+                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{ProdTypeModel>/results}">     
+                                <suggestionItems>
+                                    <core:ListItem text="{ProdTypeModel>PRODTYP}" additionalText="{ProdTypeModel>DESC1}"/>
+                                </suggestionItems>                                
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODSCEN" value="{headerData>/PRODSCEN}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                            <Input id="PRODSCEN" value="{headerData>/PRODSCEN}" showSuggestion="true" showValueHelp="true"
+                            editable="{= ${EditableFieldsData>/PRODSCEN} === true ? true : false }" valueStateText="Required"
+                                change="onHeaderChange" autocomplete="true" suggestionItems="{ProdScenModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{ProdScenModel>PRODSCEN}" additionalText="{ProdScenModel>DESC1}"/>
+                                </suggestionItems>                              
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>SALESORG}" visible="{= ${VisibleFieldsData>/SALESORG} === true ? true : false }">
                         <f:fields>
-                            <Input id="SALESORG" value="{headerData>/SALESORG}" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
+                            <Input id="SALESORG" value="{headerData>/SALESORG}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/SALESORG} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement label="{i18n>ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
                         <f:fields>
-                            <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" editable="{HeaderEditModeModel>/editMode}"
+                            <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
+                            editable="{= ${EditableFieldsData>/ORDQTY} === true ? true : false }"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement label="{i18n>ACTUALQTY}" visible="{= ${VisibleFieldsData>/ACTUALQTY} === true ? true : false }">
                         <f:fields>
-                            <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" editable="{HeaderEditModeModel>/editMode}"
+                            <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" 
+                            editable="{= ${EditableFieldsData>/ACTUALQTY} === true ? true : false }"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
-                            <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/PLANMONTH} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
@@ -96,49 +110,59 @@
                 <f:formElements>                                                            
                     <f:FormElement label="{i18n>IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                         <f:fields>
-                            <Input id="IOTYPE"  value="{headerData>/IOTYPE}" showSuggestion="true" showValueHelp="true" valueHelpRequest="handleValueHelp" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange">                                        
+                            <Input id="IOTYPE"  value="{headerData>/IOTYPE}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/IOTYPE} === true ? true : false }" valueStateText="Required"
+                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{IOTypeModel>/results}">     
+                                <suggestionItems>
+                                    <core:ListItem text="{IOTypeModel>IOTYPE}" additionalText="{IOTypeModel>DESC1}"/>
+                                </suggestionItems>                                
                             </Input>
                         </f:fields>
                     </f:FormElement>    
                     <f:FormElement label="{i18n>SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
                         <f:fields>
-                            <Input id="SALESGRP" value="{headerData>/SALESGRP}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="SALESGRP" value="{headerData>/SALESGRP}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/SALESGRP} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODPLANT" value="{headerData>/PRODPLANT}" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
+                            <Input id="PRODPLANT" value="{headerData>/PRODPLANT}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/PRODPLANT} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>
-                    <f:FormElement label="{i18n>FTYSALESTERM}" visible="{= ${VisibleFieldsData>/FTYSALESTERM} === true ? true : false }">
+                    <f:FormElement label="{i18n>FTYSALESTERM}" visible="{= ${VisibleFieldsData>/FTYSALTERM} === true ? true : false }">
                         <f:fields>
-                            <Input id="FTYSALESTERM" value="{headerData>/FTYSALESTERM}" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
+                            <Input id="FTYSALTERM" value="{headerData>/FTYSALTERM}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/FTYSALTERM} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement> 
                     <f:FormElement label="{i18n>REVORDQTY}" visible="{= ${VisibleFieldsData>/REVORDQTY} === true ? true : false }">
                         <f:fields>
-                            <Input id="REVORDQTY" type="Number" value="{headerData>/REVORDQTY}" editable="{HeaderEditModeModel>/editMode}"
+                            <Input id="REVORDQTY" type="Number" value="{headerData>/REVORDQTY}" 
+                            editable="{= ${EditableFieldsData>/REVORDQTY} === true ? true : false }"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement label="{i18n>SHIPQTY}" visible="{= ${VisibleFieldsData>/SHIPQTY} === true ? true : false }">
                         <f:fields>
-                            <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" editable="{HeaderEditModeModel>/editMode}"
+                            <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" 
+                            editable="{= ${EditableFieldsData>/SHIPQTY} === true ? true : false }"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>       
                     <f:FormElement label="{i18n>PRODWK}" visible="{= ${VisibleFieldsData>/PRODWK} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODWK" type="Number" value="{headerData>/PRODWK}" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="PRODWK" type="Number" value="{headerData>/PRODWK}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/PRODWK} === true ? true : false }" valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
@@ -151,7 +175,8 @@
                 <f:formElements>                            
                     <f:FormElement label="{i18n>IOSUFFIX}" visible="{= ${VisibleFieldsData>/IOSUFFIX} === true ? true : false }">
                         <f:fields>
-                            <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/IOSUFFIX} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/IOSUFFIX}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
@@ -159,15 +184,20 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>SEASONCD}" visible="{= ${VisibleFieldsData>/SEASONCD} === true ? true : false }">
                         <f:fields>
-                            <Input id="SEASONCD" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="SEASONCD" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/SEASONCD} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{SeasonsModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
+                                </suggestionItems>
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>CUSTGRP}" visible="{= ${VisibleFieldsData>/CUSTGRP} === true ? true : false }">
                         <f:fields>
-                            <Input id="CUSTGRP" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="CUSTGRP" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/CUSTGRP} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
@@ -175,25 +205,31 @@
                     </f:FormElement> 
                     <f:FormElement label="{i18n>TRADPLANT}" visible="{= ${VisibleFieldsData>/TRADPLANT} === true ? true : false }">
                         <f:fields>
-                            <Input id="TRADPLANT" type="Text" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
+                            <Input id="TRADPLANT" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/TRADPLANT} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/TRADPLANT}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>    
-                    <f:FormElement label="{i18n>CUSSALETERM}" visible="{= ${VisibleFieldsData>/CUSSALETERM} === true ? true : false }">
+                    <f:FormElement label="{i18n>CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
                         <f:fields>
-                            <Input id="CUSSALETERM" type="Text" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
-                                value="{headerData>/CUSSALETERM}" 
+                            <Input id="CUSSALTERM" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/CUSSALTERM} === true ? true : false }"  valueStateText="Required"
+                                value="{headerData>/CUSSALTERM}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
                         <f:fields>
-                            <Input id="BASEUOM" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="BASEUOM" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/BASEUOM} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{UOMModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/>
+                                </suggestionItems>
                             </Input>
                         </f:fields>
                     </f:FormElement>
@@ -203,7 +239,7 @@
                                 id="PLANDLVDT"
                                 placeholder="Enter Date"
                                 value="{headerData>/PLANDLVDT}" 
-                                editable="{HeaderEditModeModel>/editMode}"
+                                editable="{= ${EditableFieldsData>/PLANDLVDT} === true ? true : false }"
                                 change="handleChange"
                                 class="sapUiSmallMarginBottom"
                                 valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="short"/>
@@ -221,7 +257,8 @@
                 <f:formElements>                            
                     <f:FormElement label="{i18n>REFIONO}" visible="{= ${VisibleFieldsData>/REFIONO} === true ? true : false }">
                         <f:fields>
-                            <Input id="REFIONO" type="Text" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"
+                            <Input id="REFIONO" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/REFIONO} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/REFIONO}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
@@ -229,15 +266,20 @@
                     </f:FormElement>   
                     <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
-                            <Input id="STYLENO" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <Input id="STYLENO" type="Text" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/STYLENO} === true ? true : false }" valueStateText="Required"
                                 value="{headerData>/STYLENO}" 
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{StyleNoModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{StyleNoModel>STYLENO}" additionalText="{StyleNoModel>DESC1}"/>
+                                </suggestionItems>
                             </Input>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>VERNO}" visible="{= ${VisibleFieldsData>/VERNO} === true ? true : false }">
                         <f:fields>
-                            <Input id="VERNO"  type="Number" editable="false"
+                            <Input id="VERNO"  type="Number" 
+                            editable="{= ${EditableFieldsData>/VERNO} === true ? true : false }"
                                 value="{headerData>/VERNO}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
@@ -245,7 +287,8 @@
                     </f:FormElement>                                                                                 
                     <f:FormElement label="{i18n>PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                         <f:fields>
-                            <Input id="PLANPLANT" value="{headerData>/PLANPLANT}" showSuggestion="true" showValueHelp="true" editable="false" valueStateText="Required"/>
+                            <Input id="PLANPLANT" value="{headerData>/PLANPLANT}" showSuggestion="true" showValueHelp="true" 
+                            editable="{= ${EditableFieldsData>/PLANPLANT} === true ? true : false }" valueStateText="Required"/>
                         </f:fields>
                     </f:FormElement> 
                     <f:FormElement label="{i18n>CUSTDLVDT}"  visible="{= ${VisibleFieldsData>/CUSTDLVDT} === true ? true : false }">
@@ -254,7 +297,7 @@
                                 id="CUSTDLVDT"
                                 placeholder="Enter Date"
                                 change="handleChange"
-                                editable="{HeaderEditModeModel>/editMode}"
+                                editable="{= ${EditableFieldsData>/CUSTDLVDT} === true ? true : false }"
                                 value="{headerData>/CUSTDLVDT}" 
                                 class="sapUiSmallMarginBottom"
                                 valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="short"/>
@@ -263,7 +306,8 @@
                     </f:FormElement> 
                     <f:FormElement label="{i18n>PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
                         <f:fields>
-                            <Input id="PLANQTY" type="Number" value="{headerData>/PLANQTY}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/>
+                            <Input id="PLANQTY" type="Number" value="{headerData>/PLANQTY}" 
+                            editable="{= ${EditableFieldsData>/PLANQTY} === true ? true : false }" valueStateText="Required"/>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
@@ -272,7 +316,7 @@
                                 id="PRODSTART"
                                 placeholder="Enter Date"
                                 change="handleChange"
-                                editable="{HeaderEditModeModel>/editMode}"
+                                editable="{= ${EditableFieldsData>/PRODSTART} === true ? true : false }"
                                 class="sapUiSmallMarginBottom"
                                 valueFormat="yyyy-MM-dd-HH-mm-ss" displayFormat="short"/>
                             <!-- <Input id="PRODSTART" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
@@ -280,7 +324,8 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>REMARKS}"  visible="{= ${VisibleFieldsData>/REMARKS} === true ? true : false }">
                         <f:fields>
-                            <Input id="REMARKS" value="{headerData>/REMARKS}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/>
+                            <Input id="REMARKS" value="{headerData>/REMARKS}" 
+                            editable="{= ${EditableFieldsData>/REMARKS} === true ? true : false }" valueStateText="Required"/>
                         </f:fields>
                     </f:FormElement>                            
                 </f:formElements>

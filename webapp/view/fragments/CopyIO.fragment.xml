@@ -171,8 +171,8 @@
             </t:Table> -->
 		</Panel>
 		<buttons>
-			<Button text="{i18n>Copy}" press="onfragmentCopyIO"/>
-			<Button text="{i18n>Cancel}" press="onCloseDialog"/>
+			<Button text="{i18n>Copy}" press="onfragmentCopyIO" tooltip="Copy"/>
+			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>
