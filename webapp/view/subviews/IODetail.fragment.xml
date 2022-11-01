@@ -1,16 +1,7 @@
-<core:FragmentDefinition 
-    xmlns="sap.m" 
-    xmlns:l="sap.ui.layout" 
-    xmlns:f="sap.ui.layout.form" 
-    xmlns:core="sap.ui.core" 
-    xmlns:mvc="sap.ui.core.mvc"
-    class="sapUiSizeCompact" 
-    xmlns:tnt="sap.tnt"
-    xmlns:c="zuiio2.control" 
-    xmlns:t="sap.ui.table"> 
-        <!-- <Panel id="IODetPanel" expandable="false" height="50%" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
+<core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" class="sapUiSizeCompact" xmlns:tnt="sap.tnt" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
+    <!-- <Panel id="IODetPanel" expandable="false" height="50%" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
 
-            <!-- <headerToolbar>
+    <!-- <headerToolbar>
                 <Toolbar id="toolbarIODET" height="2rem" style="Clear">
                     <Text text="{i18n>IODetail}" />
                     <ToolbarSpacer />                    
@@ -27,81 +18,28 @@
                 </Toolbar>
             </headerToolbar> -->
 
-    <t:Table id="IODETTab" 
-                class="sapUiSizeCompact sidePadding" 
-                visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true" 
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single" 
-                selectionBehavior="RowOnly">
+    <t:Table id="IODETTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+        <t:rowSettingsTemplate>
+            <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+        </t:rowSettingsTemplate>
 
-                <t:rowSettingsTemplate>
-                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                </t:rowSettingsTemplate> 
+        <t:extension>
+            <Toolbar>
+                <Text text="{i18n>IODetail}" />
+                <ToolbarSpacer />
+                <Button id="btnNewIODet" type="Ghost" text="New" icon="sap-icon://add-document" press="onEdit('iodet')" tooltip="New" visible="true" />
+                <Button id="btnEditIODet" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('iodet')" tooltip="Edit" visible="true" />
+                <Button id="btnDeleteIODet" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('iodet')" tooltip="Delete" visible="true" />
+                <Button id="btnCopyIODet" type="Ghost" text="Copy" icon="sap-icon://delete" press="onCopy('iodet')" tooltip="Copy" visible="true" />
+                <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="onRefresh('iodet')" tooltip="Refresh" visible="true" />
+                <Button id="btnSaveIODet" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('iodet')" tooltip="{ddtext>/SAVE}" visible="false" />
+                <Button id="btnCancelIODet" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('iodet')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                <Button id="btnFullScreenDlvSched" icon="sap-icon://edit" press="onFullscreen('dlvsched')" tooltip="view Full Screen" visible="true" />
+            </Toolbar>
+        </t:extension>
+    </t:Table>
 
-                <t:extension>
-                    <Toolbar>
-                    <Text text="{i18n>IODetail}" />
-                    <ToolbarSpacer/>
-                        <Button id="btnNewIODet"
-                            type="Ghost"
-                            text="New"
-                            icon="sap-icon://add-document"
-                            press="onEdit('iodet')"
-                            tooltip="New"
-                            visible="true" />
-                        <Button id="btnEditIODet" 
-                            type="Ghost"
-                            text="Edit"
-                            icon="sap-icon://edit"
-                            press="onEdit('iodet')"
-                            tooltip="Edit"
-                            visible="true" />
-                        <Button id="btnDeleteIODet" 
-                            type="Ghost"
-                            text="Delete"
-                            icon="sap-icon://delete"
-                            press="onDelete('iodet')"
-                            tooltip="Delete"
-                            visible="true" />
-                        <Button id="btnCopyIODet" 
-                            type="Ghost"
-                            text="Copy"
-                            icon="sap-icon://delete"
-                            press="onCopy('iodet')"
-                            tooltip="Copy"
-                            visible="true" />
-                        <Button id="btnRefreshIODet" 
-                            type="Ghost"
-                            icon="sap-icon://refresh"
-                            press="onRefresh('iodet')"
-                            tooltip="Refresh"
-                            visible="true" />
-                        <Button id="btnSaveIODet" 
-                            type="Ghost"
-                            text="Save"
-                            icon="sap-icon://save"
-                            press="onSave('iodet')" 
-                            tooltip="{ddtext>/SAVE}"
-                            visible="false" />
-                        <Button id="btnCancelIODet" 
-                            type="Ghost"
-                            text="Cancel"
-                            icon="sap-icon://sys-cancel"
-                            press="onCancel('iodet')" 
-                            tooltip="{ddtext>/CANCEL}"
-                            visible="false" /> 
-                        <Button id="btnFullScreenDlvSched" 
-                            icon="sap-icon://edit"
-                            press="onFullscreen('dlvsched')"
-                            tooltip="view Full Screen"
-                            visible="true" />
-                    </Toolbar>
-                </t:extension> 
-            </t:Table> 
+    <!-- </f:Form>   -->
 
-            <!-- </f:Form>   -->
-            
-        <!-- </Panel> -->
+    <!-- </Panel> -->
 </core:FragmentDefinition>

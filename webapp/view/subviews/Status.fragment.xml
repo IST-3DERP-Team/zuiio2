@@ -2,7 +2,7 @@
     xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
 
     <OverflowToolbar id="_ovfToolBarStatus" design="Transparent" >
-            <Button id="onIOStatEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEdit('')"/>
+            <Button id="onIOStatEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')"/>
     </OverflowToolbar>
 
     <!-- #### DYNAMIC TABLE #### --> 

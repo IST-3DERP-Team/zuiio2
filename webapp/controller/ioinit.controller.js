@@ -531,11 +531,12 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "CopyIOModel");
-
+                        console.log(oData);
                         //capture new IONO
                         newIONO = oData.Znewiono;
                         Common.showMessage("Successfully create IO# " + newIONO);
                         _this._CopyIODialog.close();
+                        _this.onSearch();
                         _this.navToDetail(newIONO);
                         
                     },
