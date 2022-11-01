@@ -396,7 +396,7 @@
                             enableColumnFreeze="true"
                             enableCellFilter="true"
                             selectionMode="Single" 
-                            selectionBehavior="RowOnly">
+                            selectionBehavior="RowSelector">
 
                         <t:rowSettingsTemplate>
                             <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -422,7 +422,7 @@
                                     type="Ghost"
                                     text="Edit"
                                     icon="sap-icon://edit"
-                                    press="onEdit('IODLVTab')"
+                                    press="onEdit('IODLV')"
                                     tooltip="Edit"
                                     visible="true" />
                                 <Button id="btnDeleteDlvSched" 
@@ -449,14 +449,14 @@
                                     type="Ghost"
                                     text="Save"
                                     icon="sap-icon://save"
-                                    press="onSave('IODLVTab')" 
+                                    press="onSave('IODLV')" 
                                     tooltip="{ddtext>/SAVE}"
                                     visible="false" />
                                 <Button id="btnCancelDlvSched" 
                                     type="Ghost"
                                     text="Cancel"
                                     icon="sap-icon://sys-cancel"
-                                    press="onCancel('IODLVTab')" 
+                                    press="onCancel('IODLV')" 
                                     tooltip="{ddtext>/CANCEL}"
                                     visible="false" /> 
                                 <Button id="btnFullScreenDlvSched" 
