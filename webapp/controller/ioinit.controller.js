@@ -316,7 +316,7 @@ sap.ui.define([
 
             onSapEnter(oEvent) {
                 that.setChangeStatus(false); //remove change flag
-                console.log(this._sbu);
+                // console.log(this._sbu);
                 that.navToDetail(IONOtxt, this._sbu); //navigate to detail page
             },
 
@@ -337,6 +337,7 @@ sap.ui.define([
             navToDetail: function (ioNO) {
                 //route to detail page
                 // alert(this.sbu);
+                // alert(ioNO);
                 that._router.navTo("RouteIODetail", {
                     iono: ioNO,
                     sbu: that._sbu
@@ -405,7 +406,7 @@ sap.ui.define([
                     filters: aFilters,
                     success: function (oData) {
                         // console.log("Statistics oData");
-                        console.log(oData);
+                        // console.log(oData);
                         oForecast.setNumber(oData.results[0].FORECASTQTY);
                         oOrder.setNumber(oData.results[0].ORDERQTY);
                         oShipped.setNumber(oData.results[0].SHIPQTY);
@@ -531,6 +532,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "CopyIOModel");
+                        console.log(oParam);
                         console.log(oData);
                         //capture new IONO
                         newIONO = oData.Znewiono;
@@ -559,7 +561,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "SeasonsModel");
-                        console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                        // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
                     },
                     error: function (err) { }
                 });
@@ -579,7 +581,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "PlantModel");
-                        console.log(oView.setModel(oJSONModel, "PlantModel"));
+                        // console.log(oView.setModel(oJSONModel, "PlantModel"));
                     },
                     error: function (err) { }
                 });
@@ -641,7 +643,7 @@ sap.ui.define([
                         sap.m.MessageBox.information("Layout saved.");
                     },
                     error: function (err) {
-                        console.log(err);
+                        // console.log(err);
                         sap.m.MessageBox.error(err);
                     }
                 });

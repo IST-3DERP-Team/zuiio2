@@ -396,7 +396,7 @@
                             enableColumnFreeze="true"
                             enableCellFilter="true"
                             selectionMode="Single" 
-                            selectionBehavior="RowSelector">
+                            selectionBehavior="RowOnly">
 
                         <t:rowSettingsTemplate>
                             <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -493,14 +493,14 @@
                                         type="Ghost"
                                         text="New"
                                         icon="sap-icon://add-document"
-                                        press="onEdit('IODETTab')"
+                                        press="onNew('IODET')"
                                         tooltip="New"
                                         visible="true" />
                                     <Button id="btnEditIODet" 
                                         type="Ghost"
                                         text="Edit"
                                         icon="sap-icon://edit"
-                                        press="onEdit('IODETTab')"
+                                        press="onEdit('IODET')"
                                         tooltip="Edit"
                                         visible="true" />
                                     <Button id="btnDeleteIODet" 
@@ -520,26 +520,26 @@
                                     <Button id="btnRefreshIODet" 
                                         type="Ghost"
                                         icon="sap-icon://refresh"
-                                        press="reloadIOData('IODETTab','/IODLVSet')"
+                                        press="reloadIOData('IODETTab','/IODETSet')"
                                         tooltip="Refresh"
                                         visible="true" />
                                     <Button id="btnSaveIODet" 
                                         type="Ghost"
                                         text="Save"
                                         icon="sap-icon://save"
-                                        press="onSave('IODETTab')" 
+                                        press="onSave('IODET')" 
                                         tooltip="{ddtext>/SAVE}"
                                         visible="false" />
                                     <Button id="btnCancelIODet" 
                                         type="Ghost"
                                         text="Cancel"
                                         icon="sap-icon://sys-cancel"
-                                        press="onCancel('IODETTab')" 
+                                        press="onCancel('IODET')" 
                                         tooltip="{ddtext>/CANCEL}"
                                         visible="false" /> 
                                     <Button id="btnFullScreenIODet" 
                                         icon="sap-icon://zoom-in"
-                                        press="onFullScreen('IODETTab')"
+                                        press="onFullScreen('IODET')"
                                         tooltip="view Full Screen"
                                         visible="true" />
                                 </Toolbar>
