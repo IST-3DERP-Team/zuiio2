@@ -409,7 +409,7 @@
                                     type="Ghost"
                                     text="New"
                                     icon="sap-icon://add-document"
-                                    press="onEdit('IODLVTab')"
+                                    press="onAdd('IODLV')"
                                     tooltip="New"
                                     visible="true" />
                                 <Button id="btnImportPODlvSched" 
