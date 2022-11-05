@@ -1586,8 +1586,113 @@ sap.ui.define([
                 }
             },
 
-            onIORelease: function (source) {
+            onIORelease: function (TableName) {
+                sTableName = TableName;
+                var oParam;
+                var sIONo = this.getView().byId("IONO").getValue();
 
+                // alert(sTableName);
+                if (sTableName === "IOHDR") {
+                    oParam = {
+                        "Iono": sIONo
+                    };
+                }
+
+                // if (sTableName === "IODynTable") {
+                //     var oTable = this.byId(sTableName);
+                //     var oSelectedIndices = oTable.getSelectedIndices();
+                //     var oTmpSelectedIndices = [];
+                //     var aData = oTable.getModel().getData().rows;
+
+                //     var bProceed = true;
+                //     var oParam;
+                //     var sReleaseIO;
+
+                //     if (oSelectedIndices.length > 0) {
+                //         oSelectedIndices.forEach(item => {
+                //             oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                //         })
+
+                //         oSelectedIndices = oTmpSelectedIndices;
+
+                //         if (sTableName === "IOHDR") {
+                //             oSelectedIndices.forEach(item => {
+                //                 sReleaseIO = aData.at(item).IONO;
+                //             })
+                //         }
+
+                //         oParam = {
+                //             "Iono": sReleaseIO
+                //         };
+                //     }
+                // }
+
+                var sEntitySet = "/Internal_CreateSet";
+                var sMethod = "POST";
+                var sMessage;
+                var resultType;
+                var resultDescription;
+
+                // console.log(oParam);
+                // console.log(sEntitySet);
+                // console.log(sMethod);
+                // return;
+
+                var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+
+                oModelRelease.create(sEntitySet, oParam, {
+                    method: sMethod,
+                    success: function (oData, oResponse) {
+                        //capture oData output if needed
+                        resultType = oData.Type;
+                        resultDescription = oData.Description;
+
+                        //show MessageBox for successful execution
+                        setTimeout(() => {
+                            if(resultType === "E") {
+                                sap.m.MessageBox.error(resultDescription);
+                            }
+                            if(resultType !== "E"){
+                                sap.m.MessageBox.information(resultDescription);
+                            }                            
+                        }, 100);
+                    },
+                    error: function (err) { }
+                });
+
+                //reload data for both IO Delivery and IO Detail
+                setTimeout(() => {
+                    this.reloadHeaderData(sIONo);
+                }, 100);
+
+                setTimeout(() => {
+                    this.reloadIOData("StatDynTable", "/IOSTATSet");
+                }, 100);
+
+                // var sText;
+                // var sOutput;
+                // if(sTableName === "IODLVTab"){
+                //     sText = "Copy Delivery Sequence " + sDlvSeq + "?";
+                //     sOutput = "Copy Successful";
+                // } else if(sTableName === "IODETTab"){
+                //     sText = "Copy Delivery Item " + sIOItem + "?";
+                // }
+                // var oDialogData = {
+                //     Action: "onCopy",
+                //     SourceTable:sTableName,
+                //     Text: sText,
+                //     Output: sOutput
+                // };
+
+                // var oJSONModel = new JSONModel();
+                // oJSONModel.setData(oDialogData);
+
+                // if(!this._ConfirmDialogIOfn){
+                //     this._ConfirmDialogIOfn = sap.ui.xmlfragment("zuiio2.vew.fragments.dialog.ConfirmDialogIOfn", this);
+                //     this._ConfirmDialogIOfn.setModel(oJSONModel);
+                //     this.getView().addDependent(this._ConfirmDialogIOfn);
+                // }
+                // else this._ConfirmDialogIOfn.setModel(oJSONModel);
             },
 
             //******************************************* */
@@ -1631,7 +1736,7 @@ sap.ui.define([
                     //GET TABLE
                     var tabName = arg + "Tab";
                     var oTable = this.getView().byId(tabName);
-                    
+
                     //?? FIGURE OUT HOT TO REMOVE EXISTING ROWS BEFORE PUSHING AN EMPTY ARRAY AS ROW
                     // var aFilters= [];
                     // var oFilter = new sap.ui.model.Filter("DLVSEQ",sap.ui.model.FilterOperator.EQ,null);
@@ -1649,7 +1754,7 @@ sap.ui.define([
                     var oModel = this.getView().byId(tabName).getModel();
                     console.log(oModel);
                     var oData = oModel.getProperty('/rows');
-                    console.log(oData);
+                    // console.log(oData);
                     oData.push({});
                     oTable.getBinding("rows").refresh();
                     // oTable.setVisibleRowCount(oData.length);
@@ -1735,7 +1840,7 @@ sap.ui.define([
                         })
                     }
                 }
-                console.log(oParam);
+                // console.log(oParam);
 
                 var sEntitySet;
                 var sMethod;
@@ -1923,10 +2028,6 @@ sap.ui.define([
                 setTimeout(() => {
                     this.reloadIOData("IODETTab", "/IODETSet");
                 }, 100);
-            },
-
-            onReleaseIO: function () {
-                sap.m.MessageBox.information("Execute ZFM_ERP_CREATEMATERIAL - IO Release Logic");
             },
 
             reloadIOData: function (source, entityset) {
