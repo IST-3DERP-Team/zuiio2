@@ -501,7 +501,7 @@
                                         text="Edit"
                                         icon="sap-icon://edit"
                                         press="onEdit('IODET')"
-                                        tooltip="Edit"
+               git                         tooltip="Edit"
                                         visible="true" />
                                     <Button id="btnDeleteIODet" 
                                         type="Ghost"
