@@ -1649,12 +1649,12 @@ sap.ui.define([
 
                         //show MessageBox for successful execution
                         setTimeout(() => {
-                            if(resultType === "E") {
+                            if (resultType === "E") {
                                 sap.m.MessageBox.error(resultDescription);
                             }
-                            if(resultType !== "E"){
+                            if (resultType !== "E") {
                                 sap.m.MessageBox.information(resultDescription);
-                            }                            
+                            }
                         }, 100);
                     },
                     error: function (err) { }
@@ -1721,7 +1721,26 @@ sap.ui.define([
                     this.byId("btnSaveIODet").setVisible(false);
                     this.byId("btnCancelIODet").setVisible(false);
                     this.byId("btnFullScreenIODet").setVisible(false);
+                } else if (arg === "IODET") {
+                        this.byId("btnNewDlvSched").setVisible(false);
+                        this.byId("btnImportPODlvSched").setVisible(false);
+                        this.byId("btnEditDlvSched").setVisible(false);
+                        this.byId("btnDeleteDlvSched").setVisible(false);
+                        this.byId("btnCopyDlvSched").setVisible(false);
+                        this.byId("btnRefreshDlvSched").setVisible(false);
+                        this.byId("btnSaveDlvSched").setVisible(false);
+                        this.byId("btnCancelDlvSched").setVisible(false);
+                        this.byId("btnFullScreenDlvSched").setVisible(false);
 
+                        this.byId("btnNewIODet").setVisible(false);
+                        this.byId("btnEditIODet").setVisible(false);
+                        this.byId("btnDeleteIODet").setVisible(false);
+                        this.byId("btnCopyIODet").setVisible(false);
+                        this.byId("btnRefreshIODet").setVisible(false);
+                        this.byId("btnSaveIODet").setVisible(true);
+                        this.byId("btnCancelIODet").setVisible(true);
+                        this.byId("btnFullScreenIODet").setVisible(false);
+                    }
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                         .forEach(item => item.setProperty("enabled", false));
@@ -1735,7 +1754,10 @@ sap.ui.define([
 
                     //GET TABLE
                     var tabName = arg + "Tab";
+                    var aNewRow = [];
+                    var oNewRow = {};
                     var oTable = this.getView().byId(tabName);
+
 
                     //?? FIGURE OUT HOT TO REMOVE EXISTING ROWS BEFORE PUSHING AN EMPTY ARRAY AS ROW
                     // var aFilters= [];
@@ -1752,13 +1774,43 @@ sap.ui.define([
                     this.setActiveRowHighlightByTableId(arg + "Tab");
 
                     var oModel = this.getView().byId(tabName).getModel();
-                    console.log(oModel);
+                    // console.log(oModel);
                     var oData = oModel.getProperty('/rows');
                     // console.log(oData);
-                    oData.push({});
+
+                    oNewRow["New"] = true;
+                    aNewRow.push(oNewRow);
+                    // console.log(aNewRow);
+                    oModel.setProperty("/rows", aNewRow);
+
+                    // oData.push({});
+
+                    // this.getView().getModel("ui").setProperty("/dataMode", 'NEW');
+
+                    if (oTable.getBinding()) {
+                        // console.log("getBinding");
+                        this._aFiltersBeforeChange = jQuery.extend(true, [], oTable.getBinding().aFilters);
+
+                        // oTable.getBinding().aSorters = null;
+                        oTable.getBinding().aFilters = null;
+                    }
+
+                    var oColumns = oTable.getColumns();
+                    // console.log(oColumns);
+
+                    for (var i = 0, l = oColumns.length; i < l; i++) {
+                        var isFiltered = oColumns[i].getFiltered();
+                        // console.log(oColumns[i].getFiltered())
+                        if (isFiltered) {
+                            oColumns[i].filter("");
+                        }
+                    }
+
+                    //  oTable.getModel().refresh(true);
+
                     oTable.getBinding("rows").refresh();
                     // oTable.setVisibleRowCount(oData.length);
-                }
+                
             },
 
             onCopy: function (TableName) {
@@ -3127,10 +3179,163 @@ sap.ui.define([
 
             onSave(arg) {
                 var me = this;
+                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
+                var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true);
                 var iEdited = 0;
 
-                if (aEditedRows.length > 0) {
+                if (aNewRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var oModel;
+
+                        switch (arg) {
+                            case "IODLV":
+                                entitySet = entitySet + "IODLVSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            default: break;
+                        }
+
+                        aNewRows.forEach(item => {
+                            var param = {};
+                            param["IONO"] = me._ioNo;
+                            this._aColumns[arg].forEach(col => {
+                                console.log(col.ColumnName);
+                                console.log(col.DataType);
+                                //build up param without the key columns / values && columns where values where not assigned / undefined
+                                if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                    if (col.DataType === "NUMBER") {
+                                        param[col.ColumnName] = item[col.ColumnName] === "" ? 0 : item[col.ColumnName] * 1
+                                    } else
+                                        param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                }
+
+
+                                // if (iKeyCount === 1) {
+                                //     if (col.Key === "X")
+                                //         entitySet += "'" + item[col.ColumnName] + "'"
+                                // }
+                                // else if (iKeyCount > 1) {
+                                //     if (col.Key === "X") {
+                                //         if (col.DataType !== "NUMBER") {
+                                //             entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                //         } else {
+                                //             entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                //         }
+                                //     }
+                                // }
+                            })
+
+                            // if (iKeyCount > 1) entitySet = entitySet.substr(0, entitySet.length - 1);
+                            // entitySet += ")";
+
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(arg);
+
+                            return;
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            setTimeout(() => {
+                                // console.log(oModel);
+                                oModel.create(entitySet, param, {
+                                    method: "POST",
+                                    success: function (data, oResponse) {
+                                        iNew++;
+
+                                        if (iNew === aNewRows.length) {
+                                            Common.closeProcessingDialog(me);
+                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                            if (arg === "IODLV") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+                                            else if (arg === "IODET") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+
+                                            me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                            var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                            oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                            if (arg === "IODLV" || arg === "IODET") {
+                                                var oIconTabBarStyle = me.byId("itfDLVSCHED");
+                                                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            }
+
+                                            me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
+                                                me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
+                                            })
+
+                                            me._dataMode = "READ";
+                                        }
+                                    },
+                                    error: function () {
+                                        iNew++;
+                                        // alert("Error");
+                                        if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                    }
+                                });
+                            }, 100)
+                        })
+
+                        this.setRowReadMode(arg);
+
+                        if (arg === "IODLV") {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                        }
+
+                        if (arg === "IODET") {
+                            setTimeout(() => {
+                                this.reloadIOData("IODETTab", "/IODETSet");
+                            }, 100);
+                        }
+                    }
+                }
+                else if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         var entitySet = "/";
                         var oModel;
@@ -3200,7 +3405,7 @@ sap.ui.define([
                             Common.openProcessingDialog(me, "Processing...");
 
                             setTimeout(() => {
-                                console.log(oModel);
+                                // console.log(oModel);
                                 oModel.update(entitySet, param, {
                                     method: "PUT",
                                     success: function (data, oResponse) {
