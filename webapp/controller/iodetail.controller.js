@@ -1721,21 +1721,46 @@ sap.ui.define([
                     this.byId("btnSaveIODet").setVisible(false);
                     this.byId("btnCancelIODet").setVisible(false);
                     this.byId("btnFullScreenIODet").setVisible(false);
+                } else if(arg === "IODET"){
+                    this.byId("btnNewDlvSched").setVisible(false);
+                    this.byId("btnImportPODlvSched").setVisible(false);
+                    this.byId("btnEditDlvSched").setVisible(false);
+                    this.byId("btnDeleteDlvSched").setVisible(false);
+                    this.byId("btnCopyDlvSched").setVisible(false);
+                    this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnSaveDlvSched").setVisible(false);
+                    this.byId("btnCancelDlvSched").setVisible(false);
+                    this.byId("btnFullScreenDlvSched").setVisible(false);
+
+                    this.byId("btnNewIODet").setVisible(false);
+                    this.byId("btnEditIODet").setVisible(false);
+                    this.byId("btnDeleteIODet").setVisible(false);
+                    this.byId("btnCopyIODet").setVisible(false);
+                    this.byId("btnRefreshIODet").setVisible(false);
+                    this.byId("btnSaveIODet").setVisible(true);
+                    this.byId("btnCancelIODet").setVisible(true);
+                    this.byId("btnFullScreenIODet").setVisible(false);
+                }
 
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                         .forEach(item => item.setProperty("enabled", false));
 
-                    // if (arg === "IODLV" || arg === "IODET") {
-                    //     var oIconTabBarStyle = this.byId("itfDLVSCHED");
-                    //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                    //         .forEach(item => item.setProperty("enabled", false));
-                    // }
+                    if (arg === "IODLV" || arg === "IODET") {
+                        var oIconTabBarStyle = this.byId("itfDLVSCHED");
+                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", false));
+                    }
                     // alert("!");
 
                     //GET TABLE
+                    var aNewRow = [];
+                    var oNewRow = {};
+
                     var tabName = arg + "Tab";
                     var oTable = this.getView().byId(tabName);
+                    oNewRow["New"] = true;
+                    aNewRow.push(oNewRow);
 
                     //?? FIGURE OUT HOT TO REMOVE EXISTING ROWS BEFORE PUSHING AN EMPTY ARRAY AS ROW
                     // var aFilters= [];
@@ -1752,13 +1777,34 @@ sap.ui.define([
                     this.setActiveRowHighlightByTableId(arg + "Tab");
 
                     var oModel = this.getView().byId(tabName).getModel();
-                    console.log(oModel);
                     var oData = oModel.getProperty('/rows');
-                    // console.log(oData);
-                    oData.push({});
-                    oTable.getBinding("rows").refresh();
-                    // oTable.setVisibleRowCount(oData.length);
-                }
+
+                    oModel.setProperty("/rows", aNewRow);
+                    this.getView().getModel("ui").setProperty("/dataMode", 'NEW');
+
+                    // oData.push({});
+                    // oTable.getBinding("rows").refresh();
+                    // // oTable.setVisibleRowCount(oData.length);
+
+                    if (oTable.getBinding()) {
+                        this._aFiltersBeforeChange = jQuery.extend(true, [], oTable.getBinding().aFilters);
+    
+                        // oTable.getBinding().aSorters = null;
+                        oTable.getBinding().aFilters = null;
+                    }
+                    // console.log(this._aFiltersBeforeChange)
+                    var oColumns = oTable.getColumns();
+    
+                    for (var i = 0, l = oColumns.length; i < l; i++) {
+                        var isFiltered = oColumns[i].getFiltered();
+                        // console.log(oColumns[i].getFiltered())
+                        if (isFiltered) {
+                            oColumns[i].filter("");
+                        }
+                    }
+    
+                    oTable.getModel().refresh(true);
+                
             },
 
             onCopy: function (TableName) {

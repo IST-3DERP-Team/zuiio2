@@ -493,7 +493,7 @@
                                         type="Ghost"
                                         text="New"
                                         icon="sap-icon://add-document"
-                                        press="onNew('IODET')"
+                                        press="onAdd('IODET')"
                                         tooltip="New"
                                         visible="true" />
                                     <Button id="btnEditIODet" 
