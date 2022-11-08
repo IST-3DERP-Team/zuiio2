@@ -3127,8 +3127,172 @@ sap.ui.define([
 
             onSave(arg) {
                 var me = this;
+                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
+                var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true);
                 var iEdited = 0;
+
+                if (aNewRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var oModel;
+
+                        switch (arg) {
+                            case "IODLV":
+                                entitySet = entitySet + "IODLVSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            default:
+                                break;
+                        }
+
+                        aNewRows.forEach(item => {
+                            // var entitySet = "/" + (arg === "color" ? "AttribSet" : "ProcessSet") + "(";
+                            // entitySet = centitySet + "(";
+                            var param = {};
+
+                            param["IONO"] = me._ioNo;
+                            var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+
+                            this._aColumns[arg].forEach(col => {
+                                if (col.Key !== "X" && item[col.ColumnName] !== undefined) 
+                                    param[col.ColumnName] = item[col.ColumnName]
+
+                                // if (iKeyCount === 1) {
+                                //     if (col.Key === "X")
+                                //         entitySet += "'" + item[col.ColumnName] + "'"
+                                // }
+                                // else if (iKeyCount > 1) {
+                                //     if (col.Key === "X") {
+                                //         if (col.DataType !== "NUMBER") {
+                                //             entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                //         } else {
+                                //             entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                //         }
+                                //     }
+                                // }
+                            })
+
+                            // if (iKeyCount > 1) entitySet = entitySet.substr(0, entitySet.length - 1);
+                            // entitySet += ")";
+
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(arg);
+
+                            return;
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            setTimeout(() => {
+                                console.log(oModel);
+                                oModel.update(entitySet, param, {
+                                    method: "PUT",
+                                    success: function (data, oResponse) {
+                                        iEdited++;
+
+                                        if (iEdited === aEditedRows.length) {
+                                            Common.closeProcessingDialog(me);
+                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                            if (arg === "color") {
+                                                me.byId("btnEditColor").setVisible(true);
+                                                me.byId("btnSaveColor").setVisible(false);
+                                                me.byId("btnCancelColor").setVisible(false);
+                                            }
+                                            else if (arg === "process") {
+                                                me.byId("btnEditProcess").setVisible(true);
+                                                me.byId("btnSaveProcess").setVisible(false);
+                                                me.byId("btnCancelProcess").setVisible(false);
+                                            }
+                                            else if (arg === "ioMatList") {
+                                                me.byId("btnSubmitMRP").setVisible(true);
+                                                me.byId("btnAssignMatNo").setVisible(true);
+                                                me.byId("btnEditIOMatList").setVisible(true);
+                                                me.byId("btnRefreshIOMatList").setVisible(true);
+                                                me.byId("btnExportIOMatList").setVisible(true);
+                                                me.byId("btnSaveIOMatList").setVisible(false);
+                                                me.byId("btnCancelIOMatList").setVisible(false);
+                                            }
+                                            else if (arg === "IODLV") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+                                            else if (arg === "IODET") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+
+                                            me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                            var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                            oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                            if (arg === "color" || arg === "process") {
+                                                var oIconTabBarStyle = me.byId("itbStyleDetail");
+                                                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            }
+
+                                            if (arg === "IODLV" || arg === "IODET") {
+                                                var oIconTabBarStyle = me.byId("itfDLVSCHED");
+                                                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            }
+
+                                            me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
+                                                me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
+                                            })
+
+                                            me._dataMode = "READ";
+                                        }
+                                    },
+                                    error: function () {
+                                        iEdited++;
+                                        // alert("Error");
+                                        if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                    }
+                                });
+                            }, 100)
+                        })
+
+                        this.setRowReadMode(arg);
+                    }
+                }
 
                 if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
