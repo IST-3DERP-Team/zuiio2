@@ -1031,7 +1031,7 @@ sap.ui.define([
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
                             if (sModelName === "SalesGrpModel") {
-                                console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                                // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
                             }
                         },
                         error: function (err) { }
@@ -1208,10 +1208,10 @@ sap.ui.define([
                 var me = this;
                 var ioNo = me._ioNo;
                 var oModel = this.getOwnerComponent().getModel();
-                console.log("oModel");
+                // console.log("oModel");
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                console.log("oView");
+                // console.log("oView");
 
                 Common.openLoadingDialog(that);
 
@@ -1219,12 +1219,12 @@ sap.ui.define([
                 // console.log("IO NO");
                 // console.log(ioNo);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
-                console.log(entitySet);
-                console.log(ioNo);
+                // console.log(entitySet);
+                // console.log(ioNo);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        console.log("Header Data");
-                        console.log(oData);
+                        // console.log("Header Data");
+                        // console.log(oData);
                         me._styleVer = oData.VERNO;
                         me._prodplant = oData.PRODPLANT;
                         // oData.results.forEach(item => {
@@ -2011,7 +2011,7 @@ sap.ui.define([
                         "DLVSEQ": sDlvSeq,
                         "DELETED": "X"
                     };
-                    console.log(oParam);
+                    // console.log(oParam);
                 }
 
                 if (sTableName === "IODETTab") {
