@@ -338,8 +338,9 @@ sap.ui.define([
                 //route to detail page
                 // alert(this.sbu);
                 // alert(ioNO);
+                var sIONO = ioNO
                 that._router.navTo("RouteIODetail", {
-                    iono: ioNO,
+                    iono: sIONO.trim(),
                     sbu: that._sbu
                 });
             },
@@ -530,10 +531,10 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, "CopyIOModel");
-                            console.log(oParam);
-                            console.log(oData);
+                            // console.log(oParam);
+                            // console.log(oData);
                             //capture new IONO
-                            alert("IO Copied");
+                            // alert("IO Copied");
                             newIONO = oData.Znewiono;
                             Common.showMessage("Successfully create IO# " + newIONO);
                             _this._CopyIODialog.close();

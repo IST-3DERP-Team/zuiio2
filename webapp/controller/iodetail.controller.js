@@ -126,7 +126,7 @@ sap.ui.define([
                 // this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
 
                 if (this._ioNo === "NEW") {
-                    alert("NEW IO");
+                    // alert("NEW IO");
                     //create new - only header is editable at first
                     this.setHeaderEditMode();
                     this.byId("onIOEdit").setVisible(false);
@@ -1206,10 +1206,12 @@ sap.ui.define([
 
             getHeaderData: function () {
                 var me = this;
-                var ioNo = this._ioNo;
+                var ioNo = me._ioNo;
                 var oModel = this.getOwnerComponent().getModel();
+                console.log("oModel");
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
+                console.log("oView");
 
                 Common.openLoadingDialog(that);
 
@@ -1217,12 +1219,12 @@ sap.ui.define([
                 // console.log("IO NO");
                 // console.log(ioNo);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
-                // console.log(entitySet);
-                // console.log(ioNo);
+                console.log(entitySet);
+                console.log(ioNo);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        // console.log("Header Data");
-                        // console.log(oData);
+                        console.log("Header Data");
+                        console.log(oData);
                         me._styleVer = oData.VERNO;
                         me._prodplant = oData.PRODPLANT;
                         // oData.results.forEach(item => {
@@ -1963,6 +1965,10 @@ sap.ui.define([
                         })
                     }
 
+                    // console.log(sIONo);
+                    // console.log(sDlvSeq);
+                    // console.log(sIOItem);
+
                     if (sDeleted !== "") {
                         Common.showMessage("Record already tagged as Deleted.");
                         return;
@@ -1990,18 +1996,26 @@ sap.ui.define([
                 var sEntitySet;
                 var sMessage;
 
+                // alert("Confirm Mark as Deleted");
+                // console.log(sTableName);
+                // console.log(sIONo);
+                // console.log(sDlvSeq);
+                // console.log(sIOItem);
+
                 if (sTableName === "IODLVTab") {
-                    sEntitySet = "/IODLVSet(IONO='" + sIONo + "',DLVSEQ=" + sDlvSeq + ")";
+                    sEntitySet = "/IODLVSet(IONO='" + sIONo + "',DLVSEQ='" + sDlvSeq + "')";
+                    // console.log(sEntitySet)
 
                     oParam = {
                         "IONO": sIONo,
                         "DLVSEQ": sDlvSeq,
                         "DELETED": "X"
                     };
+                    console.log(oParam);
                 }
 
                 if (sTableName === "IODETTab") {
-                    sEntitySet = "/IODETSet(IONO='" + sIONo + "',IOITEM=" + sIOItem + ")";
+                    sEntitySet = "/IODETSet(IONO='" + sIONo + "',IOITEM='" + sIOItem + "')";
 
                     oParam = {
                         "IONO": sIONo,
@@ -2009,9 +2023,12 @@ sap.ui.define([
                         "DELETED": "X"
                     };
 
-                    // console.log(sEntitySet);
-                    // console.log(oParam);
+                    // alert(sEntitySet);
+                    // alert(oParam);
                 }
+
+                // me._ConfirmMarkAsDelete.close();
+                // return;
 
                 var oMarkAsDeletedModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
@@ -3140,8 +3157,12 @@ sap.ui.define([
                 var me = this;
                 var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
                 var iNew = 0;
-                var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true);
+                var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
+
+                // console.log(aNewRows);
+                // console.log(aEditedRows);
+                // return;
 
                 if (aNewRows.length > 0) {
                     if (this._validationErrors.length === 0) {
@@ -3166,10 +3187,12 @@ sap.ui.define([
 
                             this._aColumns[arg].forEach(col => {
                                 if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
-                                    if (col.DataType === "NUMBER") {
-                                        param[col.ColumnName] = item[col.ColumnName] === "" ? 0 : item[col.ColumnName] * 1
-                                    } else
-                                        param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                    param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+
+                                    // if (col.DataType === "NUMBER") {
+                                    //     param[col.ColumnName] = item[col.ColumnName] === "" ? 0 : item[col.ColumnName] * 1
+                                    // } else
+                                    //     param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
                                 }
                             })
 
@@ -3315,11 +3338,13 @@ sap.ui.define([
                                 }
                                 else if (iKeyCount > 1) {
                                     if (col.Key === "X") {
-                                        if (col.DataType !== "NUMBER") {
-                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                        } else {
-                                            entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
-                                        }
+                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+
+                                        // if (col.DataType !== "NUMBER") {
+                                        //     entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        // } else {
+                                        //     entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                        // }
                                     }
                                 }
                             })
@@ -3530,19 +3555,19 @@ sap.ui.define([
                         })
                 })
 
-                console.log("setRowEditMode 2");
+                // console.log("setRowEditMode 2");
 
                 var vIONo = this._ioNo; //"1000115";
 
-                console.log(me._ioNo);
+                // console.log(me._ioNo);
                 if (arg === "IODLV") {
                     this._oModel.read('/IODLVSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            console.log(oData);
-                            console.log("IODLV_MODEL");
+                            // console.log(oData);
+                            // console.log("IODLV_MODEL");
                             me.getView().setModel(new JSONModel(oData.results), "IODLV_MODEL");
                         },
                         error: function (err) { }
@@ -3555,8 +3580,8 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            console.log(oData);
-                            console.log("IODET_MODEL");
+                            // console.log(oData);
+                            // console.log("IODET_MODEL");
                             me.getView().setModel(new JSONModel(oData.results), "IODET_MODEL");
                         },
                         error: function (err) { }
@@ -3836,7 +3861,7 @@ sap.ui.define([
                 var sInputField = oInput.getBindingInfo("value").parts[0].path;
 
                 if (sInputField === "CPOATRIB") {
-                    console.log(oInput.getSuggestionItems())
+                    // console.log(oInput.getSuggestionItems())
                     if (oInput.getSuggestionItems().length === 0) {
                         var oData = me.getView().getModel("CUSTCOLOR_MODEL").getData();
                         var sKey = "";
