@@ -4926,6 +4926,8 @@ sap.ui.define([
             onExportFASummary: FASummary.onExportFASummary,
             onRefreshFASummary: FASummary.onRefreshFASummary,
             onCellClickFASummary: FASummary.onCellClickFASummary,
+            onFirstVisibleRowChangedFASummary: FASummary.onFirstVisibleRowChanged,
+            onColumnUpdatedFASummary: FASummary.onColumnUpdated,
             onFADCReceiveDetailClose: FASummary.onFADCReceiveDetailClose,
             onFADCSendDetailClose: FASummary.onFADCSendDetailClose,
 
