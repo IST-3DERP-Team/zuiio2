@@ -25,7 +25,7 @@ sap.ui.define([
         var sIOPrefix = "", sIODesc = "";
 
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
-
+        var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
         var Core = sap.ui.getCore();
 
         return Controller.extend("zuiio2.controller.iodetail", {
@@ -346,25 +346,81 @@ sap.ui.define([
                     var sColumnDataType = context.getObject().DataType;
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
+                    console.log(sColumnDataType);
+                    
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.CheckBox({selected: true, editable: false}),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                     } else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
 
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: sColumnLabel,
-                        template: new sap.m.Text({
-                            text: "{" + sColumnId + "}",
-                            wrapping: false
-                            // , 
-                            // tooltip: "{" + sColumnId + "}"
-                        }),
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    // return new sap.ui.table.Column({
+                    //     id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //     label: sColumnLabel,
+                    //     template: new sap.m.Text({
+                    //         text: "{" + sColumnId + "}",
+                    //         wrapping: false
+                    //         // , 
+                    //         // tooltip: "{" + sColumnId + "}"
+                    //     }),
+                    //     width: sColumnWidth + "px",
+                    //     sortProperty: sColumnId,
+                    //     filterProperty: sColumnId,
+                    //     autoResizable: true,
+                    //     visible: sColumnVisible,
+                    //     sorted: sColumnSorted,
+                    //     hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //     sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    // });
+
                 });
             },
 
@@ -1274,8 +1330,8 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        // console.log("Header Data");
-                        // console.log(oData);
+                        console.log("Header Data");
+                        console.log(oData);
                         // oData.results.forEach(item => {
                         //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
                         //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
@@ -1518,15 +1574,19 @@ sap.ui.define([
 
                         // //reload Header Data
                         // alert("Reload IO Header Data - " + me._ioNo);
-                        setTimeout(() => {
-                            this.reloadHeaderData(me._ioNo);
-                        }, 100);
+                        // setTimeout(() => {
+                        //     this.reloadHeaderData(me._ioNo);
+                        // }, 100);
                         // //reload IO Data (Attrib,Status,Details,Delivery Sched)
                         // setTimeout(() => {
                         //     this.getReloadIOColumnProp();
                         // }, 100);
 
                     }
+
+                    setTimeout(() => {
+                        this.reloadHeaderData(me._ioNo);
+                    }, 100);
 
                     setTimeout(() => {
                         this.closeHeaderEdit();
@@ -3187,8 +3247,11 @@ sap.ui.define([
 
                             this._aColumns[arg].forEach(col => {
                                 if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
-                                    param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
-
+                                    if (col.DataType === "DATETIME") {
+                                        param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                    } else {
+                                        param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                    }
                                     // if (col.DataType === "NUMBER") {
                                     //     param[col.ColumnName] = item[col.ColumnName] === "" ? 0 : item[col.ColumnName] * 1
                                     // } else
@@ -3196,9 +3259,9 @@ sap.ui.define([
                                 }
                             })
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(arg);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(arg);
 
                             // return;
 
@@ -3494,6 +3557,7 @@ sap.ui.define([
 
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
+                            // console.log(ci.DataType);
                             if (ci.Editable) {
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
                                 if (oValueHelp) {
@@ -3516,6 +3580,16 @@ sap.ui.define([
                                         },
                                         // suggest: this.handleSuggestion.bind(this),
                                         change: this.handleValueHelpChange.bind(this)
+                                    }));
+                                }
+                                else if (ci.DataType === "DATETIME") {
+                                    col.setTemplate(new sap.m.DatePicker({
+                                        // id: "ipt" + ci.name,
+                                        value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                        displayFormat: "short",
+                                        change: "handleChange",
+
+                                        liveChange: this.onInputLiveChange.bind(this)
                                     }));
                                 }
                                 else if (ci.DataType === "NUMBER") {
