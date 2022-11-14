@@ -35,8 +35,12 @@
                 <f:formElements>
                     <f:FormElement label="{i18n>IONO}" visible="{= ${VisibleFieldsData>/IONO} === true ? true : false }">
                         <f:fields>
-                            <Input id="IONO" value="{headerData>/IONO}" showSuggestion="true" showValueHelp="true"
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IONO} : false }" valueStateText="Required">
+                            <Input id="IONO" 
+                            value="{headerData>/IONO}" 
+                            showSuggestion="true" 
+                            showValueHelp="true"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IONO} : false }" 
+                            valueStateText="Required">
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -50,9 +54,17 @@
                     </f:FormElement>   
                     <f:FormElement label="{i18n>PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODTYPE"  value="{headerData>/PRODTYPE}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODTYPE} : false }" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{ProdTypeModel>/results}">     
+                            <Input id="PRODTYPE"  
+                                value="{headerData>/PRODTYPE}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODTYPE} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onProdTypeValueHelp"
+                                suggestionItems="{ProdTypeModel>/results}">     
                                 <suggestionItems>
                                     <core:ListItem text="{ProdTypeModel>PRODTYP}" additionalText="{ProdTypeModel>DESC1}"/>
                                 </suggestionItems>                                
@@ -61,9 +73,17 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODSCEN" value="{headerData>/PRODSCEN}" showSuggestion="true" showValueHelp="true"
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSCEN} : false }" valueStateText="Required"
-                                change="onHeaderChange" autocomplete="true" suggestionItems="{ProdScenModel>/results}">
+                            <Input id="PRODSCEN" 
+                                value="{headerData>/PRODSCEN}" 
+                                showSuggestion="true" 
+                                showValueHelp="true"
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSCEN} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onProdScenValueHelp"
+                                suggestionItems="{ProdScenModel>/results}">
                                 <suggestionItems>
                                     <core:ListItem text="{ProdScenModel>PRODSCEN}" additionalText="{ProdScenModel>DESC1}"/>
                                 </suggestionItems>                              
@@ -113,9 +133,17 @@
                 <f:formElements>                                                            
                     <f:FormElement label="{i18n>IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                         <f:fields>
-                            <Input id="IOTYPE"  value="{headerData>/IOTYPE}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOTYPE} : false }" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{IOTypeModel>/results}">     
+                            <Input id="IOTYPE"  
+                                value="{headerData>/IOTYPE}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOTYPE} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onIOTypeValueHelp"
+                                suggestionItems="{IOTypeModel>/results}">     
                                 <suggestionItems>
                                     <core:ListItem text="{IOTypeModel>IOTYPE}" additionalText="{IOTypeModel>DESC1}"/>
                                 </suggestionItems>                                
@@ -190,10 +218,18 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>SEASONCD}" visible="{= ${VisibleFieldsData>/SEASONCD} === true ? true : false }">
                         <f:fields>
-                            <Input id="SEASONCD" type="Text" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SEASONCD} : false }" valueStateText="Required"
+                            <Input id="SEASONCD" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SEASONCD} : false }" 
+                                valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
-                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{SeasonsModel>/results}">
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onSeasonsValueHelp"
+                                suggestionItems="{SeasonsModel>/results}">
                                 <suggestionItems>
                                     <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
                                 </suggestionItems>
@@ -229,10 +265,18 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
                         <f:fields>
-                            <Input id="BASEUOM" type="Text" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/BASEUOM} : false }" valueStateText="Required"
+                            <Input id="BASEUOM" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/BASEUOM} : false }" 
+                                valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
-                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{UOMModel>/results}">
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onUOMValueHelp"
+                                suggestionItems="{UOMModel>/results}">
                                 <suggestionItems>
                                     <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/>
                                 </suggestionItems>
@@ -272,10 +316,18 @@
                     </f:FormElement>   
                     <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
-                            <Input id="STYLENO" type="Text" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" valueStateText="Required"
+                            <Input id="STYLENO" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" 
+                                valueStateText="Required"
                                 value="{headerData>/STYLENO}" 
-                                change="onHeaderChange" liveChange="onHeaderChange" autocomplete="true" suggestionItems="{StyleNoModel>/results}">
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onStyleNoValueHelp"
+                                suggestionItems="{StyleNoModel>/results}">
                                 <suggestionItems>
                                     <core:ListItem text="{StyleNoModel>STYLENO}" additionalText="{StyleNoModel>DESC1}"/>
                                 </suggestionItems>

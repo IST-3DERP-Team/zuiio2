@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectStyleNo}"
+		class="sapUiPopupWithPadding"
+		items="{StyleNoModel>/results}"
+        search="_stylenoGroupValueHelpSearch"
+		confirm="_stylenoGroupValueHelpClose"
+		cancel="_stylenoGroupValueHelpClose">
+		<StandardListItem title="{StyleNoModel>STYLENO}" description="{StyleNoModel>DESC1}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

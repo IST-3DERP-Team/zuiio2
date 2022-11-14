@@ -1007,7 +1007,10 @@ sap.ui.define([
             },
 
             onHeaderChange: function (oEvent) {
-                var me = this;
+                var me = this;  
+                if(oEvent === undefined)
+                    return;
+
                 var oSource = oEvent.getSource();
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
                 // alert(oSource.getBindingInfo("value").parts[0].path);
@@ -1074,7 +1077,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
-                            // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
+                            console.log(oView.setModel(oJSONModel, ModelName));
                         },
                         error: function (err) { }
                     });
@@ -1375,6 +1378,8 @@ sap.ui.define([
                 this.getVHSet("/UOMvhSet", "UOMModel", false);
                 this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
                 this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
+
+                // console.log(this.getView().getModel());
             },
 
             // setDetailVisible: function(bool) {
@@ -1414,6 +1419,240 @@ sap.ui.define([
                 }
                 var oMsgStrip = that.getView().byId('HeaderMessageStrip');
                 oMsgStrip.setVisible(false);
+            },
+
+            //******************************************* */
+            //VALUE HELP
+            //******************************************* */
+
+            onSeasonsValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._seasonsHelpDialog) {
+                    that._seasonsHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.Seasons", that);
+                    that._seasonsHelpDialog.attachSearch(that._seasonsGroupValueHelpSearch);
+                    that.getView().addDependent(that._seasonsHelpDialog);
+                }
+                that._seasonsHelpDialog.open(sInputValue);
+            },
+
+            _seasonsGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("SEASONCD", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _seasonsGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onProdScenValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._prodscenHelpDialog) {
+                    that._prodscenHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ProdScen", that);
+                    that._prodscenHelpDialog.attachSearch(that._prodscenGroupValueHelpSearch);
+                    that.getView().addDependent(that._prodscenHelpDialog);
+                }
+                that._prodscenHelpDialog.open(sInputValue);
+            },
+
+            _prodscenGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("PRODSCEN", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _prodscenGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+
+                    var sProdScen = this.getView().byId("PRODSCEN").getValue();
+
+                    var oData = this.getView().getModel("ProdScenModel").oData;
+                    for (var i = 0; i < oData.results.length; i++) {
+                        if (oData.results[i].PRODSCEN === sProdScen) {
+                            // alert(oData.results[i].PRODPLANT);
+                            this.getView().byId("PRODPLANT").setValue(oData.results[i].PRODPLANT);
+                            this.getView().byId("TRADPLANT").setValue(oData.results[i].TRADPLANT);
+                            this.getView().byId("PLANPLANT").setValue(oData.results[i].PLANPLANT);
+                            this.getView().byId("FTYSALTERM").setValue(oData.results[i].FTY_SALES_TERM);
+                            this.getView().byId("CUSSALTERM").setValue(oData.results[i].CUST_SALES_TERM);
+                            this.getView().byId("SALESORG").setValue(oData.results[i].SALESORG);
+                        }
+                    }
+
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onIOTypeValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._iotypeHelpDialog) {
+                    that._iotypeHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.IOType", that);
+                    that._iotypeHelpDialog.attachSearch(that._iotypeGroupValueHelpSearch);
+                    that.getView().addDependent(that._iotypeHelpDialog);
+                }
+                that._iotypeHelpDialog.open(sInputValue);
+            },
+
+            _iotypeGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("IOTYPE", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _iotypeGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onProdTypeValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._prodtypeHelpDialog) {
+                    that._prodtypeHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ProdType", that);
+                    that._prodtypeHelpDialog.attachSearch(that._prodtypeGroupValueHelpSearch);
+                    that.getView().addDependent(that._prodtypeHelpDialog);
+                }
+                that._prodtypeHelpDialog.open(sInputValue);
+            },
+
+            _prodtypeGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("PRODTYP", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _prodtypeGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onStyleNoValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._stylenoHelpDialog) {
+                    that._stylenoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.StyleNo", that);
+                    that._stylenoHelpDialog.attachSearch(that._stylenoGroupValueHelpSearch);
+                    that.getView().addDependent(that._stylenoHelpDialog);
+                }
+                that._stylenoHelpDialog.open(sInputValue);
+            },
+
+            _stylenoGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("STYLENO", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _stylenoGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+
+                    var sStyleNo = this.getView().byId("STYLENO").getValue();
+
+                    var oData = this.getView().getModel("StyleNoModel").oData;
+                    // console.log(oData);     
+                    for (var i = 0; i < oData.results.length; i++) {
+                        if (oData.results[i].STYLENO === sStyleNo) {
+                            this.getView().byId("VERNO").setValue(oData.results[i].PRODPLANT);
+                            this.getView().byId("PRODTYPE").setValue(oData.results[i].PRODTYP);
+                            this.getView().byId("STYLECD").setValue(oData.results[i].STYLECD);
+                            this.getView().byId("SEASONCD").setValue(oData.results[i].SEASONCD);
+                            this.getView().byId("CUSTGRP").setValue(oData.results[i].CUSTGRP);
+                            this.getView().byId("BASEUOM").setValue(oData.results[i].UOM);
+                        }
+                    }
+                    
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onUOMValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._uomHelpDialog) {
+                    that._uomHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.UOM", that);
+                    that._uomHelpDialog.attachSearch(that._uomGroupValueHelpSearch);
+                    that.getView().addDependent(that._uomHelpDialog);
+                }
+                that._uomHelpDialog.open(sInputValue);
+            },
+
+            _uomGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("MSEHI", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("MSEHL", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _uomGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
             },
 
             //******************************************* */

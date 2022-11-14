@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectUOM}"
+		class="sapUiPopupWithPadding"
+		items="{UOMModel>/results}"
+        search="_uomGroupValueHelpSearch"
+		confirm="_uomGroupValueHelpClose"
+		cancel="_uomGroupValueHelpClose">
+		<StandardListItem title="{UOMModel>MSEHI}" description="{UOMModel>MSEHL}"/>
+	</SelectDialog>
+</core:FragmentDefinition>
