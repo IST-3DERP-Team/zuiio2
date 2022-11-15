@@ -58,7 +58,9 @@
                         headerMode="Inline"
                         expandable="false"
                         expanded="{device>/isNoPhone}"
-                        class="sapUiResponsiveContentPadding">
+                        class="sapUiNoContentPadding"
+                        stretchContentHeight="false" 
+                        applyContentPadding="false">
                             <items>
                                 <!-- ATTRIBUTES -->
                                 <IconTabFilter
