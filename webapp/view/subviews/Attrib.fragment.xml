@@ -24,7 +24,7 @@
             <t:Table id="AttribDynTable" 
                 class="sapUiSizeCompact sidePadding" 
                 visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true" git 
+                showColumnVisibilityMenu="true"
                 enableColumnFreeze="true"
                 enableCellFilter="true"
                 selectionMode="Single" 
