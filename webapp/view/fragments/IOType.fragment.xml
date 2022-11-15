@@ -2,7 +2,7 @@
 	xmlns="sap.m"
 	xmlns:core="sap.ui.core">
 	<SelectDialog
-		title="{i18n>SelectIOType}}"
+		title="{i18n>SelectIOType}"
 		class="sapUiPopupWithPadding"
 		items="{IOTypeModel>/results}"
         search="_iotypeGroupValueHelpSearch"

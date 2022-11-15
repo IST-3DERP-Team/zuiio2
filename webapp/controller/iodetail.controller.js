@@ -1378,6 +1378,9 @@ sap.ui.define([
                 this.getVHSet("/UOMvhSet", "UOMModel", false);
                 this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
                 this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
+                this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
+                this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
+                this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
 
                 // console.log(this.getView().getModel());
             },
@@ -1645,6 +1648,171 @@ sap.ui.define([
             },
 
             _uomGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onSalesOrgValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._salesorgHelpDialog) {
+                    that._salesorgHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.SalesOrg", that);
+                    that._salesorgHelpDialog.attachSearch(that._salesorgGroupValueHelpSearch);
+                    that.getView().addDependent(that._salesorgHelpDialog);
+                }
+                that._salesorgHelpDialog.open(sInputValue);
+            },
+
+            _salesorgGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("SALESORG", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESCRIPTION", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _salesorgGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onSalesGrpValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._salesgrpHelpDialog) {
+                    that._salesgrpHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.SalesGrp", that);
+                    that._salesgrpHelpDialog.attachSearch(that._salesgrpGroupValueHelpSearch);
+                    that.getView().addDependent(that._salesgrpHelpDialog);
+                }
+                that._salesgrpHelpDialog.open(sInputValue);
+            },
+
+            _salesgrpGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("SALESGRP", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _salesgrpGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onPlantValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._plantHelpDialog) {
+                    that._plantHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.Plant", that);
+                    that._plantHelpDialog.attachSearch(that._plantGroupValueHelpSearch);
+                    that.getView().addDependent(that._plantHelpDialog);
+                }
+                that._plantHelpDialog.open(sInputValue);
+            },
+
+            _plantGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("PRODPLANT", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _plantGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onStyleCdValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._stylecdHelpDialog) {
+                    that._stylecdHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.StyleCd", that);
+                    that._stylecdHelpDialog.attachSearch(that._stylecdGroupValueHelpSearch);
+                    that.getView().addDependent(that._stylecdHelpDialog);
+                }
+                that._stylecdHelpDialog.open(sInputValue);
+            },
+
+            _stylecdGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("STYLECD", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _seasonsGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onCustGrpValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._custgrpHelpDialog) {
+                    that._custgrpHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CustGrp", that);
+                    that._custgrpHelpDialog.attachSearch(that._custgrpGroupValueHelpSearch);
+                    that.getView().addDependent(that._custgrpHelpDialog);
+                }
+                that._custgrpHelpDialog.open(sInputValue);
+            },
+
+            _custgrpGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("CUSTGRP", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("DECSRIPTION", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _custgrpGroupValueHelpClose: function (evt) {
                 //on select season
                 var oSelectedItem = evt.getParameter("selectedItem");
                 if (oSelectedItem) {
