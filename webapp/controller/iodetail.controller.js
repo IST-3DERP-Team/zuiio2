@@ -346,7 +346,7 @@ sap.ui.define([
                     var sColumnDataType = context.getObject().DataType;
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
-                    console.log(sColumnDataType);
+                    // console.log(sColumnDataType);
                     
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
@@ -1077,7 +1077,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
-                            console.log(oView.setModel(oJSONModel, ModelName));
+                            // console.log(oView.setModel(oJSONModel, ModelName));
                         },
                         error: function (err) { }
                     });
@@ -3666,9 +3666,9 @@ sap.ui.define([
                                 }
                             })
 
-                            console.log(entitySet);
-                            console.log(param);
-                            console.log(arg);
+                            // console.log(entitySet);
+                            // console.log(param);
+                            // console.log(arg);
 
                             // return;
 
