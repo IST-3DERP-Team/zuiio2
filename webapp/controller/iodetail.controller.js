@@ -1882,6 +1882,7 @@ sap.ui.define([
             //******************************************* */
             onIOEdit: function (source) {
                 var sSource = source;
+
                 if (sSource === "IOHDR") {
                     //create new - only header is editable at first
                     this.setHeaderEditMode();
@@ -1891,6 +1892,9 @@ sap.ui.define([
                     this.byId("onIOStatEdit").setVisible(false);
                     this.byId("onIOSave").setVisible(true);
                     this.byId("onIOCancel").setVisible(true);
+
+                    console.log(this.getView().getModel("HeaderEditModeModel"));
+                    console.log(this.getView().getModel("headerData"));
 
                     this.disableOtherTabs();
 

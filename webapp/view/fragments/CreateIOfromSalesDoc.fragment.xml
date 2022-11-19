@@ -1,0 +1,48 @@
+<core:FragmentDefinition xmlns="sap.m" 
+    xmlns:core="sap.ui.core" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:l="sap.ui.layout"
+    xmlns:t="sap.ui.table">
+
+	<Dialog title="Selec Sales Document" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="80%">
+		<Panel height="400px" >
+
+           
+            <!-- New Style Details -->
+            <!-- Versions Table -->
+            <!-- <t:Table id="versionsTableMain" rows="{VersionsDataModel>/results}" class="sapUiSizeCompact">
+                <t:columns>
+                    <t:Column width="5rem" filterType="" filterProperty="Verno" sortProperty="Verno">
+                        <Label text="{i18n>Version}"/>
+                        <t:template>
+                            <Text text="{VersionsDataModel>Verno}" textAlign="End"/>
+                        </t:template>
+                    </t:Column>
+                    <t:Column width="6rem" hAlign="Center" sortProperty="Currentver">
+                        <Label text="{i18n>VerStatus}" />
+                        <t:template>
+                            <tnt:InfoLabel id="il8" text="{= ${VersionsDataModel>Currentver} === true ? 'Current' : ' ' }" colorScheme="{= ${VersionsDataModel>Currentver} === true ? 8 : 7 }" displayOnly= "true"
+                                visible="{VersionsDataModel>Currentver}"/>
+                        </t:template>
+                    </t:Column>
+                    <t:Column width="15rem" filterProperty="Desc1" sortProperty="Desc1">
+                        <Label text="{i18n>Description}" />
+                        <t:template>
+                            <Text text="{VersionsDataModel>Desc1}"/>
+                        </t:template>
+                    </t:Column>
+                    <t:Column width="15rem" filterProperty="Desc2" sortProperty="Desc2">
+                        <Label text="{i18n>Description}" />
+                        <t:template>
+                            <Text text="{VersionsDataModel>Desc2}"/>
+                        </t:template>
+                    </t:Column>
+                </t:columns>
+            </t:Table> -->
+		</Panel>
+		<buttons>
+			<Button text="{i18n>Select}" press="onfragmentIOSelect" tooltip="Select"/>
+			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
+		</buttons>
+	</Dialog>
+</core:FragmentDefinition>
