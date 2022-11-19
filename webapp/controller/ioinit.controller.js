@@ -38,6 +38,19 @@ sap.ui.define([
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this.setSmartFilterModel();
 
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: function(oEvent){
+                            console.log("back")
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton; 
+                            that.onRefresh();
+                        }
+                    }, oView);
+                }
+
                 this.onSearch();
             },
 
@@ -91,7 +104,7 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text();  //get selected SBU
+                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 this._sbu = 'VER';
@@ -649,6 +662,11 @@ sap.ui.define([
                         sap.m.MessageBox.error(err);
                     }
                 });
+            },
+
+            onRefresh: function (oEvent) {
+                //this.getColumns("SEARCH");
+                this.getDynamicTableData("");
             },
 
             pad: Common.pad

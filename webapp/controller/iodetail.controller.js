@@ -128,7 +128,7 @@ sap.ui.define([
                 // this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
 
                 if (this._ioNo === "NEW") {
-                    alert("NEW IO");
+                    // alert("NEW IO");
                     //create new - only header is editable at first
                     this.setHeaderEditMode();
                     this.byId("onIOEdit").setVisible(false);
@@ -149,7 +149,7 @@ sap.ui.define([
                     // //remove headerData initially stored if user selected to open an existing IO#
                     // var HeaderDataModel = this.getView().getModel("headerData");
                     // if (HeaderDataModel && this._ioNo === "NEW") {
-                    //     alert("Clear Header Data");
+                    // alert("Clear Header Data");
                     //     HeaderDataModel.setData(null);
                     //     HeaderDataModel.updateBindings(true);
                     // }
@@ -166,13 +166,13 @@ sap.ui.define([
                     oJSONModel.setData(data);
                     this.getView().setModel(oJSONModel, "headerData");
 
-                    console.log(this.getView().getModel("headerData"));
+                    // console.log(this.getView().getModel("headerData"));
 
                     // return;
                 } else {
 
-                    alert("Existing IO");
-                    alert(this._ioNo);
+                    // alert("Existing IO");
+                    // alert(this._ioNo);
                     //existing style, get the style data
                     this.cancelHeaderEdit();
                     this.enableOtherTabs();
@@ -181,7 +181,7 @@ sap.ui.define([
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
-                    // this.setDetailVisible(true); //make detail section visible
+                    this.enableOtherTabs();
                 }
 
                 //Load header
@@ -275,8 +275,9 @@ sap.ui.define([
                 // });
                 // await _promiseResult;
 
-                var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+                //// Handle when checking if NEW IO or Not
+                // var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                // oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
                 var oIconTabBarStyle = this.byId("itbStyleDetail");
                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
@@ -1376,7 +1377,7 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                alert("reload Header Data " + ioNo);
+                // alert("reload Header Data " + ioNo);
                 if (ioNo === "NEW") {
                     return;
                 }
@@ -1991,7 +1992,7 @@ sap.ui.define([
 
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                console.log(oParamIOHeaderData);
+                                // console.log(oParamIOHeaderData);
                                 oModel.create("/IOHDRSet", oParamIOHeaderData, {
                                     method: "POST",
                                     success: function (oData, oResponse) {
@@ -2010,7 +2011,7 @@ sap.ui.define([
                         await _promiseResult;
 
                         // setTimeout(() => {
-                        //     alert("Reload Header Data 1");
+                        //  alert("Reload Header Data 1");
                         //     this.reloadHeaderData(newIONO);
                         // }, 100);
 
@@ -2146,8 +2147,8 @@ sap.ui.define([
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
-                    alert(this._ioNo);
-                    alert(this._newIONo);
+                    // alert(this._ioNo);
+                    // alert(this._newIONo);
                     if (this._ioNo === "NEW" && this._newIONo !== "") {
                         this.onNavBack();
                     }
