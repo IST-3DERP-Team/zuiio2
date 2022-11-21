@@ -649,7 +649,98 @@
                     <IconTabFilter
                         text="Costing"
                         key="itfCOSTING">
-                        <Text text="Costing..." />
+                        <layout:Splitter class="iostyle">
+                            <Panel class="sapUiNoContentPadding stylHdrPadding">
+                                <t:Table id="costHdrTab"
+                                    visibleRowCountMode="Auto"
+                                    showColumnVisibilityMenu="true"
+                                    enableColumnFreeze="true"
+                                    selectionMode="Single" 
+                                    selectionBehavior="RowSelector"
+                                    firstVisibleRowChanged="onFirstVisibleRowChanged"
+                                    cellClick="onCellClick"
+                                    sort="onSort"
+                                    filter="onFilter"
+                                    columnFreeze="onColumnUpdated"
+                                    columnMove="onColumnUpdated"
+                                    columnResize="onColumnUpdated"
+                                    columnSelect="onColumnUpdated"
+                                    columnVisibility="onColumnUpdated"> 
+                                    <t:rowSettingsTemplate>
+                                        <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                    </t:rowSettingsTemplate>                                    
+                                    <!-- <t:extension>
+                                        <Toolbar>
+                                            <ToolbarSpacer/>
+                                            <Button id="btnEditColor" 
+                                                text="{ddtext>/EDIT}"
+                                                icon="sap-icon://edit"
+                                                press="onEdit('color')"
+                                                tooltip="{ddtext>/EDIT}"
+                                                visible="true" />
+                                            <Button id="btnSaveColor" 
+                                                text="{ddtext>/SAVE}"
+                                                icon="sap-icon://save"
+                                                press="onSave('color')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelColor" 
+                                                text="{ddtext>/CANCEL}"
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('color')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
+                                        </Toolbar>
+                                    </t:extension> -->
+                                </t:Table>
+                                <layoutData><layout:SplitterLayoutData size="600px" /></layoutData> 
+                            </Panel>
+                            <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+                                <t:Table id="costDtlsTab"
+                                    visibleRowCountMode="Auto"
+                                    showColumnVisibilityMenu="true"
+                                    enableColumnFreeze="true"
+                                    selectionMode="Single" 
+                                    selectionBehavior="RowSelector"
+                                    firstVisibleRowChanged="onFirstVisibleRowChanged"
+                                    cellClick="onCellClick"
+                                    sort="onSort"
+                                    filter="onFilter"
+                                    columnFreeze="onColumnUpdated"
+                                    columnMove="onColumnUpdated"
+                                    columnResize="onColumnUpdated"
+                                    columnSelect="onColumnUpdated"
+                                    columnVisibility="onColumnUpdated"> 
+                                    <t:rowSettingsTemplate>
+                                        <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                    </t:rowSettingsTemplate>                                    
+                                    <!-- <t:extension>
+                                        <Toolbar>
+                                            <ToolbarSpacer/>
+                                            <Button id="btnEditColor" 
+                                                text="{ddtext>/EDIT}"
+                                                icon="sap-icon://edit"
+                                                press="onEdit('color')"
+                                                tooltip="{ddtext>/EDIT}"
+                                                visible="true" />
+                                            <Button id="btnSaveColor" 
+                                                text="{ddtext>/SAVE}"
+                                                icon="sap-icon://save"
+                                                press="onSave('color')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelColor" 
+                                                text="{ddtext>/CANCEL}"
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('color')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
+                                        </Toolbar>
+                                    </t:extension> -->
+                                </t:Table>
+                                <layoutData><layout:SplitterLayoutData size="auto" /></layoutData>              
+                            </Panel> 
+                        </layout:Splitter>                        
                     </IconTabFilter>
 
                     <!-- FA SUMMARY-->
