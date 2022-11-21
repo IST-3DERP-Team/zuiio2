@@ -48,6 +48,17 @@
                         <f:fields>
                             <Input id="STYLECD" 
                                 value="{headerData>/STYLECD}" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange">
+                            </Input>
+                        </f:fields>
+                    </f:FormElement>
+                    <!-- <f:FormElement label="{i18n>STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
+                        <f:fields>
+                            <Input id="STYLECD" 
+                                value="{headerData>/STYLECD}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLECD} : false }" 
@@ -56,20 +67,21 @@
                                 liveChange="onHeaderChange"
                                 autocomplete="true" 
                                 valueHelpRequest="onStyleCdValueHelp"
-                                suggestionItems="{StyleCdModel>/results}">
+                                suggestionItems="{StyleCdModel>/results}"
+                                >
                                 <suggestionItems>
                                     <core:ListItem text="{StyleCdModel>STYLECD}" additionalText=""/>
                                 </suggestionItems> 
                             </Input>
                         </f:fields>
-                    </f:FormElement>   
+                    </f:FormElement>    -->
                     <f:FormElement label="{i18n>PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODTYPE"  
                                 value="{headerData>/PRODTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODTYPE} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false  }" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -174,7 +186,7 @@
                                 value="{headerData>/SALESGRP}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SALESGRP} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false  }" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 autocomplete="true" 
@@ -257,7 +269,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SEASONCD} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false  }" 
                                 valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
                                 change="onHeaderChange" 
@@ -277,7 +289,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTGRP} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false  }" 
                                 valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChange" 
@@ -326,7 +338,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/BASEUOM} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false  }" 
                                 valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
                                 change="onHeaderChange" 
@@ -375,6 +387,18 @@
                         <f:fields>
                             <Input id="STYLENO" 
                                 type="Text" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" 
+                                valueStateText="Required"
+                                value="{headerData>/STYLENO} {headerData>/VERNO}" 
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange">
+                            </Input>
+                        </f:fields>
+                    </f:FormElement>
+                    <!-- <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
+                        <f:fields>
+                            <Input id="STYLENO" 
+                                type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" 
@@ -390,8 +414,8 @@
                                 </suggestionItems>
                             </Input>
                         </f:fields>
-                    </f:FormElement>
-                    <f:FormElement label="{i18n>VERNO}" visible="{= ${VisibleFieldsData>/VERNO} === true ? true : false }">
+                    </f:FormElement> -->
+                    <f:FormElement label="{i18n>VERNO}" visible="false">
                         <f:fields>
                             <Input id="VERNO"  type="Number" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/VERNO} : false }"

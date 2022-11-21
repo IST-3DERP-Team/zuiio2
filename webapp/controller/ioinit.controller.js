@@ -38,7 +38,20 @@ sap.ui.define([
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this.setSmartFilterModel();
 
-                this.onSearch();
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: function (oEvent) {
+                            console.log("back")
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                            that.onRefresh();
+                        }
+                    }, oView);
+                }
+
+                // this.onSearch();
             },
 
             onAfterRendering: function () {
@@ -91,7 +104,7 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text();  //get selected SBU
+                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 this._sbu = 'VER';
@@ -417,8 +430,36 @@ sap.ui.define([
                 });
             },
 
+            onIOCreateSelect: function (source) {
+                var me = this;
+                var sSource = source;
+                if (sSource === "Style") {
+                    if (!me._IOfromStyleDialog) {
+                        me._IOfromStyleDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromStyle", me);
+                        me.getView().addDependent(me._IOfromStyleDialog);
+                    }
+                    me._IOfromStyleDialog.open();
+                } else if(sSource === "SalesDoc") {
+                    Common.showMessge("Ongoing ...");
+                    return;
+
+                    if (!me._IOfromSalesDocDialog) {
+                        me._IOfromSalesDocDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromSalesDoc", me);
+                        me.getView().addDependent(me._IOfromSalesDocDialog);
+                    }
+                    me._IOfromSalesDocDialog.open();
+                }
+            },
+
             onCopyIO: function (oEvent) {
                 var me = this;
+
+                if(this.getView().byId("smartFilterBar").getFilterData().SBU === undefined)
+                {
+                    Common.showMessage("SBU required.");
+                    return;
+                }
+
                 var oTable = this.byId("IODynTable");
                 var oSelectedIndices = oTable.getSelectedIndices();
                 var oTmpSelectedIndices = [];
@@ -426,6 +467,12 @@ sap.ui.define([
                 var oParamData = [];
                 var oParam = {};
                 var bProceed = true;
+
+                if(oSelectedIndices.length <= 0)
+                {
+                    Common.showMessage("No selected row to Copy.");
+                    return;
+                }
                 // var vSBU = this.getView().getModel("ui").getData().sbu;
                 // var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
 
@@ -594,10 +641,21 @@ sap.ui.define([
             },
 
             onCreateIO: function (createTyp) {
+                if(this.getView().byId("smartFilterBar").getFilterData().SBU === undefined)
+                {
+                    Common.showMessage("SBU required.");
+                    return;
+                }
                 var screateTyp = createTyp;
                 // Common.showMessage("Create IO : " + screateTyp);
                 that.setChangeStatus(false); //remove change flag
-                that.navToDetail("NEW"); //navigate to detail page
+
+                that.onIOCreateSelect(screateTyp);
+                if(screateTyp === "Manual") {
+                    // alert("Manual");
+                    that.navToDetail("NEW"); //navigate straight to detail page if Manual
+                }
+                
             },
 
             //export to spreadsheet utility
@@ -649,6 +707,11 @@ sap.ui.define([
                         sap.m.MessageBox.error(err);
                     }
                 });
+            },
+
+            onRefresh: function (oEvent) {
+                //this.getColumns("SEARCH");
+                this.getDynamicTableData("");
             },
 
             pad: Common.pad
