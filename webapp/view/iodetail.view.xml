@@ -650,7 +650,7 @@
                         text="Costing"
                         key="itfCOSTING">
                         <layout:Splitter class="iostyle">
-                            <Panel class="sapUiNoContentPadding stylHdrPadding">
+                            <Panel width="100%" height="100%" class="sapUiNoContentPadding">
                                 <t:Table id="costHdrTab"
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true"
@@ -669,31 +669,30 @@
                                     <t:rowSettingsTemplate>
                                         <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                     </t:rowSettingsTemplate>                                    
-                                    <!-- <t:extension>
+                                    <t:extension>
                                         <Toolbar>
                                             <ToolbarSpacer/>
-                                            <Button id="btnEditColor" 
+                                            <Button id="btnNewCostVer" 
+                                                text="{ddtext>/NEW}"
+                                                icon="sap-icon://new"
+                                                press="onNew('costver')"
+                                                tooltip="{ddtext>/NEW}"
+                                                visible="true" />
+                                            <Button id="btnEditCostVer" 
                                                 text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
-                                                press="onEdit('color')"
+                                                press="onEdit('costver')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
-                                            <Button id="btnSaveColor" 
-                                                text="{ddtext>/SAVE}"
-                                                icon="sap-icon://save"
-                                                press="onSave('color')" 
-                                                tooltip="{ddtext>/SAVE}"
-                                                visible="false" />
-                                            <Button id="btnCancelColor" 
-                                                text="{ddtext>/CANCEL}"
-                                                icon="sap-icon://sys-cancel"
-                                                press="onCancel('color')" 
-                                                tooltip="{ddtext>/CANCEL}"
-                                                visible="false" /> 
+                                            <Button id="btnRefreshCostVer" 
+                                                icon="sap-icon://refresh"
+                                                press="onRefresh('costver')" 
+                                                tooltip="{ddtext>/REFRESH}"
+                                                visible="true" /> 
                                         </Toolbar>
-                                    </t:extension> -->
+                                    </t:extension>
                                 </t:Table>
-                                <layoutData><layout:SplitterLayoutData size="600px" /></layoutData> 
+                                <layoutData><layout:SplitterLayoutData size="700px" /></layoutData> 
                             </Panel>
                             <Panel width="100%" height="100%" class="sapUiNoContentPadding">
                                 <t:Table id="costDtlsTab"
@@ -714,29 +713,28 @@
                                     <t:rowSettingsTemplate>
                                         <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                     </t:rowSettingsTemplate>                                    
-                                    <!-- <t:extension>
+                                    <t:extension>
                                         <Toolbar>
                                             <ToolbarSpacer/>
-                                            <Button id="btnEditColor" 
+                                            <Button id="btnEditCostDtl" 
                                                 text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
-                                                press="onEdit('color')"
+                                                press="onEdit('costdtl')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
-                                            <Button id="btnSaveColor" 
-                                                text="{ddtext>/SAVE}"
-                                                icon="sap-icon://save"
-                                                press="onSave('color')" 
-                                                tooltip="{ddtext>/SAVE}"
-                                                visible="false" />
-                                            <Button id="btnCancelColor" 
-                                                text="{ddtext>/CANCEL}"
-                                                icon="sap-icon://sys-cancel"
-                                                press="onCancel('color')" 
-                                                tooltip="{ddtext>/CANCEL}"
-                                                visible="false" /> 
+                                            <Button id="btnPrintCosting" 
+                                                text="{ddtext>/PRINT}"
+                                                icon="sap-icon://print"
+                                                press="onPrintCosting" 
+                                                tooltip="{ddtext>/PRINT}"
+                                                visible="true" />
+                                            <Button id="btnRefreshCostDtl" 
+                                                icon="sap-icon://refresh"
+                                                press="onRefresh('costdtl')" 
+                                                tooltip="{ddtext>/REFRESH}"
+                                                visible="true" /> 
                                         </Toolbar>
-                                    </t:extension> -->
+                                    </t:extension>
                                 </t:Table>
                                 <layoutData><layout:SplitterLayoutData size="auto" /></layoutData>              
                             </Panel> 

@@ -2887,6 +2887,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_NO_SEL_RECORD_TO_PROC" });
                 oDDTextParam.push({ CODE: "INFO_MATERIAL_CREATED" });
 
+                oDDTextParam.push({ CODE: "PRINT" });
+
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
                         method: "POST",
@@ -5021,24 +5023,31 @@ sap.ui.define([
             //******************************************* */            
 
             initIOCosting: function (oEvent) {
-                this._oModelIOCosting = this.getOwnerComponent().getModel("ZGW_3DERP_IOCOSTING_SRV");
+                // this._oModelIOCosting = this.getOwnerComponent().getModel("ZGW_3DERP_IOCOSTING_SRV");
+                this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
-                console.log(this._oModelIOCosting);
+
                 this.byId("costHdrTab")
                     .setModel(new JSONModel({
                         columns: [],
                         rows: []
                     }));
 
-                var vIONo = this._ioNo; //"1000115";
+                this.byId("costDtlsTab")
+                .setModel(new JSONModel({
+                    columns: [],
+                    rows: []
+                }));
 
+                var vIONo = this._ioNo; //"1000115";
+                
                 this._oModelIOCosting.read('/VersionsSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
                     },
-                    success: function (oData, response) {
+                    success: function (oData) {
                         oData.results.forEach((row, index) => {
                             row.ACTIVE = index === 0 ? "X" : "";
                         });
@@ -5064,7 +5073,11 @@ sap.ui.define([
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 setTimeout(() => {
-                    this.getIOCostingDynamicColumns("IOCOSTHDR", "ZERP_IOCOSTHDR", "costHdrTab", oColumns);
+                    this.getIOCostingDynamicColumns("IOCOSTHDR", "ZERP_IOCSHDR", "costHdrTab", oColumns);
+                }, 100);
+
+                setTimeout(() => {
+                    this.getIOCostingDynamicColumns("IOCOSTDTL", "ZDV_3DERP_CSDTL", "costDtlsTab", oColumns);
                 }, 100);
             },
 
@@ -5085,9 +5098,8 @@ sap.ui.define([
 
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
-                        // console.log(sTabId, oData)
                         if (oData.results.length > 0) {
-
+                            console.log(oData)
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
