@@ -26,6 +26,8 @@ sap.ui.define([
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
 
+        var _sStyleNo, _sVerNo, _sStyleCd, _sProdTyp, _sSalesGrp, _sSeasonCd, _sCustGrp, _sUOM;
+
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
         var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
         var Core = sap.ui.getCore();
@@ -98,8 +100,11 @@ sap.ui.define([
 
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
+                var me = this;
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
+                this._styleno = oEvent.getParameter("arguments").styleno; //get style no from route pattern
+                // this._ver = oEvent.getParameter("arguments").ver; //get ver from route pattern
 
                 // alert(this._ioNo);
 
@@ -117,19 +122,8 @@ sap.ui.define([
                 //set Change Status    
                 this.setChangeStatus(false);
 
-                // //get Value Help for fields of IO Header
-                // this.getVHSet("/IOTYPSet", "IOTypeModel", false);
-                // this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true);
-                // this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false);
-                // this.getVHSet("/SEASONSet", "SeasonsModel", true);
-                // this.getVHSet("/STYLENOvhSet", "StyleNoModel", false);
-                // this.getVHSet("/UOMvhSet", "UOMModel", false);
-                // this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
-                // this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
-
                 if (this._ioNo === "NEW") {
-                    // alert("NEW IO");
-                    //create new - only header is editable at first
+
                     this.setHeaderEditMode();
                     this.byId("onIOEdit").setVisible(false);
                     this.byId("onIORelease").setVisible(false);
@@ -141,58 +135,85 @@ sap.ui.define([
                     this.disableOtherTabs();
 
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", false));
-                    // this.setDetailVisible(false);
 
-                    // //remove headerData initially stored if user selected to open an existing IO#
-                    // var HeaderDataModel = this.getView().getModel("headerData");
-                    // if (HeaderDataModel && this._ioNo === "NEW") {
-                    // alert("Clear Header Data");
-                    //     HeaderDataModel.setData(null);
-                    //     HeaderDataModel.updateBindings(true);
-                    // }
+                    var oDisplayJSONModel = new JSONModel();
+                    var data = {};
+                    // data.editMode = true;
+                    if (this._styleno === "NEW") {
+                        alert("WIHOUT STYLE");
+                        data = {
+                            IONO: "WITHOUT STYLE",
+                            STYLENO: "",
+                            VERNO: "",
+                            STYLECD: "",
+                            PRODTYP: "",
+                            SALESGRP: "",
+                            SEASONCD: "",
+                            CUSTGRP: "",
+                            BASEUOM: "",
+                            ACTUALQTY: 0
+                        };
+                        this._headerChanged = false;
+                        // data.editMode = true;     
+                        console.log(data);                   
+                        oDisplayJSONModel.setData(data);
+                        this.getView().setModel(oDisplayJSONModel, "headerData");
+                    } else {
+                        alert("WIH STYLE");
+                        var oView = this.getView();
+                        var pStyleNo = this._styleno;
+                        var oModel = this.getOwnerComponent().getModel();
+                        var osJSONModel = new JSONModel();
 
-                    var oJSONModel = new JSONModel();
-                    var data = {
-                        IONO:"",
-                        STYELCD:"",
-                        PRODTYPE:"",
-                        PRODSCEN:""
-                    };
-                    this._headerChanged = false;
-                    data.editMode = true;
-                    oJSONModel.setData(data);
-                    this.getView().setModel(oJSONModel, "headerData");
+                        var entitySet = "/IOSTYLISTDETSet"
+                        setTimeout(() => {
+                            oModel.read(entitySet, {
+                                urlParameters: {
+                                    "$filter": "STYLENO eq '" + pStyleNo + "'"
+                                },
+                                success: function (oData, oResponse) {
+                                    oData.results.forEach(item => {
+                                        data = {
+                                            editMode: true,
+                                            IONO: "WITH STYLE",
+                                            STYLENO: item.STYLENO,
+                                            VERNO: item.VERNO,
+                                            STYLECD: item.STYLECD,
+                                            PRODTYPE: item.PRODTYP,
+                                            SALESGRP: item.SALESGRP,
+                                            SEASONCD: item.SEASONC,
+                                            CUSTGRP: item.CUSTGRP,
+                                            BASEUOM: item.UOM,
+                                            ACTUALQTY: 0
+                                        }
 
-                    // console.log(this.getView().getModel("headerData"));
+                                        // console.log(sap.ui.getCore().byId("hdrSTYLECD"));
+                                        // sap.ui.getCore().byId("hdrSTYLECD").setValue(item.STYLENO);
+                                    })
+                                    osJSONModel.setData(oData);
+                                    oView.setModel(osJSONModel, "IOSTYSELDataModel");
+                                },
+                                error: function () { }
+                            });
+                        }, 100);
 
-                    // return;
+                        this._headerChanged = false;
+                        // // data.editMode = true;  
+                        // console.log(data);                      
+                        // oDisplayJSONModel.setData(data);
+                        // this.getView().setModel(oDisplayJSONModel, "headerData");
+                    }
                 } else {
-
-                    // alert("Existing IO");
-                    // alert(this._ioNo);
-                    //existing style, get the style data
                     this.cancelHeaderEdit();
                     this.enableOtherTabs();
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
                     this.enableOtherTabs();
                 }
-
-                //Load header
-                // setTimeout(() => {
-                //     this.getHeaderConfig(); //get visible header fields
-                // }, 100);
-
-                // setTimeout(() => {
-                //     // alert("Get Header Data");
-                //     this.getHeaderData(); //get header data
-                // }, 100);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     resolve(this.getHeaderConfig());
@@ -203,6 +224,8 @@ sap.ui.define([
                     resolve(this.getHeaderData());
                 });
                 await _promiseResult;
+
+                // console.log(this.getView());
 
                 this._aIOColumns = {};
                 this._aColumns = {};
@@ -228,37 +251,37 @@ sap.ui.define([
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        this._oModel.read('/IODLVSet', {
-                            urlParameters: {
-                                "$filter": "IONO eq '" + ioNo + "'"
-                            },
-                            success: function (oData, response) {
-                                me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
-                                me.byId("IODLVTab").bindRows("/rows");
-                                // resolve();
-                            },
-                            error: function (err) {
-                                // resolve();
-                            }
-                        })
-                    }, 100);
+                setTimeout(() => {
+                    this._oModel.read('/IODLVSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + ioNo + "'"
+                        },
+                        success: function (oData, response) {
+                            me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("IODLVTab").bindRows("/rows");
+                            // resolve();
+                        },
+                        error: function (err) {
+                            // resolve();
+                        }
+                    })
+                }, 100);
                 // });
                 // await _promiseResult;
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        this._oModel.read('/IODETSet', {
-                            urlParameters: {
-                                "$filter": "IONO eq '" + ioNo + "'"
-                            },
-                            success: function (oData, response) {
-                                me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
-                                me.byId("IODETTab").bindRows("/rows");
-                            },
-                            error: function (err) { }
-                        })
-                    }, 100);
+                setTimeout(() => {
+                    this._oModel.read('/IODETSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + ioNo + "'"
+                        },
+                        success: function (oData, response) {
+                            me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("IODETTab").bindRows("/rows");
+                        },
+                        error: function (err) { }
+                    })
+                }, 100);
                 // });
                 // await _promiseResult;
 
@@ -268,10 +291,10 @@ sap.ui.define([
                 // }, 100);
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        // resolve(this.getIOColumnProp());
-                        this.getIOColumnProp();
-                    }, 100);
+                setTimeout(() => {
+                    // resolve(this.getIOColumnProp());
+                    this.getIOColumnProp();
+                }, 100);
                 // });
                 // await _promiseResult;
 
@@ -289,11 +312,59 @@ sap.ui.define([
                 //IO Material List
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        this.initIOMatList();
-                    }, 100);
+                setTimeout(() => {
+                    this.initIOMatList();
+                }, 100);
                 // });
                 // await _promiseResult;
+            },
+
+            getIOSTYLISTData: function (pstyleno) {
+                var me = this;
+                var oView = this.getView();
+                var pStyleNo = pstyleno;
+                var oModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+
+                var entitySet = "/IOSTYLISTDETSet"
+
+                setTimeout(() => {
+                    oModel.read(entitySet, {
+                        urlParameters: {
+                            "$filter": "STYLENO eq '" + pStyleNo + "'"
+                        },
+                        success: function (oData, oResponse) {
+                            // me._sStyleCd = "";
+                            // me._sStyleNo = "";
+                            // me._sVerNo = "";
+                            // me._sProdTyp = "";
+                            // me._sSalesGrp = "";
+                            // me._sSeasonCd = "";
+                            // me._sCustGrp = "";
+                            // me._sUOM = "";
+
+                            // oData.results.forEach(item => {
+                            //     me._sStyleCd = item.STYLECD;
+                            //     me._sStyleNo = item.STYLENO;
+                            //     me._sVerNo = item.VERNO;
+                            //     me._sProdTyp = item.PRODTYP;
+                            //     me._sSalesGrp = item.SALESGRP;
+                            //     me._sSeasonCd = item.SEASONCD;
+                            //     me._sCustGrp = item.CUSTGRP;
+                            //     me._sUOM = item.UOM;
+
+                            //     //     alert(me._sStyleCd);
+                            // })
+                            console.log("before oJSONModel");
+                            oJSONModel.setData(oData);
+                            console.log("oJSONModel");
+                            oView.setModel(oJSONModel, "IOSTYSELDataModel");
+                            console.log("IOSTYSELDataModel");
+                            console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
+                        },
+                        error: function () { }
+                    });
+                }, 100);
             },
 
             getIOColumnProp: async function () {
@@ -303,9 +374,9 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        this.getReloadIOColumnProp();
-                    }, 100);
+                setTimeout(() => {
+                    this.getReloadIOColumnProp();
+                }, 100);
                 // });
                 // await _promiseResult;
 
@@ -960,6 +1031,19 @@ sap.ui.define([
                         type: "Ghost"
                         // ,press: this.goToDetail 
                         , tooltip: tToolTip
+
+                        // oData = this.getView().getModel("ProdScenModel").oData;
+                        // for (var i = 0; i < oData.results.length; i++) {
+                        //     if (oData.results[i].PRODSCEN === sProdScen) {
+                        //         // alert(oData.results[i].PRODPLANT);
+                        //         this.getView().byId("PRODPLANT").setValue(oData.results[i].PRODPLANT);
+                        //         this.getView().byId("TRADPLANT").setValue(oData.results[i].TRADPLANT);
+                        //         this.getView().byId("PLANPLANT").setValue(oData.results[i].PLANPLANT);
+                        //         this.getView().byId("FTYSALTERM").setValue(oData.results[i].FTY_SALES_TERM);
+                        //         this.getView().byId("CUSSALTERM").setValue(oData.results[i].CUST_SALES_TERM);
+                        //         this.getView().byId("SALESORG").setValue(oData.results[i].SALESORG);
+                        //     }
+                        // }
                     });
                     oDetColumnTemplate.data(sKey, "{}"); //custom data to hold key id
                 }
@@ -1893,8 +1977,8 @@ sap.ui.define([
                     this.byId("onIOSave").setVisible(true);
                     this.byId("onIOCancel").setVisible(true);
 
-                    console.log(this.getView().getModel("HeaderEditModeModel"));
-                    console.log(this.getView().getModel("headerData"));
+                    // console.log(this.getView().getModel("HeaderEditModeModel"));
+                    // console.log(this.getView().getModel("headerData"));
 
                     this.disableOtherTabs();
 

@@ -313,7 +313,7 @@
                 },
                 {
                     "name": "RouteIODetail",
-                    "pattern": "RouteIODetail/{iono}/{sbu}",
+                    "pattern": "RouteIODetail/{iono}/{sbu}/{styleno}",
                     "greedy": false,
                     "target": [
                         "TargetIODetail"
