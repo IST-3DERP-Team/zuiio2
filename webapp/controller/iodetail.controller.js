@@ -142,69 +142,25 @@ sap.ui.define([
                     var data = {};
                     // data.editMode = true;
                     if (this._styleno === "NEW") {
-                        alert("WIHOUT STYLE");
+                        // alert("WITHOUT STYLE");
                         data = {
-                            IONO: "WITHOUT STYLE",
-                            STYLENO: "",
-                            VERNO: "",
-                            STYLECD: "",
-                            PRODTYP: "",
-                            SALESGRP: "",
-                            SEASONCD: "",
-                            CUSTGRP: "",
-                            BASEUOM: "",
-                            ACTUALQTY: 0
+                            "IONO": "",
+                            "STYLENO": "",
+                            "VERNO": "",
+                            "STYLECD": "",
+                            "PRODTYP": "",
+                            "SALESGRP": "",
+                            "SEASONCD": "",
+                            "CUSTGRP": "",
+                            "BASEUOM": ""
                         };
                         this._headerChanged = false;
-                        // data.editMode = true;     
+                        data.editMode = true;     
                         console.log(data);                   
                         oDisplayJSONModel.setData(data);
                         this.getView().setModel(oDisplayJSONModel, "headerData");
-                    } else {
-                        alert("WIH STYLE");
-                        var oView = this.getView();
-                        var pStyleNo = this._styleno;
-                        var oModel = this.getOwnerComponent().getModel();
-                        var osJSONModel = new JSONModel();
-
-                        var entitySet = "/IOSTYLISTDETSet"
-                        setTimeout(() => {
-                            oModel.read(entitySet, {
-                                urlParameters: {
-                                    "$filter": "STYLENO eq '" + pStyleNo + "'"
-                                },
-                                success: function (oData, oResponse) {
-                                    oData.results.forEach(item => {
-                                        data = {
-                                            editMode: true,
-                                            IONO: "WITH STYLE",
-                                            STYLENO: item.STYLENO,
-                                            VERNO: item.VERNO,
-                                            STYLECD: item.STYLECD,
-                                            PRODTYPE: item.PRODTYP,
-                                            SALESGRP: item.SALESGRP,
-                                            SEASONCD: item.SEASONC,
-                                            CUSTGRP: item.CUSTGRP,
-                                            BASEUOM: item.UOM,
-                                            ACTUALQTY: 0
-                                        }
-
-                                        // console.log(sap.ui.getCore().byId("hdrSTYLECD"));
-                                        // sap.ui.getCore().byId("hdrSTYLECD").setValue(item.STYLENO);
-                                    })
-                                    osJSONModel.setData(oData);
-                                    oView.setModel(osJSONModel, "IOSTYSELDataModel");
-                                },
-                                error: function () { }
-                            });
-                        }, 100);
-
-                        this._headerChanged = false;
-                        // // data.editMode = true;  
-                        // console.log(data);                      
-                        // oDisplayJSONModel.setData(data);
-                        // this.getView().setModel(oDisplayJSONModel, "headerData");
-                    }
+                        console.log(this.getView().setModel(oDisplayJSONModel, "headerData"));
+                    } 
                 } else {
                     this.cancelHeaderEdit();
                     this.enableOtherTabs();
@@ -224,6 +180,11 @@ sap.ui.define([
                     resolve(this.getHeaderData());
                 });
                 await _promiseResult;
+
+                if(this._styleno != "NEW"){
+                    alert("Get IO Style Data");
+                    this.getIOSTYLISTData(this._styleno);
+                }
 
                 // console.log(this.getView());
 
@@ -334,33 +295,28 @@ sap.ui.define([
                             "$filter": "STYLENO eq '" + pStyleNo + "'"
                         },
                         success: function (oData, oResponse) {
-                            // me._sStyleCd = "";
-                            // me._sStyleNo = "";
-                            // me._sVerNo = "";
-                            // me._sProdTyp = "";
-                            // me._sSalesGrp = "";
-                            // me._sSeasonCd = "";
-                            // me._sCustGrp = "";
-                            // me._sUOM = "";
+                            oData.results.forEach(item => {
 
-                            // oData.results.forEach(item => {
-                            //     me._sStyleCd = item.STYLECD;
-                            //     me._sStyleNo = item.STYLENO;
-                            //     me._sVerNo = item.VERNO;
-                            //     me._sProdTyp = item.PRODTYP;
-                            //     me._sSalesGrp = item.SALESGRP;
-                            //     me._sSeasonCd = item.SEASONCD;
-                            //     me._sCustGrp = item.CUSTGRP;
-                            //     me._sUOM = item.UOM;
+                                var styleData = {
+                                "STYLECD":item.STYLECD,
+                                "STYLENO":item.STYLENO,
+                                "VERNO":item.VERNO,
+                                "PRODTYP":item.PRODTYP,
+                                "SALESGRP":item.SALESGRP,
+                                "SEASONCD":item.SEASONCD,
+                                "CUSTGRP":item.CUSTGRP,
+                                "BASEUOM":item.UOM
+                                }
+                                //     alert(me._sStyleCd);
 
-                            //     //     alert(me._sStyleCd);
-                            // })
-                            console.log("before oJSONModel");
-                            oJSONModel.setData(oData);
-                            console.log("oJSONModel");
-                            oView.setModel(oJSONModel, "IOSTYSELDataModel");
-                            console.log("IOSTYSELDataModel");
-                            console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
+                                console.log("before oJSONModel");
+                                oJSONModel.setData(styleData);
+                                console.log("oJSONModel");
+                                oView.setModel(oJSONModel, "headerData");
+                                console.log("IOSTYSELDataModel");
+                                console.log(oView.setModel(oJSONModel, "headerData"));
+                            })
+                            
                         },
                         error: function () { }
                     });
@@ -1031,19 +987,6 @@ sap.ui.define([
                         type: "Ghost"
                         // ,press: this.goToDetail 
                         , tooltip: tToolTip
-
-                        // oData = this.getView().getModel("ProdScenModel").oData;
-                        // for (var i = 0; i < oData.results.length; i++) {
-                        //     if (oData.results[i].PRODSCEN === sProdScen) {
-                        //         // alert(oData.results[i].PRODPLANT);
-                        //         this.getView().byId("PRODPLANT").setValue(oData.results[i].PRODPLANT);
-                        //         this.getView().byId("TRADPLANT").setValue(oData.results[i].TRADPLANT);
-                        //         this.getView().byId("PLANPLANT").setValue(oData.results[i].PLANPLANT);
-                        //         this.getView().byId("FTYSALTERM").setValue(oData.results[i].FTY_SALES_TERM);
-                        //         this.getView().byId("CUSSALTERM").setValue(oData.results[i].CUST_SALES_TERM);
-                        //         this.getView().byId("SALESORG").setValue(oData.results[i].SALESORG);
-                        //     }
-                        // }
                     });
                     oDetColumnTemplate.data(sKey, "{}"); //custom data to hold key id
                 }
@@ -1240,9 +1183,7 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
+
                 oSHModel.read("/SALESORGvhSet", {
                     urlParameters: {
 
@@ -1250,7 +1191,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "SALESORGModel");
-                        // console.log(oView.setModel(oJSONModel, "UOMModel"));
                     },
                     error: function (err) { }
                 });
@@ -1260,9 +1200,7 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
+
                 oSHModel.read("/UOMvhSet", {
                     urlParameters: {
 
@@ -1270,7 +1208,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "UOMModel");
-                        // console.log(oView.setModel(oJSONModel, "UOMModel"));
                     },
                     error: function (err) { }
                 });
@@ -1280,9 +1217,7 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
+
                 oSHModel.read("/STYLENOvhSet", {
                     urlParameters: {
 
@@ -1290,7 +1225,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "StyleNoModel");
-                        // console.log(oView.setModel(oJSONModel, "StyleNoModel"));
                     },
                     error: function (err) { }
                 });
@@ -1300,9 +1234,7 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
+
                 oSHModel.read("/SEASONSet", {
                     urlParameters: {
                         "$filter": "SBU eq '" + this._sbu + "'"
@@ -1310,7 +1242,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "SeasonsModel");
-                        // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
                     },
                     error: function (err) { }
                 });
@@ -1328,7 +1259,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "ProdScenModel");
-                        // console.log(oView.setModel(oJSONModel, "ProdScenModel"));
                     },
                     error: function (err) { }
                 });
@@ -1338,9 +1268,7 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
+
                 oSHModel.read("/IOTYPSet", {
                     urlParameters: {
 
@@ -1348,8 +1276,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOTypeModel");
-                        // console.log("IO Type Set");
-                        // console.log(oView.setModel(oJSONModel, "IOTypeModel"));
                     },
                     error: function (err) { }
                 });
@@ -1359,9 +1285,6 @@ sap.ui.define([
                 var oSHModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // oSHModel.setHeaders({
-                //     sbu: this._sbu
-                // });
                 oSHModel.read("/PRODTYPvhSet", {
                     urlParameters: {
                         "$filter": "SBU eq '" + this._sbu + "'"
@@ -1369,8 +1292,6 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "ProdTypeModel");
-                        // console.log("Prod Type Set");
-                        // console.log(oView.setModel(oJSONModel, "ProdTypeModel"));
                     },
                     error: function (err) { }
                 });
@@ -1405,43 +1326,19 @@ sap.ui.define([
                 var me = this;
                 var ioNo = me._ioNo;
                 var oModel = this.getOwnerComponent().getModel();
-                // console.log("oModel");
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
-                // console.log("oView");
 
                 Common.openLoadingDialog(that);
 
-                //read Style header data
-                // console.log("IO NO");
-                // console.log(ioNo);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
-                // console.log(entitySet);
-                // console.log(ioNo);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        // console.log("Header Data");
-                        // console.log(oData);
                         me._styleVer = oData.VERNO;
                         me._prodplant = oData.PRODPLANT;
-                        // oData.results.forEach(item => {
-                        //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
-                        //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
-                        //     // item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
-                        //     // item.MATETA = dateFormat.format(item.MATETA);
-                        //     // item.MAINMATETA = dateFormat.format(item.MAINMATETA);
-                        //     // item.SUBMATETA = dateFormat.format(item.SUBMATETA);
-                        //     // item.CUTMATETA = dateFormat.format(item.CUTMATETA);
-                        //     // item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
-                        //     // item.PRODSTART = dateFormat.format(item.PLANDLVDT);
-                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);                           
-                        // })
 
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
-                        // console.log("headerData");
-                        // console.log(oView);
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
@@ -1461,7 +1358,6 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                // alert("reload Header Data " + ioNo);
                 if (ioNo === "NEW") {
                     return;
                 }
@@ -1471,22 +1367,6 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        // console.log("Header Data");
-                        // console.log(oData);
-                        // oData.results.forEach(item => {
-                        //     // item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
-                        //     // item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
-                        //     // item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
-                        //     // item.MATETA = dateFormat.format(item.MATETA);
-                        //     // item.MAINMATETA = dateFormat.format(item.MAINMATETA);
-                        //     // item.SUBMATETA = dateFormat.format(item.SUBMATETA);
-                        //     // item.CUTMATETA = dateFormat.format(item.CUTMATETA);
-                        //     // item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
-                        //     // item.PRODSTART = dateFormat.format(item.PLANDLVDT);
-                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);                           
-                        // })
-
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
                         Common.closeLoadingDialog(that);
@@ -1519,14 +1399,7 @@ sap.ui.define([
                 this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
                 this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
                 this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
-
-                // console.log(this.getView().getModel());
             },
-
-            // setDetailVisible: function(bool) {
-            //     var detailPanel = this.getView().byId('detailPanel'); //show detail section if there is header info
-            //     detailPanel.setVisible(bool);
-            // },
 
             cancelHeaderEdit: function () {
                 //confirm cancel edit of style header
@@ -1555,8 +1428,6 @@ sap.ui.define([
                 that.getView().setModel(oJSONModel, "HeaderEditModeModel");
                 if (that._DiscardHeaderChangesDialog) {
                     that._DiscardHeaderChangesDialog.close();
-                    // that.getHeaderData();
-                    // that.reloadHeaderData(me._ioNo);
                 }
                 var oMsgStrip = that.getView().byId('HeaderMessageStrip');
                 oMsgStrip.setVisible(false);
@@ -1977,13 +1848,9 @@ sap.ui.define([
                     this.byId("onIOSave").setVisible(true);
                     this.byId("onIOCancel").setVisible(true);
 
-                    // console.log(this.getView().getModel("HeaderEditModeModel"));
-                    // console.log(this.getView().getModel("headerData"));
-
                     this.disableOtherTabs();
 
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", false));
 
@@ -1993,13 +1860,8 @@ sap.ui.define([
 
             onIOSave: async function (source) {
                 var me = this;
-                // var newIONO = "";
                 var sSource = source;
                 if (sSource === "IOHDR") {
-                    // alert("Save IO Header");
-                    //prompt Dialog for Cancel
-                    // Common.showMessage("Save IO");                    
-
                     var sErrMsg = "";
                     if (this.getView().byId("IOTYPE").getValue() === "") sErrMsg = "IO Type";
                     else if (this.getView().byId("PRODSCEN").getValue() === "") sErrMsg = "Production Scenario";
@@ -2010,11 +1872,6 @@ sap.ui.define([
                         sap.m.MessageBox.warning(sErrMsg);
                         return;
                     }
-
-                    //get IO Prefix and IO Description
-                    // setTimeout(() => {
-                    //     this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
-                    // }, 100);
 
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, ""));
@@ -2060,33 +1917,12 @@ sap.ui.define([
                     var oModel = this.getOwnerComponent().getModel();
 
                     if (this._ioNo === "NEW") {
-
-                        // // alert("IO Save - New");
-                        // setTimeout(() => {
-                        //     // console.log(oParamIOHeaderData);
-                        //     oModel.create("/IOHDRSet", oParamIOHeaderData, {
-                        //         method: "POST",
-                        //         success: function (oData, oResponse) {
-                        //             newIONO = oData.IONO;
-                        //             // alert(newIONO);
-
-                        //             Common.showMessage("IO# " + newIONO + " generated.");
-                        //         },
-                        //         error: function (err) {
-
-                        //         }
-                        //     });
-                        // }, 100);
-
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                // console.log(oParamIOHeaderData);
                                 oModel.create("/IOHDRSet", oParamIOHeaderData, {
                                     method: "POST",
                                     success: function (oData, oResponse) {
                                         _newIONo = oData.IONO;
-                                        // alert(newIONO);
-
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
@@ -2097,55 +1933,12 @@ sap.ui.define([
                             }, 100);
                         });
                         await _promiseResult;
-
-                        // setTimeout(() => {
-                        //  alert("Reload Header Data 1");
-                        //     this.reloadHeaderData(newIONO);
-                        // }, 100);
-
-                        // //Set Button Visibility for Read Mode
-                        // this.byId("onIOEdit").setVisible(true);
-                        // this.byId("onIORelease").setVisible(true);
-                        // this.byId("onIOAttribEdit").setVisible(true);
-                        // this.byId("onIOStatEdit").setVisible(true);
-                        // this.byId("onIOSave").setVisible(false);
-                        // this.byId("onIOCancel").setVisible(false);
-
-                        // this.enableOtherTabs();
-
-                        // var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                        // // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
-                        // oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
-                        //     .forEach(item => item.setProperty("enabled", true));
-
-                        // Common.closeLoadingDialog(that);
                     } else {
-                        // setTimeout(() => {
-                        //     // alert("IO Edit");
-                        //     // console.log(oParamIOHeaderData);
-                        //     // return;
-                        //     oModel.update("/IOHDRSet(IONO='" + me._ioNo + "')", oParamIOHeaderData, {
-                        //         method: "PUT",
-                        //         success: function (oData, oResponse) {
-                        //             // alert(newIONO);
-                        //             newIONO = me._ioNo;
-                        //             Common.showMessage("IO# " + newIONO + " updated.");
-                        //         },
-                        //         error: function (err) {
-
-                        //         }
-                        //     });
-                        // }, 100);
-
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                // alert("IO Edit");
-                                // console.log(oParamIOHeaderData);
-                                // return;
                                 oModel.update("/IOHDRSet(IONO='" + me._ioNo + "')", oParamIOHeaderData, {
                                     method: "PUT",
                                     success: function (oData, oResponse) {
-                                        // alert(newIONO);
                                         _newIONo = me._ioNo;
                                         Common.showMessage("IO# " + _newIONo + " updated.");
                                         resolve();
@@ -2157,17 +1950,6 @@ sap.ui.define([
                             }, 100);
                         });
                         await _promiseResult;
-
-                        // //reload Header Data
-                        // alert("Reload IO Header Data - " + me._ioNo);
-                        // setTimeout(() => {
-                        //     this.reloadHeaderData(me._ioNo);
-                        // }, 100);
-                        // //reload IO Data (Attrib,Status,Details,Delivery Sched)
-                        // setTimeout(() => {
-                        //     this.getReloadIOColumnProp();
-                        // }, 100);
-
                     }
 
                     //Set Button Visibility for Read Mode
@@ -2186,7 +1968,6 @@ sap.ui.define([
                     }, 100);
 
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 

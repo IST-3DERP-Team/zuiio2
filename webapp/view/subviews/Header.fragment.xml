@@ -46,7 +46,7 @@
                     </f:FormElement>  
                     <f:FormElement label="{i18n>STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
                         <f:fields>
-                            <Input id="hdrSTYLECD" 
+                            <Input id="STYLECD" 
                                 value="{headerData>/STYLECD}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }" 
                                 valueStateText="Required"
@@ -385,7 +385,7 @@
                     </f:FormElement>   
                     <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
-                            <Input id="STYLENO" 
+                            <Input id="STYLENOVER" 
                                 type="Text" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" 
                                 valueStateText="Required"
@@ -395,7 +395,7 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>
-                    <!-- <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
+                    <f:FormElement label="{i18n>STYLENO}" visible="false">
                         <f:fields>
                             <Input id="STYLENO" 
                                 type="Text" 
@@ -414,7 +414,7 @@
                                 </suggestionItems>
                             </Input>
                         </f:fields>
-                    </f:FormElement> -->
+                    </f:FormElement>
                     <f:FormElement label="{i18n>VERNO}" visible="false">
                         <f:fields>
                             <Input id="VERNO"  type="Number" 

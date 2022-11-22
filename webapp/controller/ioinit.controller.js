@@ -621,9 +621,10 @@ sap.ui.define([
                 // });
 
                 // aFilters.push(lv_createdDateFilter);
-
+                // console.log("Statistics");
+                // console.log(aFilters);
                 oModel.read(vEntitySet, {
-                    filters: aFilters,
+                    // filters: aFilters,
                     success: function (oData) {
                         // console.log("Statistics oData");
                         // console.log(oData);
