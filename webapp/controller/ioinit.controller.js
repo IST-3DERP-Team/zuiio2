@@ -18,11 +18,13 @@ sap.ui.define([
         var IONOtxt;
 
         var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+        var sStyleNo = "NEW", sVerNo, sStyleCd, sProdTyp, sSalesGrp, sSeasonCd, sCustGrp, sUOM;
 
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
+        var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
 
         return Controller.extend("zuiio2.controller.ioinit", {
-            onInit: function () {
+            onInit: async function () {
                 that = this;
 
                 //get current userid
@@ -36,6 +38,11 @@ sap.ui.define([
                 // this._router.getRoute("RouteSalesDocHdr").attachPatternMatched(this._routePatternMatched, this);
 
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                this._oModel = this.getOwnerComponent().getModel();
+
+                this._aIOColumns = {};
+                this._aColumns = {};
+
                 this.setSmartFilterModel();
 
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
@@ -44,14 +51,211 @@ sap.ui.define([
                     var oView = this.getView();
                     oView.addEventDelegate({
                         onAfterShow: function (oEvent) {
-                            console.log("back")
+                            // console.log("back")
                             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
                             that.onRefresh();
                         }
                     }, oView);
                 }
 
+                // sap.ui.getCore().byId("IOStyleSelectTab")
+                //     .setModel(new JSONModel({
+                //         columns: [],
+                //         rows: []
+                //     }));
+
                 // this.onSearch();
+            },
+
+            onfragmentIOSelect: function (tableName) {
+                var me = this;
+                var sTableName = tableName;
+                sStyleNo = "NEW";
+
+                if (sTableName === "IOStyleSelectTab") {
+                    var oTable = sap.ui.getCore().byId(sTableName);
+                    var oTableModel = oTable.getModel("IOSTYSELDataModel");
+                    var oData = oTableModel.getData();
+                    var selected = oTable.getSelectedIndices();
+
+                    for (var i = 0; i < selected.length; i++) {
+                        sStyleNo = oData.results[selected[i]].STYLENO;
+                    }
+
+                    that.navToDetail("NEW");
+                }
+
+                me._CopyStyleDialog.close();
+
+            },
+
+            getIOSTYLISTData: function () {
+                //get versions of selected styleno
+                var me = this;
+                // var oView = sap.ui.getCore().byId("IOStyleSelectTab");
+
+                // var oModel = new sap.ui.model.json.JSONModel({ columns: [],rows: [] });
+                // oView.setModel(oModel);
+                // oView.setModel(new JSONModel({
+                //     columns: [],
+                //     rows: []
+                // }));
+
+                // setTimeout(() => {
+
+                //     this._oModel.read('/IOSTYLISTSet', {
+                //         success: function (oData, response) {
+                //             oView.getModel().setProperty("/rows", oData.results);
+                //             oView.bindRows("/rows");
+
+                //             var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                //             var oModelColumns = new JSONModel();
+                //             oModelColumns.loadData(sPath);
+
+                //             var oColumns = oModelColumns.getData();
+
+                //             me.getIODynamicColumns('IOSTYTLST','ZDV__IOSTYLST','IOStyleSelectTab',oColumns);
+                //         },
+                //         error: function (err) { }
+                //     })
+                // }, 100);
+
+                var oView = this.getView();
+                // var oView = sap.ui.getCore().byId("IOStyleSelectTab");
+                var oModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var entitySet = "/IOSTYLISTSet"
+                // oModel.setHeaders({
+                //     styleno: styleNo
+                // });
+                oModel.read(entitySet, {
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "IOSTYSELDataModel");
+                    },
+                    error: function () { }
+                })
+            },
+
+            getIODynamicColumns(arg1, arg2, arg3, arg4) {
+                var me = this;
+                var sType = arg1;
+                var sTabName = arg2;
+                var sTabId = arg3;
+                var oLocColProp = arg4;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                // var vSBU = "VER"; //this.getView().getModel("ui").getData().sbu;
+                var vSBU = this._sbu;
+
+                oModel.setHeaders({
+                    sbu: vSBU,
+                    type: sType,
+                    tabname: sTabName
+                });
+
+                oModel.read("/ColumnsSet", {
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0) {
+                            // console.log(oData);
+                            if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                                oData.results.forEach(item => {
+                                    oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                                        .forEach(col => item.ValueHelp = col.ValueHelp)
+                                })
+                            }
+
+                            me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
+                            me._aColumns[sTabId.replace("Tab", "")] = oData.results;
+                            me.setIOTableColumns(sTabId, oData.results);
+                        }
+                    },
+                    error: function (err) {
+                        // Common.closeLoadingDialog();
+                    }
+                });
+            },
+
+            setIOTableColumns(arg1, arg2) {
+                var me = this;
+                var sTabId = arg1;
+                var oColumns = arg2;
+                // var oTable = this.getView().byId(sTabId);
+                var oTable = sap.ui.getCore().byId(sTabId);
+
+                // console.log("before set Property");
+                oTable.getModel().setProperty("/columns", oColumns);
+                // console.log("after set Property");
+
+                // console.log(oTable);
+
+                //bind the dynamic column to the table
+                oTable.bindColumns("/columns", function (index, context) {
+                    // console.log("bind Columns");
+                    var sColumnId = context.getObject().ColumnName;
+                    var sColumnLabel = context.getObject().ColumnLabel;
+                    var sColumnWidth = context.getObject().ColumnWidth;
+                    var sColumnVisible = context.getObject().Visible;
+                    var sColumnSorted = context.getObject().Sorted;
+                    var sColumnSortOrder = context.getObject().SortOrder;
+                    var sColumnDataType = context.getObject().DataType;
+
+                    if (sColumnWidth === 0) sColumnWidth = 100;
+
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.CheckBox({ selected: true, editable: false }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
+                });
             },
 
             onAfterRendering: function () {
@@ -62,7 +266,7 @@ sap.ui.define([
                 oTable.attachBrowserEvent('dblclick', function (e) {
                     e.preventDefault();
                     that.setChangeStatus(false); //remove change flag
-                    that.navToDetail(IONOtxt); //navigate to detail page
+                    that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
 
                 });
             },
@@ -330,7 +534,7 @@ sap.ui.define([
             onSapEnter(oEvent) {
                 that.setChangeStatus(false); //remove change flag
                 // console.log(this._sbu);
-                that.navToDetail(IONOtxt, this._sbu); //navigate to detail page
+                that.navToDetail(IONOtxt, that._sbu, sStyleNo); //navigate to detail page
             },
 
             goToDetail: function (oEvent) {
@@ -350,11 +554,13 @@ sap.ui.define([
             navToDetail: function (ioNO) {
                 //route to detail page
                 // alert(this.sbu);
-                // alert(ioNO);
+                // alert(sStyleNo);
+                // return;
                 var sIONO = ioNO
                 that._router.navTo("RouteIODetail", {
                     iono: sIONO.trim(),
-                    sbu: that._sbu
+                    sbu: that._sbu,
+                    styleno: sStyleNo
                 });
             },
 
@@ -415,9 +621,10 @@ sap.ui.define([
                 // });
 
                 // aFilters.push(lv_createdDateFilter);
-
+                // console.log("Statistics");
+                // console.log(aFilters);
                 oModel.read(vEntitySet, {
-                    filters: aFilters,
+                    // filters: aFilters,
                     success: function (oData) {
                         // console.log("Statistics oData");
                         // console.log(oData);
@@ -430,16 +637,20 @@ sap.ui.define([
                 });
             },
 
-            onIOCreateSelect: function (source) {
+            onIOCreateSelect: async function (source) {
                 var me = this;
                 var sSource = source;
                 if (sSource === "Style") {
                     if (!me._IOfromStyleDialog) {
+
+                        this.getIOSTYLISTData();
+
                         me._IOfromStyleDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromStyle", me);
                         me.getView().addDependent(me._IOfromStyleDialog);
                     }
                     me._IOfromStyleDialog.open();
-                } else if(sSource === "SalesDoc") {
+
+                } else if (sSource === "SalesDoc") {
                     Common.showMessge("Ongoing ...");
                     return;
 
@@ -454,8 +665,7 @@ sap.ui.define([
             onCopyIO: function (oEvent) {
                 var me = this;
 
-                if(this.getView().byId("smartFilterBar").getFilterData().SBU === undefined)
-                {
+                if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
                     Common.showMessage("SBU required.");
                     return;
                 }
@@ -468,8 +678,7 @@ sap.ui.define([
                 var oParam = {};
                 var bProceed = true;
 
-                if(oSelectedIndices.length <= 0)
-                {
+                if (oSelectedIndices.length <= 0) {
                     Common.showMessage("No selected row to Copy.");
                     return;
                 }
@@ -641,8 +850,7 @@ sap.ui.define([
             },
 
             onCreateIO: function (createTyp) {
-                if(this.getView().byId("smartFilterBar").getFilterData().SBU === undefined)
-                {
+                if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
                     Common.showMessage("SBU required.");
                     return;
                 }
@@ -651,11 +859,12 @@ sap.ui.define([
                 that.setChangeStatus(false); //remove change flag
 
                 that.onIOCreateSelect(screateTyp);
-                if(screateTyp === "Manual") {
+                if (screateTyp === "Manual") {
                     // alert("Manual");
+                    this.sStyleNo = "NEW";
                     that.navToDetail("NEW"); //navigate straight to detail page if Manual
                 }
-                
+
             },
 
             //export to spreadsheet utility
