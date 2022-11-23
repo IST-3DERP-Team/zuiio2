@@ -354,7 +354,7 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="PLANDLVDT"
                                 placeholder="Enter Date"
                                 value="{headerData>/PLANDLVDT}" 
@@ -445,7 +445,7 @@
                     </f:FormElement> 
                     <f:FormElement label="{i18n>CUSTDLVDT}"  visible="{= ${VisibleFieldsData>/CUSTDLVDT} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="CUSTDLVDT"
                                 placeholder="Enter Date"
                                 change="handleChange"
@@ -464,7 +464,7 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="PRODSTART"
                                 placeholder="Enter Date"
                                 change="handleChange"
