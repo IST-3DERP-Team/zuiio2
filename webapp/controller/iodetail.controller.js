@@ -155,12 +155,12 @@ sap.ui.define([
                             "BASEUOM": ""
                         };
                         this._headerChanged = false;
-                        data.editMode = true;     
-                        console.log(data);                   
+                        data.editMode = true;
+                        console.log(data);
                         oDisplayJSONModel.setData(data);
                         this.getView().setModel(oDisplayJSONModel, "headerData");
                         console.log(this.getView().setModel(oDisplayJSONModel, "headerData"));
-                    } 
+                    }
                 } else {
                     this.cancelHeaderEdit();
                     this.enableOtherTabs();
@@ -181,7 +181,7 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                if(this._styleno != "NEW"){
+                if (this._styleno != "NEW") {
                     alert("Get IO Style Data");
                     this.getIOSTYLISTData(this._styleno);
                 }
@@ -204,47 +204,64 @@ sap.ui.define([
                         columns: [],
                         rows: []
                     }));
+                
+                this.byId("IOATTRIBTab")
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
+
+                this.byId("IOSTATUSTab")
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
 
                 var ioNo = this._ioNo;
 
-                var me = this;
+                // var me = this;
 
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this._oModel.read('/IODLVSet', {
-                        urlParameters: {
-                            "$filter": "IONO eq '" + ioNo + "'"
-                        },
-                        success: function (oData, response) {
-                            me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
-                            me.byId("IODLVTab").bindRows("/rows");
-                            // resolve();
-                        },
-                        error: function (err) {
-                            // resolve();
-                        }
-                    })
-                }, 100);
+                // setTimeout(() => {
+                //     this._oModel.read('/IODLVSet', {
+                //         urlParameters: {
+                //             "$filter": "IONO eq '" + ioNo + "'"
+                //         },
+                //         success: function (oData, response) {
+                //             me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
+                //             me.byId("IODLVTab").bindRows("/rows");
+                //             // resolve();
+                //         },
+                //         error: function (err) {
+                //             // resolve();
+                //         }
+                //     })
+                // }, 100);
+                // });
+                // await _promiseResult;                
+
+                // _promiseResult = new Promise((resolve, reject) => {
+                // setTimeout(() => {
+                //     this._oModel.read('/IODETSet', {
+                //         urlParameters: {
+                //             "$filter": "IONO eq '" + ioNo + "'"
+                //         },
+                //         success: function (oData, response) {
+                //             me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
+                //             me.byId("IODETTab").bindRows("/rows");
+                //         },
+                //         error: function (err) { }
+                //     })
+                // }, 100);
                 // });
                 // await _promiseResult;
 
-                // _promiseResult = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this._oModel.read('/IODETSet', {
-                        urlParameters: {
-                            "$filter": "IONO eq '" + ioNo + "'"
-                        },
-                        success: function (oData, response) {
-                            me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
-                            me.byId("IODETTab").bindRows("/rows");
-                        },
-                        error: function (err) { }
-                    })
-                }, 100);
-                // });
-                // await _promiseResult;
+                this.getIODLVData(ioNo);
+                this.getIODETData(ioNo);
+                this.getIOATTRIBData(ioNo);
+                this.getIOSTATUSData(ioNo);
 
                 // //get column value help prop
                 // setTimeout(() => {
@@ -258,10 +275,6 @@ sap.ui.define([
                 }, 100);
                 // });
                 // await _promiseResult;
-
-                //// Handle when checking if NEW IO or Not
-                // var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                // oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
                 var oIconTabBarStyle = this.byId("itbStyleDetail");
                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
@@ -278,6 +291,100 @@ sap.ui.define([
                 }, 100);
                 // });
                 // await _promiseResult;
+            },
+
+            getIODLVData: async function (iono) {
+                var me = this;
+                var ioNo = iono;
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this._oModel.read('/IODLVSet', {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + ioNo + "'"
+                            },
+                            success: function (oData, response) {
+                                me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
+                                me.byId("IODLVTab").bindRows("/rows");
+                                resolve();
+                            },
+                            error: function (err) {
+                                resolve();
+                            }
+                        })
+                    }, 100);
+                });
+                await _promiseResult;
+            },
+
+            getIODETData: async function (iono) {
+                var me = this;
+                var ioNo = iono;
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this._oModel.read('/IODETSet', {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + ioNo + "'"
+                            },
+                            success: function (oData, response) {
+                                me.byId("IODETTab").getModel().setProperty("/rows", oData.results);
+                                me.byId("IODETTab").bindRows("/rows");
+                                resolve();
+                            },
+                            error: function (err) {
+                                resolve();
+                            }
+                        })
+                    }, 100);
+                });
+                await _promiseResult;
+            },
+
+            getIOATTRIBData: async function (iono) {
+                console.log("IO ATTRIB");
+                var me = this;
+                var ioNo = iono;
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this._oModel.read("/ATTRIBSet", {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + ioNo + "'"
+                            },
+                            success: function (oData, response) {
+                                console.log(oData);
+                                me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
+                                me.byId("IOATTRIBTab").bindRows("/rows");
+                                resolve();
+                            },
+                            error: function (err) {
+                                resolve();
+                            }
+                        })
+                    }, 100);
+                });
+                await _promiseResult;
+            },
+
+            getIOSTATUSData: async function (iono) {
+                var me = this;
+                var ioNo = iono;
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this._oModel.read("/IOSTATSet", {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + ioNo + "'"
+                            },
+                            success: function (oData, response) {
+                                me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
+                                me.byId("IOSTATUSTab").bindRows("/rows");
+                                resolve();
+                            },
+                            error: function (err) {
+                                resolve();
+                            }
+                        })
+                    }, 100);
+                });
+                await _promiseResult;
             },
 
             getIOSTYLISTData: function (pstyleno) {
@@ -298,25 +405,19 @@ sap.ui.define([
                             oData.results.forEach(item => {
 
                                 var styleData = {
-                                "STYLECD":item.STYLECD,
-                                "STYLENO":item.STYLENO,
-                                "VERNO":item.VERNO,
-                                "PRODTYP":item.PRODTYP,
-                                "SALESGRP":item.SALESGRP,
-                                "SEASONCD":item.SEASONCD,
-                                "CUSTGRP":item.CUSTGRP,
-                                "BASEUOM":item.UOM
+                                    "STYLECD": item.STYLECD,
+                                    "STYLENO": item.STYLENO,
+                                    "VERNO": item.VERNO,
+                                    "PRODTYP": item.PRODTYP,
+                                    "SALESGRP": item.SALESGRP,
+                                    "SEASONCD": item.SEASONCD,
+                                    "CUSTGRP": item.CUSTGRP,
+                                    "BASEUOM": item.UOM
                                 }
-                                //     alert(me._sStyleCd);
-
-                                console.log("before oJSONModel");
                                 oJSONModel.setData(styleData);
-                                console.log("oJSONModel");
                                 oView.setModel(oJSONModel, "headerData");
-                                console.log("IOSTYSELDataModel");
-                                console.log(oView.setModel(oJSONModel, "headerData"));
                             })
-                            
+
                         },
                         error: function () { }
                     });
@@ -341,6 +442,10 @@ sap.ui.define([
                 //console.log("fadcsend2", sap.ui.getCore().byId("dcSendDetailTab"), this.getView().byId("dcSendDetailTab"))
             },
 
+            reloadIODataModel: function () {
+
+            },
+
             getReloadIOColumnProp: async function () {
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
 
@@ -358,13 +463,21 @@ sap.ui.define([
                 }, 100);
 
                 // build Dynamic table for Attributes
+                // setTimeout(() => {
+                //     this.getAttribDynamicTableColumns();
+                // }, 100);
+
                 setTimeout(() => {
-                    this.getAttribDynamicTableColumns();
+                    this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
                 }, 100);
 
                 //build Dynamic table for Status
+                // setTimeout(() => {
+                //     this.getStatDynamicTableColumns();
+                // }, 100);
+
                 setTimeout(() => {
-                    this.getStatDynamicTableColumns();
+                    this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
                 }, 100);
             },
 
@@ -3416,6 +3529,8 @@ sap.ui.define([
                 else if (arg === "process") this._bProcessChanged = false;
                 else if (arg === "ioMatList") this._bIOMatListChanged = false;
                 else if (arg === "IODLV") this._bIODLVChanged = false;
+                else if (arg === "IODET") this._bIODETChanged = false;
+                else if (arg === "IOATTRIB") this._bIOATTRIBChanged = false;
 
                 if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
                     Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
@@ -3477,6 +3592,13 @@ sap.ui.define([
                         this.byId("btnSaveIODet").setVisible(true);
                         this.byId("btnCancelIODet").setVisible(true);
                         this.byId("btnFullScreenIODet").setVisible(false);
+                    } else if(arg === "IOATTRIB") {
+                        this.byId("onIOAttribEdit").setVisible(false);
+                        this.byId("onIOAttribSave").setVisible(true);
+                        this.byId("onIOAttribCancel").setVisible(true);
+
+                        // sap.ui.getCore().byId("onIOEdit").setVisible(false);
+                        // sap.ui.getCore().byId("onIORelease").setVisible(false);
                     }
 
                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
@@ -3499,6 +3621,12 @@ sap.ui.define([
 
                     if (arg === "IODLV" || arg === "IODET") {
                         var oIconTabBarStyle = this.byId("itfDLVSCHED");
+                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", false));
+                    }
+
+                    if (arg === "IOATTRIB") {
+                        var oIconTabBarStyle = this.byId("itfIOATTRIB");
                         oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", false));
                     }
@@ -3590,6 +3718,13 @@ sap.ui.define([
                         this.byId("btnSaveIODet").setVisible(false);
                         this.byId("btnCancelIODet").setVisible(false);
                         this.byId("btnFullScreenIODet").setVisible(true);
+                    } else if(arg === "IOATTRIB") {
+                        this.byId("onIOAttribEdit").setVisible(true);
+                        this.byId("onIOAttribSave").setVisible(false);
+                        this.byId("onIOAttribCancel").setVisible(false);
+
+                        // sap.ui.getCore().byId("onIOEdit").setVisible(true);
+                        // sap.ui.getCore().byId("onIORelease").setVisible(true);
                     }
 
                     this.setRowReadMode(arg);
@@ -3609,6 +3744,12 @@ sap.ui.define([
                     if (arg === "IODVL" || arg === "IODET") {
                         var oIconTabBarStyle = this.byId("itfDLVSCHED");
                         oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                    }
+
+                    if (arg === "IOATTRIB") {
+                        var oIconTabBarStyle = this.byId("itfIOATTRIB");
+                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", true));
                     }
                 }
             },
@@ -4144,7 +4285,7 @@ sap.ui.define([
                         sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
                     }
 
-                    if (arg === "IODLV" || arg === "IODET") {
+                    if (arg === "IODLV" || arg === "IODET"|| arg === "IOATTRIB") {
                         this._aColumns[arg].filter(item => item.ColumnName === sColName)
                             .forEach(ci => {
                                 if (ci.DataType === "STRING" || ci.DataType === "DATETIME" || ci.DataType === "NUMBER") {
@@ -4910,13 +5051,13 @@ sap.ui.define([
                     }));
 
                 this.byId("costDtlsTab")
-                .setModel(new JSONModel({
-                    columns: [],
-                    rows: []
-                }));
+                    .setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
 
                 var vIONo = this._ioNo; //"1000115";
-                
+
                 this._oModelIOCosting.read('/VersionsSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
@@ -5040,7 +5181,7 @@ sap.ui.define([
                     });
 
                     this._oModelIOMatList.read('/MainSet', {
-                        urlParameters: { 
+                        urlParameters: {
                             "$filter": "IONO eq '" + this._ioNo + "'"
                         },
                         success: function (oData, response) {

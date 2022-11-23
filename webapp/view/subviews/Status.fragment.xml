@@ -7,7 +7,7 @@
 
     <!-- #### DYNAMIC TABLE #### --> 
     <!-- <Panel class="sapUiTinyMarginTop" height="auto">  -->
-            <!-- <c:DynamicTable id="DynTableStatus" class="sapUiSizeCompact" selectionMode="None" 
+            <!-- <c:DynamicTable id="StatDynTable" class="sapUiSizeCompact" selectionMode="None" 
                         showColumnVisibilityMenu="true">
             </c:DynamicTable> -->
             <t:Table id="StatDynTable" 
