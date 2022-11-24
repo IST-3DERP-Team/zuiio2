@@ -383,7 +383,7 @@
                             <!-- </f:Form>   -->
                         </Panel>
                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/> -->
-                        <t:Table id="IODETTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                        <t:Table id="IODETTab" fixedColumnCount="4" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </t:rowSettingsTemplate>

@@ -22,7 +22,7 @@ sap.ui.define([
         var that;
         var _promiseResult;
         var _newIONo = "";
-        
+
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
 
@@ -34,7 +34,7 @@ sap.ui.define([
 
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
-                that = this;                
+                that = this;
 
                 //get current userid
                 var oModel = new sap.ui.model.json.JSONModel();
@@ -528,8 +528,8 @@ sap.ui.define([
                     });
 
                     var pivotArray;
-                    console.log("me.iosizes");
-                    console.log(me.iosizes);
+                    console.log("me._iosizes");
+                    console.log(me._iosizes);
                     pivotArray = me._iosizes;
 
                     console.log("Pivot Array");
@@ -537,58 +537,65 @@ sap.ui.define([
 
                     //get dynamic columns of IO Details pivoted by Size
                     o3DModel.read("/DynamicColumnsSet", {
-                    success: function (oData, oResponse) {
-                        // console.log("Dynamic Columns Set");
-                        // console.log(oData);
-                        var columns = oData.results;
-                        // console.log("Columns");
-                        // console.log(columns);
-                        var pivotRow;
-                        //find the column to pivot
-                        for (var i = 0; i < columns.length; i++) {
-                            if(columns[i].Pivot !== '') {
-                                pivotRow = columns[i].Pivot;
-                            }
-                        }
-                        //build the table dyanmic columns
-                        for (var i = 0; i < columns.length; i++) {
-                            if (columns[i].Pivot === pivotRow) {
-                                //pivot the columns
-                                for (var j = 0; j < pivotArray.length; j++) {
-                                    console.log(pivotArray[j].Attribcd);
-                                    columnData.push({
-                                        "ColumnName": pivotArray[j].ATTRIBCD,
-                                        "ColumnDesc": pivotArray[j].DESC1,
-                                        "ColumnType": pivotRow,
-                                        "Editable": true,
-                                        "Mandatory": false,
-                                        "Visible": true
-                                    })
+                        success: function (oData, oResponse) {
+                            // console.log("Dynamic Columns Set");
+                            // console.log(oData);
+                            var columns = oData.results;
+                            // console.log("Columns");
+                            // console.log(columns);
+                            var pivotRow;
+                            //find the column to pivot
+                            for (var i = 0; i < columns.length; i++) {
+                                if (columns[i].Pivot !== '') {
+                                    pivotRow = columns[i].Pivot;
                                 }
-                            } else {
-                                if(columns[i].ColumnName !== pivotRow) {
-                                    if(columns[i].Visible === true) {
-                                        columnData.push({
-                                            "ColumnName": columns[i].ColumnName,
-                                            "ColumnDesc": columns[i].ColumnName,
-                                            "ColumnType": columns[i].ColumnType,
-                                            "Editable": columns[i].Editable,
-                                            "Mandatory": columns[i].Mandatory
-                                        })
+                            }
+                            //build the table dyanmic columns
+                            for (var i = 0; i < columns.length; i++) {
+                                if (columns[i].Pivot === pivotRow) {
+                                    //pivot the columns
+                                    for (var j = 0; j < pivotArray.length; j++) {
+                                        if (pivotArray[j].ATTRIBTYP === "SIZE") {
+                                            columnData.push({
+                                                "ColumnName": pivotArray[j].ATTRIBCD,
+                                                "ColumnDesc": pivotArray[j].DESC1,
+                                                "ColumnWidth": 70,
+                                                "ColumnType": pivotRow,
+                                                "Editable": true,
+                                                "Mandatory": false,
+                                                "Visible": true,
+                                                "Sorted": false,
+                                                "SortOrder": "ASC"
+                                            })
+                                        }
+                                    }
+                                } else {
+                                    if (columns[i].ColumnName !== pivotRow) {
+                                        if (columns[i].Visible === true) {
+                                            columnData.push({
+                                                "ColumnName": columns[i].ColumnName,
+                                                "ColumnDesc": columns[i].ColumnName,
+                                                "ColumnWidth": columns[i].ColumnWidth,
+                                                "ColumnType": columns[i].ColumnType,
+                                                "Editable": columns[i].Editable,
+                                                "Mandatory": columns[i].Mandatory,
+                                                "Sorted": columns[i].Sorted,
+                                                "SortOrder": columns[i].SortOrder
+                                            })
+                                        }
                                     }
                                 }
                             }
+                            console.log("column Data");
+                            console.log(columnData);
+                            me.getIODETTableData(columnData, pivotArray);
+                        },
+                        error: function (err) {
+                            Common.closeLoadingDialog(that);
                         }
-                        console.log("column Data");
-                        console.log(columnData);
-                        me.getIODETTableData(columnData, pivotArray);
-                    },
-                    error: function (err) { 
-                        Common.closeLoadingDialog(that);
-                    }
-                });
+                    });
 
-                    
+
                 } else {
                     oModel.setHeaders({
                         sbu: vSBU,
@@ -734,8 +741,8 @@ sap.ui.define([
                         "$filter": "IONO eq '" + me._ioNo + "'"
                     },
                     success: function (oData, oResponse) {
-                        console.log("IODETTab Data");
-                        console.log(oData.results);
+                        // console.log("IODETTab Data");
+                        // console.log(oData.results);
                         var rowData = oData.results;
                         // console.log(rowData)
                         //Get unique items of BOM by UV
@@ -743,7 +750,7 @@ sap.ui.define([
                         //     index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
 
                         var unique = rowData.filter((rowData, index, self) =>
-                            index === self.findIndex((t) => (t.DLVITEM === rowData.DLVITEM && t.CUSTCOLOR === rowData.CUSTCOLOR)));
+                            index === self.findIndex((t) => (t.DLVITEM === rowData.DLVITEM && t.CUSTSIZE === rowData.CUSTSIZE)));
 
                         //For every unique item
                         for (var i = 0; i < unique.length; i++) {
@@ -751,12 +758,10 @@ sap.ui.define([
                             //Set the pivot column for each unique item
                             for (var j = 0; j < rowData.length; j++) {
                                 if (rowData[j].DESC1 !== "") {
-                                    if (unique[i].DLVITEM === rowData[j].DLVITEM && unique[i].CUSTCOLOR === rowData[j].CUSTCOLOR) {
+                                    if (unique[i].DLVITEM === rowData[j].DLVITEM && unique[i].CUSTSIZE === rowData[j].CUSTSIZE) {
                                         for (var k = 0; k < pivot.length; k++) {
                                             var colname = pivot[k].ATTRIBCD;
-                                            if (rowData[j].CUSTCOLOR === colname) {
-                                                unique[i][colname] = rowData[j].DESC1;
-                                            } else if (rowData[j].CUSTSIZE === colname) {
+                                            if (rowData[j].CUSTSIZE === colname) {
                                                 unique[i][colname] = rowData[j].DESC1;
                                             }
                                         }
@@ -774,24 +779,28 @@ sap.ui.define([
                             results: unique,
                             columns: columnData
                         });
+
+                        console.log("oJSONModel");
+                        console.log(oJSONModel);
                         oTable.setModel(oJSONModel, "DataModel");
                         // oTable.setVisibleRowCount(unique.length);
                         oTable.attachPaste();
                         oTable.bindColumns("DataModel>/columns", function (sId, oContext) {
-                            console.log("oContext.getObject()");
-                            console.log(oContext.getObject());
+                            // console.log("oContext.getObject()");
+                            // console.log(oContext.getObject());
                             var column = oContext.getObject();
                             var sColumnWidth = column.ColumnWidth;
 
                             if (sColumnWidth === 0 || sColumnWidth === undefined) sColumnWidth = 100;
-
+                            // console.log(column);
                             return new sap.ui.table.Column({
-                                id: "IODETCol" + column.ColumnName,
-                                label: new sap.m.Text({ text: me.getStyleColumnDesc("IODETTab", column) }),
+                                // id: "IODETCol" + column.ColumnName,
+                                // label: new sap.m.Text({ text: me.getStyleColumnDesc("IODETTab", column) }),
+                                label: new sap.m.Text({ text: column.ColumnName}),
                                 template: me.styleColumnTemplate('UV', column),
                                 sortProperty: column.ColumnName,
                                 filterProperty: column.ColumnName,
-                                width: sColumnWidth + "100px",
+                                width: sColumnWidth + "px",
                                 autoResizable: true,
                                 visible: column.Visible,
                                 sorted: column.Sorted,
@@ -800,7 +809,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        console.log(oTable.bindRows("DataModel>/results"));
+                        oTable.fireColumnFreeze();
+                        // console.log(oTable.bindRows("DataModel>/results"));
 
                         Common.closeLoadingDialog(me);
                     },
@@ -3069,6 +3079,29 @@ sap.ui.define([
 
                 oDDTextParam.push({ CODE: "PRINT" });
 
+                oDDTextParam.push({ CODE: "IOITEM" });
+                oDDTextParam.push({ CODE: "SALDOCNO" });
+                oDDTextParam.push({ CODE: "SALDOCITEM" });
+                oDDTextParam.push({ CODE: "CUSTCOLOR" });
+                oDDTextParam.push({ CODE: "UNITPRICE1" });
+                oDDTextParam.push({ CODE: "UNITPRICE2" });
+                oDDTextParam.push({ CODE: "UNITPRICE3" });
+                oDDTextParam.push({ CODE: "REVUPRICE1" });
+                oDDTextParam.push({ CODE: "REVUPRICE2" });
+                oDDTextParam.push({ CODE: "REVUPRICE3" });
+                oDDTextParam.push({ CODE: "CUSTSIZE" });
+                oDDTextParam.push({ CODE: "REVORDERQTY" });
+                oDDTextParam.push({ CODE: "ORDERQTY" });
+                oDDTextParam.push({ CODE: "ACTUALQTY" });
+                oDDTextParam.push({ CODE: "PLANSHPQTY" });
+                oDDTextParam.push({ CODE: "SHIPQTY" });
+                oDDTextParam.push({ CODE: "MATNO" });
+                oDDTextParam.push({ CODE: "BATCH" });
+                oDDTextParam.push({ CODE: "REVDLVDT" });
+                oDDTextParam.push({ CODE: "CUSTDEST" });
+                oDDTextParam.push({ CODE: "DLVSEQ" });
+                oDDTextParam.push({ CODE: "REVDLVDT" });
+
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
                         method: "POST",
@@ -3080,6 +3113,9 @@ sap.ui.define([
                             oJSONModelDDText.setData(oDDTextResult);
                             me.getView().setModel(oJSONModelDDText, "ddtext");
                             me.getOwnerComponent().getModel("CAPTION_MSGS_MODEL").setData({ oDDTextResult })
+
+                            console.log("oJSONModelDDText");
+                            console.log(oJSONModelDDText);
                         },
                         error: function (err) {
                             // sap.m.MessageBox.error(err);
@@ -3701,6 +3737,46 @@ sap.ui.define([
                 else if (sTabId === "processTab") {
                     if (oColumn.ColumnName === "ATTRIBCD") desc = this.getView().getModel("ddtext").getData()["ATTRIBUTE"];
                     else desc = oColumn.ColumnLabel;
+                } else if (sTabId === "IODETTab") {
+                    // if (oColumn.ColumnName === "SALDOCNO") {
+                    //     console.log("SALDOCNO");
+                    //     console.log(this.getView().getModel("ddtext").getData()["SALDOCNO"]);
+                    //     desc = this.getView().getModel("ddtext").getData()["SALDOCNO"]; }
+                    
+                    if (oColumn.ColumnName === "IOITEM") desc = this.getView().getModel("ddtext").getData()["IOITEM"];
+                    else if (oColumn.ColumnName === "SALDOCNO") desc = this.getView().getModel("ddtext").getData()["SALDOCNO"];
+                    // else if (oColumn.ColumnName === "SALDOCITEM") desc = this.getView().getModel("ddtext").getData()["SALDOCITEM"];
+                    else if (oColumn.ColumnName === "CUSTCOLOR") desc = this.getView().getModel("ddtext").getData()["CUSTCOLOR"];
+                    // else if (oColumn.ColumnName === "UNITPRICE1") desc = this.getView().getModel("ddtext").getData()["UNITPRICE1"];
+                    // else if (oColumn.ColumnName === "UNITPRICE2") desc = this.getView().getModel("ddtext").getData()["UNITPRICE2"];
+                    // else if (oColumn.ColumnName === "UNITPRICE3") desc = this.getView().getModel("ddtext").getData()["UNITPRICE3"];
+                    // else if (oColumn.ColumnName === "REVUNITPRICE1") desc = this.getView().getModel("ddtext").getData()["REVUNITPRICE1"];
+                    // else if (oColumn.ColumnName === "REVUNITPRICE2") desc = this.getView().getModel("ddtext").getData()["REVUNITPRICE2"];
+                    // else if (oColumn.ColumnName === "REVUNITPRICE3") desc = this.getView().getModel("ddtext").getData()["REVUNITPRICE3"];
+                    // else if (oColumn.ColumnName === "CUSTSIZE") desc = this.getView().getModel("ddtext").getData()["CUSTSIZE"];
+                    // else if (oColumn.ColumnName === "REVORDERQTY") desc = this.getView().getModel("ddtext").getData()["REVORDERQTY"];
+                    // else if (oColumn.ColumnName === "ORDERQTY") desc = this.getView().getModel("ddtext").getData()["ORDERQTY"];
+                    // else if (oColumn.ColumnName === "ACTUALQTY") desc = this.getView().getModel("ddtext").getData()["ACTUALQTY"];
+                    // else if (oColumn.ColumnName === "PLANSHPQTY") desc = this.getView().getModel("ddtext").getData()["PLANSHPQTY"];
+                    // else if (oColumn.ColumnName === "SHIPQTY") desc = this.getView().getModel("ddtext").getData()["SHIPQTY"];
+                    // else if (oColumn.ColumnName === "MATNO") desc = this.getView().getModel("ddtext").getData()["MATNO"];
+                    // else if (oColumn.ColumnName === "BATCH") desc = this.getView().getModel("ddtext").getData()["BATCH"];
+                    // else if (oColumn.ColumnName === "REVDLVDT") desc = this.getView().getModel("ddtext").getData()["REVDLVDT"];
+                    // else if (oColumn.ColumnName === "CUSTDEST") desc = this.getView().getModel("ddtext").getData()["CUSTDEST"];
+                    // else if (oColumn.ColumnName === "DLVSEQ") desc = this.getView().getModel("ddtext").getData()["DLVSEQ"];
+                    // else if (oColumn.ColumnName === "DELETED") desc = this.getView().getModel("ddtext").getData()["DELETED"];
+                    // else if (oColumn.ColumnName === "REMARKS") desc = this.getView().getModel("ddtext").getData()["REMARKS"];
+                    // else if (oColumn.ColumnName === "CREATEDBY") desc = this.getView().getModel("ddtext").getData()["CREATEDBY"];
+                    // else if (oColumn.ColumnName === "CREATEDDT") desc = this.getView().getModel("ddtext").getData()["CREATEDDT"];
+                    // else if (oColumn.ColumnName === "CREATEDTM") desc = this.getView().getModel("ddtext").getData()["CREATEDTM"];
+                    // else if (oColumn.ColumnName === "UPDATEDBY") desc = this.getView().getModel("ddtext").getData()["UPDATEDBY"];
+                    // else if (oColumn.ColumnName === "UPDATEDDT") desc = this.getView().getModel("ddtext").getData()["UPDATEDDT"];
+                    // else if (oColumn.ColumnName === "UPDATEDTM") desc = this.getView().getModel("ddtext").getData()["UPDATEDTM"];
+                    desc = oColumn.ColumnLabel;
+                    // console.log("IODETTab Column Desc");
+                    // console.log(oColumn);
+                    // if (oColumn.ColumnName === "ATTRIBCD") desc = this.getView().getModel("ddtext").getData()["ATTRIBUTE"];
+                    // else desc = oColumn.ColumnLabel;
                 }
                 else desc = oColumn.ColumnLabel;
 
