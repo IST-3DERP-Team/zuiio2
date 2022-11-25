@@ -357,9 +357,16 @@
 
                     <!-- DELIVERY SCHEDULE -->
                     <IconTabFilter text="Order Details" key="itfDLVSCHED">
-                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.DlvSchedule" type="XML"/> -->
                         <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
-                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                            <t:Table id="IODLVTab" 
+                                class="sapUiSizeCompact sidePadding" 
+                                visibleRowCountMode="Auto" 
+                                showColumnVisibilityMenu="true" 
+                                enableColumnFreeze="true" 
+                                enableCellFilter="true" 
+                                selectionMode="Single" 
+                                selectionBehavior="RowOnly"
+                                cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                 </t:rowSettingsTemplate>
@@ -380,9 +387,7 @@
                                 </t:extension>
                             </t:Table>
 
-                            <!-- </f:Form>   -->
                         </Panel>
-                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/> -->
                         <t:Table id="IODETTab" fixedColumnCount="4" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -395,7 +400,7 @@
                                     <Button id="btnNewIODet" type="Ghost" text="New" icon="sap-icon://add-document" press="onAdd('IODET')" tooltip="New" visible="true" />
                                     <Button id="btnEditIODet" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
                                     <Button id="btnDeleteIODet" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
-                                    <Button id="btnCopyIODet" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODETTab')" tooltip="Copy" visible="true" />
+                                    <Button id="btnCopyIODet" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
                                     <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
                                     <Button id="btnSaveIODet" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('IODET')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIODet" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
@@ -403,23 +408,7 @@
                                 </Toolbar>
                             </t:extension>
                         </t:Table>
-                        <!-- <IconTabBar
-                        id="idIconTabBarInlineIODet"
-                        headerMode="Inline"
-                        expandable="false"
-                        expanded="{device>/isNoPhone}"
-                        class="sapUiResponsiveContentPadding">
-                            <items> -->
-                        <!-- ORDER DETAILS -->
-                        <!-- <IconTabFilter
-                                    text="Order Details"
-                                    key="itfIODET">
-                                    <Text text="Order Details" />
-                                    <core:Fragment fragmentName="zuiio2.view.subviews.IODetail" type="XML"/>
-                                </IconTabFilter>                        
-                            </items>
-                        </IconTabBar> -->
-                    </IconTabFilter>
+                        </IconTabFilter>
 
                     <!-- MATERIAL LIST -->
                     <IconTabFilter text="Material List" key="itfMATLIST">
