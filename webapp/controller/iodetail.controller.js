@@ -280,17 +280,17 @@ sap.ui.define([
 
                 console.log("getIODETData");
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIODETData(ioNo));
+                    resolve(this.getIODETData());
                 });
                 await _promiseResult;
 
-                console.log("initIODETColumns");
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.initIODETColumns());
-                    }, 100);
-                });
-                await _promiseResult;
+                // console.log("initIODETColumns");
+                // _promiseResult = new Promise((resolve, reject) => {
+                //     setTimeout(() => {
+                //         resolve(this.initIODETColumns());
+                //     }, 100);
+                // });
+                // await _promiseResult;
 
                 // console.log("getIOATTRIBData");
                 // this.getIOATTRIBData(ioNo)
@@ -415,9 +415,9 @@ sap.ui.define([
                 await _promiseResult;
             },
 
-            getIODETData: async function (iono) {
+            getIODETData: async function () {
                 var me = this;
-                var ioNo = iono;
+                // var ioNo = iono;
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
@@ -651,8 +651,9 @@ sap.ui.define([
 
                     o3DModel.setHeaders({
                         sbu: vSBU,
-                        type: sType,
-                        usgcls: ""
+                        type: sType
+                        // ,
+                        // usgcls: ""
                     });
 
                     //get dynamic columns of IO Details pivoted by Size
