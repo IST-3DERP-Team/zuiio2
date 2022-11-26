@@ -535,12 +535,14 @@ sap.ui.define([
                 var me = this;
                 var sType = arg1;
                 var sTabName = arg2;
+                var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 var vSBU = this.getView().getModel("ui2").getProperty("/sbu");
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
 
-                console.log(vSBU);
-                console.log(sType);
-                console.log(sTabName);
+
+                // console.log(vSBU);
+                // console.log(sType);
+                // console.log(sTabName);
 
                 oModel.setHeaders({
                     sbu: vSBU,
@@ -552,9 +554,11 @@ sap.ui.define([
                 setTimeout(() => {
                     oModel.read("/ColumnsSet", {
                         success: function (oData, response) {
-                            me._ccolumns = oData.results;
-                            console.log("getIODETColumnData");
-                            console.log(me._ccolumns);
+                            // me._ccolumns = oData.results;
+                            // console.log("getIODETColumnData");
+                            // console.log(me._ccolumns);
+                            oJSONColumnsModel.setData(oData);
+                            me.getView().setModel(oJSONColumnsModel, "currIODETModel");
                             // resolve();
                         },
                         error: function (err) {
@@ -639,21 +643,25 @@ sap.ui.define([
                 var vSBU = this._sbu;
 
                 if (arg1 === "IODET") {
+                    var oJSONDataModel = new sap.ui.model.json.JSONModel();
+
+                    this._columns;
+                    var columns;
                     var ccolumns;
                     var pivotArray;
                     pivotArray = me._iosizes;
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
 
-                    if(me._ccolumns === undefined) {
-                        this.initIODETColumns();
-                        return;
-                    }
+                    // if(me._ccolumns === undefined) {
+                    //     this.initIODETColumns();
+                    //     return;
+                    // }
 
-                    ccolumns = me._ccolumns;
+                    // ccolumns = me._ccolumns;
 
-                    console.log("DC CC");
-                    console.log(ccolumns);
+                    // console.log("DC CC");
+                    // console.log(ccolumns);
 
                     o3DModel.setHeaders({
                         sbu: vSBU,
@@ -667,63 +675,12 @@ sap.ui.define([
                         setTimeout(() => {
                             o3DModel.read("/DynamicColumnsSet", {
                                 success: function (oData, oResponse) {
-                                    console.log("Dynamic Columns Set");
-                                    console.log(oData);
-                                    var columns = oData.results;
-                                    var pivotRow;
-                                    //find the column to pivot
-                                    for (var i = 0; i < columns.length; i++) {
-                                        if (columns[i].Pivot !== '') {
-                                            pivotRow = columns[i].Pivot;
-                                        }
-                                    }
-                                    //build the table dyanmic columns
-                                    for (var i = 0; i < columns.length; i++) {
-                                        if (columns[i].Pivot === pivotRow) {
-                                            //pivot the columns
-                                            for (var j = 0; j < pivotArray.length; j++) {
-                                                if (pivotArray[j].ATTRIBTYP === "SIZE") {
-                                                    // console.log(ccolumns);
-                                                    columnData.push({
-                                                        "ColumnName": pivotArray[j].ATTRIBCD,
-                                                        "ColumnLabel": pivotArray[j].DESC1,
-                                                        "ColumnWidth": 70,
-                                                        "ColumnType": pivotRow,
-                                                        "DataType": ccolumns[i].DataType,
-                                                        "Editable": columns[i].Editable,
-                                                        "Mandatory": columns[i].Mandatory,
-                                                        "Visible": true
-                                                    })
-                                                }
-                                            }
-                                        } else {
-                                            if (columns[i].ColumnName !== pivotRow) {
-                                                if (columns[i].Visible === true) {
-                                                    // console.log("ccolumns[i]");
-                                                    // console.log(ccolumns[i]);
-                                                    // console.log("CColumns loop");
-                                                    // console.log(ccolumns);
+                                    // console.log("Dynamic Columns Set");
+                                    // console.log(oData);
+                                    oJSONDataModel.setData(oData);
+                                    me.getView().setModel(oJSONDataModel, "IODETPVTModel");
 
-                                                    console.log(ccolumns[i].ColumnType);
-                                                    columnData.push({
-                                                        "ColumnName": ccolumns[i].ColumnName,
-                                                        "ColumnLabel": ccolumns[i].ColumnLabel,
-                                                        "ColumnWidth": ccolumns[i].ColumnWidth,
-                                                        "ColumnType": ccolumns[i].ColumnType,
-                                                        "DataType": ccolumns[i].DataType,
-                                                        "Editable": ccolumns[i].Editable,
-                                                        "Mandatory": ccolumns[i].Mandatory,
-                                                        "Visible": ccolumns[i].Visible
-                                                    })
-                                                }
-                                            }
-                                        }
-                                    }
-                                    // console.log("column Data");
-                                    // console.log(columnData);
-                                    // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
-                                    me._aColumns[sTabId.replace("Tab", "")] = columnData;
-                                    me.getIODETTableData(columnData, pivotArray);
+                                    // this._columns = oData.results;
                                     resolve();
                                 },
                                 error: function (err) {
@@ -734,6 +691,87 @@ sap.ui.define([
                         }, 100);
                     });
                     await _promiseResult;
+
+                    var pivotRow;
+
+                    // if (me.getView().getModel("IODETPVTModel") === undefined) {
+
+                    // }
+                    console.log("Pivot Model");
+                    console.log(me.getView().getModel("IODETPVTModel"));
+                    console.log(me.getView().getModel("IODETPVTModel").getProperty("/results"));
+                    console.log("curr IODet Model");
+                    console.log(me.getView().getModel("currIODETModel"));
+                    console.log(me.getView().getModel("currIODETModel").getProperty("/results"));
+
+                    // return;
+                    columns = me.getView().getModel("IODETPVTModel").getProperty("/results");
+                    ccolumns = me.getView().getModel("currIODETModel").getProperty("/results");
+
+                    // return;
+
+                    //find the column to pivot
+                    for (var i = 0; i < columns.length; i++) {
+                        if (columns[i].Pivot !== '') {
+                            pivotRow = columns[i].Pivot;
+                        }
+                    }
+                    //build the table dyanmic columns
+                    for (var i = 0; i < columns.length; i++) {
+                        if (columns[i].Pivot === pivotRow) {
+                            //pivot the columns
+                            for (var j = 0; j < pivotArray.length; j++) {
+                                if (pivotArray[j].ATTRIBTYP === "SIZE") {
+                                    // console.log(ccolumns);
+                                    columnData.push({
+                                        "ColumnName": pivotArray[j].ATTRIBCD,
+                                        "ColumnLabel": pivotArray[j].DESC1,
+                                        "ColumnWidth": 70,
+                                        "ColumnType": pivotRow,
+                                        "DataType": ccolumns[i].DataType,
+                                        "Editable": columns[i].Editable,
+                                        "Mandatory": columns[i].Mandatory,
+                                        "Visible": true
+                                    })
+                                }
+                            }
+                        } else {
+                            if (columns[i].ColumnName !== pivotRow) {
+                                if (columns[i].Visible === true) {
+                                    // console.log("ccolumns[i]");
+                                    // console.log(ccolumns[i]);
+                                    // console.log("CColumns loop");
+                                    // console.log(ccolumns);
+
+                                    console.log(ccolumns[i].ColumnType);
+                                    columnData.push({
+                                        "ColumnName": ccolumns[i].ColumnName,
+                                        "ColumnLabel": ccolumns[i].ColumnLabel,
+                                        "ColumnWidth": ccolumns[i].ColumnWidth,
+                                        "ColumnType": ccolumns[i].ColumnType,
+                                        "DataType": ccolumns[i].DataType,
+                                        "Editable": ccolumns[i].Editable,
+                                        "Mandatory": ccolumns[i].Mandatory,
+                                        "Visible": ccolumns[i].Visible
+                                    })
+                                }
+                            }
+                        }
+                    }
+                    // console.log("column Data");
+                    // console.log(columnData);
+                    // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
+                    me._aColumns[sTabId.replace("Tab", "")] = columnData;
+                    me.getIODETTableData(columnData, pivotArray);
+                    
+                    //     },
+                    //     error: function (err) {
+                    //         Common.closeLoadingDialog(that);
+                    //         resolve();
+                    //     }
+                    // });
+
+
 
 
                 } else {
