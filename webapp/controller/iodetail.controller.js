@@ -250,13 +250,13 @@ sap.ui.define([
 
 
 
-                console.log("getIODETColumnData");
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.getIODETColumnData("IODET", "ZERP_IODET"));
-                    }, 100);
-                });
-                await _promiseResult;
+                // console.log("getIODETColumnData");
+                // _promiseResult = new Promise((resolve, reject) => {
+                //     setTimeout(() => {
+                //         resolve(this.getIODETColumnData("IODET", "ZERP_IODET"));
+                //     }, 100);
+                // });
+                // await _promiseResult;
 
                 console.log("getIOATTRIBData");
                 _promiseResult = new Promise((resolve, reject) => {
@@ -638,12 +638,14 @@ sap.ui.define([
                 var sTabId = arg3;
                 var oLocColProp = arg4;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                var oCommonModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 var o3DModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 // var vSBU = "VER"; //this.getView().getModel("ui2").getData().sbu;
                 var vSBU = this._sbu;
 
                 if (arg1 === "IODET") {
-                    var oJSONDataModel = new sap.ui.model.json.JSONModel();
+                    var oJSONCommonDataModel = new sap.ui.model.json.JSONModel();
+                    var oJSON3DDataModel = new sap.ui.model.json.JSONModel();
 
                     this._columns;
                     var columns;
@@ -663,6 +665,34 @@ sap.ui.define([
                     // console.log("DC CC");
                     // console.log(ccolumns);
 
+                    oCommonModel.setHeaders({
+                        sbu: "VER",
+                        type: "IODET",
+                        tabname: "ZERP_IODET"
+                    });
+
+                    //get dynamic columns of IO Details pivoted by Size
+                    _promiseResult = new Promise((resolve, reject) => {
+                        // setTimeout(() => {
+                            oCommonModel.read("/ColumnsSet", {
+                                success: function (oData, oResponse) {
+                                    // console.log("Dynamic Columns Set");
+                                    // console.log(oData);
+                                    oJSONCommonDataModel.setData(oData);
+                                    me.getView().setModel(oJSONCommonDataModel, "currIODETModel");
+
+                                    // this._columns = oData.results;
+                                    resolve();
+                                },
+                                error: function (err) {
+                                    Common.closeLoadingDialog(that);
+                                    resolve();
+                                }
+                            });
+                        // }, 100);
+                    });
+                    await _promiseResult;
+
                     o3DModel.setHeaders({
                         sbu: vSBU,
                         type: sType
@@ -677,8 +707,8 @@ sap.ui.define([
                                 success: function (oData, oResponse) {
                                     // console.log("Dynamic Columns Set");
                                     // console.log(oData);
-                                    oJSONDataModel.setData(oData);
-                                    me.getView().setModel(oJSONDataModel, "IODETPVTModel");
+                                    oJSON3DDataModel.setData(oData);
+                                    me.getView().setModel(oJSON3DDataModel, "IODETPVTModel");
 
                                     // this._columns = oData.results;
                                     resolve();
@@ -697,12 +727,12 @@ sap.ui.define([
                     // if (me.getView().getModel("IODETPVTModel") === undefined) {
 
                     // }
-                    console.log("Pivot Model");
-                    console.log(me.getView().getModel("IODETPVTModel"));
-                    console.log(me.getView().getModel("IODETPVTModel").getProperty("/results"));
-                    console.log("curr IODet Model");
-                    console.log(me.getView().getModel("currIODETModel"));
-                    console.log(me.getView().getModel("currIODETModel").getProperty("/results"));
+                    // console.log("Pivot Model");
+                    // console.log(me.getView().getModel("IODETPVTModel"));
+                    // console.log(me.getView().getModel("IODETPVTModel").getProperty("/results"));
+                    // console.log("curr IODet Model");
+                    // console.log(me.getView().getModel("currIODETModel"));
+                    // console.log(me.getView().getModel("currIODETModel").getProperty("/results"));
 
                     // return;
                     columns = me.getView().getModel("IODETPVTModel").getProperty("/results");
@@ -763,7 +793,7 @@ sap.ui.define([
                     // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                     me._aColumns[sTabId.replace("Tab", "")] = columnData;
                     me.getIODETTableData(columnData, pivotArray);
-                    
+
                     //     },
                     //     error: function (err) {
                     //         Common.closeLoadingDialog(that);
