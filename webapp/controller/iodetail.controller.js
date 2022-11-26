@@ -644,6 +644,12 @@ sap.ui.define([
                     pivotArray = me._iosizes;
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
+
+                    if(me._ccolumns === undefined) {
+                        this.initIODETColumns();
+                        return;
+                    }
+
                     ccolumns = me._ccolumns;
 
                     console.log("DC CC");
