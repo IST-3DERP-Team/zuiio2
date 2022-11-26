@@ -266,21 +266,6 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                console.log("initIODETColumns");
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.initIODETColumns());
-                    }, 100);
-                });
-                await _promiseResult;
-                // return;
-
-                console.log("getIOATTRIBData");
-                _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIOATTRIBData(ioNo));
-                });
-                await _promiseResult;
-
                 console.log("getIOSTATUSData");
                 _promiseResult = new Promise((resolve, reject) => {
                     resolve(this.getIOSTATUSData(ioNo));
@@ -296,6 +281,14 @@ sap.ui.define([
                 console.log("getIODETData");
                 _promiseResult = new Promise((resolve, reject) => {
                     resolve(this.getIODETData(ioNo));
+                });
+                await _promiseResult;
+
+                console.log("initIODETColumns");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.initIODETColumns());
+                    }, 100);
                 });
                 await _promiseResult;
 
