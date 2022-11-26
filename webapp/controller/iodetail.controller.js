@@ -651,10 +651,10 @@ sap.ui.define([
                     var columns;
                     var ccolumns;
                     var pivotArray;
-                    pivotArray = me._iosizes;
+                    pivotArray = me._iosizes; 
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
-
+ 
                     // if(me._ccolumns === undefined) {
                     //     this.initIODETColumns();
                     //     return;
