@@ -29,7 +29,7 @@ sap.ui.define([
         var _sStyleNo, _sVerNo, _sStyleCd, _sProdTyp, _sSalesGrp, _sSeasonCd, _sCustGrp, _sUOM;
 
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
-        var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
+        var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "YYYY-MM-dd" });
         var Core = sap.ui.getCore();
 
         return Controller.extend("zuiio2.controller.iodetail", {
@@ -58,13 +58,9 @@ sap.ui.define([
                     sbu: '',
                     currIONo: '',
                     currStyleNo: '',
-                    currDlvSeq: '1',
-                    currDlvItem: '1',
+                    currDlvSeq: '999',
+                    currDlvItem: '999',
                 }), "ui2");
-
-                this.getView().setModel(new JSONModel({
-                    datamode: ''
-                }), "ui");
 
                 //Add the attachments to screen
                 this.appendUploadCollection();
@@ -355,7 +351,7 @@ sap.ui.define([
             },
 
             onIODLVCellClick: async function (oEvent) {
-                // console.log(oEvent.getParameters().rowBindingContext.sPath);
+                console.log(oEvent.getParameters().rowBindingContext.sPath);
                 if (oEvent.getParameters().rowBindingContext.sPath === undefined)
                     return;
 
@@ -365,12 +361,16 @@ sap.ui.define([
                 // console.log(this.getView().byId("IODLVTab"));
                 var oRow = this.getView().byId("IODLVTab").getModel().getProperty(sRowPath);
 
-                this.getView().getModel("ui2").setProperty("/activeIONo", oRow.IONO);
-                this.getView().getModel("ui2").setProperty("/activeDlvSeq", oRow.DLVSEQ);
+                console.log("Row Path");
+                console.log(oRow.IONO);
+                console.log(oRow.DLVSEQ);
 
-                // var vIONo = this.getView().getModel("ui2").getProperty("/activeIONo");
-                // var vDlvSeq = this.getView().getModel("ui2").getProperty("/activeDlvSeq");
-                // alert(vIONo + " " + vDlvSeq);
+                this.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
+                this.getView().getModel("ui2").setProperty("/currDlvSeq", oRow.DLVSEQ);
+
+                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+                alert(vIONo + " " + vDlvSeq);
 
                 var me = this;
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -381,11 +381,11 @@ sap.ui.define([
                 var oColumns = oModelColumns.getData();
 
                 _promiseResult = new Promise((resolve, reject) => {
-
                     me._tblChange = true;
-                    setTimeout(() => {
-                        resolve(this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns));
-                    }, 100);
+                    // setTimeout(() => {
+                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    // }, 100);
+                    resolve();
                 })
                 await _promiseResult;;
 
@@ -457,6 +457,9 @@ sap.ui.define([
                                 me.byId("IOATTRIBTab").bindRows("/rows");
 
                                 me._iosizes = oData.results;
+                                
+                                console.log("IO Sizes");
+                                console.log(me._iosizes);
                                 // console.log("IO Sizes from get IO Attrib");
                                 // console.log(me._iosizes);
                                 resolve();
@@ -651,10 +654,10 @@ sap.ui.define([
                     var columns;
                     var ccolumns;
                     var pivotArray;
-                    pivotArray = me._iosizes; 
+                    pivotArray = me._iosizes;
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
- 
+
                     // if(me._ccolumns === undefined) {
                     //     this.initIODETColumns();
                     //     return;
@@ -674,21 +677,21 @@ sap.ui.define([
                     //get dynamic columns of IO Details pivoted by Size
                     _promiseResult = new Promise((resolve, reject) => {
                         // setTimeout(() => {
-                            oCommonModel.read("/ColumnsSet", {
-                                success: function (oData, oResponse) {
-                                    // console.log("Dynamic Columns Set");
-                                    // console.log(oData);
-                                    oJSONCommonDataModel.setData(oData);
-                                    me.getView().setModel(oJSONCommonDataModel, "currIODETModel");
+                        oCommonModel.read("/ColumnsSet", {
+                            success: function (oData, oResponse) {
+                                // console.log("Dynamic Columns Set");
+                                // console.log(oData);
+                                oJSONCommonDataModel.setData(oData);
+                                me.getView().setModel(oJSONCommonDataModel, "currIODETModel");
 
-                                    // this._columns = oData.results;
-                                    resolve();
-                                },
-                                error: function (err) {
-                                    Common.closeLoadingDialog(that);
-                                    resolve();
-                                }
-                            });
+                                // this._columns = oData.results;
+                                resolve();
+                            },
+                            error: function (err) {
+                                Common.closeLoadingDialog(that);
+                                resolve();
+                            }
+                        });
                         // }, 100);
                     });
                     await _promiseResult;
@@ -702,7 +705,7 @@ sap.ui.define([
 
                     //get dynamic columns of IO Details pivoted by Size
                     _promiseResult = new Promise((resolve, reject) => {
-                        setTimeout(() => {
+                        // setTimeout(() => {
                             o3DModel.read("/DynamicColumnsSet", {
                                 success: function (oData, oResponse) {
                                     // console.log("Dynamic Columns Set");
@@ -718,7 +721,7 @@ sap.ui.define([
                                     resolve();
                                 }
                             });
-                        }, 100);
+                        // }, 100);
                     });
                     await _promiseResult;
 
@@ -738,6 +741,7 @@ sap.ui.define([
                     columns = me.getView().getModel("IODETPVTModel").getProperty("/results");
                     ccolumns = me.getView().getModel("currIODETModel").getProperty("/results");
 
+                    // console.log(ccolumns);
                     // return;
 
                     //find the column to pivot
@@ -761,12 +765,24 @@ sap.ui.define([
                                         "DataType": ccolumns[i].DataType,
                                         "Editable": columns[i].Editable,
                                         "Mandatory": columns[i].Mandatory,
-                                        "Visible": true
+                                        "Visible": true,
+                                        "Creatable": ccolumns[i].Creatable,
+                                        "Decimal": ccolumns[i].Decimal,
+                                        "DictType": ccolumns[i].DictType,
+                                        "Key": ccolumns[i].Key,
+                                        "Length": ccolumns[i].Length,
+                                        "Order": ccolumns[i].Length,
+                                        "SortOrder": ccolumns[i].SortOrder,
+                                        "SortSeq": ccolumns[i].SortSeq,
+                                        "Sorted": ccolumns[i].Sorted
                                     })
                                 }
                             }
                         } else {
-                            if (columns[i].ColumnName !== pivotRow) {
+                            if (columns[i].ColumnName !== pivotRow && columns[i].ColumnName !== "IOITEM" && columns[i].ColumnName !== "IONO" 
+                            && columns[i].ColumnName !== "SALDOCNO" && columns[i].ColumnName !== "SALDOCITEM" 
+                            && columns[i].ColumnName !== "CREATEDBY" && columns[i].ColumnName !== "CREATEDDT" && columns[i].ColumnName !== "CREATEDTM"
+                            && columns[i].ColumnName !== "UPDATEDBY" && columns[i].ColumnName !== "UPDATEDDT" && columns[i].ColumnName !== "UPDATEDTM") {
                                 if (columns[i].Visible === true) {
                                     // console.log("ccolumns[i]");
                                     // console.log(ccolumns[i]);
@@ -782,7 +798,16 @@ sap.ui.define([
                                         "DataType": ccolumns[i].DataType,
                                         "Editable": ccolumns[i].Editable,
                                         "Mandatory": ccolumns[i].Mandatory,
-                                        "Visible": ccolumns[i].Visible
+                                        "Visible": ccolumns[i].Visible,
+                                        "Creatable": ccolumns[i].Creatable,
+                                        "Decimal": ccolumns[i].Decimal,
+                                        "DictType": ccolumns[i].DictType,
+                                        "Key": ccolumns[i].Key,
+                                        "Length": ccolumns[i].Length,
+                                        "Order": ccolumns[i].Length,
+                                        "SortOrder": ccolumns[i].SortOrder,
+                                        "SortSeq": ccolumns[i].SortSeq,
+                                        "Sorted": ccolumns[i].Sorted
                                     })
                                 }
                             }
@@ -791,8 +816,24 @@ sap.ui.define([
                     // console.log("column Data");
                     // console.log(columnData);
                     // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
+
+                    if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                        columnData.forEach(item => {
+                            oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                                .forEach(col => item.ValueHelp = col.ValueHelp)
+                        })
+                    }
+
                     me._aColumns[sTabId.replace("Tab", "")] = columnData;
-                    me.getIODETTableData(columnData, pivotArray);
+                    
+                    // _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            me.getIODETTableData(columnData, pivotArray);
+                        
+                        }, 100);
+                        // resolve();
+                    // });
+                    // await _promiseResult;
 
                     //     },
                     //     error: function (err) {
@@ -938,6 +979,8 @@ sap.ui.define([
                     // });
 
                 });
+                // var aItems = oTable.getItems();
+                // aItems[0].setSelected(true);
             },
 
             getIODETTableData: function (columnData, pivot) {
@@ -950,22 +993,35 @@ sap.ui.define([
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
+                console.log(cIONo);
+                console.log(cDlvSeq);
+
                 oModel.read("/IODETSet", {
                     urlParameters: {
                         // "$filter": "IONO eq '" + me._ioNo + "'"
                         "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
                     },
                     success: function (oData, oResponse) {
-                        // console.log("IODETTab Data");
-                        // console.log(oData.results);
+                        console.log("IODETTab Data");
+                        console.log(oData.results);
+                        
                         var rowData = oData.results;
+                        // console.log("rowData");
                         // console.log(rowData)
+
+                        // console.log("pivot");
+                        // console.log(pivot)
+
                         //Get unique items of BOM by UV
                         // var unique = rowData.filter((rowData, index, self) =>
                         //     index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
 
                         var unique = rowData.filter((rowData, index, self) =>
-                            index === self.findIndex((t) => (t.DLVITEM === rowData.DLVITEM && t.CUSTSIZE === rowData.CUSTSIZE)));
+                            index === self.findIndex((t) => (t.CUSTCOLOR === rowData.CUSTCOLOR && t.IONO === rowData.IONO && t.DLVSEQ === rowData.DLVSEQ)));
+                            // console.log("unique");
+                            // console.log(unique);
+
+                            // index === self.findIndex((t) => (t.DLVITEM === rowData.DLVITEM && t.CUSTSIZE === rowData.CUSTSIZE)));
 
                         //For every unique item
                         for (var i = 0; i < unique.length; i++) {
@@ -973,11 +1029,18 @@ sap.ui.define([
                             //Set the pivot column for each unique item
                             for (var j = 0; j < rowData.length; j++) {
                                 if (rowData[j].DESC1 !== "") {
-                                    if (unique[i].DLVITEM === rowData[j].DLVITEM && unique[i].CUSTSIZE === rowData[j].CUSTSIZE) {
+                                    // if (unique[i].DLVITEM === rowData[j].DLVITEM && unique[i].CUSTSIZE === rowData[j].CUSTSIZE) {
+                                    if (unique[i].CUSTCOLOR === rowData[j].CUSTCOLOR && unique[i].IONO === rowData[j].IONO && unique[i].DLVSEQ === rowData[j].DLVSEQ) {
                                         for (var k = 0; k < pivot.length; k++) {
                                             var colname = pivot[k].ATTRIBCD;
+                                            // console.log("colname");
+                                            // console.log(colname + " " + rowData[j].CUSTSIZE);
+                                            // console.log("Cust Size");
+                                            // console.log(rowData[j].CUSTSIZE);
                                             if (rowData[j].CUSTSIZE === colname) {
-                                                unique[i][colname] = rowData[j].DESC1;
+                                                // console.log(unique[i]);
+                                                // console.log(i + " " + colname + " " + unique[i][colname] + " " + rowData[j].CUSTSIZE);
+                                                unique[i][colname] = rowData[j].REVORDERQTY;
                                             }
                                         }
                                     }
@@ -986,7 +1049,7 @@ sap.ui.define([
                         }
 
                         //set the table columns/rows
-                        rowData = oData.results;
+                        // rowData = oData.results;
                         unique.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
 
                         var oJSONModel = new JSONModel();
@@ -999,6 +1062,8 @@ sap.ui.define([
                         // console.log(oJSONModel);
 
                         oTable.setModel(oJSONModel, "DataModel");
+                        console.log("Data Model Pivot");
+                        console.log(oTable.setModel(oJSONModel, "DataModel"));
                         oTable.attachPaste();
 
                         // console.log(oTable);
@@ -1087,8 +1152,12 @@ sap.ui.define([
                             // });
                         });
                         oTable.bindRows("DataModel>/results");
+                        // console.log(oTable);
                         // oTable.fireColumnFreeze();
                         // console.log(oTable.bindRows("DataModel>/results"));
+
+                        // var aItems = oTable.getItems();
+                        // aItems[0].setSelected(true);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -2748,6 +2817,8 @@ sap.ui.define([
             onAdd: function (source) {
                 var arg = source;
 
+                this.setRowReadMode(arg);
+
                 if (arg === "IODLV") {
                     this.byId("btnNewDlvSched").setVisible(false);
                     this.byId("btnImportPODlvSched").setVisible(false);
@@ -2787,21 +2858,25 @@ sap.ui.define([
                     this.byId("btnCancelIODet").setVisible(true);
                     this.byId("btnFullScreenIODet").setVisible(false);
                 }
+                console.log("1");
                 var oIconTabBar = this.byId("idIconTabBarInlineMode");
                 oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                     .forEach(item => item.setProperty("enabled", false));
 
+                console.log("2");
                 //GET TABLE
                 var aNewRow = [];
                 var oNewRow = {};
                 var tabName = arg + "Tab";
                 var oTable = this.getView().byId(tabName);
+                console.log("3");
 
                 oNewRow["New"] = true;
                 aNewRow.push(oNewRow);
 
                 //SET TABLE AS EDITABLE
                 this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
+                console.log("4");
 
                 this.setRowEditMode(arg);
                 this._validationErrors = [];
@@ -2810,13 +2885,17 @@ sap.ui.define([
 
                 // // this.setActiveRowHighlightByTableId(arg + "Tab");
 
+                console.log("5");
                 var oModel = this.getView().byId(tabName).getModel();
                 oModel.setProperty("/rows", aNewRow);
+                console.log("6");
                 this.getView().getModel("ui").setProperty("/dataMode", 'NEW');
+                console.log("7");
 
                 if (oTable.getBinding()) {
                     this._aFiltersBeforeChange = jQuery.extend(true, [], oTable.getBinding().aFilters);
 
+                    console.log("8");
                     // oTable.getBinding().aSorters = null;
                     oTable.getBinding().aFilters = null;
                 }
@@ -2824,6 +2903,7 @@ sap.ui.define([
                 var oColumns = oTable.getColumns();
                 // console.log(oColumns);
 
+                console.log("9");
                 for (var i = 0, l = oColumns.length; i < l; i++) {
                     var isFiltered = oColumns[i].getFiltered();
                     // console.log(oColumns[i].getFiltered())
@@ -2832,8 +2912,15 @@ sap.ui.define([
                     }
                 }
 
+                console.log("10");
+
                 // console.log(oTable);
+                // oTable.getBinding("rows").refresh();
+                // console.log("11");
                 oTable.getModel().refresh(true);
+                console.log("12");
+
+                console.log(oTable);
 
             },
 
@@ -3138,8 +3225,6 @@ sap.ui.define([
                     }));
 
                 // var ioNo = this._ioNo;
-                this.getView().getModel("ui2").setProperty("/currDlvSeq", "1");
-                this.getView().getModel("ui2").setProperty("/currDlvItem", "1");
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
@@ -4019,6 +4104,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
+                        console.log("BOM by UV Pivot");
+                        console.log(oTable);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -4350,14 +4437,15 @@ sap.ui.define([
             },
 
             async onSave(arg) {
+                alert("on Save");
                 var me = this;
                 var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
                 var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
 
-                // console.log(aNewRows);
-                // console.log(aEditedRows);
+                console.log(aNewRows);
+                console.log(aEditedRows);
                 // return;
 
                 if (aNewRows.length > 0) {
@@ -4528,12 +4616,30 @@ sap.ui.define([
                             entitySet = centitySet + "(";
                             var param = {};
                             var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                            var itemValue;
 
                             this._aColumns[arg].forEach(col => {
-                                if (arg === "IODLV" || arg === "IODET") {
-                                    param[col.ColumnName] = item[col.ColumnName]
+                                //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
+                                if (col.DataType === "DATETIME") {
+                                    // console.log(col.ColumnName);
+                                    // console.log(item[col.ColumnName]);
+                                    // console.log(sapDateFormat.format(new Date(item[col.ColumnName])));
+                                    itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
                                 } else {
-                                    if (col.Editable) param[col.ColumnName] = item[col.ColumnName]
+                                    itemValue = item[col.ColumnName];
+                                }
+
+                                //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
+                                if (arg === "IODLV" || arg === "IODET") {
+
+                                    param[col.ColumnName] = itemValue;
+                                }
+                                //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
+                                else {
+                                    if (col.Editable) {
+
+                                        param[col.ColumnName] = itemValue;
+                                    }
                                 }
 
                                 if (iKeyCount === 1) {
@@ -4550,9 +4656,9 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substr(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(arg);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(arg);
 
                             // Common.closeProcessingDialog(me);
 
@@ -4717,9 +4823,14 @@ sap.ui.define([
                 var oTable = this.byId(arg + "Tab");
                 var me = this;
 
+                console.log("a1");
+                // console.log(oTable.getColumns());
+                // return;
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
                     var oValueHelp = false;
+
+                    console.log("a2 ");
 
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
@@ -4730,13 +4841,56 @@ sap.ui.define([
                     // console.log(sColName + " Column Name " + arg);
                     // console.log(this._aColumns[arg]);
 
+                    // console.log("Columne Name " + sColName);
+
+                    // this._aColumns[arg].filter(item => item.ColumnName === sColName)
+                    //     .forEach(ci => {
+                    //         if (ci.Editable) {
+                    //             // console.log(ci.ColumnLabel + " | " + ci.DataType);
+                    //             console.log(ci);
+                    //             if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
+                    //             console.log(oValueHelp);
+
+                    //             if (ci.DataType === "STRING") {
+                    //                 console.log("a3 String " + sColName);
+                    //                 col.setTemplate(new sap.m.Input({
+                    //                     type: "Text",
+                    //                     value: "{" + sColName + "}",
+                    //                     maxLength: ci.Length,
+                    //                     change: this.onInputLiveChange.bind(this)
+                    //                 }));
+                    //             } else if (ci.DataType === "NUMBER") {
+                    //                 console.log("a3 NUMBER " + sColName);
+                    //                 col.setTemplate(new sap.m.Input({
+                    //                     type: sap.m.InputType.Number,
+                    //                     textAlign: sap.ui.core.TextAlign.Right,
+                    //                     value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                    //                     change: this.onNumberChange.bind(this)
+                    //                 }));
+                    //             } else if (ci.DataType === "DATETIME") {
+                    //                 console.log("a3 Datetime " + sColName);
+                    //                 col.setTemplate(new sap.m.DatePicker({
+                    //                     // id: "ipt" + ci.name,
+                    //                     value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                    //                     displayFormat: "short",
+                    //                     change: this.onInputLiveChange.bind(this)
+                    //                     // change: "handleChange"
+                    //                     // ,liveChange: this.onInputLiveChange.bind(this)
+                    //                 }));
+                    //             }
+                    //         }
+                    //     })
+
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
                             // console.log(sColName);
                             // console.log(ci);
                             if (ci.Editable) {
+                                console.log("Check Value Help");
+                                console.log(ci.ValueHelp);
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
                                 if (oValueHelp) {
+                                    console.log("a3 oValueHelp " + sColName);
                                     col.setTemplate(new sap.m.Input({
                                         type: "Text",
                                         value: "{" + sColName + "}",
@@ -4759,16 +4913,18 @@ sap.ui.define([
                                     }));
                                 }
                                 else if (ci.DataType === "DATETIME") {
+                                    console.log("a3 Datetime " + sColName);
                                     col.setTemplate(new sap.m.DatePicker({
                                         // id: "ipt" + ci.name,
                                         value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
                                         displayFormat: "short",
-                                        change: "handleChange",
-
-                                        // liveChange: this.onInputLiveChange.bind(this)
+                                        change: this.onInputLiveChange.bind(this)
+                                        // change: "handleChange"
+                                        // ,liveChange: this.onInputLiveChange.bind(this)
                                     }));
                                 }
                                 else if (ci.DataType === "NUMBER") {
+                                    console.log("a3 NUMBER " + sColName);
                                     col.setTemplate(new sap.m.Input({
                                         type: sap.m.InputType.Number,
                                         textAlign: sap.ui.core.TextAlign.Right,
@@ -4776,62 +4932,72 @@ sap.ui.define([
                                         change: this.onNumberChange.bind(this)
                                     }));
                                 }
-                                // else if (arg === "IODET" && ci.DataType === undefined) {
-                                //     switch (ci.ColumnName) {
-                                //         case "SALDOCNO" || "CUSTDEST" || "REMARKS" || "CREATEDBY" || "CREATEDTM" || "UPDATEDBY" || "UPDATEDTM":
-                                //             col.setTemplate(new sap.m.Input({
-                                //                 type: "Text",
-                                //                 value: "{" + sColName + "}",
-                                //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
-                                //                 change: this.onInputLiveChange.bind(this)
-                                //             }));
-                                //             break;
-                                //         case "CUSTCOLOR":
-                                //             col.setTemplate(new sap.m.Input({
-                                //                 type: "Text",
-                                //                 value: "{" + sColName + "}",
-                                //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
-                                //                 change: this.onInputLiveChange.bind(this)
-                                //             }));
-                                //             break;
-                                //         case "MATNO":
-                                //             col.setTemplate(new sap.m.Input({
-                                //                 type: "Text",
-                                //                 value: "{" + sColName + "}",
-                                //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
-                                //                 change: this.onInputLiveChange.bind(this)
-                                //             }));
-                                //             break;
-                                //         case "BATCH":
-                                //             col.setTemplate(new sap.m.Input({
-                                //                 type: "Text",
-                                //                 value: "{" + sColName + "}",
-                                //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
-                                //                 change: this.onInputLiveChange.bind(this)
-                                //             }));
-                                //             break;
-                                //         case "REVDLVDT":
-                                //             col.setTemplate(new sap.m.DatePicker({
-                                //                 // id: "ipt" + ci.name,
-                                //                 value: "{path: '" + sColName + "', mandatory: '" + ci.Mandatory + "'}",
-                                //                 displayFormat: "short",
-                                //                 change: "handleChange",
-
-                                //                 // liveChange: this.onInputLiveChange.bind(this)
-                                //             }));
-                                //         case "UNITPRICE1" || "UNITPRICE2" || "UNITPRICE3" || "REVUPRICE1" || "REVUPRICE2" || "REVUPRICE3" || "ORDERQTY" || "ACTUALQTY" || "PLANSHPQTY" || "SHIPQTY" || "DLVSEQ" || "IOITEM":
-                                //             col.setTemplate(new sap.m.Input({
-                                //                 type: sap.m.InputType.Number,
-                                //                 textAlign: sap.ui.core.TextAlign.Right,
-                                //                 value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:3, maxFractionDigits:3 }, constraints:{ precision:10, scale:10 }}",
-                                //                 change: this.onNumberChange.bind(this)
-                                //             }));
-                                //             break;
-
-                                //         default:
-                                //             break;
-                                //     }
+                                // else if (ci.DataType === "STRING") {
+                                //     console.log("a3 String " + sColName);
+                                //         col.setTemplate(new sap.m.Input({
+                                //             type: "Text",
+                                //             value: "{" + sColName + "}",
+                                //             maxLength: ci.Length,
+                                //             change: this.onInputLiveChange.bind(this)
+                                //         }));
                                 // }
+                                
+                                // // else if (arg === "IODET" && ci.DataType === undefined) {
+                                // //     switch (ci.ColumnName) {
+                                // //         case "SALDOCNO" || "CUSTDEST" || "REMARKS" || "CREATEDBY" || "CREATEDTM" || "UPDATEDBY" || "UPDATEDTM":
+                                // //             col.setTemplate(new sap.m.Input({
+                                // //                 type: "Text",
+                                // //                 value: "{" + sColName + "}",
+                                // //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
+                                // //                 change: this.onInputLiveChange.bind(this)
+                                // //             }));
+                                // //             break;
+                                // //         case "CUSTCOLOR":
+                                // //             col.setTemplate(new sap.m.Input({
+                                // //                 type: "Text",
+                                // //                 value: "{" + sColName + "}",
+                                // //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
+                                // //                 change: this.onInputLiveChange.bind(this)
+                                // //             }));
+                                // //             break;
+                                // //         case "MATNO":
+                                // //             col.setTemplate(new sap.m.Input({
+                                // //                 type: "Text",
+                                // //                 value: "{" + sColName + "}",
+                                // //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
+                                // //                 change: this.onInputLiveChange.bind(this)
+                                // //             }));
+                                // //             break;
+                                // //         case "BATCH":
+                                // //             col.setTemplate(new sap.m.Input({
+                                // //                 type: "Text",
+                                // //                 value: "{" + sColName + "}",
+                                // //                 maxLength: ci.Length === undefined ? 10 : ci.Length,
+                                // //                 change: this.onInputLiveChange.bind(this)
+                                // //             }));
+                                // //             break;
+                                // //         case "REVDLVDT":
+                                // //             col.setTemplate(new sap.m.DatePicker({
+                                // //                 // id: "ipt" + ci.name,
+                                // //                 value: "{path: '" + sColName + "', mandatory: '" + ci.Mandatory + "'}",
+                                // //                 displayFormat: "short",
+                                // //                 change: "handleChange",
+
+                                // //                 // liveChange: this.onInputLiveChange.bind(this)
+                                // //             }));
+                                // //         case "UNITPRICE1" || "UNITPRICE2" || "UNITPRICE3" || "REVUPRICE1" || "REVUPRICE2" || "REVUPRICE3" || "ORDERQTY" || "ACTUALQTY" || "PLANSHPQTY" || "SHIPQTY" || "DLVSEQ" || "IOITEM":
+                                // //             col.setTemplate(new sap.m.Input({
+                                // //                 type: sap.m.InputType.Number,
+                                // //                 textAlign: sap.ui.core.TextAlign.Right,
+                                // //                 value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:3, maxFractionDigits:3 }, constraints:{ precision:10, scale:10 }}",
+                                // //                 change: this.onNumberChange.bind(this)
+                                // //             }));
+                                // //             break;
+
+                                // //         default:
+                                // //             break;
+                                // //     }
+                                // // }
                                 else {
                                     if (arg === "ioMatList" && sColName === "MATDESC1") {
                                         col.setTemplate(new sap.m.Input({
@@ -4861,7 +5027,9 @@ sap.ui.define([
                         })
                 })
 
-                // console.log("setRowEditMode 2");
+                // return;
+
+                console.log("setRowEditMode 2");
 
                 var vIONo = this._ioNo; //"1000115";
 
@@ -4959,6 +5127,8 @@ sap.ui.define([
                         })
                     })
                 }
+
+                console.log("setRowEditMode 3");
             },
 
             setRowReadMode(arg) {
