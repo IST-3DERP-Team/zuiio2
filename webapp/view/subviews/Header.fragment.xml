@@ -20,7 +20,7 @@
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
     
     <!-- FORM -->
-    <f:Form id="IOHeaderForm1" editable="false">
+    <f:Form id="IOHeaderForm1" editable="true">
 
         <!-- FORM LAYOUT -->
         <f:layout>
