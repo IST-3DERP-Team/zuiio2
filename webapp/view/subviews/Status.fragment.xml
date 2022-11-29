@@ -2,12 +2,12 @@
     xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
 
     <OverflowToolbar id="_ovfToolBarStatus" design="Transparent" >
-            <Button type="Ghost"  icon="sap-icon://edit" tooltip="Edit Attributes" press="onEditStatus"/>
+            <Button id="onIOStatEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')"/>
     </OverflowToolbar>
 
     <!-- #### DYNAMIC TABLE #### --> 
     <!-- <Panel class="sapUiTinyMarginTop" height="auto">  -->
-            <!-- <c:DynamicTable id="DynTableStatus" class="sapUiSizeCompact" selectionMode="None" 
+            <!-- <c:DynamicTable id="StatDynTable" class="sapUiSizeCompact" selectionMode="None" 
                         showColumnVisibilityMenu="true">
             </c:DynamicTable> -->
             <t:Table id="StatDynTable" 

@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectSalesOrg}"
+		class="sapUiPopupWithPadding"
+		items="{SalesOrgModel>/results}"
+        search="_salesorgGroupValueHelpSearch"
+		confirm="_salesorgGroupValueHelpClose"
+		cancel="_salesorgGroupValueHelpClose">
+		<StandardListItem title="{SalesOrgModel>SALESORG}" description="{SalesOrgModel>DESCRIPTION}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

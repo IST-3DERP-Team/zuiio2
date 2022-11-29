@@ -1,7 +1,38 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
-	<Dialog title="{i18n>CopyStyle} {CopyModel>/STYLENO}" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="75%">
-		<Panel height="500px">
-
+	<Dialog title="Copy IO" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="45%">
+		<Panel height="230px" >
+            <l:HorizontalLayout class="sapUiNoContentPadding" >
+                <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                    <l:content>
+                        <Label text="Source IO No"/>
+                        <Input id="iIONo" width = "7rem" editable="false" value="IONO"/>
+                    </l:content>
+                </l:VerticalLayout>
+                <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                    <l:content>
+                        <Label text="IO Desc"/>
+                        <Input id="iIODesc" width = "7rem"  editable="false"/> 
+                    </l:content>
+                </l:VerticalLayout>
+                <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                    <l:content>
+                        <Label text="Style Code"/>
+                        <Input id="iStyleCd" width = "7rem"  editable="false"/> 
+                    </l:content>
+                </l:VerticalLayout>
+                <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                    <l:content>
+                        <Label text="Season"/>
+                        <Input id="iSeasonCd" width = "7rem"  editable="false"/> 
+                    </l:content>
+                </l:VerticalLayout>
+                <l:VerticalLayout class="sapUiContentPadding" width="100%">
+                    <l:content>
+                        <Label text="Plant"/>
+                        <Input id="iPlant" width = "7rem"  editable="false"/> 
+                    </l:content>
+                </l:VerticalLayout>
+            </l:HorizontalLayout>
             <!-- New Style Details -->
 			<f:Form id="StyleHeaderForm1" editable="true" class="sapUiNoContentPadding">
                 <f:layout>
@@ -10,7 +41,35 @@
                 <f:formContainers>
                     <f:FormContainer ariaLabelledBy="Grp1">
                         <f:formElements>
-                            <f:FormElement label="{i18n>SourceStyleCode}">
+                            <f:FormElement label="New IO Desc">
+                                <f:fields>
+                                    <Input id="newIODesc"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="New Style Code">
+                                <f:fields>
+                                    <Input id="newStyleCd"/>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="New Season">
+                                <f:fields>
+                                    <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" showValueHelp="true" suggestionItems="{SeasonsModel>/results}">
+                                        <suggestionItems>
+                                            <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
+                                        </suggestionItems>
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="New Plant">
+                                <f:fields>
+                                    <Input id="newPlant" type="Text" editable="true" showSuggestion="true" suggestionItems="{PlantModel>/results}">
+                                    <suggestionItems>
+                                            <core:ListItem text="{PlantModel>PLANTCD}"/>
+                                        </suggestionItems>
+                                    </Input>
+                                </f:fields>
+                            </f:FormElement>
+                            <!-- <f:FormElement label="{i18n>SourceStyleCode}">
                                 <f:fields>
                                     <Text text="{CopyModel>/STYLECD}"/>
                                 </f:fields>
@@ -19,14 +78,14 @@
                                 <f:fields>
                                     <Text text="{CopyModel>/SEASONCD}"/>
                                 </f:fields>
-                            </f:FormElement>
+                            </f:FormElement> -->
                         </f:formElements>
                         <f:layoutData>
-                            <l:GridData span="XL5 L5 M5 S5" />
+                            <l:GridData span="XL7 L7 M7 S7" />
                         </f:layoutData>
                     </f:FormContainer>
                     
-                    <f:FormContainer ariaLabelledBy="Grp3">
+                    <!-- <f:FormContainer ariaLabelledBy="Grp3">
                         <f:formElements>
                             <f:FormElement label="{i18n>NewStyleCode}">
                                 <f:fields>
@@ -48,30 +107,40 @@
                         <f:layoutData>
                             <l:GridData span="XL5 L5 M5 S5" />
                         </f:layoutData>
-                    </f:FormContainer>
+                    </f:FormContainer> -->
                 
                     <f:FormContainer ariaLabelledBy="Grp2">
                         <f:formElements>
-                            <f:FormElement>
+                            <f:FormElement label="New Style">
                                 <f:fields>
-                                    <CheckBox id="ColorCB" text="{i18n>Color}" selected="true" />
+                                    <CheckBox id="StyleCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement>
+                            <f:FormElement label="Color">
                                 <f:fields>
-                                    <CheckBox id="bomCB" text="{i18n>BOM}" selected="true" />
+                                    <CheckBox id="ColorCB" selected="true" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="BOM">
+                                <f:fields>
+                                    <CheckBox id="BOMCB" selected="true" />
+                                </f:fields>
+                            </f:FormElement>
+                            <f:FormElement label="Costing">
+                                <f:fields>
+                                    <CheckBox id="CostingCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
                         </f:formElements>
                         <f:layoutData>
-                            <l:GridData span="XL2 L2 M2 S2" />
+                            <l:GridData span="XL5 L5 M5 S5" />
                         </f:layoutData>
                     </f:FormContainer>
                 </f:formContainers>
             </f:Form>
 
             <!-- Versions Table -->
-            <t:Table id="versionsTableMain" rows="{VersionsDataModel>/results}" class="sapUiSizeCompact">
+            <!-- <t:Table id="versionsTableMain" rows="{VersionsDataModel>/results}" class="sapUiSizeCompact">
                 <t:columns>
                     <t:Column width="5rem" filterType="" filterProperty="Verno" sortProperty="Verno">
                         <Label text="{i18n>Version}"/>
@@ -99,11 +168,11 @@
                         </t:template>
                     </t:Column>
                 </t:columns>
-            </t:Table>
+            </t:Table> -->
 		</Panel>
 		<buttons>
-			<Button text="{i18n>Save}" press="onSaveCopyIO"/>
-			<Button text="{i18n>Cancel}" press="onCloseDialog"/>
+			<Button text="{i18n>Copy}" press="onfragmentCopyIO" tooltip="Copy"/>
+			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

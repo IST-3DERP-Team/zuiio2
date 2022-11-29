@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectStyleCd}"
+		class="sapUiPopupWithPadding"
+		items="{StyleCdModel>/results}"
+        search="_stylecdGroupValueHelpSearch"
+		confirm="_stylecdGroupValueHelpClose"
+		cancel="_stylecdGroupValueHelpClose">
+		<StandardListItem title="{StyleCdModel>STYLECD}" description=""/>
+	</SelectDialog>
+</core:FragmentDefinition>

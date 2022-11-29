@@ -14,5 +14,10 @@
         {"ColumnName": "ATTRIBCD", 
             "ValueHelp": {"show": true, "items": {"path": "ATTRIBCODE_MODEL", "value": "ATTRIBCD", "text": "ATTRIBCD"},
             "SuggestionItems": {"path": "ATTRIBCODE_MODEL>/", "text": "{ATTRIBCODE_MODEL>ATTRIBCD}", "additionalText": "{ATTRIBCODE_MODEL>DESC1}"}}}
-    ]    
+    ],
+    "IODET": [
+        {"ColumnName": "CUSTCOLOR",
+            "ValueHelp": {"show": true, "items": {"path": "IOCUSTCOLOR_MODEL", "value": "ATTRIBCD", "text": "DESC1"},
+            "SuggestionItems": {"path": "IOCUSTCOLOR_MODEL>/", "text": "{IOCUSTCOLOR_MODEL>ATTRIBCD}"}}}
+        ]
 }

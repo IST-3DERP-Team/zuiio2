@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectIOType}"
+		class="sapUiPopupWithPadding"
+		items="{IOTypeModel>/results}"
+        search="_iotypeGroupValueHelpSearch"
+		confirm="_iotypeGroupValueHelpClose"
+		cancel="_iotypeGroupValueHelpClose">
+		<StandardListItem title="{IOTypeModel>IOTYPE}" description="{IOTypeModel>DESC1}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

@@ -5,54 +5,71 @@
     class="sapUiSizeCompact" 
     xmlns:uiT="sap.ui.table"
     height="100%">
-        <VBox fitContainer="true">
-            <uiT:Table id="faSummaryTab" 
-                visibleRowCountMode="Auto"
-                showColumnVisibilityMenu="true"
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single"
-                selectionBehavior="RowOnly"
-                cellClick="onCellClickFASummary"
-                sort="onSorted"
-                rowSelectionChange="onRowSelectionChangeFASummary"
-                filter="onFilter">
-                <uiT:extension>
-                    <Toolbar>
-                        <ToolbarSpacer/>
-                        <Button id="btnDCReceiveDtl" 
-                            icon="sap-icon://sys-last-page"
-                            text="{ddtextFASummary>/FADCRCVDTL}"
-                            press="onFADCReceiveDtl"
-                            visible="true"/> 
-                        <Button id="btnDCSendDtl" 
-                            icon="sap-icon://sys-first-page"
-                            text="{ddtextFASummary>/FADCSENDDTL}"
-                            press="onFADCSendDtl"
-                            visible="true"/> 
-                        <Button id="btnExport" 
-                            icon="sap-icon://excel-attachment"
-                            press="onExportFASummary"
-                            tooltip="{ddtextFASummary>/EXPORTTOEXCEL}"
-                            visible="true"/> 
-                        <Button id="btnRefresh" 
-                            icon="sap-icon://refresh"
-                            press="onRefreshFASummary"
-                            tooltip="{ddtextFASummary>/REFRESH}"
-                            visible="true"/> 
-                        <Button id="btnFullScreen" 
-                            icon="sap-icon://full-screen"
-                            press="onTableResize('MatType','Max')"
-                            visible="false" />
-                        <Button id="btnExitFullScreen" 
-                            icon="sap-icon://exit-full-screen"
-                            press="onTableResize('MatType','Min')"
-                            visible="false" />
-                    </Toolbar>
-                </uiT:extension>    
-                <uiT:layoutData>
-                    <FlexItemData growFactor="1" baseSize="0%"/>
-                </uiT:layoutData>  
-            </uiT:Table>  
-        </VBox>
+
+    <Page id="page" enableScrolling="false" class="sapUiNoContentPadding" showHeader="false">
+        <dependents>
+            <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute="onRefreshFASummary" />
+        </dependents>
+        <content>
+
+            <VBox fitContainer="true">
+                <uiT:Table id="faSummaryTab" 
+                    rows="{faSummary>/results}"
+                    visibleRowCountMode="Auto"
+                    showColumnVisibilityMenu="true"
+                    enableColumnFreeze="true"
+                    enableCellFilter="true"
+                    selectionMode="Single"
+                    selectionBehavior="RowSelector"
+                    firstVisibleRowChanged="onFirstVisibleRowChangedFASummary"
+                    cellClick="onCellClickFASummary"
+                    sort="onSorted"
+                    filter="onFilter"
+                    columnFreeze="onColumnUpdatedFASummary"
+                    columnMove="onColumnUpdatedFASummary"
+                    columnResize="onColumnUpdatedFASummary"
+                    columnSelect="onColumnUpdatedFASummary"
+                    columnVisibility="onColumnUpdatedFASummary"
+                    rowSelectionChange="onRowSelectionChangeFASummary">
+                    <uiT:extension>
+                        <Toolbar>
+                            <ToolbarSpacer/>
+                            <Button id="btnDCReceiveDtl" 
+                                icon="sap-icon://sys-last-page"
+                                text="{ddtextFASummary>/FADCRCVDTL}"
+                                press="onFADCReceiveDtl"
+                                visible="true"/> 
+                            <Button id="btnDCSendDtl" 
+                                icon="sap-icon://sys-first-page"
+                                text="{ddtextFASummary>/FADCSENDDTL}"
+                                press="onFADCSendDtl"
+                                visible="true"/> 
+                            <Button id="btnExport" 
+                                icon="sap-icon://excel-attachment"
+                                press="onExportFASummary"
+                                tooltip="{ddtextFASummary>/EXPORTTOEXCEL}"
+                                visible="true"/> 
+                            <Button id="btnRefresh" 
+                                icon="sap-icon://refresh"
+                                press="onRefreshFASummary"
+                                tooltip="{ddtextFASummary>/REFRESH}"
+                                visible="true"/> 
+                            <Button id="btnFullScreen" 
+                                icon="sap-icon://full-screen"
+                                press="onTableResize('MatType','Max')"
+                                visible="false" />
+                            <Button id="btnExitFullScreen" 
+                                icon="sap-icon://exit-full-screen"
+                                press="onTableResize('MatType','Min')"
+                                visible="false" />
+                        </Toolbar>
+                    </uiT:extension>    
+                    <uiT:layoutData>
+                        <FlexItemData growFactor="1" baseSize="0%"/>
+                    </uiT:layoutData>  
+                </uiT:Table>  
+            </VBox>
+
+        </content>
+    </Page>
 </core:FragmentDefinition>

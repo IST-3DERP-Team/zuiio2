@@ -21,7 +21,6 @@ sap.ui.define([
         onInit(pThis) {
             _thisMain = pThis;
             _this = this;
-            this.getColumnProp();
 
             this._aColumns = {};
             this._aDataBeforeChange = [];
@@ -34,11 +33,24 @@ sap.ui.define([
 
             _thisMain.getView().setModel(oJSONModel, "uiFASummary");
 
-            _thisMain.byId("faSummaryTab")
-                .setModel(new JSONModel({
-                    columns: [],
-                    rows: []
-                }));
+            this._aEntitySet = {
+                faSummary: "FASUMMARYSet"
+            };
+
+            this._aColumns = {};
+            this._aSortableColumns = {};
+            this._aFilterableColumns = {};
+
+            this.getColumns();
+            
+            this._oDataBeforeChange = {};
+            this._aInvalidValueState = [];
+
+            // _thisMain.byId("faSummaryTab")
+            //     .setModel(new JSONModel({
+            //         columns: [],
+            //         rows: []
+            //     }));
 
             this.getFASummary();
             this.initializeComponent();
@@ -65,104 +77,273 @@ sap.ui.define([
             )
             _thisMain.getView().addDependent(_thisMain._FADCReceiveDetailDialog);
 
+            this._tableRendered = "";
+            var oTableEventDelegate = {
+                onkeyup: function(oEvent){
+                    _this.onKeyUp(oEvent);
+                },
+
+                onAfterRendering: function(oEvent) {
+                    _this.onAfterTableRendering(oEvent);
+                }
+            };
+
+            _thisMain.byId("faSummaryTab").addEventDelegate(oTableEventDelegate);
+
             // Get Captions
             setTimeout(() => {
                 this.getCaption();
             }, 100);
         },
 
-        getColumnProp: async function() {
-            var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-    
+        onAfterTableRendering: function(oEvent) {
+            if (this._tableRendered !== "") {
+                this.setActiveRowHighlight(this._tableRendered.replace("Tab", ""));
+                this._tableRendered = "";
+            }
+        },
+
+        onKeyUp(oEvent) {
+            if ((oEvent.key == "ArrowUp" || oEvent.key == "ArrowDown") && oEvent.srcControl.sParentAggregationName == "rows") {
+                var oTable = _thisMain.byId(oEvent.srcControl.sId).oParent;
+
+                var sModel = "faSummary";
+
+                if (_thisMain.byId(oEvent.srcControl.sId).getBindingContext(sModel)) {
+                    var sRowPath = _thisMain.byId(oEvent.srcControl.sId).getBindingContext(sModel).sPath;
+
+                    oTable.getModel(sModel).getData().results.forEach(row => row.ACTIVE = "");
+                    oTable.getModel(sModel).setProperty(sRowPath + "/ACTIVE", "X");
+
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext(sModel) && row.getBindingContext(sModel).sPath.replace("/results/", "") === sRowPath.replace("/results/", "")) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow")
+                    })
+                }
+            }
+        },
+
+        getColumns: async function() {
             var oModelColumns = new JSONModel();
+            var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json")
             await oModelColumns.loadData(sPath);
 
             var oColumns = oModelColumns.getData();
+            var oModel = _thisMain.getOwnerComponent().getModel();
 
-            setTimeout(() => {
-                this.getDynamicColumns("FASUMMARYMOD", "ZDV_FASUMMARY", "faSummaryTab", oColumns);
-            }, 100);
+            oModel.metadataLoaded().then(() => {
+                this.getDynamicColumns(oColumns, "FASUMMARYMOD", "ZDV_FASUMMARY");
+            })
         },
 
-        getDynamicColumns(arg1, arg2, arg3, arg4) {
-            var sType = arg1;
-            var sTabName = arg2;
-            var sTabId = arg3;
-            var oLocColProp = arg4;
-            var oModel = _thisMain.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+        getDynamicColumns(arg1, arg2, arg3) {
+            var oColumns = arg1;
+            var modCode = arg2;
+            var tabName = arg3;
+
+            //get dynamic columns based on saved layout or ZERP_CHECK
+            var oJSONColumnsModel = new JSONModel();
+            // this.oJSONModel = new JSONModel();
             var vSBU = _thisMain._sbu;
 
+            var oModel = _thisMain.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
             oModel.setHeaders({
                 sbu: vSBU,
-                type: sType,
-                tabname: sTabName
+                type: modCode,
+                tabname: tabName
             });
-
+            
             oModel.read("/ColumnsSet", {
                 success: function (oData, oResponse) {
-                     console.log(sTabId, oData)
+                    oJSONColumnsModel.setData(oData);
+                    // _this.getView().setModel(oJSONColumnsModel, "columns"); //set the view model
+
                     if (oData.results.length > 0) {
-
-                        if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
-                            oData.results.forEach(item => {
-                                oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
-                                    .forEach(col => item.ValueHelp = col.ValueHelp )
-                            })
+                        // console.log(modCode)
+                        if (modCode === 'FASUMMARYMOD') {
+                            var aColumns = _this.setTableColumns(oColumns["faSummary"], oData.results);                               
+                            // console.log(aColumns);
+                            _this._aColumns["faSummary"] = aColumns["columns"];
+                            _this._aSortableColumns["faSummary"] = aColumns["sortableColumns"];
+                            _this._aFilterableColumns["faSummary"] = aColumns["filterableColumns"]; 
+                            _this.addColumns(_thisMain.byId("faSummaryTab"), aColumns["columns"], "faSummary");
+                            _this.setRowReadMode("faSummary");
+                        } else if (modCode == 'FADCRCVMOD') {
+                            var aColumns = _this.setTableColumns(oColumns["faDCReceiveDetail"], oData.results);                               
+                            // console.log(aColumns);
+                            _this._aColumns["faDCReceiveDetail"] = aColumns["columns"];
+                            _this._aSortableColumns["faDCReceiveDetail"] = aColumns["sortableColumns"];
+                            _this._aFilterableColumns["faDCReceiveDetail"] = aColumns["filterableColumns"]; 
+                            _this.addColumns(sap.ui.getCore().byId("faDCReceiveDetailTab"), aColumns["columns"], "faDCReceiveDetail");
+                            _this.setRowReadMode("faDCReceiveDetail");
+                        } else if (modCode == 'FADCSENDMOD') {
+                            var aColumns = _this.setTableColumns(oColumns["faDCSendDetail"], oData.results);                               
+                            // console.log(aColumns);
+                            _this._aColumns["faDCSendDetail"] = aColumns["columns"];
+                            _this._aSortableColumns["faDCSendDetail"] = aColumns["sortableColumns"];
+                            _this._aFilterableColumns["faDCSendDetail"] = aColumns["filterableColumns"]; 
+                            _this.addColumns(sap.ui.getCore().byId("faDCSendDetailTab"), aColumns["columns"], "faDCSendDetail");
+                            _this.setRowReadMode("faDCSendDetail");
                         }
-
-                        _this._aColumns[sTabId.replace("Tab", "")] = oData.results;
-                        _this.setTableColumns(sTabId, oData.results);
                     }
                 },
                 error: function (err) {
+                    _this.closeLoadingDialog();
                 }
             });
         },
 
-        setTableColumns(arg1, arg2) {
+        setTableColumns: function(arg1, arg2) {
+            var oColumn = (arg1 ? arg1 : []);
+            var oMetadata = arg2;
+            
+            var aSortableColumns = [];
+            var aFilterableColumns = [];
+            var aColumns = [];
 
-            var sTabId = arg1;
-            var oColumns = arg2;
-            var oTable; // = _thisMain.getView().byId(sTabId);
+            oMetadata.forEach((prop, idx) => {
+                var vCreatable = prop.Creatable;
+                var vUpdatable = prop.Editable;
+                var vSortable = true;
+                var vSorted = prop.Sorted;
+                var vSortOrder = prop.SortOrder;
+                var vFilterable = true;
+                var vName = prop.ColumnLabel;
+                var oColumnLocalProp = oColumn.filter(col => col.name.toUpperCase() === prop.ColumnName);
+                var vShowable = true;
+                var vOrder = prop.Order;
 
-            if (sTabId == "faSummaryTab") {
-                oTable = _thisMain.getView().byId(sTabId);
-            } else {
-                oTable = sap.ui.getCore().byId(sTabId)
+                // console.log(prop)
+                if (vShowable) {
+                    //sortable
+                    if (vSortable) {
+                        aSortableColumns.push({
+                            name: prop.ColumnName, 
+                            label: vName, 
+                            position: +vOrder, 
+                            sorted: vSorted,
+                            sortOrder: vSortOrder
+                        });
+                    }
+
+                    //filterable
+                    if (vFilterable) {
+                        aFilterableColumns.push({
+                            name: prop.ColumnName, 
+                            label: vName, 
+                            position: +vOrder,
+                            value: "",
+                            connector: "Contains"
+                        });
+                    }
+                }
+
+                //columns
+                aColumns.push({
+                    name: prop.ColumnName, 
+                    label: vName, 
+                    position: +vOrder,
+                    type: prop.DataType,
+                    creatable: vCreatable,
+                    updatable: vUpdatable,
+                    sortable: vSortable,
+                    filterable: vFilterable,
+                    visible: prop.Visible,
+                    required: prop.Mandatory,
+                    width: prop.ColumnWidth + 'px',
+                    sortIndicator: vSortOrder === '' ? "None" : vSortOrder,
+                    hideOnChange: false,
+                    valueHelp: oColumnLocalProp.length === 0 ? {"show": false} : oColumnLocalProp[0].valueHelp,
+                    showable: vShowable,
+                    key: prop.Key === '' ? false : true,
+                    maxLength: prop.Length,
+                    precision: prop.Decimal,
+                    scale: prop.Scale !== undefined ? prop.Scale : null
+                })
+            })
+
+            aSortableColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
+            this.createViewSettingsDialog("sort", 
+                new JSONModel({
+                    items: aSortableColumns,
+                    rowCount: aSortableColumns.length,
+                    activeRow: 0,
+                    table: ""
+                })
+            );
+
+            aFilterableColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
+            this.createViewSettingsDialog("filter", 
+                new JSONModel({
+                    items: aFilterableColumns,
+                    rowCount: aFilterableColumns.length,
+                    table: ""
+                })
+            );
+
+            aColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
+            var aColumnProp = aColumns.filter(item => item.showable === true);
+
+            this.createViewSettingsDialog("column", 
+                new JSONModel({
+                    items: aColumnProp,
+                    rowCount: aColumnProp.length,
+                    table: ""
+                })
+            );
+
+            
+            return { columns: aColumns, sortableColumns: aSortableColumns, filterableColumns: aFilterableColumns };
+        },
+
+        addColumns(table, columns, model) {
+            //console.log("addColumns", table.getColumns(), model)
+            if (table.getColumns().length == 0) {
+                var aColumns = columns.filter(item => item.showable === true)
+                aColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
+    
+                aColumns.forEach(col => {
+                    // console.log(col)
+                    if (col.type === "STRING" || col.type === "DATETIME") {
+                        table.addColumn(new sap.ui.table.Column({
+                            id: model + "Col" + col.name,
+                            // id: col.name,
+                            width: col.width,
+                            sortProperty: col.name,
+                            filterProperty: col.name,
+                            label: new sap.m.Text({text: col.label}),
+                            template: new sap.m.Text({text: "{" + model + ">" + col.name + "}"}),
+                            visible: col.visible
+                        }));
+                    }
+                    else if (col.type === "NUMBER") {
+                        table.addColumn(new sap.ui.table.Column({
+                            id: model + "Col" + col.name,
+                            width: col.width,
+                            hAlign: "End",
+                            sortProperty: col.name,
+                            filterProperty: col.name,
+                            label: new sap.m.Text({text: col.label}),
+                            template: new sap.m.Text({text: "{" + model + ">" + col.name + "}"}),
+                            visible: col.visible
+                        }));
+                    }
+                    else if (col.type === "BOOLEAN" ) {
+                        table.addColumn(new sap.ui.table.Column({
+                            id: model + "Col" + col.name,
+                            width: col.width,
+                            hAlign: "Center",
+                            sortProperty: col.name,
+                            filterProperty: col.name,                            
+                            label: new sap.m.Text({text: col.label}),
+                            template: new sap.m.CheckBox({selected: "{" + model + ">" + col.name + "}", editable: false}),
+                            visible: col.visible
+                        }));
+                    }
+                })
             }
-           
-            oTable.getModel().setProperty("/columns", oColumns);
-
-            //bind the dynamic column to the table
-            oTable.bindColumns("/columns", function (index, context) {
-                var sColumnId = context.getObject().ColumnName;
-                var sColumnLabel = context.getObject().ColumnLabel;
-                var sColumnWidth = context.getObject().ColumnWidth;
-                var sColumnVisible = context.getObject().Visible;
-                var sColumnSorted = context.getObject().Sorted;
-                var sColumnSortOrder = context.getObject().SortOrder;
-                var sColumnDataType = context.getObject().DataType;
-
-                if (sColumnWidth === 0) sColumnWidth = 100;
-
-                return new sap.ui.table.Column({
-                    id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    label: new sap.m.Text({text: sColumnLabel}),
-                    template: new sap.m.Text({ 
-                        text: "{" + sColumnId + "}", 
-                        wrapping: false
-                        //tooltip: "{" + sColumnId + "}"
-                    }),
-                    width: sColumnWidth + "px",
-                    sortProperty: sColumnId,
-                    filterProperty: sColumnId,
-                    autoResizable: true,
-                    visible: sColumnVisible,
-                    sorted: sColumnSorted,
-                    hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                    sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending" )
-                });
-            });
         },
 
         getFASummary() {
@@ -181,15 +362,19 @@ sap.ui.define([
                         if (item.DELIVERYDT !== null) item.DELIVERYDT = dateFormat.format(item.DELIVERYDT);
                     })
 
+                    var oJSONModel = new sap.ui.model.json.JSONModel();
+                    oJSONModel.setData(data);
+
                     var aFilters = [];
                     if (_thisMain.getView().byId("faSummaryTab").getBinding("rows")) {
                         aFilters = _thisMain.getView().byId("faSummaryTab").getBinding("rows").aFilters;
                     }
 
-                    _thisMain.byId("faSummaryTab").getModel().setProperty("/rows", data.results);
-                    _thisMain.byId("faSummaryTab").bindRows("/rows");
-
+                    // _thisMain.byId("faSummaryTab").getModel().setProperty("/rows", data.results);
+                    // _thisMain.byId("faSummaryTab").bindRows("/rows");
+                    _thisMain.getView().setModel(oJSONModel, "faSummary");
                     _this.onRefreshFilter("faSummary", aFilters);
+                    _this._tableRendered = "faSummaryTab";
 
                     if (data.results.length > 0) {
                         var sPONo = data.results[0].PONO;
@@ -232,7 +417,8 @@ sap.ui.define([
                     _thisMain._FADCReceiveDetailDialog.open();
 
                     setTimeout(() => {
-                        _this.getDynamicColumns("FADCRCVMOD", "ZDV_FADCRCVDTL", "faDCReceiveDetailTab", {});
+                        _this.getDynamicColumns({}, "FADCRCVMOD", "ZDV_FADCRCVDTL");
+                        //_this.getDynamicColumns("FADCRCVMOD", "ZDV_FADCRCVDTL", "faDCReceiveDetailTab", {});
                     }, 100);
 
                     Common.closeLoadingDialog(_thisMain);
@@ -275,7 +461,8 @@ sap.ui.define([
                     _thisMain._FADCSendDetailDialog.open();
 
                     setTimeout(() => {
-                        _this.getDynamicColumns("FADCSENDMOD", "ZDV_FADCSENDDTL", "faDCSendDetailTab", {});
+                        _this.getDynamicColumns({}, "FADCSENDMOD", "ZDV_FADCSENDDTL");
+                        //_this.getDynamicColumns("FADCSENDMOD", "ZDV_FADCSENDDTL", "faDCSendDetailTab", {});
                     }, 100);
 
                     Common.closeLoadingDialog(_thisMain);
@@ -291,6 +478,46 @@ sap.ui.define([
             _thisMain._FADCSendDetailDialog.close();
         },
 
+        setRowReadMode(arg) {
+            var oTable;
+
+            if (arg == "faSummary") {
+                oTable = _thisMain.byId(arg + "Tab");
+            } else {
+                oTable = sap.ui.getCore().byId(arg + "Tab");
+            }
+            
+            oTable.getColumns().forEach((col, idx) => {                    
+                this._aColumns[arg].filter(item => item.label === col.getLabel().getText())
+                    .forEach(ci => {
+                        if (ci.type === "STRING" || ci.type === "NUMBER") {
+                            col.setTemplate(new sap.m.Text({
+                                text: "{" + arg + ">" + ci.name + "}",
+                                wrapping: false,
+                                tooltip: "{" + arg + ">" + ci.name + "}"
+                            }));
+                        }
+                        else if (ci.type === "BOOLEAN") {
+                            col.setTemplate(new sap.m.CheckBox({selected: "{" + arg + ">" + ci.name + "}", editable: false}));
+                        }
+
+                        if (ci.required) {
+                            col.getLabel().removeStyleClass("requiredField");
+                        }
+                    })
+            })
+
+            if (arg == "faSummary") {
+                // Reapply filter
+                var aFilters = [];
+                if (oTable.getBinding("rows")) {
+                    aFilters = oTable.getBinding("rows").aFilters;
+                }
+
+                _this.onRefreshFilter(arg, aFilters);
+            }
+        },
+
         onCellClickFASummary(oEvent) {
             var sPONo = oEvent.getParameters().rowBindingContext.getObject().PONO;
             var sPOItem = oEvent.getParameters().rowBindingContext.getObject().POITEM;
@@ -298,6 +525,7 @@ sap.ui.define([
             _thisMain.getView().getModel("uiFASummary").setProperty("/activePONo", sPONo);
             _thisMain.getView().getModel("uiFASummary").setProperty("/activePOItem", sPOItem);
 
+            _this.onCellClick(oEvent);
             //console.log("onCellClickFASummary", _thisMain.getView().getModel("uiFASummary"));
         },
 
@@ -320,9 +548,10 @@ sap.ui.define([
                 })
             }
 
-            var property;
-            property = '/rows';
-            aRows = oTable.getModel().getProperty(property);
+            aRows = _thisMain.getView().getModel("faSummary").getData.results;
+            // var property;
+            // property = '/rows';
+            // aRows = oTable.getModel().getProperty(property);
             // if (tabName === 'styleDetldBOMTab') {
             //     property = '/results/items';
             //     aParent = oTable.getModel('DataModel').getProperty(property);
@@ -388,6 +617,114 @@ sap.ui.define([
                     _thisMain.getView().byId(pModel + "Tab").filter(_thisMain.getView().byId(pModel + "Tab").getColumns()[iColIdx], 
                         item.oValue1);
                 });
+            }
+        },
+
+        createViewSettingsDialog: function (arg1, arg2) {
+            // var sDialogFragmentName = null;
+
+            // if (arg1 === "sort") sDialogFragmentName = "zuiio2.view.fragments.SortDialog";
+            // else if (arg1 === "filter") sDialogFragmentName = "zuiio2.view.fragments.FilterDialog";
+            // else if (arg1 === "column") sDialogFragmentName = "zuiio2.view.fragments.ColumnDialog";
+
+            // var oViewSettingsDialog = this._oViewSettingsDialog[sDialogFragmentName];
+
+            // if (!oViewSettingsDialog) {
+            //     oViewSettingsDialog = sap.ui.xmlfragment(sDialogFragmentName, this);
+                
+            //     if (Device.system.desktop) {
+            //         oViewSettingsDialog.addStyleClass("sapUiSizeCompact");
+            //     }
+
+            //     oViewSettingsDialog.setModel(arg2);
+
+            //     this._oViewSettingsDialog[sDialogFragmentName] = oViewSettingsDialog;
+            //     this.getView().addDependent(oViewSettingsDialog);
+            // }
+        },
+        
+        getConnector(args) {
+            var oConnector;
+
+            switch (args) {
+                case "EQ":
+                    oConnector = sap.ui.model.FilterOperator.EQ
+                    break;
+                  case "Contains":
+                    oConnector = sap.ui.model.FilterOperator.Contains
+                    break;
+                  default:
+                    // code block
+                    break;
+            }
+
+            return oConnector;
+        },
+
+        onFirstVisibleRowChanged: function (oEvent) {
+            var oTable = oEvent.getSource();
+            var sModel = "faSummary";
+
+            setTimeout(() => {
+                var oData = oTable.getModel(sModel).getData().results;
+                var iStartIndex = oTable.getBinding("rows").iLastStartIndex;
+                var iLength = oTable.getBinding("rows").iLastLength + iStartIndex;
+
+                if (oTable.getBinding("rows").aIndices.length > 0) {
+                    for (var i = iStartIndex; i < iLength; i++) {
+                        var iDataIndex = oTable.getBinding("rows").aIndices.filter((fItem, fIndex) => fIndex === i);
+
+                        if (oData[iDataIndex].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
+                        else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
+                    }
+                }
+                else {
+                    for (var i = iStartIndex; i < iLength; i++) {
+                        if (oData[i].ACTIVE === "X") oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].addStyleClass("activeRow");
+                        else oTable.getRows()[iStartIndex === 0 ? i : i - iStartIndex].removeStyleClass("activeRow");
+                    }
+                }
+            }, 1);
+        },
+
+        onColumnUpdated: function (oEvent) {
+            var oTable = oEvent.getSource();
+            var sModel = "faSummary";
+
+            this.setActiveRowHighlight(sModel);
+        },
+
+        setActiveRowHighlight(arg) {
+            var oTable = _thisMain.byId(arg + "Tab");
+
+            setTimeout(() => {
+                var iActiveRowIndex = oTable.getModel(arg).getData().results.findIndex(item => item.ACTIVE === "X");
+                oTable.getRows().forEach((row, idx) => {
+                    if (row.getBindingContext(arg) && +row.getBindingContext(arg).sPath.replace("/results/", "") === iActiveRowIndex) {
+                        row.addStyleClass("activeRow");
+                    }
+                    else {
+                        row.removeStyleClass("activeRow");
+                    }
+                })
+            }, 2);
+        },
+
+        onCellClick: function(oEvent) {
+            if (oEvent.getParameters().rowBindingContext) {
+                var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
+                var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+                var sModel = "faSummary";
+
+                oTable.getModel(sModel).getData().results.forEach(row => row.ACTIVE = "");
+                oTable.getModel(sModel).setProperty(sRowPath + "/ACTIVE", "X");
+
+                oTable.getRows().forEach(row => {
+                    if (row.getBindingContext(sModel) && row.getBindingContext(sModel).sPath.replace("/results/", "") === sRowPath.replace("/results/", "")) {
+                        row.addStyleClass("activeRow");
+                    }
+                    else row.removeStyleClass("activeRow");
+                })
             }
         },
 
