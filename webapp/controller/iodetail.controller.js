@@ -2713,7 +2713,7 @@ sap.ui.define([
                                     method: "POST",
                                     success: function (oData, oResponse) {
                                         _newIONo = oData.IONO;
-                                        this.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
+                                        me.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
