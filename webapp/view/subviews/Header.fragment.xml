@@ -11,7 +11,7 @@
 
     <!-- IO HEADER BUTTONS -->
     <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
-    <ToolbarSpacer/>
+    <ToolbarSpacer />
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onIOEdit('IOHDR')" visible="true"/>
         <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onIORelease('IOHDR')" visible="true"/>
         <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="Release IO" press="onIOSave('IOHDR')" visible="false"/>
