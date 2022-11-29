@@ -5582,13 +5582,12 @@ sap.ui.define([
             onManageStyle: function (oEvent) {
                 var vStyle = this._styleNo;
                 var me = this;
-                let iono= me._ioNo.length > 0 ? me._ioNo : this.getView().getModel("ui2").getProperty("/currIONo");
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + iono
+                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": vStyle,
@@ -5627,11 +5626,12 @@ sap.ui.define([
                 // console.log()
                 var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+                let iono= this.getView().getModel("ui2").getProperty("/currIONo");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
+                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + iono
                     }
                     // params: {
                     //     "styleno": "NEW",

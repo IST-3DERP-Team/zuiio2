@@ -1,4 +1,4 @@
-git statu<mvc:View
+<mvc:View
     controllerName="zuiio2.controller.iodetail"
     xmlns:mvc="sap.ui.core.mvc"
     displayBlock="true"
