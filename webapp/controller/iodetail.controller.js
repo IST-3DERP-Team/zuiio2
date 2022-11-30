@@ -4952,6 +4952,7 @@ sap.ui.define([
                                 updEntitySet += "(IONO='" + item["IONO"] + "',";
                                 hasMatchingSize = false;
                                 var param = {};
+                                var pIOITEM;
                                 param["IONO"] = me._ioNo;
 
                                 //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
@@ -4971,9 +4972,11 @@ sap.ui.define([
                                             //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
                                             param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
 
+                                            // if(item["IOITEM" + colSizes.ATTRIBCD] !== undefined) {
                                             param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
-
                                             updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
+                                            // pIOITEM = item["IOITEM" + colSizes.ATTRIBCD]
+                                            // }
                                             //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
                                             hasMatchingSize = true;
                                         } else {
@@ -5000,34 +5003,35 @@ sap.ui.define([
 
                                 updEntitySet += ")";
 
-                                // console.log(updEntitySet);
-                                // console.log(param);
-                                // console.log(arg);
+                                console.log(updEntitySet);
+                                console.log(param);
+                                console.log(arg);
 
                                 // return;
 
                                 // //CREATE ENTRIES USING BATCH PROCESSING
                                 // oModel.update(entitySet, param, mParameters);
 
+                                // if (pIOITEM !== "") {
+                                    _promiseResult = new Promise((resolve, reject) => {
+                                        setTimeout(() => {
+                                            oUpdModel.update(updEntitySet, param, {
+                                                method: "PUT",
+                                                success: function (data, oResponse) {
+                                                    resolve();
+                                                },
+                                                error: function () {
+                                                    iEdited++;
+                                                    // alert("Error");
+                                                    resolve();
+                                                    if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                                }
+                                            })
 
-                                _promiseResult = new Promise((resolve, reject) => {
-                                    setTimeout(() => {
-                                        oUpdModel.update(updEntitySet, param, {
-                                            method: "PUT",
-                                            success: function (data, oResponse) {
-                                                resolve();
-                                            },
-                                            error: function () {
-                                                iEdited++;
-                                                // alert("Error");
-                                                resolve();
-                                                if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
-                                            }
-                                        })
-
-                                    }, 100);
-                                });
-                                await _promiseResult;
+                                        }, 100);
+                                    });
+                                    await _promiseResult;
+                                // }
                             });
 
 
