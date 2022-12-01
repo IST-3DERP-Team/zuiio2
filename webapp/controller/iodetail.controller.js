@@ -2762,6 +2762,7 @@ sap.ui.define([
                                     success: function (oData, oResponse) {
                                         _newIONo = oData.IONO;
                                         me.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
+                                        console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
@@ -6159,7 +6160,7 @@ sap.ui.define([
                 // console.log()
                 var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-                var pIONO = this.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
+                var pIONO = me.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
