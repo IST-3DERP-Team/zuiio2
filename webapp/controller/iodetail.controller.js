@@ -204,7 +204,7 @@ sap.ui.define([
                 await _promiseResult;
 
                 if (this._styleno != "NEW" && this._ioNo === "NEW") {
-                    alert("Get IO Style Data");
+                    // alert("Get IO Style Data");
                     this.getIOSTYLISTData(this._styleno);
                 }
 
@@ -255,7 +255,61 @@ sap.ui.define([
                 // });
                 // await _promiseResult;
 
+                // console.log("getIOATTRIBData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.getIOATTRIBData(ioNo));
+                    }, 100);
+                });
+                await _promiseResult;
+
+                // console.log("getIOSTATUSData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    resolve(this.getIOSTATUSData(ioNo));
+                });
+                await _promiseResult;
+
+                // console.log("getIODLVData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    resolve(this.getIODLVData(ioNo));
+                });
+                await _promiseResult;
+
                 // console.log("getIOSizes");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.getIOSizes());
+                    }, 100);
+                });
+                await _promiseResult;
+
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.getIOColumnProp());
+                        // this.getIOColumnProp();
+                    }, 100);
+                });
+                await _promiseResult;
+
+                var oIconTabBarStyle = this.byId("itbStyleDetail");
+                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+
+                //Attachments
+                this.bindUploadCollection();
+                this.getView().getModel("FileModel").refresh();
+
+                //IO Material List
+
+                // _promiseResult = new Promise((resolve, reject) => {
+                // setTimeout(() => {
+                //     this.initIOMatList();
+                // }, 100);
+                // });
+                // await _promiseResult;
+                Common.closeLoadingDialog(that);
+            },
+
+            refreshIOData: async function(ioNo) {
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(this.getIOSizes());
@@ -282,58 +336,6 @@ sap.ui.define([
                     resolve(this.getIODLVData(ioNo));
                 });
                 await _promiseResult;
-
-                // console.log("getIODETData");
-                // _promiseResult = new Promise((resolve, reject) => {
-                //     resolve(this.getIODETData());
-                // });
-                // await _promiseResult;
-
-                // console.log("initIODETColumns");
-                // _promiseResult = new Promise((resolve, reject) => {
-                //     setTimeout(() => {
-                //         resolve(this.initIODETColumns());
-                //     }, 100);
-                // });
-                // await _promiseResult;
-
-                // console.log("getIOATTRIBData");
-                // this.getIOATTRIBData(ioNo)
-                // console.log("getIOSTATUSData");
-                // this.getIOSTATUSData(ioNo);
-                // console.log("getIODLVData");
-                // this.getIODLVData(ioNo);
-                // console.log("getIODETData");
-                // this.getIODETData(ioNo);  //use DynamicColumnsSet
-                // console.log("getIODETColumnData");
-                // this.getIODETColumnData("IODET", "ZERP_IODET");
-
-                // console.log("fin Get Data");
-
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.getIOColumnProp());
-                        // this.getIOColumnProp();
-                    }, 100);
-                });
-                await _promiseResult;
-
-                var oIconTabBarStyle = this.byId("itbStyleDetail");
-                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
-
-                //Attachments
-                this.bindUploadCollection();
-                this.getView().getModel("FileModel").refresh();
-
-                //IO Material List
-
-                // _promiseResult = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this.initIOMatList();
-                }, 100);
-                // });
-                // await _promiseResult;
-                Common.closeLoadingDialog(that);
             },
 
             initIODETColumns: async function () {
@@ -388,7 +390,7 @@ sap.ui.define([
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
-                alert(vIONo + " " + vDlvSeq);
+                // alert(vIONo + " " + vDlvSeq);
 
                 var me = this;
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -415,6 +417,7 @@ sap.ui.define([
             getIODLVData: async function (iono) {
                 var me = this;
                 var ioNo = iono;
+                // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read('/IODLVSet', {
@@ -465,6 +468,7 @@ sap.ui.define([
                 // console.log("IO ATTRIB");
                 var me = this;
                 var ioNo = iono;
+                // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read("/ATTRIBSet", {
@@ -496,6 +500,7 @@ sap.ui.define([
             getIOSTATUSData: async function (iono) {
                 var me = this;
                 var ioNo = iono;
+                // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read("/IOSTATSet", {
@@ -971,7 +976,7 @@ sap.ui.define([
                         oModel.read("/ColumnsSet", {
                             success: function (oData, oResponse) {
                                 if (oData.results.length > 0) {
-                                    // console.log("getIODynamicColumns " + sTabId);
+                                    console.log("getIODynamicColumns " + sTabId);
                                     // console.log(oData.results);
                                     if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                         oData.results.forEach(item => {
@@ -2175,6 +2180,7 @@ sap.ui.define([
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
                             me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);
 
+                        // alert("Init Style");
                         me.initStyle();
                         me.initIOMatList();
                         me.initIOCosting();
@@ -2698,6 +2704,7 @@ sap.ui.define([
 
             onIOSave: async function (source) {
                 var me = this;
+                var strStyleNo;
                 var sSource = source;
                 if (sSource === "IOHDR") {
                     var sErrMsg = "";
@@ -2715,6 +2722,8 @@ sap.ui.define([
                         resolve(this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, ""));
                     });
                     await _promiseResult;
+
+                    strStyleNo = this.getView().byId("STYLENO").getValue();
 
                     var oParamIOHeaderData = {
                         STYLECD: this.getView().byId("STYLECD").getValue(),
@@ -2762,6 +2771,9 @@ sap.ui.define([
                                     success: function (oData, oResponse) {
                                         _newIONo = oData.IONO;
                                         me.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
+                                        me.getView().getModel("ui2").setProperty("/currStyleNo", strStyleNo);
+
+
                                         console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
@@ -2779,9 +2791,9 @@ sap.ui.define([
                                 oModel.update("/IOHDRSet(IONO='" + me._ioNo + "')", oParamIOHeaderData, {
                                     method: "PUT",
                                     success: function (oData, oResponse) {
-                                        _newIONo = me._ioNo;
+                                        _newIONo = me.getView().getModel("ui2").getProperty("/currIONo");
 
-                                        Common.showMessage("IO# " + _newIONo + " updated.");
+                                        Common.showMessage("IO# " + me.getView().getModel("ui2").getProperty("/currIONo") + " updated.");
                                         resolve();
                                     },
                                     error: function (err) {
@@ -2804,28 +2816,41 @@ sap.ui.define([
                     //Enable Icon Tab Filters
                     this.enableOtherTabs();
 
+                    console.log("IO Save - cancelHeaderEdit");
                     setTimeout(() => {
                         this.cancelHeaderEdit();
                     }, 100);
 
+                    console.log("IO Save - idIconTabBarInlineIOHdr re-enable");
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
+                    console.log("IO Save - reload Header Data");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.reloadHeaderData(_newIONo));
                     });
                     await _promiseResult;
 
+                    console.log("IO Save - closeHeaderEdit");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.closeHeaderEdit());
                     });
                     await _promiseResult;
 
+                    console.log("IO Save - Refresh IO Data");
+                    this.refreshIOData(_newIONo);
+
+                    console.log("IO Save - getReloadIOColumnProp");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.getReloadIOColumnProp());
                     });
                     await _promiseResult;
+
+                    console.log("IO Save - getReloadIOColumnProp");
+                    this.initStyle();
+
+                    console.log("IO Save - End");
                 }
             },
 
@@ -2986,9 +3011,11 @@ sap.ui.define([
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                if (vDlvSeq === undefined || vDlvSeq === "999") {
-                    Common.showMessage("select a Delivery Sequence");
-                    return;
+                if (arg === "IODET") {
+                    if (vDlvSeq === undefined || vDlvSeq === "999") {
+                        Common.showMessage("select a Delivery Sequence");
+                        return;
+                    }
                 }
 
                 if (arg === "IODLV") {
@@ -3490,12 +3517,16 @@ sap.ui.define([
             //******************************************* */
 
             initStyle() {
+                console.log("Init Style");
                 this._oModelStyle = this.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
                 this._aColumns = {};
                 this._aDataBeforeChange = [];
                 var me = this;
 
-                if (this._styleNo.trim() === "") this.byId("btnCreateStyle").setVisible(true);
+                let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+
+                // this._styleNo
+                if (strStyle.trim() === "") this.byId("btnCreateStyle").setVisible(true);
                 else this.byId("btnCreateStyle").setVisible(false);
 
                 this.byId("colorTab")
@@ -3549,6 +3580,7 @@ sap.ui.define([
                 // })
 
                 var vIONo = this._ioNo; //"1000115";
+                vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 this._oModelStyle.read('/AttribSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
@@ -3751,7 +3783,8 @@ sap.ui.define([
                 var me = this;
                 var aStyleHdr = [];
                 var oJSONModel = new JSONModel();
-                var vStyle = this._styleNo; //"1000000272";
+                // var vStyle = this._styleNo; //"1000000272";
+                var vStyle = this.getView().getModel("ui2").getProperty("/currStyleNo"); //"1000000272";
 
                 setTimeout(() => {
                     this._oModelStyle.read('/HeaderSet', {
@@ -3934,7 +3967,8 @@ sap.ui.define([
                 var entitySet = "/StyleDetailedBOMSet"
                 // console.log(this._styleVer)
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
                     verno: this._styleVer //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
@@ -4113,7 +4147,8 @@ sap.ui.define([
                 var me = this;
 
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"), //"1000000272",
                     verno: this._styleVer //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
@@ -4148,7 +4183,8 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
 
                 oModel.setHeaders({
-                    styleno: this._styleNo //"1000000272"
+                    // styleno: this._styleNo //"1000000272"
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo") //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesColorSet", {
@@ -4166,7 +4202,8 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
 
                 oModel.setHeaders({
-                    styleno: this._styleNo //"1000000272"
+                    // styleno: this._styleNo //"1000000272"
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo") //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesSizeSet", {
@@ -4260,7 +4297,8 @@ sap.ui.define([
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
 
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
                     verno: this._styleVer, //"1",
                     usgcls: usageClass
                 });
@@ -4789,13 +4827,16 @@ sap.ui.define([
 
                         //APPLY SIZE DATAMODEL UNPIVOT
 
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
                         aNewRows.forEach(item => {
                             //LOOP THRU COLLECTION OF SIZES FOR THE IO
                             this._iosizes.forEach(async colSizes => {
                                 hasMatchingSize = false;
                                 var param = {};
-                                param["IONO"] = me._ioNo;
+                                // param["IONO"] = me._ioNo;
+                                param["IONO"] = cIONo;
                                 param["DLVSEQ"] = cDlvSeq;
 
                                 //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
@@ -4966,6 +5007,7 @@ sap.ui.define([
                         // };
 
                         //APPLY SIZE DATAMODEL UNPIVOT
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
                         aEditedRows.forEach(item => {
@@ -4976,7 +5018,8 @@ sap.ui.define([
                                 hasMatchingSize = false;
                                 var param = {};
                                 var pIOITEM;
-                                param["IONO"] = me._ioNo;
+                                // param["IONO"] = me._ioNo;
+                                param["IONO"] = cIONo;
 
                                 //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
                                 this._aColumns[arg].forEach(col => {
@@ -5179,9 +5222,14 @@ sap.ui.define([
                             default: break;
                         }
 
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                        Common.openProcessingDialog(me, "Processing...");
+
                         aNewRows.forEach(item => {
                             var param = {};
-                            param["IONO"] = me._ioNo;
+                            // param["IONO"] = me._ioNo;
+                            param["IONO"] = cIONo;
 
                             this._aColumns[arg].forEach(col => {
                                 if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
@@ -5193,13 +5241,13 @@ sap.ui.define([
                                 }
                             })
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(arg);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(arg);
 
                             // return;
 
-                            Common.openProcessingDialog(me, "Processing...");
+                            // Common.openProcessingDialog(me, "Processing...");
 
                             setTimeout(() => {
                                 oModel.create(entitySet, param, {
@@ -5273,7 +5321,7 @@ sap.ui.define([
                                     error: function () {
                                         iNew++;
                                         // alert("Error");
-                                        if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                        // if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
                                     }
                                 });
                             }, 100)
@@ -5320,7 +5368,7 @@ sap.ui.define([
 
                         var centitySet = entitySet;
 
-                        Common.openProcessingDialog(me, "Processing...");
+                        // Common.openProcessingDialog(me, "Processing...");
 
                         // console.log("Edited Rows");
                         // console.log(aEditedRows);
@@ -5387,7 +5435,7 @@ sap.ui.define([
                                             resolve();
 
                                             if (iEdited === aEditedRows.length) {
-                                                Common.closeProcessingDialog(me);
+                                                // Common.closeProcessingDialog(me);
                                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                                 if (arg === "color") {
@@ -5539,6 +5587,8 @@ sap.ui.define([
 
                     default: break;
                 }
+
+                Common.closeProcessingDialog(me);
             },
 
             setRowEditMode(arg) {
@@ -6160,7 +6210,7 @@ sap.ui.define([
                 // console.log()
                 var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-                var pIONO = me.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
+                var pIONO = me.getView().getModel("ui2").getProperty("/currIONo");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
