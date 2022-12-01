@@ -4779,6 +4779,13 @@ sap.ui.define([
                         //     "groupId": "insert"
                         // };
 
+                        // var aDeferredGroup = oModel.getDeferredGroups().push("insert");
+                        // oModel.setDeferredGroups(aDeferredGroup);
+
+                        // var mParameters = {
+                        //     groupId: "insert"
+                        // };
+
                         //APPLY SIZE DATAMODEL UNPIVOT
 
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
@@ -4827,9 +4834,9 @@ sap.ui.define([
 
 
                                 // console.log(this._iosizes);
-                                // console.log(entitySet);
-                                // console.log(param);
-                                // console.log(arg);
+                                console.log(entitySet);
+                                console.log(param);
+                                console.log(arg);
 
                                 // return;
 
@@ -4841,12 +4848,15 @@ sap.ui.define([
                                         oModel.create(entitySet, param, {
                                             method: "POST",
                                             success: function (data, oResponse) {
-
+                                                console.log("Success : " + entitySet);
+                                                resolve();
                                             },
                                             error: function () {
+                                                console.log("Error : " + entitySet);
                                                 iNew++;
                                                 // alert("Error");
                                                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                                resolve();
                                             }
                                         })
                                     }, 100);
@@ -4856,6 +4866,18 @@ sap.ui.define([
                             });
 
                             // return;
+                            // console.log(oModel);
+                            // return;
+                            // oModel.submitChanges({
+                            //     mParameters,
+                            //     // groupId: "insert",
+                            //     success: function (oData, oResponse) {
+                            //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                            //     },
+                            //     error: function (oData, oResponse) {
+                            //     }
+                            // });
+
 
                             iNew++;
                             if (iNew === aNewRows.length) {
@@ -4935,7 +4957,7 @@ sap.ui.define([
                             default: break;
                         }
 
-                        // oUpdModel.setUseBatch(false);
+                        // oUpdModel.setUseBatch(true);
                         // oUpdModel.setDeferredGroups(["update"]);
 
                         // var mParameters = {
@@ -5010,27 +5032,27 @@ sap.ui.define([
                                 // return;
 
                                 // //CREATE ENTRIES USING BATCH PROCESSING
-                                // oModel.update(entitySet, param, mParameters);
+                                // oUpdModel.update(entitySet, param, mParameters);
 
-                                // if (pIOITEM !== "") {
-                                    _promiseResult = new Promise((resolve, reject) => {
-                                        setTimeout(() => {
-                                            oUpdModel.update(updEntitySet, param, {
-                                                method: "PUT",
-                                                success: function (data, oResponse) {
-                                                    resolve();
-                                                },
-                                                error: function () {
-                                                    iEdited++;
-                                                    // alert("Error");
-                                                    resolve();
-                                                    if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
-                                                }
-                                            })
+                                // // if (pIOITEM !== "") {
+                                _promiseResult = new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        oUpdModel.update(updEntitySet, param, {
+                                            method: "PUT",
+                                            success: function (data, oResponse) {
+                                                resolve();
+                                            },
+                                            error: function () {
+                                                iEdited++;
+                                                // alert("Error");
+                                                resolve();
+                                                if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                            }
+                                        })
 
-                                        }, 100);
-                                    });
-                                    await _promiseResult;
+                                    }, 100);
+                                });
+                                await _promiseResult;
                                 // }
                             });
 
@@ -6137,11 +6159,13 @@ sap.ui.define([
                 // console.log()
                 var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+                var pIONO = this.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
+                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
+                        // action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": "NEW",
