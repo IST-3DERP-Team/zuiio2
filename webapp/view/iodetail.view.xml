@@ -56,14 +56,23 @@
                                     <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
                                     <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
-                                    <ToolbarSpacer />
+                                        <ToolbarSpacer />
                                         <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit" press="onEdit('IOATTRIB')" visible="true" />
                                         <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="Save" press="onSave('IOATTRIB')" visible="false" />
                                         <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
                                     </OverflowToolbar>
 
                                     <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
-                                        <t:Table id="IOATTRIBTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" rowSelectionChange="onRowChange">
+                                        <t:Table id="IOATTRIBTab" 
+                                                class="sapUiSizeCompact sidePadding" 
+                                                visibleRowCountMode="Auto" 
+                                                showColumnVisibilityMenu="true" 
+                                                enableColumnFreeze="true" 
+                                                enableCellFilter="true" 
+                                                selectionMode="Single" 
+                                                selectionBehavior="RowOnly" 
+                                                alternateRowColors="true"
+                                                rowSelectionChange="onRowChange">
                                             <t:layoutData>
                                                 <FlexItemData growFactor="1" baseSize="0%" />
                                             </t:layoutData>
@@ -79,7 +88,16 @@
                                         <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
                                     </OverflowToolbar>
 
-                                    <t:Table id="IOSTATUSTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" rowSelectionChange="onRowChange">
+                                    <t:Table id="IOSTATUSTab" 
+                                            class="sapUiSizeCompact sidePadding" 
+                                            visibleRowCountMode="Auto" 
+                                            showColumnVisibilityMenu="true" 
+                                            enableColumnFreeze="true" 
+                                            enableCellFilter="true" 
+                                            selectionMode="Single" 
+                                            selectionBehavior="RowOnly" 
+                                            alternateRowColors="true"
+                                            rowSelectionChange="onRowChange">
                                         <t:layoutData>
                                             <FlexItemData growFactor="1" baseSize="0%" />
                                         </t:layoutData>
@@ -137,6 +155,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             >
                                                 <t:rowSettingsTemplate>
                                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -168,6 +187,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             >
                                                 <t:rowSettingsTemplate>
                                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -199,6 +219,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             />
                                         </IconTabFilter>
                                         <!-- <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
@@ -228,6 +249,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             >
                                                 <t:extension>
                                                     <Toolbar>
@@ -267,6 +289,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             >
                                                 <t:extension>
                                                     <Toolbar>
@@ -328,6 +351,7 @@
                                                 columnResize="onColumnUpdated"
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
+                                                alternateRowColors="true"
                                             >
                                                 <!-- <uiT:extension>
                                                     <Toolbar>
@@ -358,17 +382,18 @@
                     </IconTabFilter>
 
                     <!-- DELIVERY SCHEDULE -->
-                    <IconTabFilter text="Order Details" key="itfDLVSCHED">
+                    <!-- <IconTabFilter text="Order Details" key="itfDLVSCHED">
                         <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
                             <t:Table id="IODLVTab" 
-                                class="sapUiSizeCompact sidePadding" 
-                                visibleRowCountMode="Auto" 
-                                showColumnVisibilityMenu="true" 
-                                enableColumnFreeze="true" 
-                                enableCellFilter="true" 
-                                selectionMode="Single" 
-                                selectionBehavior="RowOnly"
-                                cellClick=".onIODLVCellClick">
+                                    class="sapUiSizeCompact sidePadding" 
+                                    visibleRowCountMode="Auto" 
+                                    showColumnVisibilityMenu="true" 
+                                    enableColumnFreeze="true" 
+                                    enableCellFilter="true" 
+                                    selectionMode="Single" 
+                                    selectionBehavior="RowOnly" 
+                                    alternateRowColors="true"
+                                    cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                 </t:rowSettingsTemplate>
@@ -388,7 +413,65 @@
                                     </Toolbar>
                                 </t:extension>
                             </t:Table>
+                        </Panel>
 
+                        <IconTabBar id="idIconTabBarInlineIODET" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" class="sapUiNoContentPadding" stretchContentHeight="false" applyContentPadding="false">
+                            <items>
+                            <IconTabFilter text="{i18n>IODetail}" key="itfIODET">
+                            <Toolbar>
+                                    <ToolbarSpacer />
+                                    <Button id="btnNewIODet" type="Ghost" text="New" icon="sap-icon://add-document" press="onAdd('IODET')" tooltip="New" visible="true" />
+                                    <Button id="btnEditIODet" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
+                                    <Button id="btnDeleteIODet" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
+                                    <Button id="btnCopyIODet" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
+                                    <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
+                                    <Button id="btnSaveIODet" type="Ghost" text="Save" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />
+                                    <Button id="btnCancelIODet" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                    <Button id="btnFullScreenIODet" icon="sap-icon://full-screen" press="onTableResize('ioDet', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                    <Button id="btnExitFullScreenIODet" icon="sap-icon://exit-full-screen" press="onTableResize('ioDet', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                </Toolbar>
+                        <t:Table id="IODETTab" 
+                                fixedColumnCount="1" 
+                                class="sapUiSizeCompact sidePadding" 
+                                visibleRowCountMode="Auto" 
+                                showColumnVisibilityMenu="true" 
+                                enableColumnFreeze="true" 
+                                enableCellFilter="true" 
+                                selectionMode="Single" 
+                                alternateRowColors="true"
+                                selectionBehavior="RowOnly">
+                            <t:rowSettingsTemplate>
+                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                            </t:rowSettingsTemplate>
+                        </t:Table>
+                        </IconTabFilter>
+                        </items>
+                        </IconTabBar>
+                    </IconTabFilter> -->
+
+                    <!-- DELIVERY SCHEDULE -->                    
+                    <IconTabFilter text="Order Details" key="itfDLVSCHED">
+                        <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
+                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
+                                <t:rowSettingsTemplate>
+                                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                </t:rowSettingsTemplate>
+                                <t:extension>
+                                    <Toolbar>
+                                        <Text text="{i18n>DeliverySchedule}" />
+                                        <ToolbarSpacer />
+                                        <Button id="btnNewDlvSched" type="Ghost" text="New" icon="sap-icon://add-document" press="onAdd('IODLV')" tooltip="New" visible="true" />
+                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Edit" visible="true" />
+                                        <Button id="btnEditDlvSched" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="Edit" visible="true" />
+                                        <Button id="btnDeleteDlvSched" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="Delete" visible="true" />
+                                        <Button id="btnCopyDlvSched" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="Copy" visible="true" />
+                                        <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
+                                        <Button id="btnSaveDlvSched" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                        <Button id="btnCancelDlvSched" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                        <Button id="btnFullScreenDlvSched" icon="sap-icon://zoom-in" press="onFullScreen('dlvsched')" tooltip="view Full Screen" visible="true" />
+                                    </Toolbar>
+                                </t:extension>
+                            </t:Table>
                         </Panel>
                         <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                             <t:rowSettingsTemplate>
@@ -410,7 +493,7 @@
                                 </Toolbar>
                             </t:extension>
                         </t:Table>
-                        </IconTabFilter>
+                    </IconTabFilter>
 
                     <!-- MATERIAL LIST -->
                     <IconTabFilter text="Material List" key="itfMATLIST">
@@ -429,6 +512,7 @@
                             columnResize="onColumnUpdated"
                             columnSelect="onColumnUpdated"
                             columnVisibility="onColumnUpdated"
+                            alternateRowColors="true"
                         >
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
