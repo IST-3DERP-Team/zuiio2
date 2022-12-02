@@ -11,6 +11,7 @@
 
     <!-- IO HEADER BUTTONS -->
     <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
+    <ToolbarSpacer />
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onIOEdit('IOHDR')" visible="true"/>
         <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onIORelease('IOHDR')" visible="true"/>
         <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="Release IO" press="onIOSave('IOHDR')" visible="false"/>
@@ -20,7 +21,7 @@
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
     
     <!-- FORM -->
-    <f:Form id="IOHeaderForm1" editable="false">
+    <f:Form id="IOHeaderForm1" editable="true">
 
         <!-- FORM LAYOUT -->
         <f:layout>
@@ -81,7 +82,7 @@
                                 value="{headerData>/PRODTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/PRODTYPE} : false : ${EditableFieldsData>/PRODTYPE} : false  }" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -185,8 +186,8 @@
                             <Input id="SALESGRP" 
                                 value="{headerData>/SALESGRP}" 
                                 showSuggestion="true" 
-                                showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false  }" 
+                                showValueHelp="true"
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SALESGRP} : false : ${EditableFieldsData>/SALESGRP} : false  }"  
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 autocomplete="true" 
@@ -269,7 +270,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }"  
                                 valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
                                 change="onHeaderChange" 
@@ -289,7 +290,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/CUSTGRP} : false : ${EditableFieldsData>/CUSTGRP} : false  }"  
                                 valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChange" 
@@ -338,7 +339,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/BASEUOM} : false : ${EditableFieldsData>/BASEUOM} : false  }"  
                                 valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
                                 change="onHeaderChange" 
@@ -354,7 +355,7 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="PLANDLVDT"
                                 placeholder="Enter Date"
                                 value="{headerData>/PLANDLVDT}" 
@@ -385,7 +386,7 @@
                     </f:FormElement>   
                     <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
-                            <Input id="STYLENO" 
+                            <Input id="STYLENOVER" 
                                 type="Text" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLENO} : false }" 
                                 valueStateText="Required"
@@ -395,7 +396,7 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>
-                    <!-- <f:FormElement label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
+                    <f:FormElement label="{i18n>STYLENO}" visible="false">
                         <f:fields>
                             <Input id="STYLENO" 
                                 type="Text" 
@@ -414,7 +415,7 @@
                                 </suggestionItems>
                             </Input>
                         </f:fields>
-                    </f:FormElement> -->
+                    </f:FormElement>
                     <f:FormElement label="{i18n>VERNO}" visible="false">
                         <f:fields>
                             <Input id="VERNO"  type="Number" 
@@ -445,7 +446,7 @@
                     </f:FormElement> 
                     <f:FormElement label="{i18n>CUSTDLVDT}"  visible="{= ${VisibleFieldsData>/CUSTDLVDT} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="CUSTDLVDT"
                                 placeholder="Enter Date"
                                 change="handleChange"
@@ -464,7 +465,7 @@
                     </f:FormElement>
                     <f:FormElement label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
                         <f:fields>
-                            <DateTimePicker
+                            <DatePicker
                                 id="PRODSTART"
                                 placeholder="Enter Date"
                                 change="handleChange"

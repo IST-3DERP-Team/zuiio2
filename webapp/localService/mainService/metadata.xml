@@ -92,7 +92,7 @@
                 <Property Name="REVUPRICE2" Type="Edm.String" Nullable="false" MaxLength="19" sap:unicode="false" sap:label="REVUPRICE2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REVUPRICE3" Type="Edm.String" Nullable="false" MaxLength="19" sap:unicode="false" sap:label="REVUPRICE3" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DLVSEQ" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="DLVSEQ" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="DELETED" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DELETED" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REMARKS" Type="Edm.String" Nullable="false" MaxLength="1000" sap:unicode="false" sap:label="Long Char" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -113,12 +113,12 @@
                 <Property Name="DESC2" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBGRP" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="ATTRIBGRP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBSEQ" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="BASEIND" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="BaseInd?" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="BASEIND" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="BaseInd?" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VALUETYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VALUETYP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBVAL" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="ATTRIBVAL" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VALUNIT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VALUNIT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPOATRIB" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="PO Attribute" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="DELETED" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DELETED" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDBY" Type="Edm.String" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDDT" Type="Edm.DateTime" Precision="8" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDTM" Type="Edm.Time" Precision="0" sap:unicode="false" sap:label="Created Time" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -163,7 +163,7 @@
                 <Property Name="ORDERQTY" Type="Edm.String" Nullable="false" MaxLength="19" sap:unicode="false" sap:label="ORDERQTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REVORDERQTY" Type="Edm.String" Nullable="false" MaxLength="19" sap:unicode="false" sap:label="REVORDERQTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ACTUALQTY" Type="Edm.String" Nullable="false" MaxLength="19" sap:unicode="false" sap:label="ACTUALQTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="DELETED" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DELETED" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REMARKS" Type="Edm.String" Nullable="false" MaxLength="1000" sap:unicode="false" sap:label="Long Char" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -388,6 +388,7 @@
             <EntityType Name="IOSTYLIST" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="STYLENO"/>
+                    <PropertyRef Name="VERNO"/>
                 </Key>
                 <Property Name="STYLENO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style No" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="STYLECAT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style Cat" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -414,6 +415,64 @@
                 <Property Name="CREATEDBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CREATEDDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="IOSTYLISTDET" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="STYLENO"/>
+                    <PropertyRef Name="VERNO"/>
+                </Key>
+                <Property Name="STYLENO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style No" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="STYLECAT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style Cat" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PRODTYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Prod Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="STYLECD" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="STYLECD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FTYSTYLE" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="FTYSTYLE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="256" sap:unicode="false" sap:label="DESC1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC2" Type="Edm.String" Nullable="false" MaxLength="256" sap:unicode="false" sap:label="DESC2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Version" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="STATUSCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Stat Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SEASONCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Season Cd" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CUSTGRP" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Customer Group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SOLDTOCUST" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Sold-To-Cust" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CUSTPRODTYP" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="CUSTPRODTYP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="PRODGRP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PRODGRP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SIZEGRP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="SIZEGRP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="UOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="UOM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
+                <Property Name="STYLEGRP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="STYLEGRP" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FABRCTN" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="FABRCTN" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SALESGRP" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Sales group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SRCSTYL" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Style No" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="REMARKS" Type="Edm.String" Nullable="false" MaxLength="1000" sap:unicode="false" sap:label="Long Char" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DELETED" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CREATEDBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CREATEDDT" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="IOCUSTCOLOR" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                    <PropertyRef Name="VERNO"/>
+                    <PropertyRef Name="ATTRIBTYP"/>
+                    <PropertyRef Name="ATTRIBCD"/>
+                </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Version" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ATTRIBTYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Attrib Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ATTRIBCD" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attrib Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC2" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="IOATTRIBTYP" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="IONO"/>
+                    <PropertyRef Name="VERNO"/>
+                    <PropertyRef Name="ATTRIBTYP"/>
+                    <PropertyRef Name="ATTRIBCD"/>
+                </Key>
+                <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Version" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ATTRIBTYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Attrib Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="ATTRIBCD" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attrib Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC2" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="DESC2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityContainer Name="ZGW_3DERP_IO_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="IOHDRSet" EntityType="ZGW_3DERP_IO_SRV.IOHDR" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IODETSet" EntityType="ZGW_3DERP_IO_SRV.IODET" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -438,6 +497,9 @@
                 <EntitySet Name="CUSTGRPvhSet" EntityType="ZGW_3DERP_IO_SRV.CUSTGRPvh" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="PRODPLANTvhSet" EntityType="ZGW_3DERP_IO_SRV.PRODPLANTvh" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IOSTYLISTSet" EntityType="ZGW_3DERP_IO_SRV.IOSTYLIST" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="IOSTYLISTDETSet" EntityType="ZGW_3DERP_IO_SRV.IOSTYLISTDET" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="IOCUSTCOLORSet" EntityType="ZGW_3DERP_IO_SRV.IOCUSTCOLOR" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="IOATTRIBTYPSet" EntityType="ZGW_3DERP_IO_SRV.IOATTRIBTYP" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link rel="self" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://159.138.39.203:8000/sap/opu/odata/sap/ZGW_3DERP_IO_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
