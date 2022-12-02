@@ -5498,8 +5498,8 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            console.log(entitySet);
-                            console.log(param);
+                            // console.log(entitySet);
+                            // console.log(param);
                             // console.log(arg);
 
                             // Common.closeProcessingDialog(me);
