@@ -75,6 +75,7 @@
                                     <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
 
                                     <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
+                                        <ToolbarSpacer />
                                         <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
                                     </OverflowToolbar>
 
