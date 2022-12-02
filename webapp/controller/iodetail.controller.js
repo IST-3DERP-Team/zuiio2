@@ -5460,41 +5460,37 @@ sap.ui.define([
                             var param = {};
                             var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
                             var itemValue;
+                            console.log(this._aColumns[arg])
+                            this._aColumns[arg].forEach(col => {                                
+                                if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"                                    
+                                //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
+                                else if (col.DataType === "DATETIME") {
+                                    // console.log(col.ColumnName);
+                                    // console.log(item[col.ColumnName]);
+                                    // console.log(sapDateFormat.format(new Date(item[col.ColumnName])));
+                                    itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
+                                } else {
+                                    itemValue = item[col.ColumnName];
+                                }
 
-                            this._aColumns[arg].forEach(col => {
-                                if (col.Editable) {
-                                    if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"                                    
-                                    //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
-                                    else if (col.DataType === "DATETIME") {
-                                        // console.log(col.ColumnName);
-                                        // console.log(item[col.ColumnName]);
-                                        // console.log(sapDateFormat.format(new Date(item[col.ColumnName])));
-                                        itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
-                                    } else {
-                                        itemValue = item[col.ColumnName];
-                                    }
-
-                                    //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
-                                    if (arg === "IODLV" || arg === "IODET") {
-
+                                //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
+                                if (arg === "IODLV" || arg === "IODET") {
+                                    param[col.ColumnName] = itemValue;
+                                }
+                                //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
+                                else {
+                                    if (col.Editable) {
                                         param[col.ColumnName] = itemValue;
                                     }
-                                    //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
-                                    else {
-                                        if (col.Editable) {
+                                }
 
-                                            param[col.ColumnName] = itemValue;
-                                        }
-                                    }
-
-                                    if (iKeyCount === 1) {
-                                        if (col.Key === "X")
-                                            entitySet += "'" + item[col.ColumnName] + "'"
-                                    }
-                                    else if (iKeyCount > 1) {
-                                        if (col.Key === "X") {
-                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                        }
+                                if (iKeyCount === 1) {
+                                    if (col.Key === "X")
+                                        entitySet += "'" + item[col.ColumnName] + "'"
+                                }
+                                else if (iKeyCount > 1) {
+                                    if (col.Key === "X") {
+                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                     }
                                 }
                             })
@@ -5502,8 +5498,8 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
+                            console.log(entitySet);
+                            console.log(param);
                             // console.log(arg);
 
                             // Common.closeProcessingDialog(me);
