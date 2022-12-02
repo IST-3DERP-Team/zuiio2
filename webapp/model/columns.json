@@ -3,7 +3,7 @@
         {"ColumnName": "CPOATRIB",
             "ValueHelp": {"show": true, "items": {"path": "CUSTCOLOR_MODEL", "value": "CUSTCOLOR", "text": "CUSTCOLOR"},
             "SuggestionItems": {"path": "CUSTCOLOR_MODEL>/", "text": "{CUSTCOLOR_MODEL>CUSTCOLOR}"}}}
-        ],
+    ],
     "process": [
         {"ColumnName": "VASTYP", 
             "ValueHelp": {"show": true, "items": {"path": "VASTYPE_MODEL", "value": "PROCESSCD", "text": "PROCESSCD"},
@@ -14,5 +14,16 @@
         {"ColumnName": "ATTRIBCD", 
             "ValueHelp": {"show": true, "items": {"path": "ATTRIBCODE_MODEL", "value": "ATTRIBCD", "text": "ATTRIBCD"},
             "SuggestionItems": {"path": "ATTRIBCODE_MODEL>/", "text": "{ATTRIBCODE_MODEL>ATTRIBCD}", "additionalText": "{ATTRIBCODE_MODEL>DESC1}"}}}
-    ]    
+    ],
+    "costHdr": [
+        {"ColumnName": "CSTYPE", 
+            "ValueHelp": {"show": true, "items": {"path": "COSTTYPE_MODEL", "value": "CSTYPECD", "text": "CSTYPEDESC"},
+            "SuggestionItems": {"path": "COSTTYPE_MODEL>/", "text": "{COSTTYPE_MODEL>CSTYPECD}", "additionalText": "{COSTTYPE_MODEL>CSTYPEDESC}", "maxSuggestionWidth": "250px"}}},
+        {"ColumnName": "CSVCD", 
+            "ValueHelp": {"show": true, "items": {"path": "COSTVARIANT_MODEL", "value": "CSVCD", "text": "DESC1"},
+            "SuggestionItems": {"path": "COSTVARIANT_MODEL>/", "text": "{COSTVARIANT_MODEL>CSVCD}", "additionalText": "{COSTVARIANT_MODEL>DESC1}", "maxSuggestionWidth": "300px"}}},
+        {"ColumnName": "SALESTERM", 
+            "ValueHelp": {"show": true, "items": {"path": "COSTTERMS_MODEL", "value": "INCO1", "text": "INCO1"},
+            "SuggestionItems": {"path": "COSTTERMS_MODEL>/", "text": "{COSTTERMS_MODEL>INCO1}"}}}
+    ]
 }

@@ -162,7 +162,7 @@
                                                             icon="sap-icon://sys-cancel"
                                                             press="onCancel('color')" 
                                                             tooltip="{ddtext>/CANCEL}"
-                                                            visible="false" /> 
+                                                            visible="false" />
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
@@ -649,13 +649,13 @@
                     <IconTabFilter
                         text="Costing"
                         key="itfCOSTING">
-                        <layout:Splitter class="iostyle">
+                        <layout:Splitter class="iocosting">
                             <Panel width="100%" height="100%" class="sapUiNoContentPadding">
                                 <t:Table id="costHdrTab"
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true"
                                     enableColumnFreeze="true"
-                                    selectionMode="Single" 
+                                    selectionMode="None" 
                                     selectionBehavior="RowSelector"
                                     firstVisibleRowChanged="onFirstVisibleRowChanged"
                                     cellClick="onCellClick"
@@ -672,34 +672,46 @@
                                     <t:extension>
                                         <Toolbar>
                                             <ToolbarSpacer/>
-                                            <Button id="btnNewCostVer" 
+                                            <Button id="btnNewCostHdr" 
                                                 text="{ddtext>/NEW}"
-                                                icon="sap-icon://new"
-                                                press="onNew('costver')"
+                                                icon="sap-icon://add-document"
+                                                press="onCreateCosting"
                                                 tooltip="{ddtext>/NEW}"
                                                 visible="true" />
-                                            <Button id="btnEditCostVer" 
+                                            <Button id="btnEditCostHdr" 
                                                 text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
-                                                press="onEdit('costver')" 
+                                                press="onEdit('costHdr')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
-                                            <Button id="btnRefreshCostVer" 
+                                            <Button id="btnRefreshCostHdr" 
                                                 icon="sap-icon://refresh"
-                                                press="onRefresh('costver')" 
+                                                press="onRefresh('costHdr')" 
                                                 tooltip="{ddtext>/REFRESH}"
                                                 visible="true" /> 
+                                            <Button id="btnSaveCostHdr" 
+                                                text="{ddtext>/SAVE}"
+                                                icon="sap-icon://save"
+                                                press="onSave('costHdr')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelCostHdr" 
+                                                text="{ddtext>/CANCEL}"
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('costHdr')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>
-                                <layoutData><layout:SplitterLayoutData size="700px" /></layoutData> 
+                                <layoutData><layout:SplitterLayoutData size="775px" /></layoutData> 
                             </Panel>
                             <Panel width="100%" height="100%" class="sapUiNoContentPadding">
                                 <t:Table id="costDtlsTab"
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true"
                                     enableColumnFreeze="true"
-                                    selectionMode="Single" 
+                                    selectionMode="None" 
                                     selectionBehavior="RowSelector"
                                     firstVisibleRowChanged="onFirstVisibleRowChanged"
                                     cellClick="onCellClick"
@@ -719,7 +731,7 @@
                                             <Button id="btnEditCostDtl" 
                                                 text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
-                                                press="onEdit('costdtl')" 
+                                                press="onEdit('costDtls')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
                                             <Button id="btnPrintCosting" 
@@ -728,11 +740,29 @@
                                                 press="onPrintCosting" 
                                                 tooltip="{ddtext>/PRINT}"
                                                 visible="true" />
+                                            <Button id="btnReleaseCosting" 
+                                                text="{ddtext>/RELCOSTING}"
+                                                icon="sap-icon://open-command-field"
+                                                press="onReleaseCosting" 
+                                                tooltip="{ddtext>/RELCOSTING}"
+                                                visible="true" />
                                             <Button id="btnRefreshCostDtl" 
                                                 icon="sap-icon://refresh"
-                                                press="onRefresh('costdtl')" 
+                                                press="onRefresh('costDtls')" 
                                                 tooltip="{ddtext>/REFRESH}"
                                                 visible="true" /> 
+                                            <Button id="btnSaveCostDtl" 
+                                                text="{ddtext>/SAVE}"
+                                                icon="sap-icon://save"
+                                                press="onSave('costDtls')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelCostDtl" 
+                                                text="{ddtext>/CANCEL}"
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('costDtls')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>
