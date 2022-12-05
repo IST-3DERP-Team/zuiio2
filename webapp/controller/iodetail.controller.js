@@ -3758,6 +3758,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CSDATE" });
                 oDDTextParam.push({ CODE: "CREATECOSTING" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_REFRESH" });                
+                oDDTextParam.push({ CODE: "INFO_COSTING_RELEASE" });
+                oDDTextParam.push({ CODE: "INFO_STATUS_ALREADY_REL" });
 
                 oDDTextParam.push({ CODE: "IOITEM" });
                 oDDTextParam.push({ CODE: "SALDOCNO" });
@@ -3781,7 +3783,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CUSTDEST" });
                 oDDTextParam.push({ CODE: "DLVSEQ" });
                 oDDTextParam.push({ CODE: "REVDLVDT" });
-
+                
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
                         method: "POST",
@@ -4542,7 +4544,73 @@ sap.ui.define([
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                         .forEach(item => item.setProperty("enabled", false));
-                } else {
+                }
+                else if (arg === "costHdr" || arg === "costDtls") {
+                    if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                    }
+                    else {
+                        if (arg === "costHdr") {
+                            if (this.byId(arg + "Tab").getModel().getData().rows.filter(fi => fi.COSTSTATUS !== "REL").length === 0) {
+                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                            }
+                            else {
+                                this.byId("btnNewCostHdr").setVisible(false);
+                                this.byId("btnEditCostHdr").setVisible(false);
+                                this.byId("btnRefreshCostHdr").setVisible(false);
+                                this.byId("btnSaveCostHdr").setVisible(true);
+                                this.byId("btnCancelCostHdr").setVisible(true);
+        
+                                this.byId("btnEditCostDtl").setEnabled(false);
+                                this.byId("btnPrintCosting").setEnabled(false);
+                                this.byId("btnReleaseCosting").setEnabled(false);
+                                this.byId("btnRefreshCostDtl").setEnabled(false);
+
+                                this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);                        
+                                this.setRowEditMode(arg);
+                                this._validationErrors = [];
+                                this._sTableModel = arg;
+                                this._dataMode = "EDIT";
+
+                                var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));            
+                            }
+                        }
+                        else {
+                            var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
+                            var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
+                            var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
+
+                            if (vStatus === "REL") {
+                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                            }
+                            else {
+                                this.byId("btnEditCostDtl").setVisible(false);
+                                this.byId("btnPrintCosting").setVisible(false);
+                                this.byId("btnReleaseCosting").setVisible(false);
+                                this.byId("btnRefreshCostDtl").setVisible(false);
+                                this.byId("btnSaveCostDtl").setVisible(true);
+                                this.byId("btnCancelCostDtl").setVisible(true);
+        
+                                this.byId("btnNewCostHdr").setEnabled(false);
+                                this.byId("btnEditCostHdr").setEnabled(false);
+                                this.byId("btnRefreshCostHdr").setEnabled(false);
+
+                                this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);                        
+                                this.setRowEditMode(arg);
+                                this._validationErrors = [];
+                                this._sTableModel = arg;
+                                this._dataMode = "EDIT";
+
+                                var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));            
+                            }
+                        }
+                    }
+                }
+                else {
                     if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                     }
@@ -4637,6 +4705,7 @@ sap.ui.define([
                             this.byId("btnEditCostHdr").setEnabled(false);
                             this.byId("btnRefreshCostHdr").setEnabled(false);
                         }
+
                         this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);                        
                         this.setRowEditMode(arg);
                         this._validationErrors = [];
@@ -5460,7 +5529,7 @@ sap.ui.define([
                             var param = {};
                             var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
                             var itemValue;
-                            console.log(this._aColumns[arg])
+                            
                             this._aColumns[arg].forEach(col => {                                
                                 if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"                                    
                                 //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
@@ -5498,8 +5567,8 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
+                            console.log(entitySet);
+                            console.log(param);
                             // console.log(arg);
 
                             // Common.closeProcessingDialog(me);
@@ -5577,28 +5646,28 @@ sap.ui.define([
                                                     me.byId("btnFullScreenIODet").setVisible(true);
                                                 }
                                                 else if (arg === "costHdr") {
-                                                    this.byId("btnNewCostHdr").setVisible(true);
-                                                    this.byId("btnEditCostHdr").setVisible(true);
-                                                    this.byId("btnRefreshCostHdr").setVisible(true);
-                                                    this.byId("btnSaveCostHdr").setVisible(false);
-                                                    this.byId("btnCancelCostHdr").setVisible(false);
+                                                    me.byId("btnNewCostHdr").setVisible(true);
+                                                    me.byId("btnEditCostHdr").setVisible(true);
+                                                    me.byId("btnRefreshCostHdr").setVisible(true);
+                                                    me.byId("btnSaveCostHdr").setVisible(false);
+                                                    me.byId("btnCancelCostHdr").setVisible(false);
                             
-                                                    this.byId("btnEditCostDtl").setEnabled(true);
-                                                    this.byId("btnPrintCosting").setEnabled(true);
-                                                    this.byId("btnReleaseCosting").setEnabled(true);
-                                                    this.byId("btnRefreshCostDtl").setEnabled(true);
+                                                    me.byId("btnEditCostDtl").setEnabled(true);
+                                                    me.byId("btnPrintCosting").setEnabled(true);
+                                                    me.byId("btnReleaseCosting").setEnabled(true);
+                                                    me.byId("btnRefreshCostDtl").setEnabled(true);
                                                 }
                                                 else if (arg === "costDtls") {
-                                                    this.byId("btnEditCostDtl").setVisible(true);
-                                                    this.byId("btnPrintCosting").setVisible(true);
-                                                    this.byId("btnReleaseCosting").setVisible(true);
-                                                    this.byId("btnRefreshCostDtl").setVisible(true);
-                                                    this.byId("btnSaveCostDtl").setVisible(false);
-                                                    this.byId("btnCancelCostDtl").setVisible(false);
+                                                    me.byId("btnEditCostDtl").setVisible(true);
+                                                    me.byId("btnPrintCosting").setVisible(true);
+                                                    me.byId("btnReleaseCosting").setVisible(true);
+                                                    me.byId("btnRefreshCostDtl").setVisible(true);
+                                                    me.byId("btnSaveCostDtl").setVisible(false);
+                                                    me.byId("btnCancelCostDtl").setVisible(false);
                             
-                                                    this.byId("btnNewCostHdr").setEnabled(true);
-                                                    this.byId("btnEditCostHdr").setEnabled(true);
-                                                    this.byId("btnRefreshCostHdr").setEnabled(true);
+                                                    me.byId("btnNewCostHdr").setEnabled(true);
+                                                    me.byId("btnEditCostHdr").setEnabled(true);
+                                                    me.byId("btnRefreshCostHdr").setEnabled(true);
                                                 }
 
                                                 if (arg !== "IODET")
@@ -5756,45 +5825,83 @@ sap.ui.define([
 
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
-                            // console.log(sColName);
-                            // console.log(ci);
                             if (ci.Editable) {
-                                // console.log("Check Value Help");
-                                // console.log(ci.ValueHelp);
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
+
                                 if (oValueHelp) {
-                                    // console.log("a3 oValueHelp " + sColName);
-                                    col.setTemplate(new sap.m.Input({
-                                        type: "Text",
-                                        value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
-                                        showValueHelp: true,
-                                        valueHelpRequest: this.handleValueHelp.bind(this),
-                                        showSuggestion: true,
-                                        maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
-                                        suggestionItems: {
-                                            path: ci.ValueHelp["SuggestionItems"].path,
-                                            length: 10000,
-                                            template: new sap.ui.core.ListItem({
-                                                key: ci.ValueHelp["SuggestionItems"].text,
-                                                text: ci.ValueHelp["SuggestionItems"].text,
-                                                additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
-                                            }),
-                                            templateShareable: false
-                                        },
-                                        // suggest: this.handleSuggestion.bind(this),
-                                        change: this.handleValueHelpChange.bind(this)
-                                    }));
+                                    if (arg === "costHdr") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            change: this.handleValueHelpChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            // suggest: this.handleSuggestion.bind(this),
+                                            change: this.handleValueHelpChange.bind(this)
+                                        }));
+                                    }
                                 }
                                 else if (ci.DataType === "DATETIME") {
-                                    // console.log("a3 Datetime " + sColName);
-                                    col.setTemplate(new sap.m.DatePicker({
-                                        // id: "ipt" + ci.name,
-                                        value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                        displayFormat: "short",
-                                        change: this.onInputLiveChange.bind(this)
-                                        // change: "handleChange"
-                                        // ,liveChange: this.onInputLiveChange.bind(this)
-                                    }));
+                                    if (arg === "costHdr" && sColName === "CSDATE") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }                                            
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this)
+                                        }));
+                                    }
                                 }
                                 else if (ci.DataType === "NUMBER") {
                                     // console.log("a3 NUMBER " + sColName);
@@ -5816,6 +5923,21 @@ sap.ui.define([
                                                 path: "MATNO",
                                                 formatter: function (MATNO) {
                                                     if (MATNO !== "") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else if (arg === "costHdr" && sColName === "VERDESC") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
                                                     else { return true }
                                                 }
                                             }
@@ -7064,8 +7186,7 @@ sap.ui.define([
                 var me = this;
                 var oJSONModel = new JSONModel();
                 oJSONModel.setData(this.getView().getModel("ddtext").getData(), "ddtext");
-                console.log(this.getView().byId("costHdrTab").getColumns())
-                console.log(this.getView().byId("costHdrTab").getModel())
+
                 this._oModelIOCosting.read('/TypeSHSet', {
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
@@ -7116,21 +7237,40 @@ sap.ui.define([
                 var today = new Date();
                 sap.ui.getCore().byId("CSDATE").setValue(sapDateFormat.format(today));
 
+                //set value of fields if resource has only 1 data
+                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1)
+                { sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); }
+                else { sap.ui.getCore().byId("CSTYPE").setValue(""); }
+
+                if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1)
+                { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                else { sap.ui.getCore().byId("CSVCD").setValue(""); }
+
+                if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1)
+                { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                else { sap.ui.getCore().byId("SALESTERM").setValue(""); }
+
+                sap.ui.getCore().byId("VERDESC").setValue("");
                 // console.log(sapDateFormat.format("11/28/2022"))
             },
 
             afterOpenCreateCosting: function(oEvent) {   
                 oEvent.getSource().setInitialFocus(sap.ui.getCore().byId("CSTYPE"));
 
-                //set value of fields if resource has only 1 data
-                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1)
-                { sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); }
+                // //set value of fields if resource has only 1 data
+                // if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); }
+                // else { sap.ui.getCore().byId("CSTYPE").setValue(""); }
 
-                if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1)
-                { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                // if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                // else { sap.ui.getCore().byId("CSVCD").setValue(""); }
 
-                if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1)
-                { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                // if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                // else { sap.ui.getCore().byId("SALESTERM").setValue(""); }
+
+                // sap.ui.getCore().byId("VERDESC").setValue("");
             },
 
             onSaveCreateCosting: function(oEvent) {
@@ -7168,6 +7308,7 @@ sap.ui.define([
                                 me.byId("costHdrTab").getModel().setProperty("/rows", oReadData.results);
                                 me.byId("costHdrTab").bindRows("/rows");
                                 me._tableRendered = "costHdrTab";
+                                me._CreateCostingDialog.close();
                             },
                             error: function (err) { }
                         })
@@ -7274,7 +7415,62 @@ sap.ui.define([
                     })
                 }
 
-                console.log(this._validationErrors);
+                // console.log(this._validationErrors);
+            },
+
+            onReleaseCosting: function(oEvent) {
+                var me = this;
+                var oTable = oEvent.getSource().oParent.oParent;
+                var oData = oTable.getModel().getData().rows;
+
+                if (oData.length > 0) {
+                    var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === oData[0].CSTYPE && fi.VERSION === oData[0].VERSION)[0].COSTSTATUS;
+
+                    if (vStatus === "REL") {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                    }
+                    else {
+                        Common.openProcessingDialog(me, "Processing");
+
+                        this._oModelIOCosting.update("/VersionsSet(IONO='" + oData[0].IONO + "',CSTYPE='"+ oData[0].CSTYPE + "',VERSION='"+ oData[0].VERSION + "')", { COSTSTATUS: "ACTION-REL" }, {
+                            method: "PUT",
+                            success: function (data, oResponse) {
+                                Common.closeProcessingDialog(me);
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_COSTING_RELEASE"]);
+    
+                                me._oModelIOCosting.read('/VersionsSet', {
+                                    urlParameters: {
+                                        "$filter": "IONO eq '" + oData[0].IONO + "'"
+                                    },
+                                    success: function (oData) {
+                                        me.byId("costHdrTab").getModel().getData().rows.filter(fItem => fItem.ACTIVE === "X")
+                                            .forEach(item => {
+                                                oData.results.filter(fItem2 => fItem2.CSTYPE === item.CSTYPE && fItem2.VERSION === item.VERSION)
+                                                    .forEach(item2 => item2.ACTIVE = "X")
+                                            })
+    
+                                        oData.results.forEach((row, index) => {
+                                            row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                        });
+                
+                                        me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
+                                        me.byId("costHdrTab").bindRows("/rows");
+                                        // me._tableRendered = "costHdrTab";
+                                    },
+                                    error: function (err) { 
+                                        Common.closeProcessingDialog(me);
+                                    }
+                                })                            
+                            },
+                            error: function (err) {
+                                Common.closeProcessingDialog(me);
+                            }
+                        });
+                    }
+                }
+                else {
+                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                }
             },
 
             onRefresh(arg) {
@@ -7382,6 +7578,12 @@ sap.ui.define([
                 if (oEvent.getParameters().rowBindingContext) {
                     var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+
+                    if (oTable.getId().indexOf("costHdrTab") >= 0) {
+                        var vType = oTable.getModel().getProperty(sRowPath + "/CSTYPE");
+                        var vVersion = oTable.getModel().getProperty(sRowPath + "/VERSION");
+                        this.getIOCostDetails(vType, vVersion, false);
+                    }
 
                     oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
                     oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
