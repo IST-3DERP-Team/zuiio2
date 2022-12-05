@@ -62,6 +62,11 @@ sap.ui.define([
                     currDlvItem: '999',
                 }), "ui2");
 
+                this.getView().setModel(new JSONModel({
+                    dataMode: "INIT",
+                    today: ""
+                }), "ui");
+
                 //Add the attachments to screen
                 this.appendUploadCollection();
 
@@ -548,10 +553,10 @@ sap.ui.define([
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
 
-                this.getView().setModel(new JSONModel({
-                    dataMode: "INIT",
-                    today: ""
-                }), "ui");
+                // this.getView().setModel(new JSONModel({
+                //     dataMode: "INIT",
+                //     today: ""
+                // }), "ui");
                 setTimeout(() => {
                     oModel.read(entitySet, {
                         urlParameters: {
@@ -3117,10 +3122,10 @@ sap.ui.define([
                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);
                 }
 
-                if(arg !== "IODET") {
+                if (arg !== "IODET") {
                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
                 }
-                
+
                 console.log("4");
 
                 this.setRowEditMode(arg);
@@ -3136,7 +3141,7 @@ sap.ui.define([
                     var oModel = this.getView().byId(tabName).getModel("DataModel");
                     oModel.setProperty("/results", aNewRow);
                 }
-                
+
                 if (arg !== "IODET") {
                     var oModel = this.getView().byId(tabName).getModel();
                     oModel.setProperty("/rows", aNewRow);
@@ -7598,15 +7603,40 @@ sap.ui.define([
             setActiveRowHighlightByTableId(arg) {
                 var oTable = this.byId(arg);
 
+                // var oTable = arg;
+                var sTableId = oTable.getId();
+
                 setTimeout(() => {
-                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                    // console.log(iActiveRowIndex)
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow");
-                    })
+
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.items.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    } else {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        // console.log(iActiveRowIndex)
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
                 }, 10);
             },
 
