@@ -62,6 +62,11 @@ sap.ui.define([
                     currDlvItem: '999',
                 }), "ui2");
 
+                this.getView().setModel(new JSONModel({
+                    dataMode: "INIT",
+                    today: ""
+                }), "ui");
+
                 //Add the attachments to screen
                 this.appendUploadCollection();
 
@@ -84,7 +89,7 @@ sap.ui.define([
                     onAfterRendering: function (oEvent) {
                         var oControl = oEvent.srcControl;
                         var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
-                        
+
                         if (sTabId.substr(sTabId.length - 3) === "Tab") that._tableRendered = sTabId;
                         else that._tableRendered = "";
 
@@ -318,7 +323,7 @@ sap.ui.define([
                 Common.closeLoadingDialog(that);
             },
 
-            refreshIOData: async function(ioNo) {
+            refreshIOData: async function (ioNo) {
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(this.getIOSizes());
@@ -373,8 +378,11 @@ sap.ui.define([
             },
 
             onIODLVCellClick: async function (oEvent) {
-                // console.log(oEvent.getParameters().rowBindingContext.sPath);
-                if (oEvent.getParameters().rowBindingContext.sPath === undefined)
+                // // console.log(oEvent.getParameters().rowBindingContext.sPath);
+                // if (oEvent.getParameters().rowBindingContext.sPath === undefined)
+                //     return;
+
+                if (!oEvent.getParameters().rowBindingContext)
                     return;
 
                 if (this._bIODETChanged === true)
@@ -517,6 +525,8 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+                                // console.log("IO Status Data");
+                                // console.log(oData);
                                 me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOSTATUSTab").bindRows("/rows");
                                 resolve();
@@ -543,10 +553,10 @@ sap.ui.define([
                 this.bindUploadCollection();
                 this.getView().getModel("FileModel").refresh();
 
-                this.getView().setModel(new JSONModel({
-                    dataMode: "INIT",
-                    today: ""
-                }), "ui");
+                // this.getView().setModel(new JSONModel({
+                //     dataMode: "INIT",
+                //     today: ""
+                // }), "ui");
                 setTimeout(() => {
                     oModel.read(entitySet, {
                         urlParameters: {
@@ -659,22 +669,28 @@ sap.ui.define([
                 // }, 100);
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
+                    setTimeout(() => {
+                        this._tblChange = true;
+                        this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
+                    }, 100);
                     resolve();
                 })
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
+                    setTimeout(() => {
+                        this._tblChange = true;
+                        this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
+                    }, 100);
                     resolve();
                 })
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    setTimeout(() => {
+                        this._tblChange = true;
+                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    }, 100);
                     resolve();
                 })
                 await _promiseResult;
@@ -852,12 +868,13 @@ sap.ui.define([
                     // console.log(ccolumns);
                     // return;
 
-                    //find the column to pivot
+                    //find the column to pivot  CUSTSIZE
                     for (var i = 0; i < columns.length; i++) {
                         if (columns[i].Pivot !== '') {
                             pivotRow = columns[i].Pivot;
                         }
                     }
+
                     //build the table dyanmic columns
                     for (var i = 0; i < columns.length; i++) {
                         if (columns[i].Pivot === pivotRow) {
@@ -866,9 +883,9 @@ sap.ui.define([
                                 if (pivotArray[j].ATTRIBTYP === "SIZE") {
                                     // console.log(ccolumns);
                                     columnData.push({
-                                        "ColumnName": pivotArray[j].ATTRIBCD,
-                                        "ColumnLabel": pivotArray[j].DESC1,
-                                        "ColumnWidth": 70,
+                                        "ColumnName": pivotArray[j].ATTRIBCD + ccolumns[i].ColumnName,
+                                        "ColumnLabel": pivotArray[j].DESC1 + " " + ccolumns[i].ColumnLabel,
+                                        "ColumnWidth": 120,
                                         "ColumnType": pivotRow,
                                         "DataType": ccolumns[i].DataType,
                                         "Editable": columns[i].Editable,
@@ -886,7 +903,7 @@ sap.ui.define([
                                     })
 
                                     columnData.push({
-                                        "ColumnName": "IOITEM" + pivotArray[j].ATTRIBCD,
+                                        "ColumnName": "IOITEM" + pivotArray[j].ATTRIBCD + ccolumns[i].ColumnName,
                                         "ColumnLabel": "IOITEM" + pivotArray[j].ATTRIBCD,
                                         "ColumnWidth": 70,
                                         "ColumnType": "",
@@ -993,13 +1010,18 @@ sap.ui.define([
                         oModel.read("/ColumnsSet", {
                             success: function (oData, oResponse) {
                                 if (oData.results.length > 0) {
-                                    console.log("getIODynamicColumns " + sTabId);
+                                    // console.log("getIODynamicColumns " + sTabId);
                                     // console.log(oData.results);
                                     if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                         oData.results.forEach(item => {
                                             oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
                                                 .forEach(col => item.ValueHelp = col.ValueHelp)
                                         })
+                                    }
+
+                                    if (arg1 === "IOSTATUS") {
+                                        // console.log("IO Status Data");
+                                        // console.log(oData);
                                     }
 
                                     me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
@@ -1215,8 +1237,10 @@ sap.ui.define([
                                     if (rowData[j].CUSTSIZE === colname) {
                                         // console.log(unique[i]);
                                         // console.log(i + " " + colname + " " + unique[i][colname] + " " + rowData[j].CUSTSIZE);
-                                        unique[i][colname] = rowData[j].REVORDERQTY;
-                                        unique[i]["IOITEM" + colname] = rowData[j].IOITEM;
+                                        unique[i][colname + "ORDERQTY"] = rowData[j].ORDERQTY;
+                                        unique[i][colname + "SHIPQTY"] = rowData[j].SHIPQTY;
+                                        unique[i]["IOITEM" + colname + "ORDERQTY"] = rowData[j].IOITEM;
+                                        unique[i]["IOITEM" + colname + "SHIPQTY"] = rowData[j].IOITEM;
                                     }
                                 }
                             }
@@ -1236,6 +1260,9 @@ sap.ui.define([
 
                 // console.log("Columns Data");
                 // console.log(columnData);
+
+                // console.log("unique");
+                // console.log(unique);
 
                 // console.log("oJSONModel");
                 // console.log(oJSONModel);
@@ -2791,7 +2818,7 @@ sap.ui.define([
                                         me.getView().getModel("ui2").setProperty("/currStyleNo", strStyleNo);
 
 
-                                        console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
+                                        // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
@@ -2833,41 +2860,41 @@ sap.ui.define([
                     //Enable Icon Tab Filters
                     this.enableOtherTabs();
 
-                    console.log("IO Save - cancelHeaderEdit");
+                    // console.log("IO Save - cancelHeaderEdit");
                     setTimeout(() => {
                         this.cancelHeaderEdit();
                     }, 100);
 
-                    console.log("IO Save - idIconTabBarInlineIOHdr re-enable");
+                    // console.log("IO Save - idIconTabBarInlineIOHdr re-enable");
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
-                    console.log("IO Save - reload Header Data");
+                    // console.log("IO Save - reload Header Data");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.reloadHeaderData(_newIONo));
                     });
                     await _promiseResult;
 
-                    console.log("IO Save - closeHeaderEdit");
+                    // console.log("IO Save - closeHeaderEdit");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.closeHeaderEdit());
                     });
                     await _promiseResult;
 
-                    console.log("IO Save - Refresh IO Data");
+                    // console.log("IO Save - Refresh IO Data");
                     this.refreshIOData(_newIONo);
 
-                    console.log("IO Save - getReloadIOColumnProp");
+                    // console.log("IO Save - getReloadIOColumnProp");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.getReloadIOColumnProp());
                     });
                     await _promiseResult;
 
-                    console.log("IO Save - getReloadIOColumnProp");
+                    // console.log("IO Save - getReloadIOColumnProp");
                     this.initStyle();
 
-                    console.log("IO Save - End");
+                    // console.log("IO Save - End");
                 }
             },
 
@@ -3085,7 +3112,7 @@ sap.ui.define([
                 var oNewRow = {};
                 var tabName = arg + "Tab";
                 var oTable = this.getView().byId(tabName);
-                // console.log("3");
+                console.log("3");
 
                 oNewRow["New"] = true;
                 aNewRow.push(oNewRow);
@@ -3093,35 +3120,41 @@ sap.ui.define([
                 //SET TABLE AS EDITABLE
                 if (arg === "IODET") {
                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);
-                } else
+                }
+
+                if (arg !== "IODET") {
                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
-                // console.log("4");
+                }
+
+                console.log("4");
 
                 this.setRowEditMode(arg);
                 this._validationErrors = [];
                 this._sTableModel = arg;
                 this._dataMode = "EDIT";
 
-                if (arg !== "IODET")
-                    this.setActiveRowHighlightByTableId(arg + "Tab");
+                // if (arg !== "IODET")
+                //     this.setActiveRowHighlightByTableId(arg + "Tab");
 
-                // console.log("5");
+                console.log("5");
                 if (arg === "IODET") {
                     var oModel = this.getView().byId(tabName).getModel("DataModel");
                     oModel.setProperty("/results", aNewRow);
-                } else {
+                }
+
+                if (arg !== "IODET") {
                     var oModel = this.getView().byId(tabName).getModel();
                     oModel.setProperty("/rows", aNewRow);
                 }
 
-                // console.log("6");
+                console.log("6");
                 this.getView().getModel("ui").setProperty("/dataMode", 'NEW');
-                // console.log("7");
+                console.log("7");
 
                 if (oTable.getBinding()) {
                     this._aFiltersBeforeChange = jQuery.extend(true, [], oTable.getBinding().aFilters);
 
-                    // console.log("8");
+                    console.log("8");
                     // oTable.getBinding().aSorters = null;
                     oTable.getBinding().aFilters = null;
                 }
@@ -3129,7 +3162,7 @@ sap.ui.define([
                 var oColumns = oTable.getColumns();
                 // console.log(oColumns);
 
-                // console.log("9");
+                console.log("9");
                 for (var i = 0, l = oColumns.length; i < l; i++) {
                     var isFiltered = oColumns[i].getFiltered();
                     // console.log(oColumns[i].getFiltered())
@@ -3138,7 +3171,7 @@ sap.ui.define([
                     }
                 }
 
-                // console.log("10");
+                console.log("10");
 
                 // console.log(oTable);
                 // oTable.getBinding("rows").refresh();
@@ -3150,9 +3183,8 @@ sap.ui.define([
                 else
                     oTable.getModel().refresh(true);
 
-                // console.log("12");
-                // console.log(oTable);
-
+                console.log("12");
+                console.log(oTable);
             },
 
             onCopy: async function (TableName) {
@@ -3485,19 +3517,6 @@ sap.ui.define([
                 // console.log(cDlvSeq);
 
                 if (source === "IODETTab") {
-                    // this._oModel.read(sEntitySet, {
-                    //     urlParameters: {
-                    //         "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
-                    //     },
-                    //     success: function (oData, response) {
-                    //         // console.log("Reload IO Data");
-                    //         // console.log(oData);
-                    //         me.byId(sSource).getModel().setProperty("/rows", oData.results);
-                    //         me.byId(sSource).bindRows("/rows");
-                    //     },
-                    //     error: function (err) { alert(err); }
-                    // })
-
                     var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
 
                     var oModelColumns = new JSONModel();
@@ -3509,6 +3528,17 @@ sap.ui.define([
                         this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
                     })
                     await _promiseResult;
+
+                    //RELOAD IO DELIVERY DATA PER IO
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this.reloadIOData("IODLVTab", "/IODLVSet");
+                        }, 100);
+                        resolve();
+                    });
+                    await _promiseResult;
+
+
                 } else {
                     this._oModel.read(sEntitySet, {
                         urlParameters: {
@@ -3534,7 +3564,7 @@ sap.ui.define([
             //******************************************* */
 
             initStyle() {
-                console.log("Init Style");
+                // console.log("Init Style");
                 this._oModelStyle = this.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
@@ -3783,7 +3813,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CUSTDEST" });
                 oDDTextParam.push({ CODE: "DLVSEQ" });
                 oDDTextParam.push({ CODE: "REVDLVDT" });
-                
+                console.log(oDDTextParam);
+
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
                         method: "POST",
@@ -4508,10 +4539,12 @@ sap.ui.define([
                 // }
 
                 if (arg === "IODET") {
+                    // this.byId("idIconTabBarInlineIODET").
                     if (this.byId(arg + "Tab").getModel("DataModel").getData().results.length === 0) {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                         return;
                     }
+
                     // console.log(this.byId(arg + "Tab").getModel("DataModel").getData());
                     // console.log("Entered Edit Mode");
 
@@ -4687,7 +4720,7 @@ sap.ui.define([
                             this.byId("btnRefreshCostHdr").setVisible(false);
                             this.byId("btnSaveCostHdr").setVisible(true);
                             this.byId("btnCancelCostHdr").setVisible(true);
-    
+
                             this.byId("btnEditCostDtl").setEnabled(false);
                             this.byId("btnPrintCosting").setEnabled(false);
                             this.byId("btnReleaseCosting").setEnabled(false);
@@ -4700,13 +4733,13 @@ sap.ui.define([
                             this.byId("btnRefreshCostDtl").setVisible(false);
                             this.byId("btnSaveCostDtl").setVisible(true);
                             this.byId("btnCancelCostDtl").setVisible(true);
-    
+
                             this.byId("btnNewCostHdr").setEnabled(false);
                             this.byId("btnEditCostHdr").setEnabled(false);
                             this.byId("btnRefreshCostHdr").setEnabled(false);
                         }
 
-                        this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);                        
+                        this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
                         this.setRowEditMode(arg);
                         this._validationErrors = [];
                         this._sTableModel = arg;
@@ -4860,7 +4893,7 @@ sap.ui.define([
                         this.byId("btnNewCostHdr").setEnabled(true);
                         this.byId("btnEditCostHdr").setEnabled(true);
                         this.byId("btnRefreshCostHdr").setEnabled(true);
-                    }                    
+                    }
 
                     this.setRowReadMode(arg);
                     if (arg === "IODET") {
@@ -4989,11 +5022,18 @@ sap.ui.define([
                                         if (col.DataType === "DATETIME") {
                                             param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
                                             //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                        } else if (col.ColumnName === colSizes.ATTRIBCD) {
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "ORDERQTY") {
                                             //SET CUSTSIZE : USE ATTRIBUTE CODE
                                             param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                             //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            param["ORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
                                             //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
                                             hasMatchingSize = true;
                                         } else {
@@ -5007,43 +5047,47 @@ sap.ui.define([
                                 //INSERT CUSTSIZE WITH REVORDERQTY = 0
                                 if (!hasMatchingSize) {
                                     param["CUSTSIZE"] = colSizes.ATTRIBCD;
-                                    param["REVORDERQTY"] = "0";
+                                    param["ORDERQTY"] = "0";
+                                    param["SHIPQTY"] = "0";
                                 }
 
                                 //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
                                 this._iosizes.forEach(colSizesRemove => {
-                                    if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
-                                        delete param[colSizesRemove.ATTRIBCD];
+                                    delete param[colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
+                                    //     delete param[colSizesRemove.ATTRIBCD];
                                 })
 
 
                                 // console.log(this._iosizes);
-                                console.log(entitySet);
-                                console.log(param);
-                                console.log(arg);
+                                // console.log(entitySet);
+                                // console.log(param);
+                                // console.log(arg);
 
                                 // return;
 
                                 // //CREATE ENTRIES USING BATCH PROCESSING
                                 // oModel.create(entitySet, param, mParameters);
 
+
                                 _promiseResult = new Promise((resolve, reject) => {
-                                    setTimeout(() => {
+                                    setTimeout(async () => {
                                         oModel.create(entitySet, param, {
                                             method: "POST",
                                             success: function (data, oResponse) {
-                                                console.log("Success : " + entitySet);
+                                                // console.log("Success : " + entitySet);
                                                 resolve();
                                             },
                                             error: function () {
-                                                console.log("Error : " + entitySet);
+                                                // console.log("Error : " + entitySet);
                                                 iNew++;
                                                 // alert("Error");
                                                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
                                                 resolve();
                                             }
                                         })
-                                    }, 100);
+                                    }, 300);
                                 });
                                 await _promiseResult;
 
@@ -5174,17 +5218,25 @@ sap.ui.define([
                                             //     param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
                                             // }
                                             //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                        } else if (col.ColumnName === colSizes.ATTRIBCD) {
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "ORDERQTY") {
                                             //SET CUSTSIZE : USE ATTRIBUTE CODE
                                             param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                             //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            param["ORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET IOITEM 
+                                            param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "ORDERQTY"]
+                                            updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "ORDERQTY"] + "'"
 
-                                            // if(item["IOITEM" + colSizes.ATTRIBCD] !== undefined) {
-                                            param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
-                                            updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
-                                            // pIOITEM = item["IOITEM" + colSizes.ATTRIBCD]
-                                            // }
+                                            // param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
+                                            // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
+
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
                                             //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
                                             hasMatchingSize = true;
                                         } else {
@@ -5195,32 +5247,37 @@ sap.ui.define([
                                 })
 
                                 //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                // console.log("REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT");
                                 this._iosizes.forEach(colSizesRemove => {
-                                    if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
-                                        delete param[colSizesRemove.ATTRIBCD];
-                                        delete param["IOITEM" + colSizesRemove.ATTRIBCD];
-                                    }
+                                    // console.log(colSizesRemove.ATTRIBCD);
+                                    delete param[colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
+                                    //     delete param[colSizesRemove.ATTRIBCD];
+                                    //     delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    // }
                                 })
 
-                                //REMOVE IOITEM WITH SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
-                                this._iosizes.forEach(colSizesRemove => {
-                                    if (colSizes.ATTRIBCD === colSizesRemove.ATTRIBCD) {
-                                        delete param["IOITEM" + colSizesRemove.ATTRIBCD];
-                                    }
-                                })
+                                // //REMOVE IOITEM WITH SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                // this._iosizes.forEach(colSizesRemove => {
+                                //     if (colSizes.ATTRIBCD === colSizesRemove.ATTRIBCD) {
+                                //         delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                //     }
+                                // })
 
                                 updEntitySet += ")";
 
-                                console.log(updEntitySet);
-                                console.log(param);
-                                console.log(arg);
+                                // console.log(updEntitySet);
+                                // console.log(param);
+                                // console.log(arg);
 
                                 // return;
 
                                 // //CREATE ENTRIES USING BATCH PROCESSING
                                 // oUpdModel.update(entitySet, param, mParameters);
 
-                                // // if (pIOITEM !== "") {
                                 _promiseResult = new Promise((resolve, reject) => {
                                     setTimeout(() => {
                                         oUpdModel.update(updEntitySet, param, {
@@ -5239,7 +5296,6 @@ sap.ui.define([
                                     }, 100);
                                 });
                                 await _promiseResult;
-                                // }
                             });
 
 
@@ -5327,6 +5383,15 @@ sap.ui.define([
                         });
                         await _promiseResult;
 
+                        //RELOAD IO DELIVERY DATA PER IO
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
                         break;
                     default:
                         break;
@@ -5383,9 +5448,9 @@ sap.ui.define([
                                 }
                             })
 
-                            console.log(entitySet);
-                            console.log(param);
-                            console.log(arg);
+                            // console.log(entitySet);
+                            // console.log(param);
+                            // console.log(arg);
 
                             // return;
 
@@ -5529,9 +5594,9 @@ sap.ui.define([
                             var param = {};
                             var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
                             var itemValue;
-                            
-                            this._aColumns[arg].forEach(col => {                                
-                                if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"                                    
+                            // console.log(this._aColumns[arg])
+                            this._aColumns[arg].forEach(col => {
+                                if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
                                 //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
                                 else if (col.DataType === "DATETIME") {
                                     // console.log(col.ColumnName);
@@ -5738,6 +5803,7 @@ sap.ui.define([
                         break;
 
                     case "IODET":
+                        //RELOAD IO DETAIL DATA PER IO & DLVSEQ
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
@@ -5745,6 +5811,16 @@ sap.ui.define([
                             resolve();
                         });
                         await _promiseResult;
+
+                        //RELOAD IO DELIVERY DATA PER IO
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
                         break;
 
                     case "IOATTRIB":
@@ -5765,14 +5841,11 @@ sap.ui.define([
                 var oTable = this.byId(arg + "Tab");
                 var me = this;
 
-                // console.log("a1");
-                // console.log(oTable.getColumns());
-                // return;
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
                     var oValueHelp = false;
 
-                    // console.log("a2 ");
+                    console.log("a2 ");
 
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
@@ -5782,7 +5855,6 @@ sap.ui.define([
                     }
                     // console.log(col.mAggregations.template.mBindingInfos);
                     // console.log(this._aColumns[arg]);
-
                     // console.log("Columne Name " + sColName);
 
                     // this._aColumns[arg].filter(item => item.ColumnName === sColName)
@@ -5956,7 +6028,7 @@ sap.ui.define([
                         })
                 })
 
-                // console.log("setRowEditMode 2");
+                console.log("setRowEditMode 2");
 
                 if (arg === "IODET") {
                     var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
@@ -5984,7 +6056,7 @@ sap.ui.define([
                         error: function (err) { }
                     })
                 }
-                
+
                 if (arg === "process") {
                     this._oModelStyle.read('/AttribTypeSet', {
                         urlParameters: {
@@ -6036,7 +6108,7 @@ sap.ui.define([
                         })
                     })
                 }
-                
+
                 if (arg === "costHdr") {
                     this._oModelIOCosting.read('/TypeSHSet', {
                         success: function (oData) {
@@ -6044,14 +6116,14 @@ sap.ui.define([
                         },
                         error: function (err) { }
                     })
-    
+
                     this._oModelIOCosting.read('/SalesTermSet', {
                         success: function (oData) {
                             me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
                         },
                         error: function (err) { }
                     })
-    
+
                     this._oModelIOCosting.setHeaders({
                         PRODPLANT: this._prodplant
                     })
@@ -6062,7 +6134,7 @@ sap.ui.define([
                         error: function (err) { }
                     })
                 }
-                // console.log("setRowEditMode 3");
+                console.log("setRowEditMode 3");
             },
 
             setRowReadMode(arg) {
@@ -6123,9 +6195,9 @@ sap.ui.define([
 
             onNumberChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
-                
+
                 var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
-                
+
                 if (oEvent.getParameters().value.split(".").length > 1) {
                     if (oEvent.getParameters().value.split(".")[1].length > decPlaces) {
                         // console.log("invalid");
@@ -6201,7 +6273,7 @@ sap.ui.define([
                 var vItemDesc = vColProp[0].ValueHelp.items.text;
                 var sPath = vColProp[0].ValueHelp.items.path;
                 var vh = this.getView().getModel(sPath).getData();
-                
+
                 vh.forEach(item => {
                     item.VHTitle = item[vItemValue];
                     item.VHDesc = vItemValue === vItemDesc ? "" : item[vItemDesc];
@@ -6236,18 +6308,17 @@ sap.ui.define([
             handleValueHelpClose: function (oEvent) {
                 if (oEvent.sId === "confirm") {
                     if (oEvent.getSource().getModel().getData().process !== undefined) {
-                        if (oEvent.getSource().getModel().getData().process === "CREATECOSTING") 
-                        { this.handleValueHelpCloseCosting(oEvent); }
+                        if (oEvent.getSource().getModel().getData().process === "CREATECOSTING") { this.handleValueHelpCloseCosting(oEvent); }
                     }
                     else {
                         var oSelectedItem = oEvent.getParameter("selectedItem");
 
                         if (oSelectedItem) {
                             this._inputSource.setValue(oSelectedItem.getTitle());
-    
+
                             if (this._inputValue !== oSelectedItem.getTitle()) {
                                 var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
-    
+
                                 this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                                 // this._bColorChanged = true;
                                 if (this._sTableModel === "color") this._bColorChanged = true;
@@ -6257,7 +6328,7 @@ sap.ui.define([
                                 else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
                             }
                         }
-    
+
                         this._inputSource.setValueState("None");
                     }
                 }
@@ -7008,13 +7079,13 @@ sap.ui.define([
                     success: function (oData) {
                         oData.results.forEach((row, index) => {
                             if (index === 0) {
-                                row.ACTIVE = "X"; 
-                                me.getIOCostDetails(row.CSTYPE, row.VERSION, false);   
+                                row.ACTIVE = "X";
+                                me.getIOCostDetails(row.CSTYPE, row.VERSION, false);
                             }
                             else row.ACTIVE = "";
 
                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
-                        });                        
+                        });
 
                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
                         me.byId("costHdrTab").bindRows("/rows");
@@ -7103,14 +7174,14 @@ sap.ui.define([
                     // var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
                     var oText = new sap.m.Text({
                         wrapping: false,
-                        tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"                            
-                    })                    
+                        tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
+                    })
 
-                    oText.bindText({  
-                        parts: [  
+                    oText.bindText({
+                        parts: [
                             { path: sColumnId }
                         ]
-                    }); 
+                    });
 
                     // if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp !== undefined) {
                     //     oText.bindText({  
@@ -7121,7 +7192,7 @@ sap.ui.define([
                     //             if (oColProp[0].ValueHelp.items.value === oColProp[0].ValueHelp.items.text) return sColumnId;
                     //             else {
                     //                 var oValue = me.getView().getModel(oColProp[0].ValueHelp.items.path).getData().filter(v => v[oColProp[0].ValueHelp.items.value] === sColumnId);
-                                
+
                     //                 if (oValue && oValue.length > 0) {
                     //                     return oValue[0][oColProp[0].ValueHelp.items.text] + " (" + sColumnId + ")";
                     //                 }
@@ -7150,7 +7221,7 @@ sap.ui.define([
                         sorted: sColumnSorted,
                         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
                         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });                        
+                    });
                 });
 
                 // this._tableRendered = sTabId;
@@ -7165,7 +7236,7 @@ sap.ui.define([
                     },
                     success: function (oData) {
                         if (arg3) { Common.closeProcessingDialog(me); }
-                        
+
                         oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
 
                         oData.results.forEach((row, index) => {
@@ -7182,7 +7253,7 @@ sap.ui.define([
                 })
             },
 
-            onCreateCosting: function(oEvent) {
+            onCreateCosting: function (oEvent) {
                 var me = this;
                 var oJSONModel = new JSONModel();
                 oJSONModel.setData(this.getView().getModel("ddtext").getData(), "ddtext");
@@ -7230,7 +7301,7 @@ sap.ui.define([
                 this._validationErrors = [];
             },
 
-            beforeOpenCreateCosting: function(oEvent) {   
+            beforeOpenCreateCosting: function (oEvent) {
                 oEvent.getSource().setInitialFocus(sap.ui.getCore().byId("CSTYPE"));
 
                 //set CS DATE value to today's date
@@ -7273,7 +7344,7 @@ sap.ui.define([
                 // sap.ui.getCore().byId("VERDESC").setValue("");
             },
 
-            onSaveCreateCosting: function(oEvent) {
+            onSaveCreateCosting: function (oEvent) {
                 var me = this;
                 var oParam = {
                     "IONO": this._ioNo,
@@ -7299,12 +7370,12 @@ sap.ui.define([
 
                                 oReadData.results.forEach((row, index) => {
                                     if ((index + 1) === oReadData.results.length) {
-                                        row.ACTIVE = "X"; 
-                                        me.getIOCostDetails(row.CSTYPE, row.VERSION, true); 
+                                        row.ACTIVE = "X";
+                                        me.getIOCostDetails(row.CSTYPE, row.VERSION, true);
                                     }
                                     else row.ACTIVE = "";
                                 });
-        
+
                                 me.byId("costHdrTab").getModel().setProperty("/rows", oReadData.results);
                                 me.byId("costHdrTab").bindRows("/rows");
                                 me._tableRendered = "costHdrTab";
@@ -7317,7 +7388,7 @@ sap.ui.define([
                 })
             },
 
-            onCancelCreateCosting: function(oEvent) {
+            onCancelCreateCosting: function (oEvent) {
                 var oData = {
                     Action: "createcosting-cancel",
                     Text: this.getView().getModel("ddtext").getData()["CONFIRM_DISREGARD_CHANGE"]
@@ -7330,7 +7401,7 @@ sap.ui.define([
                     this.getView().addDependent(this._ConfirmDialog);
                 }
                 else this._ConfirmDialog.setModel(new JSONModel(oData));
-                    
+
                 this._ConfirmDialog.open();
             },
 
@@ -7345,9 +7416,8 @@ sap.ui.define([
                 this._inputSource = oSource;
                 this._inputId = oSource.getId();
                 this._inputValue = oSource.getValue();
-                
-                if (oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText") !== undefined) 
-                { sVHDesc = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText").parts[0].path }
+
+                if (oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText") !== undefined) { sVHDesc = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText").parts[0].path }
 
                 vh.forEach(item => {
                     item.VHTitle = item[sVHTitle];
@@ -7511,7 +7581,7 @@ sap.ui.define([
                             //     me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
                             // }, 50);
                         },
-                        error: function (err) { 
+                        error: function (err) {
                             Common.closeProcessingDialog(me);
                         }
                     })
@@ -7524,19 +7594,19 @@ sap.ui.define([
                         success: function (oData) {
                             oData.results.forEach((row, index) => {
                                 if (index === 0) {
-                                    row.ACTIVE = "X"; 
-                                    me.getIOCostDetails(row.CSTYPE, row.VERSION, true);   
+                                    row.ACTIVE = "X";
+                                    me.getIOCostDetails(row.CSTYPE, row.VERSION, true);
                                 }
                                 else row.ACTIVE = "";
-                                
+
                                 row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                             });
-    
+
                             me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
                             me.byId("costHdrTab").bindRows("/rows");
                             me._tableRendered = "costHdrTab";
                         },
-                        error: function (err) { 
+                        error: function (err) {
                             Common.closeProcessingDialog(me);
                         }
                     })
@@ -7571,6 +7641,21 @@ sap.ui.define([
                     }
 
                     this._tableRendered = "ioMatListTab";
+                }
+
+                if (arg1 === "ioDet") {
+                    if (arg2 === "max") {
+                        this.byId("idIconTabBarInlineIODET").setVisible(false);
+                        this.byId("btnFullScreenIODet").setVisible(false);
+                        this.byId("btnExitFullScreenIODet").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("idIconTabBarInlineIODET").setVisible(true);
+                        this.byId("btnFullScreenIODet").setVisible(true);
+                        this.byId("btnExitFullScreenIODet").setVisible(false);
+                    }
+
+                    this._tableRendered = "IODETTab";
                 }
             },
 
@@ -7717,15 +7802,40 @@ sap.ui.define([
             setActiveRowHighlightByTableId(arg) {
                 var oTable = this.byId(arg);
 
+                // var oTable = arg;
+                var sTableId = oTable.getId();
+
                 setTimeout(() => {
-                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                    // console.log(iActiveRowIndex)
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow");
-                    })
+
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.items.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    } else {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        // console.log(iActiveRowIndex)
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
                 }, 10);
             },
 

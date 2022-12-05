@@ -82,7 +82,14 @@ sap.ui.define([
                         sStyleNo = oData.results[selected[i]].STYLENO;
                     }
 
-                    that.navToDetail("NEW");
+                    // that.navToDetail("NEW");
+
+                    that._router.navTo("RouteIODetail", {
+                        iono: "NEW",
+                        sbu: that._sbu,
+                        styleno: sStyleNo
+                    });
+
                 }
 
                 me._CopyStyleDialog.close();
@@ -553,6 +560,7 @@ sap.ui.define([
 
             navToDetail: function (ioNO) {
                 //route to detail page
+                // alert(sIONO);
                 // alert(this.sbu);
                 // alert(sStyleNo);
                 // return;
@@ -860,9 +868,13 @@ sap.ui.define([
 
                 that.onIOCreateSelect(screateTyp);
                 if (screateTyp === "Manual") {
-                    // alert("Manual");
-                    this.sStyleNo = "NEW";
-                    that.navToDetail("NEW"); //navigate straight to detail page if Manual
+                    // that.navToDetail("NEW"); //navigate straight to detail page if Manual
+
+                    that._router.navTo("RouteIODetail", {
+                        iono: "NEW",
+                        sbu: that._sbu,
+                        styleno: "NEW"
+                    });
                 }
 
             },
