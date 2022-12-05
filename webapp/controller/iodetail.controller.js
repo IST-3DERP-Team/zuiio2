@@ -207,12 +207,18 @@ sap.ui.define([
                 }
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getHeaderConfig());
+                    setTimeout(() => {
+                        this.getHeaderConfig();
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getHeaderData());
+                    setTimeout(() => {
+                        this.getHeaderData();
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
@@ -272,36 +278,44 @@ sap.ui.define([
                 // console.log("getIOATTRIBData");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(this.getIOATTRIBData(ioNo));
+                        this.getIOATTRIBData(ioNo);
                     }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 // console.log("getIOSTATUSData");
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIOSTATUSData(ioNo));
+                    setTimeout(() => {
+                        this.getIOSTATUSData(ioNo);
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 // console.log("getIODLVData");
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIODLVData(ioNo));
+                    setTimeout(() => {
+                        this.getIODLVData(ioNo);
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 // console.log("getIOSizes");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(this.getIOSizes());
+                        this.getIOSizes();
                     }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(this.getIOColumnProp());
-                        // this.getIOColumnProp();
+                        this.getIOColumnProp();
                     }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
@@ -3133,8 +3147,8 @@ sap.ui.define([
                 this._sTableModel = arg;
                 this._dataMode = "EDIT";
 
-                // if (arg !== "IODET")
-                //     this.setActiveRowHighlightByTableId(arg + "Tab");
+                if (arg !== "IODET")
+                    this.setActiveRowHighlightByTableId(arg + "Tab");
 
                 console.log("5");
                 if (arg === "IODET") {
@@ -3177,11 +3191,11 @@ sap.ui.define([
                 // oTable.getBinding("rows").refresh();
                 // console.log("11");
 
-                if (arg === "IODET") {
-                    oTable.getModel("DataModel").refresh(true);
-                }
-                else
-                    oTable.getModel().refresh(true);
+                // if (arg === "IODET") {
+                //     oTable.getModel("DataModel").refresh(true);
+                // }
+                // else
+                //     oTable.getModel().refresh(true);
 
                 console.log("12");
                 console.log(oTable);
@@ -3525,7 +3539,10 @@ sap.ui.define([
                     var oColumns = oModelColumns.getData();
 
                     _promiseResult = new Promise((resolve, reject) => {
-                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                        setTimeout(() => {
+                            this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                        }, 100);
+                        resolve();
                     })
                     await _promiseResult;
 
@@ -5072,7 +5089,7 @@ sap.ui.define([
 
 
                                 _promiseResult = new Promise((resolve, reject) => {
-                                    setTimeout(async () => {
+                                    setTimeout(() => {
                                         oModel.create(entitySet, param, {
                                             method: "POST",
                                             success: function (data, oResponse) {
@@ -5976,7 +5993,7 @@ sap.ui.define([
                                     }
                                 }
                                 else if (ci.DataType === "NUMBER") {
-                                    // console.log("a3 NUMBER " + sColName);
+                                    console.log("a3 NUMBER " + sColName);
                                     col.setTemplate(new sap.m.Input({
                                         type: sap.m.InputType.Number,
                                         textAlign: sap.ui.core.TextAlign.Right,
