@@ -10,7 +10,15 @@
 	<Dialog title="Select Style" contentWidth="80%">
 		<Panel height="400px" >
 
-           
+           <Toolbar>
+            <ToolbarSpacer/>
+            <SearchField
+                id="searchFieldStyle"
+                placeholder="Filter"
+                value=""
+                search="filterGlobally"
+                width="15rem"/>
+           </Toolbar>
             <!-- Versions Table -->
             <t:Table id="IOStyleSelectTab"     
                 rows="{IOSTYSELDataModel>/results}"             

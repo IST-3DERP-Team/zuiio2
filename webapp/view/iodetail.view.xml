@@ -480,6 +480,11 @@
                                         <Button id="btnEditDlvSched" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="Edit" visible="true" />
                                         <Button id="btnDeleteDlvSched" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="Delete" visible="true" />
                                         <Button id="btnCopyDlvSched" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="Copy" visible="true" />
+                                        <Button text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                            <customData>
+                                                <core:CustomData key="TableName" value="IODLVTab" />
+                                            </customData>
+                                        </Button>
                                         <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
                                         <Button id="btnSaveDlvSched" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
