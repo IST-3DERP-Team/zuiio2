@@ -72,6 +72,7 @@
                                                 selectionMode="Single" 
                                                 selectionBehavior="RowOnly" 
                                                 alternateRowColors="true"
+                                                firstVisibleRowChanged="onFirstVisibleRowChanged"
                                                 rowSelectionChange="onRowChange">
                                             <t:layoutData>
                                                 <FlexItemData growFactor="1" baseSize="0%" />
@@ -95,7 +96,7 @@
                                             enableColumnFreeze="true" 
                                             enableCellFilter="true" 
                                             selectionMode="Single" 
-                                            selectionBehavior="RowOnly" 
+                                            selectionBehavior="RowSelector" 
                                             alternateRowColors="true"
                                             rowSelectionChange="onRowChange">
                                         <t:layoutData>

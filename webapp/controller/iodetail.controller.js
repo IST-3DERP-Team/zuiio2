@@ -108,6 +108,11 @@ sap.ui.define([
                 this.byId("styleMatListTab").addEventDelegate(oTableEventDelegate);
                 this.byId("costHdrTab").addEventDelegate(oTableEventDelegate);
                 this.byId("costDtlsTab").addEventDelegate(oTableEventDelegate);
+                
+                this.byId("IOATTRIBTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IOSTATUSTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
             },
 
             onNavBack: function () {
@@ -402,11 +407,19 @@ sap.ui.define([
                 // if (oEvent.getParameters().rowBindingContext.sPath === undefined)
                 //     return;
 
-                if (!oEvent.getParameters().rowBindingContext)
+                if (!oEvent.getParameters().rowBindingContext) {
                     return;
+                }
+                    
 
-                if (this._bIODETChanged === true)
+                if (this._bIODETChanged === true) {
                     return;
+                }
+                 
+                if(this.byId("btnSaveDlvSched").Visible === true) {
+                    alert("btnSaveDlvSched");
+                    return;
+                }               
 
                 //control based on value of _EditIODet
 
@@ -415,6 +428,18 @@ sap.ui.define([
                 // var oRow = this.getView().getModel("IODLVModel").getProperty(sRowPath);
                 // console.log(this.getView().byId("IODLVTab"));
                 var oRow = this.getView().byId("IODLVTab").getModel().getProperty(sRowPath);
+
+                //NEW ROW, DO NOT CONTINUE
+                if(oRow.IONO === undefined){
+                    return;
+                }
+
+                //IF IN EDIT MODE, DO NOT CONTINUE
+                if(this._dataMode === "EDIT"){
+                    return;
+                }
+
+                alert("on Cell Click IO DLV");
 
                 // console.log("Row Path");
                 // console.log(oRow.IONO);
@@ -462,8 +487,10 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IODLVTab").bindRows("/rows");
+                                me._tableRendered = "IODLVTab";
                                 resolve();
                             },
                             error: function (err) {
@@ -514,8 +541,10 @@ sap.ui.define([
                             },
                             success: function (oData, response) {
                                 // console.log(oData.results);
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
+                                me._tableRendered = "IOATTRIBTab";
 
                                 // me._iosizes = oData.results;
 
@@ -547,8 +576,10 @@ sap.ui.define([
                             success: function (oData, response) {
                                 // console.log("IO Status Data");
                                 // console.log(oData);
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOSTATUSTab").bindRows("/rows");
+                                me._tableRendered = "IOSTATUSTab";
                                 resolve();
                             },
                             error: function (err) {
@@ -1191,8 +1222,8 @@ sap.ui.define([
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                // console.log(cIONo);
-                // console.log(cDlvSeq);
+                console.log(cIONo);
+                console.log(cDlvSeq);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -1204,8 +1235,10 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
                             },
                             success: function (oData, oResponse) {
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 oJSONModel.setData(oData);
                                 me.getView().setModel(oJSONModel, "IODETrowData");
+                                me._tableRendered = sTabId;
                                 // console.log(me.getView().setModel(oJSONModel, "IODETrowData"));
                                 // rowData = oData.results;
                                 // console.log("IODETTab Data");
@@ -3564,13 +3597,29 @@ sap.ui.define([
                     await _promiseResult;
 
                     //RELOAD IO DELIVERY DATA PER IO
-                    _promiseResult = new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            this.reloadIOData("IODLVTab", "/IODLVSet");
-                        }, 100);
-                        resolve();
-                    });
-                    await _promiseResult;
+                    // _promiseResult = new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //         this.reloadIOData("IODLVTab", "/IODLVSet");
+                    //     }, 100);
+                    //     resolve();
+                    // });
+                    // await _promiseResult;
+
+                    this._oModel.read(sEntitySet, {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + cIONo + "'"
+                        },
+                        success: function (oData, response) {
+                            // console.log("Reload IO Data");
+                            // console.log(ioNo);
+                            // console.log(oData);
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            me.byId(sSource).getModel().setProperty("/rows", oData.results);
+                            me.byId(sSource).bindRows("/rows");
+                            me._tableRendered = sSource;
+                        },
+                        error: function (err) { alert(err); }
+                    })
 
 
                 } else {
@@ -3582,8 +3631,10 @@ sap.ui.define([
                             // console.log("Reload IO Data");
                             // console.log(ioNo);
                             // console.log(oData);
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                             me.byId(sSource).getModel().setProperty("/rows", oData.results);
                             me.byId(sSource).bindRows("/rows");
+                            me._tableRendered = sSource;
                         },
                         error: function (err) { alert(err); }
                     })
@@ -5069,6 +5120,14 @@ sap.ui.define([
 
                         var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
+                        // console.log("aNewRows");
+                        // console.log(aNewRows);
+                        if(aNewRows[0]["CUSTCOLOR"] === undefined) {
+                            Common.showMessage("Customer Color is required.");
+                            Common.closeProcessingDialog(this);
+                            return;
+                        }
+
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
                         aNewRows.forEach(item => {
                             //LOOP THRU COLLECTION OF SIZES FOR THE IO
@@ -5124,6 +5183,10 @@ sap.ui.define([
                                     //     delete param[colSizesRemove.ATTRIBCD];
                                 })
 
+                                // if(param["CUSTCOLOR"] === undefined){
+                                //     Common.showMessage("Customer Color entry is required");
+                                //     return;
+                                // }
 
                                 // console.log(this._iosizes);
                                 console.log(entitySet);
@@ -5849,10 +5912,12 @@ sap.ui.define([
                     //this._validationErrors.length
                     else {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        return;
                     }
                 }
                 else {
                     Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    return;
                 }
 
                 //reload data based on arguments
@@ -7170,10 +7235,12 @@ sap.ui.define([
                 var oMessage;
                 var hasValid = false;
 
+                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
                 if (iAccRowCount + iFabRowCount > 0) {
                     oParam = {
                         "SBU": this._sbu,
-                        "IONO": this._ioNo,
+                        "IONO": vIONo,
                         "MATTYPGRP": "FAB"
                     };
                     console.log(oParam)
@@ -7184,12 +7251,16 @@ sap.ui.define([
                                 method: "POST",
                                 success: function (data, oResponse) {
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
+                                    console.log("FAB - " + oMessage.message);
 
-                                    if (oMessage !== "0")
+                                    if (oMessage.message === "0")
                                         hasValid = true;
+
+                                    resolve();
                                 },
                                 error: function (err) {
                                     // sap.m.MessageBox.error(err);
+                                    resolve();
                                 }
                             });
                         }, 100);
@@ -7208,12 +7279,16 @@ sap.ui.define([
                                 method: "POST",
                                 success: function (data, oResponse) {
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
-                                    console.log(oMessage);
-                                    if (oMessage !== "0")
+                                    console.log("ACC - " + oMessage.message);
+
+                                    if (oMessage.message === "0")
                                         hasValid = true;
+
+                                    resolve();
                                 },
                                 error: function (err) {
                                     // sap.m.MessageBox.error(err);
+                                    resolve();
                                 }
                             });
                         }, 100);
@@ -8254,6 +8329,9 @@ sap.ui.define([
                 var oTable = oEvent.getSource();
                 var sTableId = oTable.getId();
 
+                // console.log("onFirstVisibleRowChanged");
+                // console.log(oTable);
+
                 setTimeout(() => {
                     var oData = [];
 
@@ -8293,7 +8371,7 @@ sap.ui.define([
                     if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
                         var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
 
-                        oTable.getModel().getData().rows.forEach(roonAfterTableRenderingw => row.ACTIVE = "");
+                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
                         oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
 
                         oTable.getRows().forEach(row => {
@@ -8359,11 +8437,17 @@ sap.ui.define([
 
             setActiveRowHighlightByTableId(arg) {
                 var oTable = this.byId(arg);
-
-                // var oTable = arg;
                 var sTableId = oTable.getId();
 
                 setTimeout(() => {
+
+                    // if(sTableId.indexOf("styleBOMUVTab") >= 0){
+                    //     console.log("IO Attrib Data Model");
+                    //     console.log(oTable);
+                    //     return;
+                    // }
+
+                    console.log(oTable);
 
                     if (sTableId.indexOf("styleBOMUVTab") >= 0) {
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
