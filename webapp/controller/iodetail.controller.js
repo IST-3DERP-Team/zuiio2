@@ -5816,11 +5816,11 @@ sap.ui.define([
                                                 //     var oIconTabBarStyle = me.byId("idIconTabBarInlineMode");
                                                 //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
                                                 // } 
-                                                else {
+                                                // else {
                                                     var oIconTabBar = me.byId("idIconTabBarInlineMode");
                                                     oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
-                                                }
+                                                // }
 
                                                 me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
                                                     me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
@@ -6792,7 +6792,7 @@ sap.ui.define([
                                 method: "POST",
                                 success: function (data, oResponse) {
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
-
+                                    console.log(oMessage);
                                     if (oMessage !== "0")
                                         hasValid = true;
                                 },
