@@ -3659,7 +3659,10 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
                     },
                     success: function (oData, response) {
-                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                        oData.results.forEach((item, index) => {
+                            item.ACTIVE = index === 0 ? "X" : "";
+                            item.BASEIND = item.BASEIND === "X" ? true : false;
+                        });
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
                         me._tableRendered = "sizeTab";
@@ -3990,23 +3993,43 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
-                        template: new sap.m.Text({
-                            text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
-                            wrapping: false,
-                            tooltip: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
-                        }),
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    if (sColumnDataType !== "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel }),
+                            template: new sap.m.Text({
+                                text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
+                                wrapping: false,
+                                tooltip: sColumnDataType === "BOOLEAN" ? "" : sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
+                    else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel }),
+                            template: new sap.m.CheckBox({
+                                selected: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
                 });
             },
 
@@ -4235,7 +4258,7 @@ sap.ui.define([
                 })
             },
 
-            getStyleColors: function () {
+            getStyleColors: function () {getStyleBOMUV
                 //get color attributes
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
@@ -6702,7 +6725,7 @@ sap.ui.define([
                             if (oMessage.message === "0") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                             }
-                            else if (oMessage.message === "0") {
+                            else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                             }
                         },
@@ -7545,9 +7568,10 @@ sap.ui.define([
 
             onRefresh(arg) {
                 var me = this;
-                Common.openProcessingDialog(this, "Processing...");
 
                 if (arg === "ioMatList") {
+                    Common.openProcessingDialog(this, "Processing...");
+
                     this._oModelIOMatList.setHeaders({
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
@@ -7587,6 +7611,8 @@ sap.ui.define([
                     })
                 }
                 else if (arg === "costHdr") {
+                    Common.openProcessingDialog(this, "Processing...");
+
                     this._oModelIOCosting.read('/VersionsSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + me._ioNo + "'"
