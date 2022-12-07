@@ -417,7 +417,7 @@ sap.ui.define([
                 }
                  
                 if(this.byId("btnSaveDlvSched").Visible === true) {
-                    alert("btnSaveDlvSched");
+                    // alert("btnSaveDlvSched");
                     return;
                 }               
 
@@ -439,7 +439,7 @@ sap.ui.define([
                     return;
                 }
 
-                alert("on Cell Click IO DLV");
+                // alert("on Cell Click IO DLV");
 
                 // console.log("Row Path");
                 // console.log(oRow.IONO);
