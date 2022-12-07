@@ -27,6 +27,10 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
+                this.getView().setModel(new JSONModel({
+                    activeSTYLENO: ''
+                }), "ui");
+
                 //get current userid
                 var oModel = new sap.ui.model.json.JSONModel();
                 oModel.loadData("/sap/bc/ui2/start_up").then(() => {
@@ -72,17 +76,46 @@ sap.ui.define([
                 var sTableName = tableName;
                 sStyleNo = "NEW";
 
+                console.log("IO from Style");
                 if (sTableName === "IOStyleSelectTab") {
-                    var oTable = sap.ui.getCore().byId(sTableName);
-                    var oTableModel = oTable.getModel("IOSTYSELDataModel");
-                    var oData = oTableModel.getData();
-                    var selected = oTable.getSelectedIndices();
 
-                    for (var i = 0; i < selected.length; i++) {
-                        sStyleNo = oData.results[selected[i]].STYLENO;
+                    console.log("IOStyleSelectTab");
+                    // var oTable = this.byId("IOStyleSelectTab");
+                    var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
+                    console.log(oTable);
+                    var oSelectedIndices = oTable.getSelectedIndices();
+                    console.log(oTable.getSelectedIndices());
+                    var oTmpSelectedIndices = [];
+                    var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
+
+                    console.log(aData);
+                    console.log(oTable.getBinding("rows"));
+                    var oParamData = [];
+                    var oParam = {};
+                    var bProceed = true;
+
+                    if (oSelectedIndices.length <= 0) {
+                        Common.showMessage("No selected row to process.");
+                        return;
                     }
+                    // var vSBU = this.getView().getModel("ui").getData().sbu;
+                    // var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
 
-                    // that.navToDetail("NEW");
+                    //reset variables
+                    sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+                    if (oSelectedIndices.length > 0) {
+                        oSelectedIndices.forEach(item => {
+                            oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                        })
+
+                        oSelectedIndices = oTmpSelectedIndices;
+
+                        oSelectedIndices.forEach(item => {
+                            // alert(aData.at(item).STYLENO);
+                            sStyleNo = aData.at(item).STYLENO;
+                        })
+                    }
+                    // return;
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
@@ -94,6 +127,48 @@ sap.ui.define([
 
                 me._CopyStyleDialog.close();
 
+            },
+
+            filterGlobally: function(oEvent) {
+                // var oTable = oEvent.getSource().oParent.oParent;
+                var oTable = oEvent.getSource().oParent.oParent.oParent.oParent;
+                // var sTable = oTable.getBindingInfo("rows").model;
+                var sTable = oTable.getBindingInfo("rows");
+                console.log("sTable");
+                console.log(sTable);
+                var sQuery = oEvent.getParameter("query");
+
+                console.log("sQuery");
+                console.log(sQuery);
+
+                if (sTable === "IOStyleSelectTab") {
+                    this.byId("searchFieldAttr").setProperty("value", "");
+                }
+
+                this.exeGlobalSearch(sQuery, sTable);
+            },
+
+            exeGlobalSearch(arg1, arg2) {
+                var oFilter = null;
+                var aFilter = [];
+                
+                if (arg1) {
+                    this._aFilterableColumns[arg2].forEach(item => {
+                        var sDataType = this._aColumns[arg2].filter(col => col.name === item.name)[0].type;
+
+                        if (sDataType === "BOOLEAN") aFilter.push(new Filter(item.name, FilterOperator.EQ, arg1));
+                        else aFilter.push(new Filter(item.name, FilterOperator.Contains, arg1));
+                    })
+
+                    oFilter = new Filter(aFilter, false);
+                }
+    
+                this.byId(arg2).getBinding("rows").filter(oFilter, "Application");
+
+                if (arg1 && arg2 === "IOStyleSelectTab") {
+                    var vStyleNo = this.getView().getModel("IOSTYSELDataModel").getData().results.filter((item,index) => index === this.byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
+                    this.getView().getModel("ui").setProperty("/activeSTYLENO", vStyleNo);
+                }
             },
 
             getIOSTYLISTData: function () {
@@ -140,6 +215,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
+                        console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
                     },
                     error: function () { }
                 })
