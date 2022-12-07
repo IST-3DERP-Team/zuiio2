@@ -172,7 +172,7 @@
                                                         <Button id="btnSaveColor" 
                                                             text="{ddtext>/SAVE}"
                                                             icon="sap-icon://save"
-                                                            press="onSave('color')" 
+                                                            press="onBatchSave('color')" 
                                                             tooltip="{ddtext>/SAVE}"
                                                             visible="false" />
                                                         <Button id="btnCancelColor" 
@@ -211,7 +211,7 @@
                                                     <Toolbar>
                                                         <ToolbarSpacer />
                                                         <Button id="btnEditProcess" text="{ddtext>/EDIT}" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
-                                                        <Button id="btnSaveProcess" text="{ddtext>/SAVE}" icon="sap-icon://save" press="onSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                                        <Button id="btnSaveProcess" text="{ddtext>/SAVE}" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
                                                         <Button id="btnCancelProcess" text="{ddtext>/CANCEL}" icon="sap-icon://sys-cancel" press="onCancel('process')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                                     </Toolbar>
                                                 </t:extension>
@@ -543,7 +543,7 @@
                                     <Button id="btnSubmitMRP" text="{ddtext>/SUBMITMRP}" icon="sap-icon://action" press="onSubmitMRP" tooltip="{ddtext>/SUBMITMRP}" visible="true" />
                                     <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
-                                    <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                    <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onBatchSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIOMatList" icon="sap-icon://sys-cancel" press="onCancel('ioMatList')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                     <Button id="btnExportIOMatList" icon="sap-icon://excel-attachment" press="onExport" tooltip="{ddtext>/EXCELEXPORT}" visible="true">
@@ -607,7 +607,7 @@
                                             <Button id="btnSaveCostHdr" 
                                                 text="{ddtext>/SAVE}"
                                                 icon="sap-icon://save"
-                                                press="onSave('costHdr')" 
+                                                press="onBatchSave('costHdr')" 
                                                 tooltip="{ddtext>/SAVE}"
                                                 visible="false" />
                                             <Button id="btnCancelCostHdr" 
@@ -671,7 +671,7 @@
                                             <Button id="btnSaveCostDtl" 
                                                 text="{ddtext>/SAVE}"
                                                 icon="sap-icon://save"
-                                                press="onSave('costDtls')" 
+                                                press="onBatchSave('costDtls')" 
                                                 tooltip="{ddtext>/SAVE}"
                                                 visible="false" />
                                             <Button id="btnCancelCostDtl" 
