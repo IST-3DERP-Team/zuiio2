@@ -58,6 +58,7 @@ sap.ui.define([
                     sbu: '',
                     currIONo: '',
                     currStyleNo: '',
+                    currVerNo: '',
                     currDlvSeq: '999',
                     currDlvItem: '999',
                 }), "ui2");
@@ -224,7 +225,8 @@ sap.ui.define([
 
                 if (this._styleno != "NEW" && this._ioNo === "NEW") {
                     // alert("Get IO Style Data");
-                    this.getIOSTYLISTData(this._styleno);
+                    let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+                    this.getIOSTYLISTData(strStyle);
                 }
 
                 // console.log(this.getView());
@@ -364,6 +366,10 @@ sap.ui.define([
                     resolve(this.getIODLVData(ioNo));
                 });
                 await _promiseResult;
+
+                this.initStyle();
+                this.initIOMatList();
+                this.initIOCosting();
             },
 
             initIODETColumns: async function () {
@@ -583,7 +589,7 @@ sap.ui.define([
                                     "STYLECD": item.STYLECD,
                                     "STYLENO": item.STYLENO,
                                     "VERNO": item.VERNO,
-                                    "PRODTYP": item.PRODTYP,
+                                    "PRODTYPE": item.PRODTYP,
                                     "SALESGRP": item.SALESGRP,
                                     "SEASONCD": item.SEASONCD,
                                     "CUSTGRP": item.CUSTGRP,
@@ -1255,9 +1261,9 @@ sap.ui.define([
                                     if (rowData[j].CUSTSIZE === colname) {
                                         // console.log(unique[i]);
                                         // console.log(i + " " + colname + " " + unique[i][colname] + " " + rowData[j].CUSTSIZE);
-                                        unique[i][colname + "ORDERQTY"] = rowData[j].ORDERQTY;
+                                        unique[i][colname + "REVORDERQTY"] = rowData[j].REVORDERQTY;
                                         unique[i][colname + "SHIPQTY"] = rowData[j].SHIPQTY;
-                                        unique[i]["IOITEM" + colname + "ORDERQTY"] = rowData[j].IOITEM;
+                                        unique[i]["IOITEM" + colname + "REVORDERQTY"] = rowData[j].IOITEM;
                                         unique[i]["IOITEM" + colname + "SHIPQTY"] = rowData[j].IOITEM;
                                     }
                                 }
@@ -2231,6 +2237,7 @@ sap.ui.define([
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         me._styleVer = oData.VERNO;
+                        me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
                         me._prodplant = oData.PRODPLANT;
 
                         oJSONModel.setData(oData);
@@ -2274,6 +2281,7 @@ sap.ui.define([
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
+                        me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
 
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
                             me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);
@@ -2767,6 +2775,7 @@ sap.ui.define([
             onIOSave: async function (source) {
                 var me = this;
                 var strStyleNo;
+                var strVerNo;
                 var sSource = source;
                 if (sSource === "IOHDR") {
                     var sErrMsg = "";
@@ -2786,6 +2795,7 @@ sap.ui.define([
                     await _promiseResult;
 
                     strStyleNo = this.getView().byId("STYLENO").getValue();
+                    strVerNo = this.getView().byId("VERNO").getValue();
 
                     var oParamIOHeaderData = {
                         STYLECD: this.getView().byId("STYLECD").getValue(),
@@ -2834,6 +2844,7 @@ sap.ui.define([
                                         _newIONo = oData.IONO;
                                         me.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
                                         me.getView().getModel("ui2").setProperty("/currStyleNo", strStyleNo);
+                                        me.getView().getModel("ui2").setProperty("/currVerNo", strVerNo);
 
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
@@ -3087,6 +3098,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(true);
                     this.byId("btnCancelDlvSched").setVisible(true);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -3106,6 +3118,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(false);
                     this.byId("btnCancelDlvSched").setVisible(false);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -3864,7 +3877,9 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 // var vStyle = this._styleNo; //"1000000272";
                 var vStyle = this.getView().getModel("ui2").getProperty("/currStyleNo"); //"1000000272";
-
+                
+                console.log("getStyleHeaderData");
+                console.log(vStyle);
                 setTimeout(() => {
                     this._oModelStyle.read('/HeaderSet', {
                         urlParameters: {
@@ -3873,9 +3888,9 @@ sap.ui.define([
                         success: function (oData, response) {
                             // me._styleVer = oData.results[0].VERNO;
 
-                            me.getStyleDetailedBOM();
-                            me.getStyleMaterialList();
                             me.getStyleColors();
+                            me.getStyleDetailedBOM();
+                            me.getStyleMaterialList();                            
 
                             var oModel = me.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                             var vSBU = me._sbu; //"VER"; 
@@ -4048,7 +4063,7 @@ sap.ui.define([
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
                     styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
-                    verno: this._styleVer //"1"
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
@@ -4228,7 +4243,7 @@ sap.ui.define([
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
                     styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"), //"1000000272",
-                    verno: this._styleVer //"1"
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
                 oModel.read('/StyleMaterialListSet', {
@@ -4257,13 +4272,14 @@ sap.ui.define([
             },
 
             getStyleColors: function () {
-                //get color attributes
+                console.log("get color attributes");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+                let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
-                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo") //"1000000272"
+                    styleno: paramStyle //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesColorSet", {
@@ -4276,13 +4292,14 @@ sap.ui.define([
             },
 
             getStyleSizes: function () {
-                //get sizes attributes
+                console.log("get sizes attributes");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+                let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
-                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo") //"1000000272"
+                    styleno: paramStyle //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesSizeSet", {
@@ -4295,7 +4312,7 @@ sap.ui.define([
             },
 
             getStyleBOMUV: function () {
-                //get BOM by UV 
+                console.log("get BOM by UV");
                 var me = this;
                 var columnData = [];
                 var oModelUV = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
@@ -4314,7 +4331,7 @@ sap.ui.define([
                     pivotArray = me._sizes;
                 }
 
-                //get dynamic columns of BOM by UV
+                console.log("get dynamic columns of BOM by UV");
                 oModelUV.read("/DynamicColumnsSet", {
                     success: function (oData, oResponse) {
                         var columns = oData.results;
@@ -4369,7 +4386,7 @@ sap.ui.define([
             },
 
             getBOMUVTableData: function (columnData, pivot) {
-                //Get BOM by UV actual data
+                console.log("Get BOM by UV actual data");
                 var me = this;
                 var oTable = this.getView().byId("styleBOMUVTab");
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
@@ -4378,7 +4395,7 @@ sap.ui.define([
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
                     styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
-                    verno: this._styleVer, //"1",
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo"),
                     usgcls: usageClass
                 });
                 // console.log(this._styleNo, this._styleVer, usageClass);
@@ -4443,8 +4460,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        // console.log("BOM by UV Pivot");
-                        // console.log(oTable);
+                        console.log("BOM by UV Pivot");
+                        console.log(oTable);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -4575,6 +4592,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(false);
                     this.byId("btnCancelDlvSched").setVisible(false);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -4694,6 +4712,7 @@ sap.ui.define([
                             this.byId("btnDeleteDlvSched").setVisible(false);
                             this.byId("btnCopyDlvSched").setVisible(false);
                             this.byId("btnRefreshDlvSched").setVisible(false);
+                            this.byId("btnGenMatList").setVisible(false);
                             this.byId("btnSaveDlvSched").setVisible(true);
                             this.byId("btnCancelDlvSched").setVisible(true);
                             this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -4852,6 +4871,7 @@ sap.ui.define([
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
                         this.byId("btnRefreshDlvSched").setVisible(true);
+                        this.byId("btnGenMatList").setVisible(true);
                         this.byId("btnSaveDlvSched").setVisible(false);
                         this.byId("btnCancelDlvSched").setVisible(false);
                         this.byId("btnFullScreenDlvSched").setVisible(true);
@@ -4871,6 +4891,7 @@ sap.ui.define([
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
                         this.byId("btnRefreshDlvSched").setVisible(true);
+                        this.byId("btnGenMatList").setVisible(true);
                         this.byId("btnSaveDlvSched").setVisible(false);
                         this.byId("btnCancelDlvSched").setVisible(false);
                         this.byId("btnFullScreenDlvSched").setVisible(true);
@@ -5043,11 +5064,11 @@ sap.ui.define([
                                         if (col.DataType === "DATETIME") {
                                             param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
                                             //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "ORDERQTY") {
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
                                             //SET CUSTSIZE : USE ATTRIBUTE CODE
                                             param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                             //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                            param["ORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
                                             //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
                                             hasMatchingSize = true;
                                         } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
@@ -5068,13 +5089,13 @@ sap.ui.define([
                                 //INSERT CUSTSIZE WITH REVORDERQTY = 0
                                 if (!hasMatchingSize) {
                                     param["CUSTSIZE"] = colSizes.ATTRIBCD;
-                                    param["ORDERQTY"] = "0";
+                                    param["REVORDERQTY"] = "0";
                                     param["SHIPQTY"] = "0";
                                 }
 
                                 //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
                                 this._iosizes.forEach(colSizesRemove => {
-                                    delete param[colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
                                     delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
                                     // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
                                     //     delete param[colSizesRemove.ATTRIBCD];
@@ -5082,9 +5103,9 @@ sap.ui.define([
 
 
                                 // console.log(this._iosizes);
-                                // console.log(entitySet);
-                                // console.log(param);
-                                // console.log(arg);
+                                console.log(entitySet);
+                                console.log(param);
+                                console.log(arg);
 
                                 // return;
 
@@ -5140,6 +5161,7 @@ sap.ui.define([
                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                     me.byId("btnCopyDlvSched").setVisible(true);
                                     me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnGenMatList").setVisible(true);
                                     me.byId("btnSaveDlvSched").setVisible(false);
                                     me.byId("btnCancelDlvSched").setVisible(false);
                                     me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -5239,14 +5261,14 @@ sap.ui.define([
                                             //     param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
                                             // }
                                             //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "ORDERQTY") {
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
                                             //SET CUSTSIZE : USE ATTRIBUTE CODE
                                             param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                             //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                            param["ORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
                                             //SET IOITEM 
-                                            param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "ORDERQTY"]
-                                            updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "ORDERQTY"] + "'"
+                                            param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"]
+                                            updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"] + "'"
 
                                             // param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
                                             // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
@@ -5271,8 +5293,8 @@ sap.ui.define([
                                 // console.log("REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT");
                                 this._iosizes.forEach(colSizesRemove => {
                                     // console.log(colSizesRemove.ATTRIBCD);
-                                    delete param[colSizesRemove.ATTRIBCD + "ORDERQTY"];
-                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "REVORDERQTY"];
                                     delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
                                     delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
                                     // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
@@ -5494,6 +5516,7 @@ sap.ui.define([
                                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                                 me.byId("btnCopyDlvSched").setVisible(true);
                                                 me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
                                                 me.byId("btnSaveDlvSched").setVisible(false);
                                                 me.byId("btnCancelDlvSched").setVisible(false);
                                                 me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -5514,6 +5537,7 @@ sap.ui.define([
                                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                                 me.byId("btnCopyDlvSched").setVisible(true);
                                                 me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
                                                 me.byId("btnSaveDlvSched").setVisible(false);
                                                 me.byId("btnCancelDlvSched").setVisible(false);
                                                 me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -5698,6 +5722,7 @@ sap.ui.define([
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
                                                     me.byId("btnRefreshDlvSched").setVisible(true);
+                                                    me.byId("btnGenMatList").setVisible(true);
                                                     me.byId("btnSaveDlvSched").setVisible(false);
                                                     me.byId("btnCancelDlvSched").setVisible(false);
                                                     me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -5718,6 +5743,7 @@ sap.ui.define([
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
                                                     me.byId("btnRefreshDlvSched").setVisible(true);
+                                                    me.byId("btnGenMatList").setVisible(true);
                                                     me.byId("btnSaveDlvSched").setVisible(false);
                                                     me.byId("btnCancelDlvSched").setVisible(false);
                                                     me.byId("btnFullScreenDlvSched").setVisible(true);
