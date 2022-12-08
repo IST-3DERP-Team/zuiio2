@@ -311,6 +311,50 @@ sap.ui.define([
                 }
             },
 
+            onBatchSaveMaterialList(arg) {
+                // alert("on Save");
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                var oTableModel = this.getView().byId("materialListTab").getModel("materialList");
+                var oData = oTableModel.getData();
+                var iEdited = 0;
+                var oEditedData = oData.filter(fItem => fItem.MATNO !== "");
+
+                if (oEditedData.length === 0) {
+                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                }
+                else {
+                    Common.openProcessingDialog(me);
+
+                    oModel.setUseBatch(true);
+                    oModel.setDeferredGroups(["update"]);
+                    oModel.setHeaders({ UPDTYP: "MAT" });
+
+                    var mParameters = {
+                        "groupId":"update"
+                    }
+
+                    oEditedData.forEach(item => {
+                        param["MATNO"] = item.MATNO;
+
+                        console.log(entitySet);
+                        console.log(param);
+                        oModel.update("/MainSet(IONO='" + item.IONO + "',SEQNO='" + item.SEQNO + "')", param, mParameters);
+                    })
+                    
+                    oModel.submitChanges({
+                        groupId: "update",
+                        success: function (oData, oResponse) {
+                            Common.closeProcessingDialog(me);
+                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        },
+                        error: function () {
+                            Common.closeProcessingDialog(me);
+                        }
+                    })
+                }
+            },
+
             //******************************************* */
             // Search Helps
             //******************************************* */
