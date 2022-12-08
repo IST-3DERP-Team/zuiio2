@@ -7226,7 +7226,6 @@ sap.ui.define([
                     } else {
                         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                     }
-
                 } else {
                     Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
@@ -7251,7 +7250,7 @@ sap.ui.define([
                         "IONO": this._ioNo,
                         "MATTYPGRP": arg
                     };
-                    console.log(oParam)
+                    
                     this._oModelStyle.create("/GenIOMatListSet", oParam, {
                         method: "POST",
                         success: function (data, oResponse) {
@@ -7262,6 +7261,37 @@ sap.ui.define([
                             }
                             else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+
+                                //auto assign material no
+                                var oModelIOMatList = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                                oModelIOMatList.read('/MainSet', {
+                                    urlParameters: {
+                                        "$filter": "IONO eq '" + this._ioNo + "'"
+                                    },
+                                    success: function (oData, response) {
+                                        var aParam = [];
+                                        oData.results.forEach((row, index) => {
+                                            aParam.push({
+                                                SEQNO: row.SEQNO,
+                                                GMC: row.GMC,
+                                                MATDESC1: row.MATDESC1,
+                                                MATNO: ""                                                
+                                            })
+                                        });
+
+                                        var oEntry = {
+                                            IONO: me.ioNo,
+                                            N_AutoAssign: aParam
+                                        }
+
+                                        oModelIOMatList.create("/AutoAssignSet", oEntry, {
+                                            method: "POST",
+                                            success: function(oDataReturn, oResponse) { },
+                                            error: function(err) { }
+                                        });
+                                    },
+                                    error: function (err) { }
+                                })
                             }
                         },
                         error: function (err) {

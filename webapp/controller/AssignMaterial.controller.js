@@ -104,7 +104,7 @@ sap.ui.define([
 
                     oSelectedIndices.forEach((item, index) => {
                         if (aData.at(item).MATNO === "") {
-                            aParam.push({
+                            aParam.push({ 
                                 SEQNO: aData.at(item).SEQNO,
                                 GMC: aData.at(item).GMC,
                                 MATDESC1: aData.at(item).MATDESC1,
