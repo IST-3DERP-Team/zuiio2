@@ -470,7 +470,7 @@ sap.ui.define([
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
-                alert(vIONo + " " + vDlvSeq);
+                // alert(vIONo + " " + vDlvSeq);
 
                 var me = this;
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -502,8 +502,8 @@ sap.ui.define([
                 if (ioNo === "NEW")
                     return;
 
-                console.log("getIODLVData");
-                console.log(ioNo);
+                // console.log("getIODLVData");
+                // console.log(ioNo);
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read('/IODLVSet', {
@@ -511,8 +511,8 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
-                                console.log("getIODLVData");
-                                console.log(oData);
+                                // console.log("getIODLVData");
+                                // console.log(oData);
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
                                         item.ACTIVE = "X"
@@ -534,7 +534,7 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
+                // console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
             },
 
             // getIODETData: async function () {
@@ -860,8 +860,8 @@ sap.ui.define([
                     var pivotArray;
                     pivotArray = me._iosizes;
 
-                    console.log("pivotArray");
-                    console.log(pivotArray);
+                    // console.log("pivotArray");
+                    // console.log(pivotArray);
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
 
@@ -3634,9 +3634,9 @@ sap.ui.define([
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                console.log("reloadIOData");
-                console.log(cIONo);
-                console.log(cDlvSeq);
+                // console.log("reloadIOData");
+                // console.log(cIONo);
+                // console.log(cDlvSeq);
 
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
 
@@ -3666,8 +3666,8 @@ sap.ui.define([
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
                                         item.ACTIVE = "X"
-                                        console.log("index zero Delivery Sequence");
-                                        console.log(item.DLVSEQ);
+                                        // console.log("index zero Delivery Sequence");
+                                        // console.log(item.DLVSEQ);
                                         me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
                                     } else
                                         item.ACTIVE = ""
@@ -3686,8 +3686,8 @@ sap.ui.define([
                     // })
                     // await _promiseResult;
 
-                    console.log("reload Data new active Seq");
-                    console.log(me.getView().getModel("ui2").setProperty("/currDlvSeq"));
+                    // console.log("reload Data new active Seq");
+                    // console.log(me.getView().getModel("ui2").setProperty("/currDlvSeq"));
 
 
                 } else {
@@ -3701,11 +3701,11 @@ sap.ui.define([
                             // console.log(ioNo);
                             // console.log(oData);
                             oData.results.forEach((item, index) => {
-                                console.log(item);
+                                // console.log(item);
                                 if (index === 0) {
                                     item.ACTIVE = "X"
-                                    console.log("index zero Delivery Sequence");
-                                    console.log(item.DLVSEQ);
+                                    // console.log("index zero Delivery Sequence");
+                                    // console.log(item.DLVSEQ);
                                     me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
                                 } else
                                     item.ACTIVE = ""
@@ -3733,8 +3733,8 @@ sap.ui.define([
                     // })
                     // await _promiseResult;
 
-                    console.log("reload Data new active Seq");
-                    console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
+                    // console.log("reload Data new active Seq");
+                    // console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
                 }
 
                 // this.getReloadIOColumnProp();
@@ -8326,7 +8326,7 @@ sap.ui.define([
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
                     });
-                    console.log(this._sbu, this._prodplant, vIONo)
+                    // console.log(this._sbu, this._prodplant, vIONo)
                     this._oModelIOMatList.read('/MainSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"
