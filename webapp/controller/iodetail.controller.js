@@ -7365,8 +7365,9 @@ sap.ui.define([
                 var oParam = {};
                 var oMessage;
                 var hasValid = false;
+                var vIONo = this._ioNo
 
-                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (iAccRowCount + iFabRowCount > 0) {
                     oParam = {
@@ -7384,7 +7385,7 @@ sap.ui.define([
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
                                     // console.log("FAB - " + oMessage.message);
 
-                                    if (oMessage.message === "0")
+                                    if (oMessage.message === "1")
                                         hasValid = true;
 
                                     resolve();
@@ -7400,7 +7401,7 @@ sap.ui.define([
 
                     oParam = {
                         "SBU": this._sbu,
-                        "IONO": this._ioNo,
+                        "IONO": vIONo,
                         "MATTYPGRP": "ACC"
                     };
                     // console.log(oParam)
@@ -7412,7 +7413,7 @@ sap.ui.define([
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
                                     // console.log("ACC - " + oMessage.message);
 
-                                    if (oMessage.message === "0")
+                                    if (oMessage.message === "1")
                                         hasValid = true;
 
                                     resolve();
@@ -7430,13 +7431,12 @@ sap.ui.define([
                     if (hasValid === false) {
                         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                     } else {
+                        me.onRefresh("ioMatList");
                         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                     }
                 } else {
                     Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
-
-                me.onRefresh("ioMatList");
             },
 
             onGenMatList(arg) {
