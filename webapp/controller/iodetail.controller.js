@@ -7341,6 +7341,8 @@ sap.ui.define([
                             }
                             else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                                
+                                me.onRefresh("ioMatList");
                             }
                         },
                         error: function (err) {
