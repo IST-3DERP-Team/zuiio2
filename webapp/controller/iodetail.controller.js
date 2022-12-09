@@ -2314,6 +2314,8 @@ sap.ui.define([
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
+                        me._styleVer = oData.VERNO;
+                        me._prodplant = oData.PRODPLANT;
                         me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
 
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
@@ -7309,6 +7311,9 @@ sap.ui.define([
             onGenMatList(arg) {
                 var me = this;
                 var iRowCount = 0;
+                var vIONo = this._ioNo
+                
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");               
 
                 if (arg === "ACC") {
                     // console.log(this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length)
@@ -7322,10 +7327,10 @@ sap.ui.define([
                 if (iRowCount > 0) {
                     var oParam = {
                         "SBU": this._sbu,
-                        "IONO": this._ioNo,
+                        "IONO": vIONo,
                         "MATTYPGRP": arg
                     };
-                    
+                    console.log(oParam)
                     this._oModelStyle.create("/GenIOMatListSet", oParam, {
                         method: "POST",
                         success: function (data, oResponse) {
@@ -7336,37 +7341,6 @@ sap.ui.define([
                             }
                             else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
-
-                                //auto assign material no
-                                var oModelIOMatList = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
-                                oModelIOMatList.read('/MainSet', {
-                                    urlParameters: {
-                                        "$filter": "IONO eq '" + this._ioNo + "'"
-                                    },
-                                    success: function (oData, response) {
-                                        var aParam = [];
-                                        oData.results.forEach((row, index) => {
-                                            aParam.push({
-                                                SEQNO: row.SEQNO,
-                                                GMC: row.GMC,
-                                                MATDESC1: row.MATDESC1,
-                                                MATNO: ""                                                
-                                            })
-                                        });
-
-                                        var oEntry = {
-                                            IONO: me.ioNo,
-                                            N_AutoAssign: aParam
-                                        }
-
-                                        oModelIOMatList.create("/AutoAssignSet", oEntry, {
-                                            method: "POST",
-                                            success: function(oDataReturn, oResponse) { },
-                                            error: function(err) { }
-                                        });
-                                    },
-                                    error: function (err) { }
-                                })
                             }
                         },
                         error: function (err) {
@@ -7892,10 +7866,13 @@ sap.ui.define([
 
             getIOCostDetails(arg1, arg2, arg3) {
                 var me = this;
+                var vIONo = this._ioNo
+                
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo"); 
 
                 this._oModelIOCosting.read('/DetailsSet', {
                     urlParameters: {
-                        "$filter": "IONO eq '" + me._ioNo + "' and CSTYPE eq '" + arg1 + "' and VERSION eq '" + arg2 + "'"
+                        "$filter": "IONO eq '" + vIONo + "' and CSTYPE eq '" + arg1 + "' and VERSION eq '" + arg2 + "'"
                     },
                     success: function (oData) {
                         if (arg3) { Common.closeProcessingDialog(me); }
@@ -8205,6 +8182,9 @@ sap.ui.define([
 
             onRefresh(arg) {
                 var me = this;
+                var vIONo = this._ioNo
+                
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo"); 
 
                 if (arg === "ioMatList") {
                     Common.openProcessingDialog(this, "Processing...");
@@ -8213,10 +8193,10 @@ sap.ui.define([
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
                     });
-
+                    console.log(this._sbu, this._prodplant, vIONo)
                     this._oModelIOMatList.read('/MainSet', {
                         urlParameters: {
-                            "$filter": "IONO eq '" + this._ioNo + "'"
+                            "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
                             Common.closeProcessingDialog(me);
@@ -8252,7 +8232,7 @@ sap.ui.define([
 
                     this._oModelIOCosting.read('/VersionsSet', {
                         urlParameters: {
-                            "$filter": "IONO eq '" + me._ioNo + "'"
+                            "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData) {
                             oData.results.forEach((row, index) => {

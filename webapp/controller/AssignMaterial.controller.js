@@ -317,9 +317,8 @@ sap.ui.define([
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
                 var oTableModel = this.getView().byId("materialListTab").getModel("materialList");
                 var oData = oTableModel.getData();
-                var iEdited = 0;
                 var oEditedData = oData.filter(fItem => fItem.MATNO !== "");
-
+                console.log(oEditedData)
                 if (oEditedData.length === 0) {
                     Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
@@ -330,16 +329,16 @@ sap.ui.define([
                     oModel.setDeferredGroups(["update"]);
                     oModel.setHeaders({ UPDTYP: "MAT" });
 
+                    // var param = {};
                     var mParameters = {
                         "groupId":"update"
                     }
 
                     oEditedData.forEach(item => {
-                        param["MATNO"] = item.MATNO;
-
-                        console.log(entitySet);
-                        console.log(param);
-                        oModel.update("/MainSet(IONO='" + item.IONO + "',SEQNO='" + item.SEQNO + "')", param, mParameters);
+                        // console.log(item.MATNO)
+                        // param["MATNO"] = item.MATNO;
+                        // console.log(param);
+                        oModel.update("/MainSet(IONO='" + item.IONO + "',SEQNO='" + item.SEQNO + "')", { MATNO: item.MATNO }, mParameters);
                     })
                     
                     oModel.submitChanges({
