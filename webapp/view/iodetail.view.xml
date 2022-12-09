@@ -71,6 +71,7 @@
                                                 enableCellFilter="true" 
                                                 selectionMode="Single" 
                                                 selectionBehavior="RowOnly" 
+                                                cellClick="onCellClick"
                                                 alternateRowColors="true"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
                                                 rowSelectionChange="onRowChange">
@@ -96,6 +97,7 @@
                                             enableColumnFreeze="true" 
                                             enableCellFilter="true" 
                                             selectionMode="Single" 
+                                            cellClick="onCellClick"
                                             selectionBehavior="RowSelector" 
                                             alternateRowColors="true"
                                             rowSelectionChange="onRowChange">
