@@ -3647,14 +3647,14 @@ sap.ui.define([
 
                 if (source === "IODETTab") {
                     // _promiseResult = new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                        }, 100);
+                    setTimeout(() => {
+                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    }, 100);
                     //     resolve();
                     // })
                     // await _promiseResult;
 
-                    // _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
                         this._oModel.read("/IODLVSet", {
                             urlParameters: {
                                 "$filter": "IONO eq '" + cIONo + "'"
@@ -3677,11 +3677,12 @@ sap.ui.define([
                                 me._tableRendered = sSource;
                                 // resolve();
                             },
-                            error: function (err) { 
-                                alert(err); 
+                            error: function (err) {
+                                alert(err);
                                 // resolve();
                             }
                         })
+                    }, 100);
                     // })
                     // await _promiseResult;
 
@@ -3691,43 +3692,43 @@ sap.ui.define([
 
                 } else {
                     // _promiseResult = new Promise((resolve, reject) => {
-                        this._oModel.read(sEntitySet, {
-                            urlParameters: {
-                                "$filter": "IONO eq '" + cIONo + "'"
-                            },
-                            success: function (oData, response) {
-                                // console.log("Reload IO Data");
-                                // console.log(ioNo);
-                                // console.log(oData);
-                                oData.results.forEach((item, index) => {
-                                    console.log(item);
-                                    if (index === 0) {
-                                        item.ACTIVE = "X"
-                                        console.log("index zero Delivery Sequence");
-                                        console.log(item.DLVSEQ);
-                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
-                                    } else
-                                        item.ACTIVE = ""
-                                });
-                                me.byId(sSource).getModel().setProperty("/rows", oData.results);
-                                me.byId(sSource).bindRows("/rows");
-                                me._tableRendered = sSource;
+                    this._oModel.read(sEntitySet, {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + cIONo + "'"
+                        },
+                        success: function (oData, response) {
+                            // console.log("Reload IO Data");
+                            // console.log(ioNo);
+                            // console.log(oData);
+                            oData.results.forEach((item, index) => {
+                                console.log(item);
+                                if (index === 0) {
+                                    item.ACTIVE = "X"
+                                    console.log("index zero Delivery Sequence");
+                                    console.log(item.DLVSEQ);
+                                    me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                } else
+                                    item.ACTIVE = ""
+                            });
+                            me.byId(sSource).getModel().setProperty("/rows", oData.results);
+                            me.byId(sSource).bindRows("/rows");
+                            me._tableRendered = sSource;
 
-                                // resolve();
-                            },
-                            error: function (err) { 
-                                alert(err); 
-                                // resolve(); 
-                            }
-                        })
+                            // resolve();
+                        },
+                        error: function (err) {
+                            alert(err);
+                            // resolve(); 
+                        }
+                    })
 
                     // })
                     // await _promiseResult;
                     // this.getReloadIOColumnProp();
 
                     // _promiseResult = new Promise((resolve, reject) => {
-                        me._tblChange = true;
-                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    me._tblChange = true;
+                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
                     //     resolve();
                     // })
                     // await _promiseResult;
@@ -5197,12 +5198,12 @@ sap.ui.define([
                             default: break;
                         }
 
-                        // oModel.setUseBatch(true);
-                        // oModel.setDeferredGroups(["insert"]);
+                        oModel.setUseBatch(true);
+                        oModel.setDeferredGroups(["insert"]);
 
-                        // var mParameters = {
-                        //     "groupId": "insert"
-                        // };
+                        var mParameters = {
+                            "groupId": "insert"
+                        };
 
                         // var aDeferredGroup = oModel.getDeferredGroups().push("insert");
                         // oModel.setDeferredGroups(aDeferredGroup);
@@ -5290,44 +5291,44 @@ sap.ui.define([
 
                                 // return;
 
-                                // //CREATE ENTRIES USING BATCH PROCESSING
-                                // oModel.create(entitySet, param, mParameters);
+                                //CREATE ENTRIES USING BATCH PROCESSING
+                                oModel.create(entitySet, param, mParameters);
 
 
-                                _promiseResult = new Promise((resolve, reject) => {
-                                    setTimeout(() => {
-                                        oModel.create(entitySet, param, {
-                                            method: "POST",
-                                            success: function (data, oResponse) {
-                                                // console.log("Success : " + entitySet);
-                                                resolve();
-                                            },
-                                            error: function () {
-                                                // console.log("Error : " + entitySet);
-                                                iNew++;
-                                                // alert("Error");
-                                                if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
-                                                resolve();
-                                            }
-                                        })
-                                    }, 1000);
-                                });
-                                await _promiseResult;
+                                // _promiseResult = new Promise((resolve, reject) => {
+                                //     setTimeout(() => {
+                                //         oModel.create(entitySet, param, {
+                                //             method: "POST",
+                                //             success: function (data, oResponse) {
+                                //                 // console.log("Success : " + entitySet);
+                                //                 resolve();
+                                //             },
+                                //             error: function () {
+                                //                 // console.log("Error : " + entitySet);
+                                //                 iNew++;
+                                //                 // alert("Error");
+                                //                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                //                 resolve();
+                                //             }
+                                //         })
+                                //     }, 1000);
+                                // });
+                                // await _promiseResult;
 
                             });
 
                             // return;
                             // console.log(oModel);
                             // return;
-                            // oModel.submitChanges({
-                            //     mParameters,
-                            //     // groupId: "insert",
-                            //     success: function (oData, oResponse) {
-                            //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                            //     },
-                            //     error: function (oData, oResponse) {
-                            //     }
-                            // });
+                            oModel.submitChanges({
+                                mParameters,
+                                // groupId: "insert",
+                                success: function (oData, oResponse) {
+                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                },
+                                error: function (oData, oResponse) {
+                                }
+                            });
 
 
                             iNew++;
@@ -7442,8 +7443,8 @@ sap.ui.define([
                 var me = this;
                 var iRowCount = 0;
                 var vIONo = this._ioNo
-                
-                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");               
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (arg === "ACC") {
                     // console.log(this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length)
@@ -7471,7 +7472,7 @@ sap.ui.define([
                             }
                             else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
-                                
+
                                 me.onRefresh("ioMatList");
                             }
                         },
@@ -7999,8 +8000,8 @@ sap.ui.define([
             getIOCostDetails(arg1, arg2, arg3) {
                 var me = this;
                 var vIONo = this._ioNo
-                
-                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo"); 
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 this._oModelIOCosting.read('/DetailsSet', {
                     urlParameters: {
@@ -8315,8 +8316,8 @@ sap.ui.define([
             onRefresh(arg) {
                 var me = this;
                 var vIONo = this._ioNo
-                
-                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo"); 
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (arg === "ioMatList") {
                     Common.openProcessingDialog(this, "Processing...");
