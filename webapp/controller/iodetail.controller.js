@@ -7602,7 +7602,7 @@ sap.ui.define([
                         oParam["MRPTYP"] = "IOMRP";
                         oParam["N_CreateMRPDataParam"] = aParam;
                         oParam["N_CreateMRPDataReturn"] = [];
-
+                        console.log(oParam)
                         oModel.create("/CreateMRPDataSet", oParam, {
                             method: "POST",
                             success: function (oDataReturn, oResponse) {
@@ -7613,6 +7613,7 @@ sap.ui.define([
 
                                 if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
                                     Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
+                                    me.onRefresh("ioMatList");
                                 }
 
                                 me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
