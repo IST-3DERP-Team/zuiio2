@@ -127,7 +127,8 @@ sap.ui.define([
                 // }
 
                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                    oRouter.navTo("Routeioinit", {}, true);
+                oRouter.navTo("Routeioinit", {}, true);
+                console.log(window.history);
             },
 
             _routePatternMatched: async function (oEvent) {
