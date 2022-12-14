@@ -113,10 +113,16 @@ sap.ui.define([
                 this.byId("IOSTATUSTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
+
+                // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+            },
+
+            onExit: function() {
+                sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             },
 
             onNavBack: function () {
-                // var oHistory = History.getInstance();
+                var oHistory = History.getInstance();
                 // var sPreviousHash = oHistory.getPreviousHash();
 
                 // if (sPreviousHash !== undefined) {
@@ -6880,6 +6886,7 @@ sap.ui.define([
 
             onNumberChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
+                console.log(oEvent.getSource());
 
                 var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
 
