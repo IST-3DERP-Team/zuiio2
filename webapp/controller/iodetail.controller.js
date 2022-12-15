@@ -114,28 +114,36 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
+
+                window.onhashchange = function() {
+                    if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
+                        window.history.state.sap.history.forEach((item, index) => {
+                            if (item === "ZSO_IO2-display") window.history.go((index+1) - window.history.state.sap.history.length);
+                        })
+                    }
+                }
             },
 
-            onExit: function() {
-                sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
-            },
+            // onExit: function() {
+            //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
+            // },
 
-            onNavBack: function () {
-                var oHistory = History.getInstance();
-                // var sPreviousHash = oHistory.getPreviousHash();
+            // onNavBack: function (oEvent) {
+            //     // var oHistory = History.getInstance();
+            //     // var sPreviousHash = oHistory.getPreviousHash();
 
-                // if (sPreviousHash !== undefined) {
-                //     window.history.go(-1);
-                // } else {
-                //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                //     oRouter.navTo("Routeioinit", {}, true);
-                // }
-
-                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                oRouter.navTo("Routeioinit", {}, true);
-                console.log(window.history);
-            },
+            //     // if (sPreviousHash !== undefined) {
+            //     //     window.history.go(-1);
+            //     // } else {
+            //     //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //     //     oRouter.navTo("Routeioinit", {}, true);
+            //     // }
+            //     console.log("onNavBack")
+            //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //     oRouter.navTo("Routeioinit", {}, true);
+            //     // console.log(window.history);
+            // },
 
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
@@ -282,8 +290,6 @@ sap.ui.define([
 
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-
-
                 // console.log("getIODETColumnData");
                 // _promiseResult = new Promise((resolve, reject) => {
                 //     setTimeout(() => {
@@ -357,7 +363,14 @@ sap.ui.define([
                 // await _promiseResult;
                 Common.closeLoadingDialog(that);
 
-                // window.open(window.document.URL, "_self");                
+                this._routeToStyle = false;
+                // window.open(window.document.URL, "_self");    
+                // var url = new URL(window.location);
+                // // url.hash = "#ZSO_IO2-display";
+                // // url.href = url.origin + url.pathname + url.search + "#ZSO_IO2-display";
+                // console.log(url.origin + url.pathname + url.search + "#ZSO_IO2-display");
+                // window.history.pushState(window.history.state, '', url.origin + url.pathname + url.search + "#ZSO_IO2-display");
+                // console.log(window.history)
             },
 
             refreshIOData: async function (ioNo) {
@@ -6881,7 +6894,7 @@ sap.ui.define([
                                     }));
                                 }
                             })
-git st                    }
+                    }
                 })
             },
 
@@ -7239,6 +7252,8 @@ git st                    }
                     }
                 }); // navigate to Supplier application
 
+                this._routeToStyle = true;
+
                 // sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then( function (oService) {
                 //     oService.hrefForExternalAsync({
                 //         target : {
@@ -7283,6 +7298,8 @@ git st                    }
                         shellHash: hash
                     }
                 }); // navigate to Supplier application
+
+                this._routeToStyle = true;
             },
 
             onSaveTableLayout(arg) {
