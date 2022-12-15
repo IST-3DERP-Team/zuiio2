@@ -36,6 +36,8 @@ sap.ui.define([
             onInit: function () {
                 that = this;
 
+                // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
+
                 this._ccolumns;
 
                 //get current userid
@@ -43,6 +45,20 @@ sap.ui.define([
                 oModel.loadData("/sap/bc/ui2/start_up").then(() => {
                     this._userid = oModel.oData.id;
                 })
+
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                    
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: function (oEvent) {
+                            // console.log("back")
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                            that.onRefresh();
+                        }
+                    }, oView);
+                }
+
                 this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
                 this._Model2 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -123,17 +139,19 @@ sap.ui.define([
 
             onNavBack: function () {
                 var oHistory = History.getInstance();
-                // var sPreviousHash = oHistory.getPreviousHash();
+                var sPreviousHash = oHistory.getPreviousHash();
 
-                // if (sPreviousHash !== undefined) {
-                //     window.history.go(-1);
-                // } else {
-                //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                //     oRouter.navTo("Routeioinit", {}, true);
-                // }
-
-                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                if (sPreviousHash !== undefined) {
+                    console.log("History");
+                    window.history.go(-1);
+                } else {
+                    console.log("Routeioinit");
+                    var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                     oRouter.navTo("Routeioinit", {}, true);
+                }
+
+                // var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                //     oRouter.navTo("Routeioinit", {}, true);
             },
 
             _routePatternMatched: async function (oEvent) {
