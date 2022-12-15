@@ -76,7 +76,7 @@ sap.ui.define([
                 var sTableName = tableName;
                 sStyleNo = "NEW";
 
-                console.log("IO from Style");
+                // console.log("IO from Style");
                 if (sTableName === "IOStyleSelectTab") {
 
                     console.log("IOStyleSelectTab");
@@ -98,6 +98,8 @@ sap.ui.define([
                         Common.showMessage("No selected row to process.");
                         return;
                     }
+
+
                     // var vSBU = this.getView().getModel("ui").getData().sbu;
                     // var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
 
@@ -125,11 +127,91 @@ sap.ui.define([
 
                 }
 
+                if (sTableName === "IOSDSelectTab") {
+                    console.log(sTableName);
+                    // var oTable = this.byId("IOStyleSelectTab");
+                    var oTable = sap.ui.getCore().byId(sTableName);
+                    var oSelectedIndices = oTable.getSelectedIndices();
+                    var oTmpSelectedIndices = [];
+                    var aData = oTable.getModel("IOSDSELDataModel").getData().results;
+
+                    var oParamData = [];
+                    var oParam = {};
+                    var bProceed = true;
+
+                    if (oSelectedIndices.length <= 0) {
+                        Common.showMessage("No selected row to process.");
+                        return;
+                    }
+
+                    sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
+                    if (oSelectedIndices.length > 0) {
+                        oSelectedIndices.forEach(item => {
+                            oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                        })
+
+                        oSelectedIndices = oTmpSelectedIndices;
+
+                        // this.getOwnerComponent().getModel("routeModel").setProperty("/rows", oSelectedIndices, null, true);
+
+                        // console.log("Route Model");
+                        // console.log(this.getOwnerComponent().getModel("routeModel"));
+
+                        // var aItems = this.getView().byId(sTableName).getItems();
+                        // var aSelectedItems = [];
+                        // for (var i = 0; i < aItems.length; i++) {
+                        //     if (aItems[i].getSelected()) {
+                        //         aSelectedItems.push(aItems[i]);
+                        //     }
+                        // }                       
+
+                        var aSelectedItems = [];
+                        oSelectedIndices.forEach(item => {
+                            // alert(aData.at(item).STYLENO);
+                            // sStyleNo = aData.at(item).STYLENO;
+                            aSelectedItems.push(aData.at(item));
+
+                        })
+
+                        // console.log("Route Model 1");
+                        this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
+
+                        var rowData = this.getOwnerComponent().getModel("routeModel");
+                        console.log("rowData");
+                        console.log(rowData);
+                        // console.log("Route Model 2");
+
+                        // // // console.log("Route Model");
+                        // console.log(this.getOwnerComponent().getModel("routeModel"));
+
+                        // console.log("Selected Items");
+                        // console.log(aSelectedItems);
+
+                        var unique = rowData.filter((rowData, index, self) =>
+                        index === self.findIndex((t) => (t.STYLENO === rowData.STYLENO)));
+
+                        // var unique = rowData.filter((rowData, index, self) =>
+                        // index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
+                        //     && t.PRODTYP === rowData.PRODTYP  && t.SEASONCD === rowData.SEASONCD  && t.STYLECD === rowData.STYLECD  && t.VERNO === rowData.VERNO
+                        //     && t.CUSTGRP === rowData.CUSTGRP  && t.UOM === rowData.UOM)));
+
+                        console.log("unique");    
+                        console.log(unique);
+                    }
+                    return;
+
+                    that._router.navTo("RouteIODetail", {
+                        iono: "NEW",
+                        sbu: that._sbu,
+                        styleno: sStyleNo
+                    });
+                }
+
                 me._CopyStyleDialog.close();
 
             },
 
-            filterGlobally: function(oEvent) {
+            filterGlobally: function (oEvent) {
                 // var oTable = oEvent.getSource().oParent.oParent;
                 var oTable = oEvent.getSource().oParent.oParent.oParent.oParent;
                 // var sTable = oTable.getBindingInfo("rows").model;
@@ -142,7 +224,7 @@ sap.ui.define([
                 console.log(sQuery);
 
                 if (sTable === "IOStyleSelectTab") {
-                    this.byId("searchFieldAttr").setProperty("value", "");
+                    this.byId("setTableColumns").setProperty("value", "");
                 }
 
                 this.exeGlobalSearch(sQuery, sTable);
@@ -151,7 +233,7 @@ sap.ui.define([
             exeGlobalSearch(arg1, arg2) {
                 var oFilter = null;
                 var aFilter = [];
-                
+
                 if (arg1) {
                     this._aFilterableColumns[arg2].forEach(item => {
                         var sDataType = this._aColumns[arg2].filter(col => col.name === item.name)[0].type;
@@ -162,13 +244,29 @@ sap.ui.define([
 
                     oFilter = new Filter(aFilter, false);
                 }
-    
+
                 this.byId(arg2).getBinding("rows").filter(oFilter, "Application");
 
                 if (arg1 && arg2 === "IOStyleSelectTab") {
-                    var vStyleNo = this.getView().getModel("IOSTYSELDataModel").getData().results.filter((item,index) => index === this.byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
+                    var vStyleNo = this.getView().getModel("IOSTYSELDataModel").getData().results.filter((item, index) => index === this.byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
                     this.getView().getModel("ui").setProperty("/activeSTYLENO", vStyleNo);
                 }
+            },
+
+            getIOSDLISTData: function () {
+                var me = this;
+                var oView = this.getView();
+                var oModel = this.getOwnerComponent().getModel();
+                var oJSONModel = new JSONModel();
+                var entitySet = "/IOSDLISTSet"
+                oModel.read(entitySet, {
+                    success: function (oData, oResponse) {
+                        oJSONModel.setData(oData);
+                        oView.setModel(oJSONModel, "IOSDSELDataModel");
+                        console.log(oView.setModel(oJSONModel, "IOSDSELDataModel"));
+                    },
+                    error: function () { }
+                })
             },
 
             getIOSTYLISTData: function () {
@@ -735,10 +833,13 @@ sap.ui.define([
                     me._IOfromStyleDialog.open();
 
                 } else if (sSource === "SalesDoc") {
-                    Common.showMessge("Ongoing ...");
-                    return;
+                    // Common.showMessge("Ongoing ...");
+                    // return;
 
                     if (!me._IOfromSalesDocDialog) {
+
+                        this.getIOSDLISTData();
+
                         me._IOfromSalesDocDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromSalesDoc", me);
                         me.getView().addDependent(me._IOfromSalesDocDialog);
                     }

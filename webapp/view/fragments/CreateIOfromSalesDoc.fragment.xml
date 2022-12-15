@@ -2,46 +2,199 @@
     xmlns:core="sap.ui.core" 
     xmlns:f="sap.ui.layout.form" 
     xmlns:l="sap.ui.layout"
-    xmlns:t="sap.ui.table">
+    xmlns:mvc="sap.ui.core.mvc"
+    class="sapUiSizeCompact" 
+    xmlns:tnt="sap.tnt"
+    xmlns:c="zuiio2.control" 
+    xmlns:t="sap.ui.table"
+    xmlns:t2="sap.m.Table">
 
-	<Dialog title="Selec Sales Document" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="80%">
-		<Panel height="400px" >
+	<Dialog title="Select Sales Document" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="100%">
+		<Panel width="100%" height="100%" class="sapUiNoContentPadding">
 
-           
-            <!-- New Style Details -->
+           <Toolbar>
+            <ToolbarSpacer/>
+            <SearchField
+                id="searchFieldSaldoc"
+                placeholder="Filter"
+                value=""
+                search="filterGlobally"
+                width="15rem"/>
+           </Toolbar>
             <!-- Versions Table -->
-            <!-- <t:Table id="versionsTableMain" rows="{VersionsDataModel>/results}" class="sapUiSizeCompact">
+            <t:Table id="IOSDSelectTab"     
+                rows="{IOSDSELDataModel>/results}"             
+                class="sapUiSizeCompact"
+                showColumnVisibilityMenu="true" 
+                enableColumnFreeze="true"
+                enableCellFilter="true"
+                selectionMode="MultiToggle"
+                selectionBehavior="RowSelector"
+                alternateRowColors="true">
                 <t:columns>
-                    <t:Column width="5rem" filterType="" filterProperty="Verno" sortProperty="Verno">
-                        <Label text="{i18n>Version}"/>
+                    <t:Column width="120px" filterProperty="SALESDOCNO" sortProperty="SALESDOCNO">
+                        <Label text="{i18n>SALESDOCNO}"/>
                         <t:template>
-                            <Text text="{VersionsDataModel>Verno}" textAlign="End"/>
+                            <Text text="{IOSDSELDataModel>SALESDOCNO}"  textAlign="End"/>
                         </t:template>
                     </t:Column>
-                    <t:Column width="6rem" hAlign="Center" sortProperty="Currentver">
-                        <Label text="{i18n>VerStatus}" />
+                    <t:Column width="120px" filterProperty="SALESDOCITEM" sortProperty="SALESDOCITEM">
+                        <Label text="{i18n>SALESDOCITEM}"/>
                         <t:template>
-                            <tnt:InfoLabel id="il8" text="{= ${VersionsDataModel>Currentver} === true ? 'Current' : ' ' }" colorScheme="{= ${VersionsDataModel>Currentver} === true ? 8 : 7 }" displayOnly= "true"
-                                visible="{VersionsDataModel>Currentver}"/>
+                            <Text text="{IOSDSELDataModel>SALESDOCITEM}"  textAlign="End"/>
                         </t:template>
                     </t:Column>
-                    <t:Column width="15rem" filterProperty="Desc1" sortProperty="Desc1">
-                        <Label text="{i18n>Description}" />
+                    <t:Column width="100px" filterProperty="QTY" sortProperty="QTY">
+                        <Label text="{i18n>QTY}"/>
                         <t:template>
-                            <Text text="{VersionsDataModel>Desc1}"/>
+                            <Text text="{IOSDSELDataModel>QTY}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="120px" filterProperty="DLVDT" sortProperty="DLVDT">
+                        <Label text="{i18n>DLVDT}"/>
+                        <t:template>
+                            <!-- <Text text="{IOSDSELDataModel>DLVDT}"  textAlign="End"/> -->
+                            <Text text="{path: 'IOSDSELDataModel>DLVDT', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MM/dd/yyyy'}}"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="140px" filterProperty="CUSTCOLOR" sortProperty="CUSTCOLOR">
+                        <Label text="{i18n>CUSTCOLOR}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTCOLOR}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="140px" filterProperty="CUSTDEST" sortProperty="CUSTDEST">
+                        <Label text="{i18n>CUSTDEST}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTDEST}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="140px" filterProperty="CUSTSIZE" sortProperty="CUSSIZE">
+                        <Label text="{i18n>CUSTDEST}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTSIZE}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="100px" filterProperty="UNITPRICE" sortProperty="UNITPRICE">
+                        <Label text="{i18n>UNITPRICE}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>UNITPRICE}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>   
+                    <t:Column width="100px" filterProperty="CPONO" sortProperty="CPONO">
+                        <Label text="{i18n>CPONO}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CPONO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>   
+                    <t:Column width="100px" filterProperty="CPOREV" sortProperty="CPOREV">
+                        <Label text="{i18n>CPOREV}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CPOREV}"  textAlign="End"/>
                         </t:template>
                     </t:Column>
-                    <t:Column width="15rem" filterProperty="Desc2" sortProperty="Desc2">
-                        <Label text="{i18n>Description}" />
+                    <t:Column width="100px" filterProperty="CPOITEM" sortProperty="CPOITEM">
+                        <Label text="{i18n>CPOITEM}"/>
                         <t:template>
-                            <Text text="{VersionsDataModel>Desc2}"/>
+                            <Text text="{IOSDSELDataModel>CPOITEM}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="100px" filterProperty="CPODT" sortProperty="CPODT">
+                        <Label text="{i18n>CPODT}"/>
+                        <t:template>
+                            <!-- <Text text="{IOSDSELDataModel>CPODT}"  textAlign="End"/> -->
+                            <Text text="{path: 'IOSDSELDataModel>CPODT', type: 'sap.ui.model.type.Date', formatOptions: {pattern: 'MM/dd/yyyy'}}"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="140px" filterProperty="CUSTSHIPTO" sortProperty="CUSTSHIPTO">
+                        <Label text="{i18n>CUSTSHIPTO}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTSHIPTO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="140px" filterProperty="CUSTBILLTO" sortProperty="CUSTBILLTO">
+                        <Label text="{i18n>CUSTBILLTO}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTBILLTO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="100px" filterProperty="SHIPMODE" sortProperty="SHIPMODE">
+                        <Label text="{i18n>SHIPMODE}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>SHIPMODE}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="130px" filterProperty="PAYMETHODCD" sortProperty="PAYMETHODCD">
+                        <Label text="{i18n>PAYMETHODCD}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>PAYMETHODCD}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="100px" filterProperty="SALESGRP" sortProperty="SALESGRP">
+                        <Label text="{i18n>SALESGRP}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>SALESGRP}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>     
+                    <t:Column width="130px" filterProperty="CUSTGRP" sortProperty="CUSTGRP">
+                        <Label text="{i18n>CUSTGRP}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTGRP}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="130px" filterProperty="STYLENO" sortProperty="STYLENO">
+                        <Label text="{i18n>STYLENO_}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>STYLENO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="100px" filterProperty="VERNO" sortProperty="VERNO">
+                        <Label text="{i18n>VERNO}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>VERNO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="140px" filterProperty="CUSTSOLDTO" sortProperty="CUSTSOLDTO">
+                        <Label text="{i18n>CUSTSOLDTO}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CUSTSOLDTO}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>  
+                    <t:Column width="100px" filterProperty="UOM" sortProperty="UOM">
+                        <Label text="{i18n>UOM}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>UOM}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="120px" filterProperty="CURRENCYCD" sortProperty="CURRENCYCD">
+                        <Label text="{i18n>CURRENCYCD}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>CURRENCYCD}"  textAlign="End"/>
                         </t:template>
                     </t:Column>
+                    <t:Column width="250px" filterProperty="STYLECD" sortProperty="STYLECD">
+                        <Label text="{i18n>STYLECD}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>STYLECD}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column> 
+                    <t:Column width="120px" filterProperty="PRODTYP" sortProperty="PRODTYP">
+                        <Label text="{i18n>PRODTYP}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>PRODTYP}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>                    
+                    <t:Column width="120px" filterProperty="SEASONCD" sortProperty="SEASONCD">
+                        <Label text="{i18n>SEASONCD}"/>
+                        <t:template>
+                            <Text text="{IOSDSELDataModel>SEASONCD}"  textAlign="End"/>
+                        </t:template>
+                    </t:Column>   
                 </t:columns>
-            </t:Table> -->
+            </t:Table> 
 		</Panel>
 		<buttons>
-			<Button text="{i18n>Select}" press="onfragmentIOSelect" tooltip="Select"/>
+			<Button text="{i18n>Select}" press="onfragmentIOSelect('IOSDSelectTab')" tooltip="Select"/>
 			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
 		</buttons>
 	</Dialog>
