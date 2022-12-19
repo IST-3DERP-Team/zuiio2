@@ -79,17 +79,17 @@ sap.ui.define([
                 // console.log("IO from Style");
                 if (sTableName === "IOStyleSelectTab") {
 
-                    console.log("IOStyleSelectTab");
+                    // console.log("IOStyleSelectTab");
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
-                    console.log(oTable);
+                    // console.log(oTable);
                     var oSelectedIndices = oTable.getSelectedIndices();
-                    console.log(oTable.getSelectedIndices());
+                    // console.log(oTable.getSelectedIndices());
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
 
-                    console.log(aData);
-                    console.log(oTable.getBinding("rows"));
+                    // console.log(aData);
+                    // console.log(oTable.getBinding("rows"));
                     var oParamData = [];
                     var oParam = {};
                     var bProceed = true;
@@ -128,7 +128,7 @@ sap.ui.define([
                 }
 
                 if (sTableName === "IOSDSelectTab") {
-                    console.log(sTableName);
+                    // console.log(sTableName);
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId(sTableName);
                     var oSelectedIndices = oTable.getSelectedIndices();
@@ -152,19 +152,6 @@ sap.ui.define([
 
                         oSelectedIndices = oTmpSelectedIndices;
 
-                        // this.getOwnerComponent().getModel("routeModel").setProperty("/rows", oSelectedIndices, null, true);
-
-                        // console.log("Route Model");
-                        // console.log(this.getOwnerComponent().getModel("routeModel"));
-
-                        // var aItems = this.getView().byId(sTableName).getItems();
-                        // var aSelectedItems = [];
-                        // for (var i = 0; i < aItems.length; i++) {
-                        //     if (aItems[i].getSelected()) {
-                        //         aSelectedItems.push(aItems[i]);
-                        //     }
-                        // }                       
-
                         var aSelectedItems = [];
                         oSelectedIndices.forEach(item => {
                             // alert(aData.at(item).STYLENO);
@@ -176,29 +163,38 @@ sap.ui.define([
                         // console.log("Route Model 1");
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
-                        var rowData = this.getOwnerComponent().getModel("routeModel");
-                        console.log("rowData");
-                        console.log(rowData);
-                        // console.log("Route Model 2");
-
-                        // // // console.log("Route Model");
-                        // console.log(this.getOwnerComponent().getModel("routeModel"));
-
-                        // console.log("Selected Items");
-                        // console.log(aSelectedItems);
+                        var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
+                        // console.log("rowData");
+                        // console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
-                        index === self.findIndex((t) => (t.STYLENO === rowData.STYLENO)));
+                        index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
+                            && t.PRODTYP === rowData.PRODTYP  && t.SEASONCD === rowData.SEASONCD  && t.STYLECD === rowData.STYLECD  && t.VERNO === rowData.VERNO
+                            && t.CUSTGRP === rowData.CUSTGRP)));
 
-                        // var unique = rowData.filter((rowData, index, self) =>
-                        // index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
-                        //     && t.PRODTYP === rowData.PRODTYP  && t.SEASONCD === rowData.SEASONCD  && t.STYLECD === rowData.STYLECD  && t.VERNO === rowData.VERNO
-                        //     && t.CUSTGRP === rowData.CUSTGRP  && t.UOM === rowData.UOM)));
+                        // console.log("unique");    
+                        // console.log(unique);
 
-                        console.log("unique");    
-                        console.log(unique);
+                        if(rowData.length <= 0) {
+                            Common.showMessage("No row/s selected.");
+                            this.getOwnerComponent().getModel("routeModel").setData(null);
+                            return;
+                        }
+
+                        if(unique.length > 1){
+                            Common.showMessage("Selected items must have the same: Style No. / Style Code / Season  Sales Group / Customer Group / Product Type / UOM");
+                            this.getOwnerComponent().getModel("routeModel").setData(null);
+                            return;
+                        } else {
+                            unique.forEach(item => {
+                                // alert(item.STYLENO);
+                                sStyleNo = item.STYLENO;
+                            })
+                        }
                     }
-                    return;
+                    // return;
+                    // console.log(that._sbu);
+                    // console.log(sStyleNo);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
@@ -216,12 +212,12 @@ sap.ui.define([
                 var oTable = oEvent.getSource().oParent.oParent.oParent.oParent;
                 // var sTable = oTable.getBindingInfo("rows").model;
                 var sTable = oTable.getBindingInfo("rows");
-                console.log("sTable");
-                console.log(sTable);
+                // console.log("sTable");
+                // console.log(sTable);
                 var sQuery = oEvent.getParameter("query");
 
-                console.log("sQuery");
-                console.log(sQuery);
+                // console.log("sQuery");
+                // console.log(sQuery);
 
                 if (sTable === "IOStyleSelectTab") {
                     this.byId("setTableColumns").setProperty("value", "");
@@ -263,7 +259,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSDSELDataModel");
-                        console.log(oView.setModel(oJSONModel, "IOSDSELDataModel"));
+                        // console.log(oView.setModel(oJSONModel, "IOSDSELDataModel"));
                     },
                     error: function () { }
                 })
@@ -313,7 +309,7 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
-                        console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
+                        // console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
                     },
                     error: function () { }
                 })
@@ -380,6 +376,9 @@ sap.ui.define([
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
+
+                    // console.log("sColumnSortOrder");
+                    // console.log(sColumnSortOrder);
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
@@ -600,6 +599,8 @@ sap.ui.define([
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
                     // var sColumnToolTip = context.getObject().Tooltip;
+
+                    // console.log(context.getObject());
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
@@ -1035,10 +1036,14 @@ sap.ui.define([
             },
 
             onCreateIO: function (createTyp) {
+                // console.log("on Create IO");
                 if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
                     Common.showMessage("SBU required.");
                     return;
                 }
+
+                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;
+
                 var screateTyp = createTyp;
                 // Common.showMessage("Create IO : " + screateTyp);
                 that.setChangeStatus(false); //remove change flag

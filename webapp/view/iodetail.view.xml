@@ -49,7 +49,7 @@
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="IO Header" key="itfIOHDR">
                         <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
-                        <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" class="sapUiNoContentPadding" stretchContentHeight="false" applyContentPadding="false">
+                        <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" class="IODetailSection"  stretchContentHeight="true" applyContentPadding="false">
                             <items>
                                 <!-- ATTRIBUTES -->
                                 <IconTabFilter text="Attributes" key="itfIOATTRIB">
@@ -62,7 +62,7 @@
                                         <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
                                     </OverflowToolbar>
 
-                                    <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
+                                    <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
                                         <t:Table id="IOATTRIBTab" 
                                                 class="sapUiSizeCompact sidePadding" 
                                                 visibleRowCountMode="Auto" 
@@ -74,12 +74,13 @@
                                                 cellClick="onCellClick"
                                                 alternateRowColors="true"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
-                                                rowSelectionChange="onRowChange">
+                                                rowSelectionChange="onRowChange"
+                                                >
                                             <t:layoutData>
-                                                <FlexItemData growFactor="1" baseSize="0%" />
-                                            </t:layoutData>
+                                            <FlexItemData growFactor="1" baseSize="0%" />
+                                        </t:layoutData>
                                         </t:Table>
-                                    </Panel>
+                                    <!-- </Panel> -->
                                 </IconTabFilter>
                                 <!-- STATUS -->
                                 <IconTabFilter text="Status" key="itfIOSTATUS">

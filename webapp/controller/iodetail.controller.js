@@ -26,6 +26,9 @@ sap.ui.define([
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
 
+        var hasSDData = false;
+        var uniqueSDData;
+
         var _sStyleNo, _sVerNo, _sStyleCd, _sProdTyp, _sSalesGrp, _sSeasonCd, _sCustGrp, _sUOM;
 
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
@@ -48,7 +51,7 @@ sap.ui.define([
 
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
                     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-                    
+
                     var oView = this.getView();
                     oView.addEventDelegate({
                         onAfterShow: function (oEvent) {
@@ -132,13 +135,13 @@ sap.ui.define([
 
                 // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
 
-                window.onhashchange = function() {
-                    if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
-                        window.history.state.sap.history.forEach((item, index) => {
-                            if (item === "ZSO_IO2-display") window.history.go((index+1) - window.history.state.sap.history.length);
-                        })
-                    }
-                }
+                // window.onhashchange = function () {
+                //     if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
+                //         window.history.state.sap.history.forEach((item, index) => {
+                //             if (item === "ZSO_IO2-display") window.history.go((index + 1) - window.history.state.sap.history.length);
+                //         })
+                //     }
+                // }
             },
 
             // onExit: function() {
@@ -164,6 +167,9 @@ sap.ui.define([
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
+
+                me.hasSDData = false;
+
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
                 this._styleno = oEvent.getParameter("arguments").styleno; //get style no from route pattern
@@ -173,6 +179,25 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
 
+                // console.log("Sales Document Data");
+                // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
+
+                var SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
+                
+                // console.log(SalDocData);
+                // console.log(SalDocData.length);
+
+                // if(SalDocData.length > 0) {
+                //     me.hasSDData = true;
+                //     me.uniqueSDData = SalDocData.filter((SalDocData, index, self) =>
+                //     index === self.findIndex((t) => (t.SALESGRP === SalDocData.SALESGRP && t.STYLENO === SalDocData.STYLENO && t.UOM === SalDocData.UOM
+                //         && t.PRODTYP === SalDocData.PRODTYP  && t.SEASONCD === SalDocData.SEASONCD  && t.STYLECD === SalDocData.STYLECD  && t.VERNO === SalDocData.VERNO
+                //         && t.CUSTGRP === SalDocData.CUSTGRP)));
+                // }                    
+
+                // console.log("New IO - SD Data");
+                // console.log(me.uniqueSDData);
+                
                 // alert(this._ioNo);
                 //pivot arrays
                 this._iocolors;
@@ -261,6 +286,10 @@ sap.ui.define([
                     resolve();
                 });
                 await _promiseResult;
+
+                // console.log("New IO / Style No from Sales Doc");
+                // console.log(this.getView().getModel("ui2").getProperty("/currStyleNo"));
+                // console.log(this._ioNo);
 
                 if (this._styleno != "NEW" && this._ioNo === "NEW") {
                     // alert("Get IO Style Data");
@@ -674,9 +703,9 @@ sap.ui.define([
 
                 var entitySet = "/IOSTYLISTDETSet"
 
-                //Attachments
-                this.bindUploadCollection();
-                this.getView().getModel("FileModel").refresh();
+                // //Attachments
+                // this.bindUploadCollection();
+                // this.getView().getModel("FileModel").refresh();
 
                 // this.getView().setModel(new JSONModel({
                 //     dataMode: "INIT",
@@ -821,14 +850,16 @@ sap.ui.define([
                 })
                 await _promiseResult;
 
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        this._tblChange = true;
-                        this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                    }, 100);
-                    resolve();
-                })
-                await _promiseResult;
+                if (this.getView().getModel("ui2").getProperty("/currIONo") !== "NEW") {
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this._tblChange = true;
+                            this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                        }, 100);
+                        resolve();
+                    })
+                    await _promiseResult;
+                }
 
                 this._tblChange = false;
             },
@@ -3079,8 +3110,17 @@ sap.ui.define([
 
                     // alert(this._ioNo);
                     // alert(this._newIONo);
-                    if (this._ioNo === "NEW" && this._newIONo !== "") {
-                        this.onNavBack();
+                    if (this._ioNo === "NEW" && (this._newIONo !== "" || this._newIONo !== undefined)) {
+                        // this.onNavBack();
+                        var oHistory = History.getInstance();
+                        var sPreviousHash = oHistory.getPreviousHash();
+
+                        if (sPreviousHash !== undefined) {
+                            window.history.go(-1);
+                        } else {
+                            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                            oRouter.navTo("Routeioinit", {}, true);
+                        }
                     }
 
                 }
@@ -6916,7 +6956,7 @@ sap.ui.define([
 
             onNumberChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
-                console.log(oEvent.getSource());
+                // console.log(oEvent.getSource());
 
                 var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
 
