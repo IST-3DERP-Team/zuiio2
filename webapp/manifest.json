@@ -188,6 +188,9 @@
                     "bundleName": "zuiio2.i18n.i18n"
                 }
             },
+            "routeModel": {
+                "type": "sap.ui.model.json.JSONModel"
+              },
             "": {
                 "dataSource": "mainService",
                 "preload": true,

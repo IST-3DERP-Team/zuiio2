@@ -7,8 +7,8 @@
     xmlns:c="zuiio2.control"
     xmlns:uiT="sap.ui.table">
 
-	<Dialog title="Select Style" contentWidth="80%">
-		<Panel height="400px" >
+	<Dialog title="Select Style" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt"  contentWidth="100%">
+		<Panel width="100%" height="100%" class="sapUiNoContentPadding">
 
            <Toolbar>
             <ToolbarSpacer/>

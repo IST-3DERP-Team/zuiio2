@@ -182,3 +182,27 @@ span[data-row-active-class=X] {
     box-sizing: border-box;
 }
 
+.VBOXHdrSize{
+    height: 100%;
+}
+.VBOXHdrSize2{
+    height: 85%;
+}
+.vboxHeight > .sapMFlexItem {
+    height: 100%;
+}
+
+.vboxHeight {
+    height: 85%;
+    padding-left: 0rem;
+    padding-right: 0rem;
+}
+
+.designSection2 {
+    position: relative;
+}
+
+.IODetailSection{
+    position: relative;
+    height: 60%;
+}
