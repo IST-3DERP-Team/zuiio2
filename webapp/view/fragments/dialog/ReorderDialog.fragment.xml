@@ -91,6 +91,7 @@
             <Button id="btnSaveReorder" icon="sap-icon://save" text="{ddtext>/SAVE}" tooltip="{ddtext>/SAVE}" press="onBatchSaveReorder" visible="false" />
             <Button id="btnCancelReorder" icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/CANCEL}" press="onCancelReorder" visible="false" />
             <Button id="btnDeleteReorder" icon="sap-icon://delete" text="{ddtext>/DELETE}" tooltip="{ddtext>/DELETE}" press="onDeleteReorder" visible="true" />
+            <Button id="btnRefreshReorder" icon="sap-icon://refresh" text="{ddtext>/REFRESH}" tooltip="{ddtext>/REFRESH}" press="onRefreshReorder" visible="true" />
             <Button id="btnCloseReorder" icon="sap-icon://decline" text="{ddtext>/CLOSE}" tooltip="{ddtext>/CLOSE}" press="onCloseReorder" visible="true" />
         </buttons>        
     </Dialog>

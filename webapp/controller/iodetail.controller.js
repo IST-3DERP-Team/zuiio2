@@ -4004,6 +4004,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CREATEDDT" });
                 oDDTextParam.push({ CODE: "UPDATEDBY" });
                 oDDTextParam.push({ CODE: "UPDATEDDT" });
+                oDDTextParam.push({ CODE: "REFRESH" });
 
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
@@ -7222,6 +7223,7 @@ sap.ui.define([
                         sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
                         sap.ui.getCore().byId("btnCloseReorder").setVisible(true); 
                         sap.ui.getCore().byId("btnDeleteReorder").setVisible(true); 
+                        sap.ui.getCore().byId("btnRefreshReorder").setVisible(true); 
                     }
                     else {
                         if (this._sTableModel === "color") {
@@ -7938,88 +7940,105 @@ sap.ui.define([
             },
 
             onReorder: function (oEvent) {
-                if (this.byId("ioMatListTab").getModel().getData().rows.length > 0) {
-                    Common.openProcessingDialog(this, "Processing...");
-                    var me = this;
-                    var vIONo = this._ioNo;
+                if (this.byId("ioMatListTab").getModel().getData().rows.length > 0) {                   
                     this._bRefreshIOMatlist = false;
-    
-                    if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-    
-                    this._oModelIOMatList.read('/ReorderSet', {
-                        urlParameters: {
-                            "$filter": "IONO eq '" + vIONo + "'"
-                        },
-                        success: function (oData, oResponse) {
-                            oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
-
-                            oData.results.forEach((item, index) => { 
-                                item.DELETED = item.DELETED === "X" ? true : false;
-                                item.NEW = false;
-                                item.EDITED = false;
-                                item.ACTIVE = index === 0 ? "X" : "";
-
-                                if (item.CREATEDDT !== null)
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-    
-                                if (item.UPDATEDDT !== null)
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
-
-                                var sSeqNo = item.SEQNO;
-                                if (!isNaN(sSeqNo)) {
-                                    while (sSeqNo.length < 3) sSeqNo = "0" + sSeqNo;
-                                }
-
-                                item.SEQNO = sSeqNo;                            
-                            }); 
-
-                            if (!me._ReorderDialog) {
-                                me._ReorderDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ReorderDialog", me);
-                                
-                                me._ReorderDialog.setModel(
-                                    new JSONModel({
-                                        rows: oData.results,
-                                        rowCount: oData.results.length
-                                    })
-                                )
-    
-                                me.getView().addDependent(me._ReorderDialog);
-
-                                var oTableEventDelegate = {
-                                    onkeyup: function (oEvent) {
-                                        me.onKeyUp(oEvent);
-                                    },
-                
-                                    onAfterRendering: function (oEvent) {
-                                        var oControl = oEvent.srcControl;
-                                        var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
-                
-                                        if (sTabId.substr(sTabId.length - 3) === "Tab") me._tableRendered = sTabId;
-                                        else me._tableRendered = "";
-                
-                                        me.onAfterTableRendering();
-                                    }
-                                };
-
-                                sap.ui.getCore().byId("reorderTab").addEventDelegate(oTableEventDelegate);                                
-                            }
-                            else {
-                                me._ReorderDialog.getModel().setProperty("/rows", oData.results);
-                                me._ReorderDialog.getModel().setProperty("/rowCount", oData.results.length);
-                            }
-    
-                            me._ReorderDialog.setTitle("Reorder");
-                            me._ReorderDialog.open();
-                            me._bReorderChanged = false;
-                            me._sTableModel = "reorder";
-                            Common.closeProcessingDialog(me);
-                        },
-                        error: function (err) { }
-                    })
+                    this.getReorderData(true);
                 }
                 else {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_MATLIST"]);
                 }
+            },
+
+            getReorderData(arg) {
+                Common.openProcessingDialog(this, "Processing...");
+                var me = this;
+                var vIONo = this._ioNo;
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                this._oModelIOMatList.read('/ReorderSet', {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + vIONo + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+
+                        oData.results.forEach((item, index) => { 
+                            item.DELETED = item.DELETED === "X" ? true : false;
+                            item.NEW = false;
+                            item.EDITED = false;
+                            item.ACTIVE = index === 0 ? "X" : "";
+
+                            if (item.CREATEDDT !== null)
+                                item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+
+                            if (item.UPDATEDDT !== null)
+                                item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+
+                            var sSeqNo = item.SEQNO;
+                            if (!isNaN(sSeqNo)) {
+                                while (sSeqNo.length < 3) sSeqNo = "0" + sSeqNo;
+                            }
+
+                            item.SEQNO = sSeqNo;                            
+                        }); 
+
+                        me._bReorderChanged = false;
+                        me._sTableModel = "reorder";
+                        Common.closeProcessingDialog(me);
+                        
+                        if (arg) me.showReorder(oData);
+                        else {
+                            var oTable = sap.ui.getCore().byId("reorderTab");
+                            me._ReorderDialog.getModel().setProperty("/rowCount", oData.results.length);
+                            oTable.getModel().setProperty("/rows", oData.results);
+                            oTable.bindRows("/rows");    
+                        }
+                    },
+                    error: function (err) { }
+                })
+            },
+
+            showReorder(arg) {
+                var me = this;
+                var oData = arg;
+
+                if (!me._ReorderDialog) {
+                    me._ReorderDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ReorderDialog", me);
+                    
+                    me._ReorderDialog.setModel(
+                        new JSONModel({
+                            rows: oData.results,
+                            rowCount: oData.results.length
+                        })
+                    )
+
+                    me.getView().addDependent(me._ReorderDialog);
+
+                    var oTableEventDelegate = {
+                        onkeyup: function (oEvent) {
+                            me.onKeyUp(oEvent);
+                        },
+    
+                        onAfterRendering: function (oEvent) {
+                            var oControl = oEvent.srcControl;
+                            var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+    
+                            if (sTabId.substr(sTabId.length - 3) === "Tab") me._tableRendered = sTabId;
+                            else me._tableRendered = "";
+    
+                            me.onAfterTableRendering();
+                        }
+                    };
+
+                    sap.ui.getCore().byId("reorderTab").addEventDelegate(oTableEventDelegate);                                
+                }
+                else {
+                    me._ReorderDialog.getModel().setProperty("/rows", oData.results);
+                    me._ReorderDialog.getModel().setProperty("/rowCount", oData.results.length);
+                }
+
+                me._ReorderDialog.setTitle("Reorder");
+                me._ReorderDialog.open();
             },
 
             onNewReorder: function (oEvent) {
@@ -8127,6 +8146,7 @@ sap.ui.define([
                 sap.ui.getCore().byId("btnCancelReorder").setVisible(true);
                 sap.ui.getCore().byId("btnCloseReorder").setVisible(false);
                 sap.ui.getCore().byId("btnDeleteReorder").setVisible(false); 
+                sap.ui.getCore().byId("btnRefreshReorder").setVisible(false); 
                 oTable.focus();
             },
 
@@ -8168,6 +8188,11 @@ sap.ui.define([
             },
 
             onEditReorder: function (oEvent) {
+                if (this._ReorderDialog.getModel().getData().rows.length === 0) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                    return;
+                }
+
                 var oTable = sap.ui.getCore().byId("reorderTab");
 
                 this._validationErrors = [];
@@ -8214,6 +8239,7 @@ sap.ui.define([
                 sap.ui.getCore().byId("btnCancelReorder").setVisible(true);
                 sap.ui.getCore().byId("btnCloseReorder").setVisible(false);
                 sap.ui.getCore().byId("btnDeleteReorder").setVisible(false); 
+                sap.ui.getCore().byId("btnRefreshReorder").setVisible(false); 
                 oTable.focus();
             },
 
@@ -8253,6 +8279,7 @@ sap.ui.define([
                         sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
                         sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
                         sap.ui.getCore().byId("btnDeleteReorder").setVisible(true); 
+                        sap.ui.getCore().byId("btnRefreshReorder").setVisible(true); 
                     }
                 }
             },
@@ -8300,15 +8327,18 @@ sap.ui.define([
                                     sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
                                     sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
                                     sap.ui.getCore().byId("btnDeleteReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnRefreshReorder").setVisible(true); 
 
-                                    const aDataAfterChange = me._aDataBeforeChange.concat(aNewRows);
-                                    // Array.prototype.push.apply(me._aDataBeforeChange, aNewRows);
-                                    aDataAfterChange.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+                                    // const aDataAfterChange = me._aDataBeforeChange.concat(aNewRows);
+                                    // aDataAfterChange.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
 
-                                    me._ReorderDialog.getModel().setProperty("/rowCount", aDataAfterChange.length);
-                                    oTable.getModel().setProperty("/rows", aDataAfterChange);
-                                    oTable.bindRows("/rows");
+                                    // me._ReorderDialog.getModel().setProperty("/rowCount", aDataAfterChange.length);
+                                    // oTable.getModel().setProperty("/rows", aDataAfterChange);
+                                    // oTable.bindRows("/rows");
+
+                                    me.getReorderData(false);
                                     me._bRefreshIOMatlist = true;
+                                    Common.closeProcessingDialog(me);
                                 },
                                 error: function (oResponse) {
                                     var oError = JSON.parse(oResponse.responseText);
@@ -8360,7 +8390,9 @@ sap.ui.define([
                                     sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
                                     sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
                                     sap.ui.getCore().byId("btnDeleteReorder").setVisible(true); 
+                                    sap.ui.getCore().byId("btnRefreshReorder").setVisible(true); 
                                     me._bRefreshIOMatlist = true;
+                                    me.getReorderData(false);
                                 },
                                 error: function () {
                                     Common.closeProcessingDialog(me);
@@ -8421,13 +8453,14 @@ sap.ui.define([
                                         success: function (oData, oResponse) {
                                             Common.closeProcessingDialog(me);                                            
                                             MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_DELETED"]);
+                                            me.getReorderData(false);
 
-                                            aSelIndices.forEach(item => {
-                                                aData.at(item).DELETED = true;
-                                            })
+                                            // aSelIndices.forEach(item => {
+                                            //     aData.at(item).DELETED = true;
+                                            // })
 
-                                            oTable.getModel().setProperty("/rows", aData);
-                                            oTable.bindRows("/rows");
+                                            // oTable.getModel().setProperty("/rows", aData);
+                                            // oTable.bindRows("/rows");
                                         },
                                         error: function () {
                                             Common.closeProcessingDialog(me);
@@ -8468,6 +8501,10 @@ sap.ui.define([
                 })
 
                 this._ReorderDialog.getModel().getData().rows.forEach(item => item.EDITED = false);                
+            },
+
+            onRefreshReorder: function (oEvent) {
+                this.getReorderData(false);
             },
 
             onCloseReorder: function (oEvent) {
