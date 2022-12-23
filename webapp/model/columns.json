@@ -30,5 +30,9 @@
         {"ColumnName": "SALESTERM", 
             "ValueHelp": {"show": true, "items": {"path": "COSTTERMS_MODEL", "value": "INCO1", "text": "INCO1"},
             "SuggestionItems": {"path": "COSTTERMS_MODEL>/", "text": "{COSTTERMS_MODEL>INCO1}"}}}
+    ],    
+    "iostylist": [
+    {"name": "STYLENO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
+            "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
     ]
 }
