@@ -4005,6 +4005,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "UPDATEDBY" });
                 oDDTextParam.push({ CODE: "UPDATEDDT" });
                 oDDTextParam.push({ CODE: "REFRESH" });
+                oDDTextParam.push({ CODE: "INFO_IVALID_RECORD_FOR_MRP" });
 
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
@@ -4971,6 +4972,7 @@ sap.ui.define([
                             this.byId("btnSaveIOMatList").setVisible(true);
                             this.byId("btnCancelIOMatList").setVisible(true);
                             this.byId("btnReorderIOMatList").setVisible(false);
+                            this.byId("btnTabLayoutIOMatList").setVisible(false);
                         } else if (arg === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(false);
                             this.byId("btnImportPODlvSched").setVisible(false);
@@ -5131,6 +5133,7 @@ sap.ui.define([
                         this.byId("btnSaveIOMatList").setVisible(false);
                         this.byId("btnCancelIOMatList").setVisible(false);
                         this.byId("btnReorderIOMatList").setVisible(true);
+                        this.byId("btnTabLayoutIOMatList").setVisible(true);
                     } else if (arg === "IODLV") {
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
@@ -6023,6 +6026,7 @@ sap.ui.define([
                                                 me.byId("btnSaveIOMatList").setVisible(false);
                                                 me.byId("btnCancelIOMatList").setVisible(false);
                                                 me.byId("btnReorderIOMatList").setVisible(true);
+                                                me.byId("btnTabLayoutIOMatList").setVisible(true);
                                             }
                                             else if (arg === "IODLV") {
                                                 me.byId("btnNewDlvSched").setVisible(true);
@@ -6464,6 +6468,7 @@ sap.ui.define([
                                     me.byId("btnSaveIOMatList").setVisible(false);
                                     me.byId("btnCancelIOMatList").setVisible(false);
                                     me.byId("btnReorderIOMatList").setVisible(true);
+                                    me.byId("btnTabLayoutIOMatList").setVisible(true);
                                 }
                                 else if (arg === "IODLV") {
                                     me.byId("btnNewDlvSched").setVisible(true);
@@ -7245,6 +7250,7 @@ sap.ui.define([
                             this.byId("btnSaveIOMatList").setVisible(false);
                             this.byId("btnCancelIOMatList").setVisible(false);
                             this.byId("btnReorderIOMatList").setVisible(true);
+                            this.byId("btnTabLayoutIOMatList").setVisible(true);
                         } else if (this._sTableModel === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(true);
                             this.byId("btnImportPODlvSched").setVisible(true);
@@ -7424,9 +7430,10 @@ sap.ui.define([
             },
 
             onSaveTableLayout(arg) {
+                var me = this;
+
                 if (arg === "style") {
                     //saving of the layout of table
-                    var me = this;
                     var aTables = [];
 
                     aTables.push({
@@ -7434,31 +7441,31 @@ sap.ui.define([
                         TABNAME: "ZERP_IOATTRIB",
                         TABID: "colorTab"
                     },
-                        {
-                            TYPE: "IOPROCESS",
-                            TABNAME: "ZERP_IOPROC",
-                            TABID: "processTab"
-                        },
-                        {
-                            TYPE: "IOSIZE",
-                            TABNAME: "ZERP_IOATTRIB",
-                            TABID: "sizeTab"
-                        },
-                        {
-                            TYPE: "IOSTYLDTLDBOM",
-                            TABNAME: "ZERP_S_STYLBOM",
-                            TABID: "styleDetldBOMTab"
-                        },
-                        // {
-                        //     TYPE: "IOSTYLBOMUV",
-                        //     TABNAME: "ZERP_S_STYLBOMUV",
-                        //     TABID: "styleBOMUVTab"
-                        // },
-                        {
-                            TYPE: "IOSTYLMATLIST",
-                            TABNAME: "ZERP_S_STYLMATLST",
-                            TABID: "styleMatListTab"
-                        })
+                    {
+                        TYPE: "IOPROCESS",
+                        TABNAME: "ZERP_IOPROC",
+                        TABID: "processTab"
+                    },
+                    {
+                        TYPE: "IOSIZE",
+                        TABNAME: "ZERP_IOATTRIB",
+                        TABID: "sizeTab"
+                    },
+                    {
+                        TYPE: "IOSTYLDTLDBOM",
+                        TABNAME: "ZERP_S_STYLBOM",
+                        TABID: "styleDetldBOMTab"
+                    },
+                    // {
+                    //     TYPE: "IOSTYLBOMUV",
+                    //     TABNAME: "ZERP_S_STYLBOMUV",
+                    //     TABID: "styleBOMUVTab"
+                    // },
+                    {
+                        TYPE: "IOSTYLMATLIST",
+                        TABNAME: "ZERP_S_STYLMATLST",
+                        TABID: "styleMatListTab"
+                    })
 
                     aTables.forEach(item => {
                         setTimeout(() => {
@@ -7502,6 +7509,46 @@ sap.ui.define([
                             });
                         }, 100);
                     })
+                }
+                else {
+                    var oTable = this.getView().byId(arg + "Tab");
+                    var oColumns = oTable.getColumns();
+                    var ctr = 1;
+
+                    var oParam = {
+                        "SBU": this._sbu,
+                        "TYPE": "IOMATLIST",
+                        "TABNAME": "ZDV_3DERP_MATLST",
+                        "TableLayoutToItems": []
+                    };
+
+                    //get information of columns, add to payload
+                    oColumns.forEach((column) => {
+                        oParam.TableLayoutToItems.push({
+                            COLUMNNAME: column.mProperties.sortProperty,
+                            ORDER: ctr.toString(),
+                            SORTED: column.mProperties.sorted,
+                            SORTORDER: column.mProperties.sortOrder,
+                            SORTSEQ: "1",
+                            VISIBLE: column.mProperties.visible,
+                            WIDTH: column.mProperties.width
+                        });
+
+                        ctr++;
+                    });
+                    // console.log(oParam)
+                    //call the layout save
+                    var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+
+                    oModel.create("/TableLayoutSet", oParam, {
+                        method: "POST",
+                        success: function (data, oResponse) {
+                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_LAYOUT_SAVE"]);
+                        },
+                        error: function (err) {
+                            sap.m.MessageBox.error(err);
+                        }
+                    });
                 }
             },
 
@@ -7859,22 +7906,23 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        // console.log(aData.at(item))
-                        aParam.push({
-                            Mrptyp: "IOMRP",
-                            Plantcd: aData.at(item).PURPLANT,
-                            Iono: aData.at(item).IONO,
-                            Matno: aData.at(item).MATNO,
-                            Baseuom: aData.at(item).UOM,
-                            Reqqty: aData.at(item).REQDQTY,
-                            Purgrp: aData.at(item).PURGRP,
-                            Supplytyp: aData.at(item).SUPPLYTYP,
-                            Vendorcd: aData.at(item).VENDORCD,
-                            Unitprice: aData.at(item).UNITPRICE,
-                            Orderuom: aData.at(item).ORDERUOM,
-                            Umrez: aData.at(item).UMREZ,
-                            Umren: aData.at(item).UMREN
-                        });
+                        if (aData.at(item).VARIANCE > 0) {
+                            aParam.push({
+                                Mrptyp: "IOMRP",
+                                Plantcd: aData.at(item).PURPLANT,
+                                Iono: aData.at(item).IONO,
+                                Matno: aData.at(item).MATNO,
+                                Baseuom: aData.at(item).UOM,
+                                Reqqty: aData.at(item).VARIANCE,
+                                Purgrp: aData.at(item).PURGRP,
+                                Supplytyp: aData.at(item).SUPPLYTYP,
+                                Vendorcd: aData.at(item).VENDORCD,
+                                Unitprice: aData.at(item).UNITPRICE,
+                                Orderuom: aData.at(item).ORDERUOM,
+                                Umrez: aData.at(item).UMREZ,
+                                Umren: aData.at(item).UMREN
+                            });
+                        }
                     })
 
                     if (aParam.length > 0) {
@@ -7907,7 +7955,7 @@ sap.ui.define([
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
                     }
                 }
                 else {

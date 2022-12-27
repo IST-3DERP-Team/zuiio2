@@ -558,6 +558,7 @@
                                     </Button>
                                     <Button id="btnFullScreenIOMatList" icon="sap-icon://full-screen" press="onTableResize('ioMatList', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
                                     <Button id="btnExitFullScreenIOMatList" icon="sap-icon://exit-full-screen" press="onTableResize('ioMatList', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                    <Button id="btnTabLayoutIOMatList" icon="sap-icon://grid" press="onSaveTableLayout('ioMatList')" tooltip="{ddtext>/SAVELAYOUT}" visible="true" />  
                                 </Toolbar>
                             </t:extension>
                         </t:Table>
