@@ -27,6 +27,7 @@ sap.ui.define([
         var sIOPrefix = "", sIODesc = "";
 
         var hasSDData = false;
+        var SalDocData;
         var uniqueSDData;
 
         var _sStyleNo, _sVerNo, _sStyleCd, _sProdTyp, _sSalesGrp, _sSeasonCd, _sCustGrp, _sUOM;
@@ -187,16 +188,16 @@ sap.ui.define([
                 // console.log("Sales Document Data");
                 // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
 
-                var SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
+                me.SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
 
-                console.log(SalDocData);
+                console.log(me.SalDocData);
 
-                if (SalDocData !== undefined) {
-                    console.log(SalDocData.length);
+                if (me.SalDocData !== undefined) {
+                    console.log(me.SalDocData.length);
 
-                    if (SalDocData.length > 0) {
+                    if (me.SalDocData.length > 0) {
                         me.hasSDData = true;
-                        me.uniqueSDData = SalDocData.filter((SalDocData, index, self) =>
+                        me.uniqueSDData = me.SalDocData.filter((SalDocData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === SalDocData.SALESGRP && t.STYLENO === SalDocData.STYLENO && t.UOM === SalDocData.UOM
                                 && t.PRODTYP === SalDocData.PRODTYP && t.SEASONCD === SalDocData.SEASONCD && t.STYLECD === SalDocData.STYLECD && t.VERNO === SalDocData.VERNO
                                 && t.CUSTGRP === SalDocData.CUSTGRP)));
@@ -3055,6 +3056,13 @@ sap.ui.define([
                                         me.getView().getModel("ui2").setProperty("/currStyleNo", strStyleNo);
                                         me.getView().getModel("ui2").setProperty("/currVerNo", strVerNo);
 
+                                        console.log("has SD Data - Save New IO 1");
+                                        console.log(me.hasSDData);
+                                        if(me.hasSDData === true){
+                                            console.log("has SD Data - Save New IO");
+                                            me.SaveSDData(_newIONo);
+                                        }
+
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
                                         Common.showMessage("IO# " + _newIONo + " generated.");
@@ -3142,6 +3150,13 @@ sap.ui.define([
 
                     // console.log("IO Save - End");
                 }
+            },
+
+            SaveSDData: function(iono){
+                var me = this;
+                var sIONO = iono;
+
+                console.log(me.SalDocData);
             },
 
             onIOCancel: function (source) {
