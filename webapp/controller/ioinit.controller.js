@@ -29,7 +29,8 @@ sap.ui.define([
                 that = this;
 
                 this.getView().setModel(new JSONModel({
-                    activeSTYLENO: ''
+                    activeSTYLENO: '',
+                    activeSALDOCNO: ''
                 }), "ui");
 
                 //get current userid
@@ -124,7 +125,7 @@ sap.ui.define([
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
-                        sbu: that._sbu,
+                        sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo
                     });
 
@@ -167,16 +168,16 @@ sap.ui.define([
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
-                        // console.log("rowData");
-                        // console.log(rowData);
+                        console.log("rowData");
+                        console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
                                 && t.PRODTYP === rowData.PRODTYP && t.SEASONCD === rowData.SEASONCD && t.STYLECD === rowData.STYLECD && t.VERNO === rowData.VERNO
                                 && t.CUSTGRP === rowData.CUSTGRP)));
 
-                        // console.log("unique");    
-                        // console.log(unique);
+                        console.log("unique");    
+                        console.log(unique);
 
                         if (rowData.length <= 0) {
                             Common.showMessage("No row/s selected.");
@@ -194,14 +195,15 @@ sap.ui.define([
                                 sStyleNo = item.STYLENO;
                             })
                         }
+
                     }
                     // return;
-                    // console.log(that._sbu);
-                    // console.log(sStyleNo);
+                    console.log(that._sbu);
+                    console.log(sStyleNo);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
-                        sbu: that._sbu,
+                        sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo
                     });
                 }
@@ -229,8 +231,8 @@ sap.ui.define([
                 var aFilter = [];
 
                 if (arg1) {
-                    this._aFilterableColumns[arg2.replace("Tab","")].forEach(item => {
-                        var sDataType = this._aColumns[arg2.replace("Tab","")].filter(col => col.ColumnName === item.name)[0].DataType;
+                    this._aFilterableColumns[arg2.replace("Tab", "")].forEach(item => {
+                        var sDataType = this._aColumns[arg2.replace("Tab", "")].filter(col => col.ColumnName === item.name)[0].DataType;
 
                         if (sDataType === "BOOLEAN") aFilter.push(new Filter(item.name, FilterOperator.EQ, arg1));
                         else aFilter.push(new Filter(item.name, FilterOperator.Contains, arg1));
@@ -245,6 +247,11 @@ sap.ui.define([
                     var vStyleNo = this.getView().getModel("IOSTYSELDataModel").getData().results.filter((item, index) => index === sap.ui.getCore().byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
                     this.getView().getModel("ui").setProperty("/activeSTYLENO", vStyleNo);
                 }
+
+                if (arg1 && arg2 === "IOSDSelectTab") {
+                    var vStyleNo = this.getView().getModel("IOSDSELDataModel").getData().results.filter((item, index) => index === sap.ui.getCore().byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
+                    this.getView().getModel("ui").setProperty("/activeSALDOCNO", vStyleNo);
+                }
             },
 
             getIOSDLISTData: function () {
@@ -258,6 +265,8 @@ sap.ui.define([
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSDSELDataModel");
                         // console.log(oView.setModel(oJSONModel, "IOSDSELDataModel"));
+
+                        me.setSearchTableData("IOSDSelectTab");
                     },
                     error: function () { }
                 })
@@ -310,7 +319,7 @@ sap.ui.define([
                         // console.log("IOSTYSELDataModel");
                         // console.log(oData);
 
-                        me.setSearchTableData();
+                        me.setSearchTableData("IOStyleSelectTab");
                         // console.log(oView.setModel(oJSONModel, "IOSTYSELDataModel"));
 
                         // me.byId("IOStyleSelectTab").getModel().setProperty("/rows", oData.results);
@@ -461,6 +470,7 @@ sap.ui.define([
 
                 });
             },
+
             setSmartFilterModel: function () {
                 var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER_CDS");
                 var oSmartFilter = this.getView().byId("smartFilterBar");
@@ -852,7 +862,7 @@ sap.ui.define([
 
 
                         // this.getIOSTYLISTData();
-                        // this.geSearchtDynamicTableColumns("IOSTYLIST", "ZDV__IOSTYLST", "IOStyleSelectTab", oColumns);
+                        // this.getSearchDynamicTableColumns("IOSTYLIST", "ZDV__IOSTYLST", "IOStyleSelectTab", oColumns);
 
                         me._IOfromStyleDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromStyle", me);
                         me.getView().addDependent(me._IOfromStyleDialog);
@@ -875,8 +885,10 @@ sap.ui.define([
                         // setTimeout(() => {
                         //     this.getIOSTYLISTData();
                         // }, 100);
-                        
-                        this.geSearchtDynamicTableColumns("IOSTYLIST", "ZDV__IOSTYLST", "IOStyleSelectTab", oColumns);
+
+                        this.getSearchDynamicTableColumns("IOSTYLIST", "ZDV__IOSTYLST", "IOStyleSelectTab", oColumns);
+
+                        // sap.ui.getCore().byId("searchFieldStyle").setProperty("value", "");
                     }
                     me._IOfromStyleDialog.open();
 
@@ -886,16 +898,32 @@ sap.ui.define([
 
                     if (!me._IOfromSalesDocDialog) {
 
-                        this.getIOSDLISTData();
+                        // this.getIOSDLISTData();
 
                         me._IOfromSalesDocDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CreateIOfromSalesDoc", me);
                         me.getView().addDependent(me._IOfromSalesDocDialog);
+
+                        var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                        var oModelColumns = new JSONModel();
+                        await oModelColumns.loadData(sPath);
+
+                        var oColumns = oModelColumns.getData();
+
+                        var oTable = sap.ui.getCore().byId("IOSDSelectTab");
+                        oTable.setModel(new JSONModel({
+                            columns: [],
+                            rows: []
+                        }));
+
+                        console.log("getSearchDynamicTableColumns");
+                        this.getSearchDynamicTableColumns("IOSDLIST", "ZDV_3D_SDLIST", "IOSDSelectTab", oColumns);
                     }
                     me._IOfromSalesDocDialog.open();
                 }
             },
 
-            geSearchtDynamicTableColumns: function (arg1, arg2, arg3, arg4) {
+            getSearchDynamicTableColumns: function (arg1, arg2, arg3, arg4) {
                 var me = this;
                 var sType = arg1;
                 var sTabName = arg2;
@@ -909,7 +937,7 @@ sap.ui.define([
                 this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
-                this._sbu = 'VER';
+                // this._sbu = 'VER';
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: sType,
@@ -920,8 +948,15 @@ sap.ui.define([
                 this._Model.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            // console.log(oData);
-                            var aColumns = me.setTableColumns(oLocColProp["iostylist"], oData.results);
+                            console.log(oData);
+
+                            var aColumns;
+
+                            if (sTabId === "IOStyleSelectTab")
+                                aColumns = me.setTableColumns(oLocColProp["iostylist"], oData.results);
+
+                            if (sTabId === "IOSDSelectTab")
+                                aColumns = me.setTableColumns(oLocColProp["iosdlist"], oData.results);
 
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
@@ -942,20 +977,43 @@ sap.ui.define([
 
                             oJSONColumnsModel.setData(oData);
                             me.oJSONModel.setData(oData);
-                            me.getView().setModel(oJSONColumnsModel, "IOSTYLISTColumns");  //set the view model
-                            me.getIOSTYLISTData();
+
+                            // me.getView().setModel(oJSONColumnsModel, "IOSTYLISTColumns");  //set the view model
+                            // me.getIOSTYLISTData();
+
+                            if (sTabId === "IOStyleSelectTab") {
+                                me.getView().setModel(oJSONColumnsModel, "IOSTYLISTColumns");  //set the view model
+                                me.getIOSTYLISTData();
+                            }
+
+
+                            if (sTabId === "IOSDSelectTab") {
+                                me.getView().setModel(oJSONColumnsModel, "IOSDLISTColumns");  //set the view model
+                                me.getIOSDLISTData();
+                            }
                         }
                     },
                     error: function (err) { }
                 });
             },
 
-            setSearchTableData: function () {
+            setSearchTableData: function (tableName) {
                 var me = this;
+                var sTabId = tableName;
+
+                var oColumnsModel;
+                var oDataModel;
 
                 //the selected dynamic columns
-                var oColumnsModel = this.getView().getModel("IOSTYLISTColumns");
-                var oDataModel = this.getView().getModel("IOSTYSELDataModel");
+                if (sTabId === "IOStyleSelectTab") {
+                    oColumnsModel = this.getView().getModel("IOSTYLISTColumns");
+                    oDataModel = this.getView().getModel("IOSTYSELDataModel");
+                }
+
+                if (sTabId === "IOSDSelectTab") {
+                    oColumnsModel = this.getView().getModel("IOSDLISTColumns");
+                    oDataModel = this.getView().getModel("IOSDSELDataModel");
+                }
 
                 // console.log(oColumnsModel);
                 // console.log(oDataModel);
@@ -989,9 +1047,27 @@ sap.ui.define([
                 };
 
                 // this.byId("IODynTable").addEventDelegate(oDelegateKeyUp);
-                sap.ui.getCore().byId("IOStyleSelectTab").addEventDelegate(oDelegateKeyUp);
+                // sap.ui.getCore().byId("IOStyleSelectTab").addEventDelegate(oDelegateKeyUp);
 
-                var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
+                // var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
+                var oTable;
+                var oColumnsModel;
+                var oDataModel;
+                
+                if (sTabId === "IOStyleSelectTab") {
+                    sap.ui.getCore().byId("IOStyleSelectTab").addEventDelegate(oDelegateKeyUp);
+                    oTable = sap.ui.getCore().byId("IOStyleSelectTab");
+                    oColumnsModel = this.getView().getModel("IOSTYLISTColumns");
+                    oDataModel = this.getView().getModel("IOSTYSELDataModel");
+                }
+
+                if (sTabId === "IOSDSelectTab") {
+                    sap.ui.getCore().byId("IOSDSelectTab").addEventDelegate(oDelegateKeyUp);
+                    oTable = sap.ui.getCore().byId("IOSDSelectTab");
+                    oColumnsModel = this.getView().getModel("IOSDLISTColumns");
+                    oDataModel = this.getView().getModel("IOSDSELDataModel");
+                }
+                
                 oTable.setModel(oModel);
 
                 //bind the dynamic column to the table

@@ -34,5 +34,9 @@
     "iostylist": [
     {"name": "STYLENO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
             "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
-    ]
+    ],
+    "iosdlist": [
+        {"name": "SALESDOCNO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
+                "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
+        ]
 }
