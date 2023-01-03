@@ -6,7 +6,15 @@
                 <SearchField id="searchFieldStyle" placeholder="Filter" value="" search="filterGlobally" width="15rem" />
             </Toolbar> -->
             <!-- Versions Table -->
-            <t:Table id="IOStyleSelectTab" rows="{IOSTYSELDataModel>/rows}" class="sapUiSizeCompact" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" alternateRowColors="true">
+            <t:Table id="IOStyleSelectTab" 
+                    rows="{IOSTYSELDataModel>/rows}" 
+                    class="sapUiSizeCompact" 
+                    showColumnVisibilityMenu="true" 
+                    enableColumnFreeze="true" 
+                    enableCellFilter="true" 
+                    selectionMode="Single" 
+                    selectionBehavior="RowOnly" 
+                    alternateRowColors="true">
                 <!-- <t:columns>
                     <t:Column width="7rem" filterProperty="STYLENO" sortProperty="STYLENO">
                         <Label text="{i18n>STYLENO_}"/>
