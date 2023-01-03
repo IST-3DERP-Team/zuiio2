@@ -168,16 +168,16 @@ sap.ui.define([
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
-                        console.log("rowData");
-                        console.log(rowData);
+                        // console.log("rowData");
+                        // console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
                                 && t.PRODTYP === rowData.PRODTYP && t.SEASONCD === rowData.SEASONCD && t.STYLECD === rowData.STYLECD && t.VERNO === rowData.VERNO
                                 && t.CUSTGRP === rowData.CUSTGRP)));
 
-                        console.log("unique");    
-                        console.log(unique);
+                        // console.log("unique");    
+                        // console.log(unique);
 
                         if (rowData.length <= 0) {
                             Common.showMessage("No row/s selected.");
@@ -198,8 +198,8 @@ sap.ui.define([
 
                     }
                     // return;
-                    console.log(that._sbu);
-                    console.log(sStyleNo);
+                    // console.log(that._sbu);
+                    // console.log(sStyleNo);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
@@ -916,7 +916,7 @@ sap.ui.define([
                             rows: []
                         }));
 
-                        console.log("getSearchDynamicTableColumns");
+                        // console.log("getSearchDynamicTableColumns");
                         this.getSearchDynamicTableColumns("IOSDLIST", "ZDV_3D_SDLIST", "IOSDSelectTab", oColumns);
                     }
                     me._IOfromSalesDocDialog.open();
@@ -948,7 +948,7 @@ sap.ui.define([
                 this._Model.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            console.log(oData);
+                            // console.log(oData);
 
                             var aColumns;
 
