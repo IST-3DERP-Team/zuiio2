@@ -170,6 +170,8 @@ sap.ui.define([
 
                 me.hasSDData = false;
 
+                this.getView().byId("idIconTabBarInlineMode").setSelectedKey("itfIOHDR");
+
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
                 this._styleno = oEvent.getParameter("arguments").styleno; //get style no from route pattern
