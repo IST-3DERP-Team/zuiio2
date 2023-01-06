@@ -7906,7 +7906,7 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        if (aData.at(item).VARIANCE > 0) {
+                        if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "") {
                             aParam.push({
                                 Mrptyp: "IOMRP",
                                 Plantcd: aData.at(item).PURPLANT,
