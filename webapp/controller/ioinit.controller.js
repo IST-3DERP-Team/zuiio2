@@ -129,6 +129,8 @@ sap.ui.define([
                         styleno: sStyleNo
                     });
 
+                    me._CopyStyleDialog.close();
+
                 }
 
                 if (sTableName === "IOSDSelectTab") {
@@ -206,9 +208,11 @@ sap.ui.define([
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo
                     });
+
+                    me._IOfromSalesDocDialog.close();
                 }
 
-                me._CopyStyleDialog.close();
+                // me._CopyStyleDialog.close();
 
             },
 
