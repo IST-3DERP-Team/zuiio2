@@ -316,7 +316,7 @@
                 },
                 {
                     "name": "RouteIODetail",
-                    "pattern": "RouteIODetail/{iono}/{sbu}/{styleno}",
+                    "pattern": "RouteIODetail/{iono}/{sbu}/{styleno}/{icontabfilterkey}",
                     "greedy": false,
                     "target": [
                         "TargetIODetail"

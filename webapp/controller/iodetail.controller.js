@@ -82,7 +82,8 @@ sap.ui.define([
                     currVerNo: '',
                     currDlvSeq: '999',
                     currDlvItem: '999',
-                    hasSDData: false
+                    hasSDData: false,
+                    icontabfilterkey: ''
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -171,10 +172,10 @@ sap.ui.define([
                 // console.log(oEvent);
                 var me = this;
 
-                var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
-                // console.log(cIconTabBar);
+                // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
+                // // console.log(cIconTabBar);
 
-                cIconTabBar.setSelectedKey("itfIOHDR");
+                // cIconTabBar.setSelectedKey("itfIOHDR");
 
                 me.hasSDData = false;
 
@@ -186,6 +187,10 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/sbu", oEvent.getParameter("arguments").sbu);
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
+                this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+
+                var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
+                cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
 
                 // console.log("Sales Document Data");
                 // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));

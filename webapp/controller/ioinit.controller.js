@@ -768,7 +768,8 @@ sap.ui.define([
                 that._router.navTo("RouteIODetail", {
                     iono: sIONO.trim(),
                     sbu: that._sbu,
-                    styleno: sStyleNo
+                    styleno: sStyleNo,
+                    icontabfilterkey: "itfIOHDR"
                 });
             },
 
