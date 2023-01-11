@@ -8195,7 +8195,7 @@ sap.ui.define([
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
                     }
                 }
                 else {
