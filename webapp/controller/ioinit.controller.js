@@ -126,7 +126,8 @@ sap.ui.define([
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
-                        styleno: sStyleNo
+                        styleno: sStyleNo,
+                        icontabfilterkey: "itfIOHDR"
                     });
 
                     me._CopyStyleDialog.close();
@@ -206,7 +207,8 @@ sap.ui.define([
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
-                        styleno: sStyleNo
+                        styleno: sStyleNo,
+                        icontabfilterkey: "itfIOHDR"
                     });
 
                     me._IOfromSalesDocDialog.close();
