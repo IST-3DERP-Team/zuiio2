@@ -2453,6 +2453,8 @@ sap.ui.define([
                         "$filter": "Sbu eq '" + ssbu + "'"
                     },
                     success: function (oData, oResponse) {
+                        console.log("GetIOPrefixSet");
+                        console.log(oData);
                         for (var i = 0; i < oData.results.length; i++) {
                             sIOPrefix = oData.results[i].Ioprefix;
                             sIODesc = oData.results[i].Iodesc;
@@ -3471,6 +3473,7 @@ sap.ui.define([
                 oModelRelease.create(sEntitySet, oParam, {
                     method: sMethod,
                     success: function (oData, oResponse) {
+                        console.log(oData);
                         //capture oData output if needed
                         resultType = oData.Type;
                         resultDescription = oData.Description;
@@ -3485,7 +3488,11 @@ sap.ui.define([
                             }
                         }, 100);
                     },
-                    error: function (err) { }
+                    error: function (err) { 
+                        console.log(err);
+                        resultDescription = err.responseText;
+                        sap.m.MessageBox.error(resultDescription);
+                    }
                 });
 
                 //reload data for both IO Delivery and IO Detail
