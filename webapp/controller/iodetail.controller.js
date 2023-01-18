@@ -8154,22 +8154,23 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        // console.log(aData.at(item))
-                        aParam.push({
-                            Mrptyp: "IOMRP",
-                            Plantcd: aData.at(item).PURPLANT,
-                            Iono: aData.at(item).IONO,
-                            Matno: aData.at(item).MATNO,
-                            Baseuom: aData.at(item).UOM,
-                            Reqqty: aData.at(item).REQDQTY,
-                            Purgrp: aData.at(item).PURGRP,
-                            Supplytyp: aData.at(item).SUPPLYTYP,
-                            Vendorcd: aData.at(item).VENDORCD,
-                            Unitprice: aData.at(item).UNITPRICE,
-                            Orderuom: aData.at(item).ORDERUOM,
-                            Umrez: aData.at(item).UMREZ,
-                            Umren: aData.at(item).UMREN
-                        });
+                        if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "") {
+                            aParam.push({
+                                Mrptyp: "IOMRP",
+                                Plantcd: aData.at(item).PURPLANT,
+                                Iono: aData.at(item).IONO,
+                                Matno: aData.at(item).MATNO,
+                                Baseuom: aData.at(item).UOM,
+                                Reqqty: aData.at(item).VARIANCE,
+                                Purgrp: aData.at(item).PURGRP,
+                                Supplytyp: aData.at(item).SUPPLYTYP,
+                                Vendorcd: aData.at(item).VENDORCD,
+                                Unitprice: aData.at(item).UNITPRICE,
+                                Orderuom: aData.at(item).ORDERUOM,
+                                Umrez: aData.at(item).UMREZ,
+                                Umren: aData.at(item).UMREN
+                            });
+                        }
                     })
 
                     if (aParam.length > 0) {
