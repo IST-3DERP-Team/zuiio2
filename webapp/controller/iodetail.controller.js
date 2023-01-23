@@ -578,16 +578,19 @@ sap.ui.define([
                 //     return;
 
                 if (!oEvent.getParameters().rowBindingContext) {
+                    console.log("oEvent.getParameters().rowBindingContext");
                     return;
                 }
 
 
                 if (this._bIODETChanged === true) {
+                    console.log(_bIODETChanged);
                     return;
                 }
 
                 if (this.byId("btnSaveDlvSched").Visible === true) {
                     // alert("btnSaveDlvSched");
+                    console.log("btnSaveDlvSched");
                     return;
                 }
 
@@ -5508,6 +5511,7 @@ sap.ui.define([
                         // this.byId(arg + "Tab").bindRows("/results");
                         // console.log(this.byId(arg + "Tab").getModel("DataModel"));
                         this.reloadIOData("IODETTab", "/IODETSet");
+                        this._bIODETChanged = false;
                     }
                     else {
                         this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
@@ -6014,6 +6018,7 @@ sap.ui.define([
                         break;
                 }
 
+                this._bIODETChanged = false;
                 Common.closeProcessingDialog(me);
             },
 
@@ -9758,6 +9763,7 @@ sap.ui.define([
                         })
 
                     } else if (sTableId.indexOf("IODETTab") >= 0) {
+                        // console.log(oTable);
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
 
                         oTable.getRows().forEach(row => {

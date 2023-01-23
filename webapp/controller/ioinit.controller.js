@@ -566,6 +566,8 @@ sap.ui.define([
                         //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);   
                         // })
 
+                        oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
+
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DataModel");
