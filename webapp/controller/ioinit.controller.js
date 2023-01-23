@@ -209,7 +209,7 @@ sap.ui.define([
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
-git statu                    });
+                    });
 
                     me._IOfromSalesDocDialog.close();
                 }
@@ -565,6 +565,8 @@ git statu                    });
                         //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
                         //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);   
                         // })
+
+                        oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
 
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
