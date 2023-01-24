@@ -92,7 +92,12 @@
                                         required="true"
                                     />
                                 </form:fields>
-                            </form:FormElement>    
+                            </form:FormElement> 
+                            <form:FormElement label="{ddtext>/COSTSTATUS}">
+                                <form:fields>
+                                    <Input id="COSTSTATUS" value="" maxLength="3" visible="false" />
+                                </form:fields>
+                            </form:FormElement>                               
                         </form:formElements>
                     </form:FormContainer>
                 </form:formContainers>

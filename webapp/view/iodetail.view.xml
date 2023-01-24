@@ -592,6 +592,7 @@
                                     </t:rowSettingsTemplate>
                                     <t:extension>
                                         <Toolbar>
+                                            <Text text="Costing Version" class="titleTab" />
                                             <ToolbarSpacer/>
                                             <Button id="btnNewCostHdr" 
                                                 text="{ddtext>/NEW}"
@@ -650,6 +651,7 @@
                                     </t:rowSettingsTemplate>
                                     <t:extension>
                                         <Toolbar>
+                                            <Text text="Costing Details" class="titleTab" />
                                             <ToolbarSpacer/>
                                             <Button id="btnEditCostDtl" 
                                                 text="{ddtext>/EDIT}"

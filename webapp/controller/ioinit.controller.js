@@ -209,7 +209,7 @@ sap.ui.define([
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
-git statu                    });
+                    });
 
                     me._IOfromSalesDocDialog.close();
                 }
