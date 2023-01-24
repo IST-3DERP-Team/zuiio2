@@ -4449,7 +4449,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_MRPDATA_CREATED" });
                 oDDTextParam.push({ CODE: "INFO_NO_SEL_RECORD_TO_PROC" });
                 oDDTextParam.push({ CODE: "INFO_MATERIAL_CREATED" });
-
+                oDDTextParam.push({ CODE: "INFO_IVALID_RECORD_FOR_MRP" });
+                
                 oDDTextParam.push({ CODE: "PRINT" });
                 oDDTextParam.push({ CODE: "RELCOSTING" });
                 oDDTextParam.push({ CODE: "CSTYPE" });
@@ -8256,7 +8257,7 @@ sap.ui.define([
                         if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "") {
                             aParam.push({
                                 Mrptyp: "IOMRP",
-                                Plantcd: aData.at(item).PURPLANT,
+                                Plantcd: me._prodplant,
                                 Iono: aData.at(item).IONO,
                                 Matno: aData.at(item).MATNO,
                                 Baseuom: aData.at(item).UOM,
@@ -8267,7 +8268,8 @@ sap.ui.define([
                                 Unitprice: aData.at(item).UNITPRICE,
                                 Orderuom: aData.at(item).ORDERUOM,
                                 Umrez: aData.at(item).UMREZ,
-                                Umren: aData.at(item).UMREN
+                                Umren: aData.at(item).UMREN,
+                                Purplant: aData.at(item).PURPLANT
                             });
                         }
                     })
@@ -8317,7 +8319,8 @@ sap.ui.define([
 
                 aData.forEach(item => {
                     oParam["IMATNR"] = item.Matno;
-                    oParam["IWERKS"] = item.Plantcd;
+                    oParam["IWERKSFROM"] = item.Purplant;
+                    oParam["IWERKSTO"] = item.Plantcd;
                     oParam["ERETCODE"] = "";
                     oParam["N_ExtendMaterialReturn"] = [];
 
@@ -8325,7 +8328,7 @@ sap.ui.define([
                         method: "POST",
                         success: function (oDataReturn, oResponse) {
                             //assign the materials based on the return
-                            // console.log(oDataReturn);
+                            console.log(oDataReturn);
                         },
                         error: function (err) {
                             // Common.closeLoadingDialog(me);
@@ -9239,7 +9242,14 @@ sap.ui.define([
                     success: function (oData) {
                         if (arg3) { Common.closeProcessingDialog(me); }
 
-                        oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+                        oData.results.forEach(item => {
+                            if (item.COSTCOMPCD === "NETBAL") { item.TOPSEQ = 1; }
+                            else if (item.COSTCOMPCD === "% TO FOB") { item.TOPSEQ = 2; }
+                            else { item.TOPSEQ = 100 + (+item.SEQNO) }
+                        })
+
+                        oData.results.sort((a, b) => (a.TOPSEQ > b.TOPSEQ ? 1 : -1));
+                        // oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
 
                         oData.results.forEach((row, index) => {
                             row.ACTIVE = index === 0 ? "X" : "";
@@ -9306,21 +9316,44 @@ sap.ui.define([
             beforeOpenCreateCosting: function (oEvent) {
                 oEvent.getSource().setInitialFocus(sap.ui.getCore().byId("CSTYPE"));
 
+                sap.ui.getCore().byId("COSTSTATUS").setValue("CRT");
+                sap.ui.getCore().byId("VERDESC").setValue("");
+
                 //set CS DATE value to today's date
                 var today = new Date();
                 sap.ui.getCore().byId("CSDATE").setValue(sapDateFormat.format(today));
 
+                if (this.getView().byId("CUSSALTERM").getValue() !== "") {
+                    sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").getValue());
+                }
+                else {
+                    //set value of fields if resource has only 1 data
+                    if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1) { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                    else { sap.ui.getCore().byId("SALESTERM").setValue(""); }    
+                }
+
                 //set value of fields if resource has only 1 data
-                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); }
-                else { sap.ui.getCore().byId("CSTYPE").setValue(""); }
+                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1) { 
+                    sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); 
+                
+                    //get default value
+                    var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                    
+                    if (aDef.length > 0) {
+                        sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
 
-                if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
-                else { sap.ui.getCore().byId("CSVCD").setValue(""); }
-
-                if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1) { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
-                else { sap.ui.getCore().byId("SALESTERM").setValue(""); }
-
-                sap.ui.getCore().byId("VERDESC").setValue("");
+                        if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                    }
+                    // else {
+                    //     //set value of fields if resource has only 1 data
+                    //     if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                    //     else { sap.ui.getCore().byId("CSVCD").setValue(""); }    
+                    // }                    
+                }
+                else { 
+                    sap.ui.getCore().byId("CSTYPE").setValue(""); 
+                    sap.ui.getCore().byId("CSVCD").setValue("");
+                }
                 // console.log(sapDateFormat.format("11/28/2022"))
             },
 
@@ -9351,9 +9384,10 @@ sap.ui.define([
                     "CSVCD": sap.ui.getCore().byId("CSVCD").getValue(),
                     "VERDESC": sap.ui.getCore().byId("VERDESC").getValue(),
                     "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
-                    "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00"
+                    "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
+                    "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
                 }
-                // console.log(oParam);
+                console.log(oParam);
 
                 Common.openProcessingDialog(this, "Processing...");
 
@@ -9457,6 +9491,15 @@ sap.ui.define([
                     // console.log(oSelectedItem)
                     if (oSelectedItem) {
                         this._inputSource.setValue(oSelectedItem.getTitle());
+
+                        //get default value
+                        var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                        
+                        if (aDef.length > 0) {
+                            sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                            if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                        }
                     }
 
                     this._inputSource.setValueState("None");
@@ -9701,7 +9744,7 @@ sap.ui.define([
                 var oTable = oEvent.getSource();
                 var sTableId = oTable.getId();
 
-                // console.log("onFirstVisibleRowChanged");
+                console.log("onFirstVisibleRowChanged");
                 // console.log(oTable);
 
                 setTimeout(() => {
