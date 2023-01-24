@@ -2451,10 +2451,17 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                oModel.read("/GetIOPrefixSet", {
-                    urlParameters: {
-                        "$filter": "Sbu eq '" + ssbu + "'"
-                    },
+                var oParam = {
+                    "SBU": ssbu,
+                    "SOLDTOCUST": this.getView().byId("SOLDTOCUST").getValue(),
+                    "PRODSCEN": this.getView().byId("PRODSCEN").getValue(),
+                    "PRODPLANT": this.getView().byId("PRODPLANT").getValue(),
+                    "SALESORG": this.getView().byId("SALESORG").getValue(),
+                    "PLANMONTH": this.getView().byId("PLANMONTH").getValue()
+                };
+
+                oModel.create("/GetIOPrefixSet", oParam, {
+                    method: "POST",
                     success: function (oData, oResponse) {
                         console.log("GetIOPrefixSet");
                         console.log(oData);
@@ -3050,7 +3057,7 @@ sap.ui.define([
                     if (me.hasSDData === true) {
                         me.SalDocData.forEach(item => {
                             // if (isNumeric(item.QTY))
-                                IOQty += +item.QTY;
+                            IOQty += +item.QTY;
                         })
 
                         oParamIOHeaderData = {
@@ -3147,9 +3154,9 @@ sap.ui.define([
                                         if (me.hasSDData === true) {
                                             // console.log("has SD Data - Save New IO");
                                             // _promiseResult = new Promise((resolve, reject) => {
-                                                setTimeout(() => {
-                                                    me.SaveSDData(_newIONo);
-                                                }, 100);
+                                            setTimeout(() => {
+                                                me.SaveSDData(_newIONo);
+                                            }, 100);
                                             // });
                                             // await _promiseResult;
 
@@ -3157,6 +3164,10 @@ sap.ui.define([
                                                 me.UpdateSD_IO(_newIONo);
                                             }, 100);
                                         }
+
+                                        setTimeout(() => {
+                                            me.createIOPreCost(_newIONo);
+                                        }, 100);
 
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
@@ -3251,7 +3262,90 @@ sap.ui.define([
                 return /^-?\d+$/.test(value);
             },
 
-            UpdateSD_IO: function(iono) {
+            createIOPreCost: function (iono) {
+                var me = this;
+                let sIONO = iono;
+                var entitySet = "/VariantSHSet";
+                var csvcd;
+                var cstype;
+                var companycd;
+                var csstat;
+                var hasFilter = false;
+
+                this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
+
+                this._oModelIOCosting.setHeaders({
+                    PRODPLANT: this.getView().byId("PRODPLANT").getValue()
+                })
+
+                if (hasFilter === false && this.getView().byId("CUSTGRP").getValue() !== "") {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.CUSTGRP === this.getView().byId("CUSTGRP").getValue())
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if (hasFilter === false && this.getView().byId("PRODPLANT").getValue() !== "") {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.PLANTCD === this.getView().byId("PRODPLANT").getValue())
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if (hasFilter === false) {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.ZDEFAULT === "X")
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if(hasFilter) {
+                    var oParam = {
+                        "IONO": sIONO,
+                        "CSTYPE": cstype,
+                        "CSVCD": csvcd,
+                        "VERDESC": "Initial Pre-Costing",
+                        "SALESTERM": this.getView().byId("CUSSALTERM").getValue(),
+                        "CSDATE": sapDateFormat.format(new Date()) + "T00:00:00",
+                        "COSTSTATUS": csstat === true ? "REL" : "CRT"			
+                    }
+
+                    this._oModelIOCosting.create("/VersionsSet", oParam, {
+                        method: "POST",
+                        success: function (oData) { },
+                        error: function (err) { }
+                    })
+                }
+            },
+
+            UpdateSD_IO: function (iono) {
                 var me = this;
                 var sIONO = iono;
                 var sdData = [];
@@ -3491,7 +3585,7 @@ sap.ui.define([
                             }
                         }, 100);
                     },
-                    error: function (err) { 
+                    error: function (err) {
                         console.log(err);
                         resultDescription = err.responseText;
                         sap.m.MessageBox.error(resultDescription);
