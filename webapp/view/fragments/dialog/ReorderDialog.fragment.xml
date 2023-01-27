@@ -1,0 +1,98 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+        xmlns:uit="sap.ui.table"
+        id="fragment-reorder" 
+        fragmentName="reorder">
+    <Dialog contentWidth="1301px"
+        contentHeight="500px"
+        title="Reorder"
+        resizable="true"
+        draggable="true">
+        <content>
+            <uit:Table id="reorderTab"
+                rows="{/rows}"
+                selectionMode="MultiToggle"
+                visibleRowCount="{/rowCount}"
+                paste="onPaste"
+                class="sapUiTinyMargin">
+                <uit:rowSettingsTemplate>
+                    <uit:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                </uit:rowSettingsTemplate>
+                <uit:columns>
+                    <uit:Column width="180px">
+                        <Label text="{ddtext>/MATNO}" />
+                        <uit:template>
+                            <Text text="{MATNO}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="80px" hAlign="End">
+                        <Label text="{ddtext>/SEQNO}" />
+                        <uit:template>
+                            <Text text="{SEQNO}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>                   
+                    <!-- <uit:Column width="8rem">
+                        <Label text="{ddtext>/VENDOR}" />
+                        <uit:template>
+                            <Text text="{VENDOR}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column> -->
+                    <uit:Column width="125px" hAlign="End">
+                        <Label text="{ddtext>/REORDERQTY}" />
+                        <uit:template>
+                            <Text text="{REORDERQTY}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="300px">
+                        <Label text="{ddtext>/REMARKS}" />
+                        <uit:template>
+                            <Text text="{REMARKS}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="80px" hAlign="Center">
+                        <Label text="{ddtext>/DELETED}" />
+                        <uit:template>
+                            <CheckBox selected="{DELETED}" editable="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="120px">
+                        <Label text="{ddtext>/CREATEDBY}" />
+                        <uit:template>
+                            <Text text="{CREATEDBY}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="120px">
+                        <Label text="{ddtext>/CREATEDDT}" />
+                        <uit:template>
+                            <Text text="{CREATEDDT}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>                    
+                    <uit:Column width="120px">
+                        <Label text="{ddtext>/UPDATEDBY}" />
+                        <uit:template>
+                            <Text text="{UPDATEDBY}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                    <uit:Column width="120px">
+                        <Label text="{ddtext>/UPDATEDDT}" />
+                        <uit:template>
+                            <Text text="{UPDATEDDT}" wrapping="false" />
+                        </uit:template>
+                    </uit:Column>
+                </uit:columns>
+            </uit:Table>
+        </content> 
+        <buttons>
+            <Button id="btnNewReorder" icon="sap-icon://add" text="{ddtext>/NEW}" tooltip="{ddtext>/NEW}" press="onNewReorder" visible="true" />
+            <Button id="btnEditReorder" icon="sap-icon://edit" text="{ddtext>/EDIT}" tooltip="{ddtext>/EDIT}" press="onEditReorder" visible="true" />
+            <Button id="btnAddReorder" icon="sap-icon://add" text="{ddtext>/ADD}" tooltip="{ddtext>/ADD}" press="onAddReorder" visible="false" />
+            <Button id="btnSaveReorder" icon="sap-icon://save" text="{ddtext>/SAVE}" tooltip="{ddtext>/SAVE}" press="onBatchSaveReorder" visible="false" />
+            <Button id="btnCancelReorder" icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/CANCEL}" press="onCancelReorder" visible="false" />
+            <Button id="btnDeleteReorder" icon="sap-icon://delete" text="{ddtext>/DELETE}" tooltip="{ddtext>/DELETE}" press="onDeleteReorder" visible="true" />
+            <Button id="btnRefreshReorder" icon="sap-icon://refresh" text="{ddtext>/REFRESH}" tooltip="{ddtext>/REFRESH}" press="onRefreshReorder" visible="true" />
+            <Button id="btnCloseReorder" icon="sap-icon://decline" text="{ddtext>/CLOSE}" tooltip="{ddtext>/CLOSE}" press="onCloseReorder" visible="true" />
+        </buttons>        
+    </Dialog>
+</core:FragmentDefinition>

@@ -86,7 +86,7 @@
                             visible="true"/>
                         <Button id="btnSave" 
                             icon="sap-icon://save"
-                            press="onSaveMaterialList"
+                            press="onBatchSaveMaterialList"
                             tooltip="{ddtext>/SAVE}"
                             visible="true"/>
                     </Toolbar>  

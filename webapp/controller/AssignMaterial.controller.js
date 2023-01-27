@@ -104,7 +104,7 @@ sap.ui.define([
 
                     oSelectedIndices.forEach((item, index) => {
                         if (aData.at(item).MATNO === "") {
-                            aParam.push({
+                            aParam.push({ 
                                 SEQNO: aData.at(item).SEQNO,
                                 GMC: aData.at(item).GMC,
                                 MATDESC1: aData.at(item).MATDESC1,
@@ -307,6 +307,49 @@ sap.ui.define([
                                 }
                             });                            
                         }, 500);
+                    })
+                }
+            },
+
+            onBatchSaveMaterialList(arg) {
+                // alert("on Save");
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                var oTableModel = this.getView().byId("materialListTab").getModel("materialList");
+                var oData = oTableModel.getData();
+                var oEditedData = oData.filter(fItem => fItem.MATNO !== "");
+                console.log(oEditedData)
+                if (oEditedData.length === 0) {
+                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                }
+                else {
+                    Common.openProcessingDialog(me);
+
+                    oModel.setUseBatch(true);
+                    oModel.setDeferredGroups(["update"]);
+                    oModel.setHeaders({ UPDTYP: "MAT" });
+
+                    // var param = {};
+                    var mParameters = {
+                        "groupId":"update"
+                    }
+
+                    oEditedData.forEach(item => {
+                        // console.log(item.MATNO)
+                        // param["MATNO"] = item.MATNO;
+                        // console.log(param);
+                        oModel.update("/MainSet(IONO='" + item.IONO + "',SEQNO='" + item.SEQNO + "')", { MATNO: item.MATNO }, mParameters);
+                    })
+                    
+                    oModel.submitChanges({
+                        groupId: "update",
+                        success: function (oData, oResponse) {
+                            Common.closeProcessingDialog(me);
+                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        },
+                        error: function () {
+                            Common.closeProcessingDialog(me);
+                        }
                     })
                 }
             },

@@ -1,27 +1,21 @@
-<core:FragmentDefinition xmlns="sap.m" 
-    xmlns:core="sap.ui.core" 
-    xmlns:f="sap.ui.layout.form" 
-    xmlns:l="sap.ui.layout"
-    xmlns:t="sap.ui.table"
-    xmlns:mvc="sap.ui.core.mvc" 
-    xmlns:c="zuiio2.control"
-    xmlns:uiT="sap.ui.table">
-
-	<Dialog title="Select Style" contentWidth="80%">
-		<Panel height="400px" >
-
-           
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:t="sap.ui.table" xmlns:mvc="sap.ui.core.mvc" xmlns:c="zuiio2.control" xmlns:uiT="sap.ui.table">
+    <Dialog title="Select Style" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="100%">
+        <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+            <!-- <Toolbar>
+                <ToolbarSpacer />
+                <SearchField id="searchFieldStyle" placeholder="Filter" value="" search="filterGlobally" width="15rem" />
+            </Toolbar> -->
             <!-- Versions Table -->
-            <t:Table id="IOStyleSelectTab"     
-                rows="{IOSTYSELDataModel>/results}"             
-                class="sapUiSizeCompact"
-                showColumnVisibilityMenu="true" 
-                enableColumnFreeze="true"
-                enableCellFilter="true"
-                selectionMode="Single"
-                selectionBehavior="RowOnly"
-                alternateRowColors="true">
-                <t:columns>
+            <t:Table id="IOStyleSelectTab" 
+                    rows="{IOSTYSELDataModel>/rows}" 
+                    class="sapUiSizeCompact" 
+                    showColumnVisibilityMenu="true" 
+                    enableColumnFreeze="true" 
+                    enableCellFilter="true" 
+                    selectionMode="Single" 
+                    selectionBehavior="RowOnly" 
+                    alternateRowColors="true">
+                <!-- <t:columns>
                     <t:Column width="7rem" filterProperty="STYLENO" sortProperty="STYLENO">
                         <Label text="{i18n>STYLENO_}"/>
                         <t:template>
@@ -148,12 +142,22 @@
                             <Text text="{IOSTYSELDataModel>REMARKS}"  textAlign="End"/>
                         </t:template>
                     </t:Column>
-                </t:columns>
-            </t:Table> 
-		</Panel>
-		<buttons>
-			<Button text="{i18n>Select}" press="onfragmentIOSelect('IOStyleSelectTab')" tooltip="Select"/>
-			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
-		</buttons>
-	</Dialog>
+                </t:columns> -->
+                <t:extension>
+                    <Toolbar>
+                        <ToolbarSpacer />
+                        <SearchField id="searchFieldStyle" 
+                            placeholder="Filter" 
+                            value="" 
+                            search="filterGlobally" 
+                            width="15rem" />
+                    </Toolbar>
+                </t:extension>
+            </t:Table>
+        </Panel>
+        <buttons>
+            <Button text="{i18n>Select}" press="onfragmentIOSelect('IOStyleSelectTab')" tooltip="Select" />
+            <Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel" />
+        </buttons>
+    </Dialog>
 </core:FragmentDefinition>

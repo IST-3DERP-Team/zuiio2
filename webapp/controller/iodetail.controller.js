@@ -11,12 +11,12 @@ sap.ui.define([
     "../control/DynamicTable",
     "./fragments/FASummary",
     "sap/m/MessageBox",
-    "sap/ui/core/routing/History"
+    "sap/ui/core/routing/History",
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, control, FASummary, MessageBox, History) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History) {
         "use strict";
 
         var that;
@@ -25,6 +25,11 @@ sap.ui.define([
 
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
+
+        var hasSDData = false;
+        var SalDocData;
+        var uniqueSDData;
+        var uniqueIODLVData;
 
         var _sStyleNo, _sVerNo, _sStyleCd, _sProdTyp, _sSalesGrp, _sSeasonCd, _sCustGrp, _sUOM;
 
@@ -36,6 +41,8 @@ sap.ui.define([
             onInit: function () {
                 that = this;
 
+                // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
+
                 this._ccolumns;
 
                 //get current userid
@@ -43,6 +50,20 @@ sap.ui.define([
                 oModel.loadData("/sap/bc/ui2/start_up").then(() => {
                     this._userid = oModel.oData.id;
                 })
+
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: function (oEvent) {
+                            // console.log("back")
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                            that.onRefresh();
+                        }
+                    }, oView);
+                }
+
                 this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
                 this._Model2 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -58,9 +79,17 @@ sap.ui.define([
                     sbu: '',
                     currIONo: '',
                     currStyleNo: '',
+                    currVerNo: '',
                     currDlvSeq: '999',
                     currDlvItem: '999',
+                    hasSDData: false,
+                    icontabfilterkey: ''
                 }), "ui2");
+
+                this.getView().setModel(new JSONModel({
+                    dataMode: "INIT",
+                    today: ""
+                }), "ui");
 
                 //Add the attachments to screen
                 this.appendUploadCollection();
@@ -82,7 +111,13 @@ sap.ui.define([
                     },
 
                     onAfterRendering: function (oEvent) {
-                        that.onAfterTableRendering(oEvent);
+                        var oControl = oEvent.srcControl;
+                        var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+
+                        if (sTabId.substr(sTabId.length - 3) === "Tab") that._tableRendered = sTabId;
+                        else that._tableRendered = "";
+
+                        that.onAfterTableRendering();
                     }
                 };
 
@@ -94,23 +129,56 @@ sap.ui.define([
                 this.byId("styleFabBOMTab").addEventDelegate(oTableEventDelegate);
                 this.byId("styleAccBOMTab").addEventDelegate(oTableEventDelegate);
                 this.byId("styleMatListTab").addEventDelegate(oTableEventDelegate);
+                this.byId("costHdrTab").addEventDelegate(oTableEventDelegate);
+                this.byId("costDtlsTab").addEventDelegate(oTableEventDelegate);
+
+                this.byId("IOATTRIBTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IOSTATUSTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
+                this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
+
+                // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
+
+                // window.onhashchange = function () {
+                //     if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
+                //         window.history.state.sap.history.forEach((item, index) => {
+                //             if (item === "ZSO_IO2-display") window.history.go((index + 1) - window.history.state.sap.history.length);
+                //         })
+                //     }
+                // }
             },
 
-            onNavBack: function () {
-                var oHistory = History.getInstance();
-                var sPreviousHash = oHistory.getPreviousHash();
+            // onExit: function() {
+            //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
+            // },
 
-                if (sPreviousHash !== undefined) {
-                    window.history.go(-1);
-                } else {
-                    var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                    oRouter.navTo("Routeioinit", {}, true);
-                }
-            },
+            // onNavBack: function (oEvent) {
+            //     // var oHistory = History.getInstance();
+            //     // var sPreviousHash = oHistory.getPreviousHash();
+
+            //     // if (sPreviousHash !== undefined) {
+            //     //     window.history.go(-1);
+            //     // } else {
+            //     //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //     //     oRouter.navTo("Routeioinit", {}, true);
+            //     // }
+            //     console.log("onNavBack")
+            //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //     oRouter.navTo("Routeioinit", {}, true);
+            //     // console.log(window.history);
+            // },
 
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
+
+                // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
+                // // console.log(cIconTabBar);
+
+                // cIconTabBar.setSelectedKey("itfIOHDR");
+
+                me.hasSDData = false;
+
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
                 this._sbu = oEvent.getParameter("arguments").sbu; //get SBU from route pattern
                 this._styleno = oEvent.getParameter("arguments").styleno; //get style no from route pattern
@@ -119,6 +187,33 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/sbu", oEvent.getParameter("arguments").sbu);
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
+                this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+
+                var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
+                cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
+
+                // console.log("Sales Document Data");
+                // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
+
+                me.SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
+
+                console.log(me.SalDocData);
+
+                if (me.SalDocData !== undefined) {
+                    // console.log(me.SalDocData.length);
+
+                    if (me.SalDocData.length > 0) {
+                        me.hasSDData = true;
+                        this.getView().getModel("ui2").setProperty("/hasSDData", true);
+                        me.uniqueSDData = me.SalDocData.filter((SalDocData, index, self) =>
+                            index === self.findIndex((t) => (t.SALESGRP === SalDocData.SALESGRP && t.STYLENO === SalDocData.STYLENO && t.UOM === SalDocData.UOM
+                                && t.PRODTYP === SalDocData.PRODTYP && t.SEASONCD === SalDocData.SEASONCD && t.STYLECD === SalDocData.STYLECD && t.VERNO === SalDocData.VERNO
+                                && t.CUSTGRP === SalDocData.CUSTGRP)));
+                    }
+
+                    // console.log("New IO - SD Data");
+                    // console.log(me.uniqueSDData);
+                }
 
                 // alert(this._ioNo);
                 //pivot arrays
@@ -145,7 +240,7 @@ sap.ui.define([
                 Common.openLoadingDialog(that);
 
                 if (this._ioNo === "NEW") {
-
+                    // console.log("setHeaderEditMode");
                     this.setHeaderEditMode();
                     this.byId("onIOEdit").setVisible(false);
                     this.byId("onIORelease").setVisible(false);
@@ -154,6 +249,7 @@ sap.ui.define([
                     this.byId("onIOSave").setVisible(true);
                     this.byId("onIOCancel").setVisible(true);
 
+                    // console.log("disableOtherTabs");
                     this.disableOtherTabs();
 
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
@@ -165,23 +261,54 @@ sap.ui.define([
                     // data.editMode = true;
                     if (this._styleno === "NEW") {
                         // alert("WITHOUT STYLE");
-                        data = {
-                            "IONO": "",
-                            "STYLENO": "",
-                            "VERNO": "",
-                            "STYLECD": "",
-                            "PRODTYP": "",
-                            "SALESGRP": "",
-                            "SEASONCD": "",
-                            "CUSTGRP": "",
-                            "BASEUOM": ""
-                        };
+                        if (me.hasSDData === false) {
+                            data = {
+                                "IONO": "",
+                                "STYLENO": "",
+                                "VERNO": "",
+                                "STYLECD": "",
+                                "PRODTYPE": "",
+                                "SALESGRP": "",
+                                "SEASONCD": "",
+                                "CUSTGRP": "",
+                                "BASEUOM": ""
+                            };
+                        } else {
+                            var IOQty = "0";
+                            // console.log("IO Qty Sum");
+                            // console.log(me.SalDocData);
+                            // me.SalDocData.forEach(item => {
+                            //     // if (isNumeric(item.QTY))
+                            //         IOQty += item.QTY;
+                            // })
+
+                            me.uniqueSDData.forEach(item => {
+                                data = {
+                                    "IONO": "",
+                                    "SALESGRP": item.SALESGRP,
+                                    "STYLENO": item.STYLENO,
+                                    "BASEUOM": item.UOM,
+                                    "PRODTYPE": item.PRODTYP,
+                                    "SEASONCD": item.SEASONCD,
+                                    "STYLECD": item.STYLECD,
+                                    "VERNO": item.VERNO,
+                                    "CUSTGRP": item.CUSTGRP,
+                                    "ORDQTY": IOQty
+                                };
+                            });
+                        }
+
+                        console.log("NEW IO DATA");
+                        console.log(data);
+
                         this._headerChanged = false;
                         data.editMode = true;
                         // console.log(data);
                         oDisplayJSONModel.setData(data);
                         this.getView().setModel(oDisplayJSONModel, "headerData");
                         // console.log(this.getView().setModel(oDisplayJSONModel, "headerData"));
+
+                        this.setRequiredFields();
                     }
                 } else {
                     this.cancelHeaderEdit();
@@ -194,24 +321,75 @@ sap.ui.define([
                 }
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getHeaderConfig());
+                    setTimeout(() => {
+                        this.getHeaderConfig();
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getHeaderData());
+                    setTimeout(() => {
+                        this.getHeaderData();
+                    }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
+                // console.log("hasSDData");
+                // console.log(me.hasSDData);
+
+                // console.log("New IO / Style No from Sales Doc");
+                // console.log(this.getView().getModel("ui2").getProperty("/currStyleNo"));
+                // console.log(this._ioNo);
+
                 if (this._styleno != "NEW" && this._ioNo === "NEW") {
-                    alert("Get IO Style Data");
-                    this.getIOSTYLISTData(this._styleno);
+                    // alert("Get IO Style Data");
+                    let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+
+                    if (me.hasSDData === false) {
+                        // console.log("No SD Data, with Style No");
+                        this.getIOSTYLISTData(strStyle);
+                    } else {
+                        // console.log("has SD Data");
+                        var data = {};
+
+                        var IOQty = 0;
+                        // console.log("IO Qty Sum");
+                        // console.log(me.SalDocData);
+                        me.SalDocData.forEach(item => {
+                            // if (isNumeric(item.QTY))
+                            IOQty += +item.QTY;
+                        })
+
+                        me.uniqueSDData.forEach(item => {
+                            data = {
+                                "IONO": "",
+                                "SALESGRP": item.SALESGRP,
+                                "STYLENO": item.STYLENO,
+                                "BASEUOM": item.UOM,
+                                "PRODTYPE": item.PRODTYP,
+                                "SEASONCD": item.SEASONCD,
+                                "STYLECD": item.STYLECD,
+                                "VERNO": item.VERNO,
+                                "CUSTGRP": item.CUSTGRP,
+                                "ORDQTY": +IOQty,
+                                "REVORDQTY": +IOQty
+                            };
+                        });
+
+                        oDisplayJSONModel.setData(data);
+                        this.getView().setModel(oDisplayJSONModel, "headerData");
+
+                        // me.SaveSDData("NEWIONO");
+                    }
                 }
 
                 // console.log(this.getView());
 
                 this._aIOColumns = {};
                 this._aColumns = {};
+                this._aDataBeforeChange = [];
                 this._aIODataBeforeChange = [];
                 var me = this;
 
@@ -245,8 +423,6 @@ sap.ui.define([
 
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-
-
                 // console.log("getIODETColumnData");
                 // _promiseResult = new Promise((resolve, reject) => {
                 //     setTimeout(() => {
@@ -255,66 +431,52 @@ sap.ui.define([
                 // });
                 // await _promiseResult;
 
-                console.log("getIOSizes");
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.getIOSizes());
-                    }, 100);
-                });
-                await _promiseResult;
-
-                console.log("getIOATTRIBData");
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        resolve(this.getIOATTRIBData(ioNo));
-                    }, 100);
-                });
-                await _promiseResult;
-
-                console.log("getIOSTATUSData");
-                _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIOSTATUSData(ioNo));
-                });
-                await _promiseResult;
-
-                console.log("getIODLVData");
-                _promiseResult = new Promise((resolve, reject) => {
-                    resolve(this.getIODLVData(ioNo));
-                });
-                await _promiseResult;
-
-                // console.log("getIODETData");
-                // _promiseResult = new Promise((resolve, reject) => {
-                //     resolve(this.getIODETData());
-                // });
-                // await _promiseResult;
-
-                // console.log("initIODETColumns");
-                // _promiseResult = new Promise((resolve, reject) => {
-                //     setTimeout(() => {
-                //         resolve(this.initIODETColumns());
-                //     }, 100);
-                // });
-                // await _promiseResult;
-
                 // console.log("getIOATTRIBData");
-                // this.getIOATTRIBData(ioNo)
-                // console.log("getIOSTATUSData");
-                // this.getIOSTATUSData(ioNo);
-                // console.log("getIODLVData");
-                // this.getIODLVData(ioNo);
-                // console.log("getIODETData");
-                // this.getIODETData(ioNo);  //use DynamicColumnsSet
-                // console.log("getIODETColumnData");
-                // this.getIODETColumnData("IODET", "ZERP_IODET");
+                // console.log(ioNo);
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this.getIOATTRIBData(ioNo);
+                    }, 100);
+                    resolve();
+                });
+                await _promiseResult;
 
-                console.log("fin Get Data");
+                // console.log("getIOSTATUSData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this.getIOSTATUSData(ioNo);
+                    }, 100);
+                    resolve();
+                });
+                await _promiseResult;
+
+                // console.log("getIOSizes");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this.getIOSizes();
+                    }, 100);
+                    resolve();
+                });
+                await _promiseResult;
+
+                // console.log("getIODLVData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this.getIODLVData(ioNo);
+                    }, 100);
+                    resolve();
+                });
+                await _promiseResult;
+
+                // var IODLVRows = me.getView().getModel("IODLVTab").getProperty("/rows");
+                // console.log("IODLVRows");
+                // console.log(IODLVRows);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        resolve(this.getIOColumnProp());
-                        // this.getIOColumnProp();
+                        this.getIOColumnProp();
                     }, 100);
+                    resolve();
                 });
                 await _promiseResult;
 
@@ -328,12 +490,61 @@ sap.ui.define([
                 //IO Material List
 
                 // _promiseResult = new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    this.initIOMatList();
-                }, 100);
+                // setTimeout(() => {
+                //     this.initIOMatList();
+                // }, 100);
                 // });
                 // await _promiseResult;
                 Common.closeLoadingDialog(that);
+
+                this._routeToStyle = false;
+                // window.open(window.document.URL, "_self");    
+                // var url = new URL(window.location);
+                // // url.hash = "#ZSO_IO2-display";
+                // // url.href = url.origin + url.pathname + url.search + "#ZSO_IO2-display";
+                // console.log(url.origin + url.pathname + url.search + "#ZSO_IO2-display");
+                // window.history.pushState(window.history.state, '', url.origin + url.pathname + url.search + "#ZSO_IO2-display");
+                // console.log(window.history)
+            },
+
+            setRequiredFields: function () {
+                // sap.ui.getCore().byId("STYLECD")._oLabel.addStyleClass("requiredField");
+                // sap.ui.getCore().byId("STYLECD").addStyleClass("requiredField");
+            },
+
+            refreshIOData: async function (ioNo) {
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.getIOSizes());
+                    }, 100);
+                });
+                await _promiseResult;
+
+                // console.log("getIOATTRIBData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        resolve(this.getIOATTRIBData(ioNo));
+                    }, 100);
+                });
+                await _promiseResult;
+
+                // console.log("getIOSTATUSData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    resolve(this.getIOSTATUSData(ioNo));
+                });
+                await _promiseResult;
+
+                // console.log("getIODLVData");
+                _promiseResult = new Promise((resolve, reject) => {
+                    resolve(this.getIODLVData(ioNo));
+                });
+                await _promiseResult;
+
+                this.initIODETColumns();
+
+                this.initStyle();
+                this.initIOMatList();
+                this.initIOCosting();
             },
 
             initIODETColumns: async function () {
@@ -362,30 +573,68 @@ sap.ui.define([
             },
 
             onIODLVCellClick: async function (oEvent) {
-                console.log(oEvent.getParameters().rowBindingContext.sPath);
-                if (oEvent.getParameters().rowBindingContext.sPath === undefined)
+                // // console.log(oEvent.getParameters().rowBindingContext.sPath);
+                // if (oEvent.getParameters().rowBindingContext.sPath === undefined)
+                //     return;
+
+                if (!oEvent.getParameters().rowBindingContext) {
                     return;
+                }
+
+
+                if (this._bIODETChanged === true) {
+                    return;
+                }
+
+                if (this.byId("btnSaveDlvSched").Visible === true) {
+                    // alert("btnSaveDlvSched");
+                    return;
+                }
 
                 //control based on value of _EditIODet
 
                 var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+
+                var oTable = this.byId("IODLVTab");
+                oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
+
+                oTable.getRows().forEach(row => {
+                    if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                        row.addStyleClass("activeRow");
+                    }
+                    else row.removeStyleClass("activeRow")
+                })
+
                 sRowPath = "/rows/" + sRowPath.split("/")[2];
                 // var oRow = this.getView().getModel("IODLVModel").getProperty(sRowPath);
                 // console.log(this.getView().byId("IODLVTab"));
                 var oRow = this.getView().byId("IODLVTab").getModel().getProperty(sRowPath);
 
-                console.log("Row Path");
-                console.log(oRow.IONO);
-                console.log(oRow.DLVSEQ);
+                //NEW ROW, DO NOT CONTINUE
+                if (oRow.IONO === undefined) {
+                    return;
+                }
+
+                //IF IN EDIT MODE, DO NOT CONTINUE
+                if (this._dataMode === "EDIT") {
+                    return;
+                }
+
+                // alert("on Cell Click IO DLV");
+
+                // console.log("Row Path");
+                // console.log(oRow.IONO);
+                // console.log(oRow.DLVSEQ);
 
                 Common.openLoadingDialog(this);
 
-                this.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
+                // this.getView().getModel("ui2").setProperty("/currIONo", oRow.IONO);
                 this.getView().getModel("ui2").setProperty("/currDlvSeq", oRow.DLVSEQ);
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
-                alert(vIONo + " " + vDlvSeq);
+                // alert(vIONo + " " + vDlvSeq);
 
                 var me = this;
                 var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -411,7 +660,14 @@ sap.ui.define([
 
             getIODLVData: async function (iono) {
                 var me = this;
-                var ioNo = iono;
+                // var ioNo = iono;
+                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                if (ioNo === "NEW")
+                    return;
+
+                // console.log("getIODLVData");
+                // console.log(ioNo);
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read('/IODLVSet', {
@@ -419,8 +675,19 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+                                // console.log("getIODLVData");
+                                // console.log(oData);
+                                oData.results.forEach((item, index) => {
+                                    if (index === 0) {
+                                        item.ACTIVE = "X"
+                                        // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
+                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                    } else
+                                        item.ACTIVE = ""
+                                });
                                 me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IODLVTab").bindRows("/rows");
+                                me._tableRendered = "IODLVTab";
                                 resolve();
                             },
                             error: function (err) {
@@ -430,6 +697,8 @@ sap.ui.define([
                     }, 100);
                 });
                 await _promiseResult;
+
+                // console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
             },
 
             // getIODETData: async function () {
@@ -462,6 +731,7 @@ sap.ui.define([
                 // console.log("IO ATTRIB");
                 var me = this;
                 var ioNo = iono;
+                // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read("/ATTRIBSet", {
@@ -469,9 +739,12 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+                                // console.log("ATTRIBSet");
                                 // console.log(oData.results);
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
+                                me._tableRendered = "IOATTRIBTab";
 
                                 // me._iosizes = oData.results;
 
@@ -493,6 +766,7 @@ sap.ui.define([
             getIOSTATUSData: async function (iono) {
                 var me = this;
                 var ioNo = iono;
+                // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read("/IOSTATSet", {
@@ -500,8 +774,12 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+                                // console.log("IO Status Data");
+                                // console.log(oData);
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOSTATUSTab").bindRows("/rows");
+                                me._tableRendered = "IOSTATUSTab";
                                 resolve();
                             },
                             error: function (err) {
@@ -522,6 +800,14 @@ sap.ui.define([
 
                 var entitySet = "/IOSTYLISTDETSet"
 
+                // //Attachments
+                // this.bindUploadCollection();
+                // this.getView().getModel("FileModel").refresh();
+
+                // this.getView().setModel(new JSONModel({
+                //     dataMode: "INIT",
+                //     today: ""
+                // }), "ui");
                 setTimeout(() => {
                     oModel.read(entitySet, {
                         urlParameters: {
@@ -534,7 +820,7 @@ sap.ui.define([
                                     "STYLECD": item.STYLECD,
                                     "STYLENO": item.STYLENO,
                                     "VERNO": item.VERNO,
-                                    "PRODTYP": item.PRODTYP,
+                                    "PRODTYPE": item.PRODTYP,
                                     "SALESGRP": item.SALESGRP,
                                     "SEASONCD": item.SEASONCD,
                                     "CUSTGRP": item.CUSTGRP,
@@ -634,22 +920,19 @@ sap.ui.define([
                 // }, 100);
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
+                    setTimeout(() => {
+                        this._tblChange = true;
+                        this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
+                    }, 100);
                     resolve();
                 })
                 await _promiseResult;
 
                 _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
-                    resolve();
-                })
-                await _promiseResult;
-
-                _promiseResult = new Promise((resolve, reject) => {
-                    this._tblChange = true;
-                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    setTimeout(() => {
+                        this._tblChange = true;
+                        this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
+                    }, 100);
                     resolve();
                 })
                 await _promiseResult;
@@ -664,6 +947,17 @@ sap.ui.define([
                 })
                 await _promiseResult;
 
+                if (this.getView().getModel("ui2").getProperty("/currIONo") !== "NEW") {
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this._tblChange = true;
+                            this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                        }, 100);
+                        resolve();
+                    })
+                    await _promiseResult;
+                }
+
                 this._tblChange = false;
             },
 
@@ -672,6 +966,8 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel();
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                // console.log("getIOSizes");
+                // console.log(vIONo);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.read("/IOATTRIBTYPSet", {
@@ -730,6 +1026,9 @@ sap.ui.define([
                     var ccolumns;
                     var pivotArray;
                     pivotArray = me._iosizes;
+
+                    // console.log("pivotArray");
+                    // console.log(pivotArray);
                     // console.log(this._ccolumns);
                     // console.log(me._ccolumns);
 
@@ -827,12 +1126,16 @@ sap.ui.define([
                     // console.log(ccolumns);
                     // return;
 
-                    //find the column to pivot
+                    //find the column to pivot  CUSTSIZE
                     for (var i = 0; i < columns.length; i++) {
                         if (columns[i].Pivot !== '') {
                             pivotRow = columns[i].Pivot;
                         }
                     }
+
+                    // console.log("pivotRow");
+                    // console.log(pivotRow);
+
                     //build the table dyanmic columns
                     for (var i = 0; i < columns.length; i++) {
                         if (columns[i].Pivot === pivotRow) {
@@ -841,12 +1144,12 @@ sap.ui.define([
                                 if (pivotArray[j].ATTRIBTYP === "SIZE") {
                                     // console.log(ccolumns);
                                     columnData.push({
-                                        "ColumnName": pivotArray[j].ATTRIBCD,
-                                        "ColumnLabel": pivotArray[j].DESC1,
-                                        "ColumnWidth": 70,
+                                        "ColumnName": pivotArray[j].ATTRIBCD + ccolumns[i].ColumnName,
+                                        "ColumnLabel": pivotArray[j].DESC1 + " " + ccolumns[i].ColumnLabel,
+                                        "ColumnWidth": 120,
                                         "ColumnType": pivotRow,
                                         "DataType": ccolumns[i].DataType,
-                                        "Editable": columns[i].Editable,
+                                        "Editable": ccolumns[i].Editable,
                                         "Mandatory": columns[i].Mandatory,
                                         "Visible": true,
                                         "Creatable": ccolumns[i].Creatable,
@@ -858,6 +1161,26 @@ sap.ui.define([
                                         "SortOrder": ccolumns[i].SortOrder,
                                         "SortSeq": ccolumns[i].SortSeq,
                                         "Sorted": ccolumns[i].Sorted
+                                    })
+
+                                    columnData.push({
+                                        "ColumnName": "IOITEM" + pivotArray[j].ATTRIBCD + ccolumns[i].ColumnName,
+                                        "ColumnLabel": "IOITEM" + pivotArray[j].ATTRIBCD,
+                                        "ColumnWidth": 70,
+                                        "ColumnType": "",
+                                        "DataType": "NUMMBER",
+                                        "Editable": false,
+                                        "Mandatory": "",
+                                        "Visible": false,
+                                        "Creatable": false,
+                                        "Decimal": 0,
+                                        "DictType": "",
+                                        "Key": "",
+                                        "Length": 0,
+                                        "Order": "",
+                                        "SortOrder": "",
+                                        "SortSeq": "",
+                                        "Sorted": false
                                     })
                                 }
                             }
@@ -896,6 +1219,7 @@ sap.ui.define([
                             }
                         }
                     }
+
                     // console.log("column Data");
                     // console.log(columnData);
                     // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
@@ -937,7 +1261,7 @@ sap.ui.define([
 
 
                 } else {
-                    console.log(vSBU + " - " + sType + " - " + sTabName);
+                    // console.log(vSBU + " - " + sType + " - " + sTabName);
                     oModel.setHeaders({
                         sbu: vSBU,
                         type: sType,
@@ -948,13 +1272,18 @@ sap.ui.define([
                         oModel.read("/ColumnsSet", {
                             success: function (oData, oResponse) {
                                 if (oData.results.length > 0) {
-                                    console.log("getIODynamicColumns " + sTabId);
-                                    console.log(oData.results);
+                                    // console.log("getIODynamicColumns " + sTabId);
+                                    // console.log(oData.results);
                                     if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                         oData.results.forEach(item => {
                                             oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
                                                 .forEach(col => item.ValueHelp = col.ValueHelp)
                                         })
+                                    }
+
+                                    if (arg1 === "IOSTATUS") {
+                                        // console.log("IO Status Data");
+                                        // console.log(oData);
                                     }
 
                                     me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
@@ -1100,8 +1429,8 @@ sap.ui.define([
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                console.log(cIONo);
-                console.log(cDlvSeq);
+                // console.log(cIONo);
+                // console.log(cDlvSeq);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -1113,9 +1442,11 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
                             },
                             success: function (oData, oResponse) {
+                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 oJSONModel.setData(oData);
                                 me.getView().setModel(oJSONModel, "IODETrowData");
-                                console.log(me.getView().setModel(oJSONModel, "IODETrowData"));
+                                me._tableRendered = sTabId;
+                                // console.log(me.getView().setModel(oJSONModel, "IODETrowData"));
                                 // rowData = oData.results;
                                 // console.log("IODETTab Data");
                                 // console.log(oData.results);
@@ -1143,8 +1474,8 @@ sap.ui.define([
 
                 rowData = me.getView().getModel("IODETrowData").getProperty("/results");
 
-                console.log("rowData");
-                console.log(rowData);
+                // console.log("rowData");
+                // console.log(rowData);
 
                 var unique = rowData.filter((rowData, index, self) =>
                     index === self.findIndex((t) => (t.CUSTCOLOR === rowData.CUSTCOLOR && t.IONO === rowData.IONO && t.DLVSEQ === rowData.DLVSEQ)));
@@ -1170,7 +1501,10 @@ sap.ui.define([
                                     if (rowData[j].CUSTSIZE === colname) {
                                         // console.log(unique[i]);
                                         // console.log(i + " " + colname + " " + unique[i][colname] + " " + rowData[j].CUSTSIZE);
-                                        unique[i][colname] = rowData[j].REVORDERQTY;
+                                        unique[i][colname + "REVORDERQTY"] = rowData[j].REVORDERQTY;
+                                        unique[i][colname + "SHIPQTY"] = rowData[j].SHIPQTY;
+                                        unique[i]["IOITEM" + colname + "REVORDERQTY"] = rowData[j].IOITEM;
+                                        unique[i]["IOITEM" + colname + "SHIPQTY"] = rowData[j].IOITEM;
                                     }
                                 }
                             }
@@ -1188,15 +1522,18 @@ sap.ui.define([
                     columns: columnData
                 });
 
-                console.log("Columns Data");
-                console.log(columnData);
+                // console.log("Columns Data");
+                // console.log(columnData);
+
+                // console.log("unique");
+                // console.log(unique);
 
                 // console.log("oJSONModel");
                 // console.log(oJSONModel);
 
                 oTable.setModel(oJSONModel, "DataModel");
-                console.log("Data Model Pivot");
-                console.log(oTable.setModel(oJSONModel, "DataModel"));
+                // console.log("Data Model Pivot");
+                // console.log(oTable.setModel(oJSONModel, "DataModel"));
                 oTable.attachPaste();
 
                 // console.log(oTable);
@@ -1281,11 +1618,11 @@ sap.ui.define([
                 });
 
                 oTable.bindRows("DataModel>/results");
-                console.log("DataModel>/results");
+                // console.log("DataModel>/results");
 
                 // oTable.bindRows("/results");
                 // console.log("/results");
-                console.log(oTable);
+                // console.log(oTable);
 
                 // Common.closeLoadingDialog(me);
             },
@@ -2140,6 +2477,7 @@ sap.ui.define([
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         me._styleVer = oData.VERNO;
+                        me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
                         me._prodplant = oData.PRODPLANT;
 
                         oJSONModel.setData(oData);
@@ -2151,6 +2489,7 @@ sap.ui.define([
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
                             me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);
 
+                        // alert("Init Style");
                         me.initStyle();
                         me.initIOMatList();
                         me.initIOCosting();
@@ -2182,6 +2521,9 @@ sap.ui.define([
                         Common.closeLoadingDialog(that);
                         me.setChangeStatus(false);
                         me._styleNo = oData.STYLENO;
+                        me._styleVer = oData.VERNO;
+                        me._prodplant = oData.PRODPLANT;
+                        me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
 
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
                             me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);
@@ -2674,6 +3016,8 @@ sap.ui.define([
 
             onIOSave: async function (source) {
                 var me = this;
+                var strStyleNo;
+                var strVerNo;
                 var sSource = source;
                 if (sSource === "IOHDR") {
                     var sErrMsg = "";
@@ -2692,41 +3036,93 @@ sap.ui.define([
                     });
                     await _promiseResult;
 
-                    var oParamIOHeaderData = {
-                        STYLECD: this.getView().byId("STYLECD").getValue(),
-                        PRODTYPE: this.getView().byId("PRODTYPE").getValue(),
-                        PRODSCEN: this.getView().byId("PRODSCEN").getValue(),
-                        SALESORG: this.getView().byId("SALESORG").getValue(),
-                        ORDQTY: this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
-                        ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
-                        PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
-                        IOTYPE: this.getView().byId("IOTYPE").getValue(),
-                        IOPREFIX: sIOPrefix,
-                        IODESC: sIODesc,
-                        SBU: this._sbu,
-                        SALESGRP: this.getView().byId("SALESGRP").getValue(),
-                        PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
-                        FTYSALTERM: this.getView().byId("FTYSALTERM").getValue(),
-                        REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
-                        SHIPQTY: this.getView().byId("SHIPQTY").getValue() === "" ? "0" : this.getView().byId("SHIPQTY").getValue(),
-                        PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : this.getView().byId("PRODWK").getValue(),
-                        IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
-                        SEASONCD: this.getView().byId("SEASONCD").getValue(),
-                        CUSTGRP: this.getView().byId("CUSTGRP").getValue(),
-                        TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
-                        CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
-                        BASEUOM: this.getView().byId("BASEUOM").getValue(),
-                        PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
-                        REFIONO: this.getView().byId("REFIONO").getValue(),
-                        STYLENO: this.getView().byId("STYLENO").getValue(),
-                        VERNO: this.getView().byId("VERNO").getValue(),
-                        PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
-                        CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
-                        PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
-                        PRODSTART: this.getView().byId("PRODSTART").getValue(),
-                        REMARKS: this.getView().byId("REMARKS").getValue(),
-                        STATUSCD: "CRT"
-                    };
+                    strStyleNo = this.getView().byId("STYLENO").getValue();
+                    strVerNo = this.getView().byId("VERNO").getValue();
+
+                    var oParamIOHeaderData;
+                    var IOQty = 0;
+
+                    if (me.hasSDData === true) {
+                        me.SalDocData.forEach(item => {
+                            // if (isNumeric(item.QTY))
+                                IOQty += +item.QTY;
+                        })
+
+                        oParamIOHeaderData = {
+                            STYLECD: this.getView().byId("STYLECD").getValue(),
+                            PRODTYPE: this.getView().byId("PRODTYPE").getValue(),
+                            PRODSCEN: this.getView().byId("PRODSCEN").getValue(),
+                            SALESORG: this.getView().byId("SALESORG").getValue(),
+                            ORDQTY: this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
+                            ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
+                            PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
+                            IOTYPE: this.getView().byId("IOTYPE").getValue(),
+                            IOPREFIX: sIOPrefix,
+                            IODESC: sIODesc,
+                            SBU: this._sbu,
+                            SALESGRP: this.getView().byId("SALESGRP").getValue(),
+                            PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
+                            FTYSALTERM: this.getView().byId("FTYSALTERM").getValue(),
+                            REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
+                            SHIPQTY: this.getView().byId("SHIPQTY").getValue() === "" ? "0" : this.getView().byId("SHIPQTY").getValue(),
+                            PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : this.getView().byId("PRODWK").getValue(),
+                            IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
+                            SEASONCD: this.getView().byId("SEASONCD").getValue(),
+                            CUSTGRP: this.getView().byId("CUSTGRP").getValue(),
+                            TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
+                            CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
+                            BASEUOM: this.getView().byId("BASEUOM").getValue(),
+                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
+                            REFIONO: this.getView().byId("REFIONO").getValue(),
+                            STYLENO: this.getView().byId("STYLENO").getValue(),
+                            VERNO: this.getView().byId("VERNO").getValue(),
+                            PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
+                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
+                            PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
+                            PRODSTART: this.getView().byId("PRODSTART").getValue(),
+                            REMARKS: this.getView().byId("REMARKS").getValue(),
+                            STATUSCD: "CRT"
+                        };
+                    } else {
+
+                        oParamIOHeaderData = {
+                            STYLECD: this.getView().byId("STYLECD").getValue(),
+                            PRODTYPE: this.getView().byId("PRODTYPE").getValue(),
+                            PRODSCEN: this.getView().byId("PRODSCEN").getValue(),
+                            SALESORG: this.getView().byId("SALESORG").getValue(),
+                            ORDQTY: this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
+                            ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
+                            PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
+                            IOTYPE: this.getView().byId("IOTYPE").getValue(),
+                            IOPREFIX: sIOPrefix,
+                            IODESC: sIODesc,
+                            SBU: this._sbu,
+                            SALESGRP: this.getView().byId("SALESGRP").getValue(),
+                            PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
+                            FTYSALTERM: this.getView().byId("FTYSALTERM").getValue(),
+                            REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
+                            SHIPQTY: this.getView().byId("SHIPQTY").getValue() === "" ? "0" : this.getView().byId("SHIPQTY").getValue(),
+                            PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : this.getView().byId("PRODWK").getValue(),
+                            IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
+                            SEASONCD: this.getView().byId("SEASONCD").getValue(),
+                            CUSTGRP: this.getView().byId("CUSTGRP").getValue(),
+                            TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
+                            CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
+                            BASEUOM: this.getView().byId("BASEUOM").getValue(),
+                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
+                            REFIONO: this.getView().byId("REFIONO").getValue(),
+                            STYLENO: this.getView().byId("STYLENO").getValue(),
+                            VERNO: this.getView().byId("VERNO").getValue(),
+                            PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
+                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
+                            PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
+                            PRODSTART: this.getView().byId("PRODSTART").getValue(),
+                            REMARKS: this.getView().byId("REMARKS").getValue(),
+                            STATUSCD: "CRT"
+                        };
+                    }
+
+                    // console.log(oParamIOHeaderData);
 
                     var oModel = this.getOwnerComponent().getModel();
 
@@ -2738,6 +3134,27 @@ sap.ui.define([
                                     success: function (oData, oResponse) {
                                         _newIONo = oData.IONO;
                                         me.getView().getModel("ui2").setProperty("/currIONo", oData.IONO);
+                                        me.getView().getModel("ui2").setProperty("/currStyleNo", strStyleNo);
+                                        me.getView().getModel("ui2").setProperty("/currVerNo", strVerNo);
+
+                                        // console.log("has SD Data - Save New IO 1");
+                                        // console.log(me.hasSDData);
+                                        if (me.hasSDData === true) {
+                                            // console.log("has SD Data - Save New IO");
+                                            // _promiseResult = new Promise((resolve, reject) => {
+                                                setTimeout(() => {
+                                                    me.SaveSDData(_newIONo);
+                                                }, 100);
+                                            // });
+                                            // await _promiseResult;
+
+                                            setTimeout(() => {
+                                                me.UpdateSD_IO(_newIONo);
+                                            }, 100);
+                                        }
+
+
+                                        // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
                                         Common.showMessage("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
@@ -2754,9 +3171,9 @@ sap.ui.define([
                                 oModel.update("/IOHDRSet(IONO='" + me._ioNo + "')", oParamIOHeaderData, {
                                     method: "PUT",
                                     success: function (oData, oResponse) {
-                                        _newIONo = me._ioNo;
+                                        _newIONo = me.getView().getModel("ui2").getProperty("/currIONo");
 
-                                        Common.showMessage("IO# " + _newIONo + " updated.");
+                                        Common.showMessage("IO# " + me.getView().getModel("ui2").getProperty("/currIONo") + " updated.");
                                         resolve();
                                     },
                                     error: function (err) {
@@ -2779,29 +3196,176 @@ sap.ui.define([
                     //Enable Icon Tab Filters
                     this.enableOtherTabs();
 
+                    // console.log("IO Save - cancelHeaderEdit");
                     setTimeout(() => {
                         this.cancelHeaderEdit();
                     }, 100);
 
+                    // console.log("IO Save - idIconTabBarInlineIOHdr re-enable");
                     var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
                     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                         .forEach(item => item.setProperty("enabled", true));
 
+                    // console.log("IO Save - reload Header Data");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.reloadHeaderData(_newIONo));
                     });
                     await _promiseResult;
 
+                    // console.log("IO Save - closeHeaderEdit");
                     _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.closeHeaderEdit());
                     });
                     await _promiseResult;
 
                     _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this.getIOSizes();
+                        }, 100);
+                        resolve();
+                    });
+                    await _promiseResult;
+
+                    // console.log("IO Save - Refresh IO Data");
+                    this.refreshIOData(_newIONo);
+
+                    // console.log("IO Save - getReloadIOColumnProp");
+                    _promiseResult = new Promise((resolve, reject) => {
                         resolve(this.getReloadIOColumnProp());
                     });
                     await _promiseResult;
+
+                    // console.log("IO Save - getReloadIOColumnProp");
+                    this.initStyle();
+
+                    // console.log("IO Save - End");
                 }
+            },
+
+            isNumeric: function (value) {
+                return /^-?\d+$/.test(value);
+            },
+
+            UpdateSD_IO: function(iono) {
+                var me = this;
+                var sIONO = iono;
+                var sdData = [];
+                var entitySet = "/SALDOCDETSet";
+
+                var oModel = me.getOwnerComponent().getModel();
+
+                oModel.setUseBatch(true);
+                oModel.setDeferredGroups(["update"]);
+
+                var mParameters = {
+                    "groupId": "update"
+                }
+
+                me.SalDocData.forEach(sditem => {
+                    sdData = {
+                        "SALESDOCNO": sditem.SALESDOCNO,
+                        "SALESDOCITEM": +sditem.SALESDOCITEM,
+                        "IONO": sIONO
+                    }
+
+                    oModel.update(entitySet + "(SALESDOCNO='" + sditem.SALESDOCNO + "',SALESDOCITEM=" + sditem.SALESDOCITEM + ")", sdData, mParameters);
+                })
+
+                oModel.submitChanges({
+                    mParameters,
+                    success: function (oData, oResponse) {
+                    },
+                    error: function (oData, oResponse) {
+                        console.log(oResponse);
+                    }
+                });
+            },
+
+            SaveSDData: function (iono) {
+                var me = this;
+                var sIONO = iono;
+                var dlvData = [];
+                var detData = [];
+                var dlvSeq = 1;
+
+                var dlventitySet = "/IODLVSet"
+                var detentitySet = "/IODETSet"
+                var oModel = me.getOwnerComponent().getModel();
+
+                oModel.setUseBatch(true);
+                oModel.setDeferredGroups(["insert"]);
+
+                var mParameters = {
+                    "groupId": "insert"
+                };
+
+                console.log("SaveSDData");
+                console.log(me.SalDocData);
+
+                me.uniqueIODLVData = me.SalDocData.filter((SalDocData, index, self) =>
+                    index === self.findIndex((t) => (t.CPONO === SalDocData.CPONO && t.CPOREV === SalDocData.CPOREV
+                        && t.DLVDT === SalDocData.DLVDT && t.CUSTSHIPTO === SalDocData.CUSTSHIPTO && t.CUSTBILLTO === SalDocData.CUSTBILLTO)));
+
+                console.log("uniqueIODLVData");
+                console.log(me.uniqueIODLVData);
+
+                me.uniqueIODLVData.forEach(item => {
+                    dlvData = {
+                        "IONO": sIONO,
+                        "CPONO": item.CPONO,
+                        "CPOREV": item.CPOREV,
+                        "CPOITEM": item.CPOITEM,
+                        "CPODT": sapDateFormat.format(new Date(item.CPODT)),
+                        "DLVDT": sapDateFormat.format(new Date(item.DLVDT)),
+                        "REVDLVDT": sapDateFormat.format(new Date(item.DLVDT)),
+                        "CUSTSHIPTO": item.CUSTSHIPTO,
+                        "CUSTBILLTO": item.CUSTBILLTO,
+                        "SHIPMODE": item.SHIPMODE,
+                        "PAYMETHOD": item.PAYMETHOD
+                    }
+
+                    console.log(dlvData);
+                    oModel.create(dlventitySet, dlvData, mParameters);
+
+                    me.SalDocData.filter(sditem => sditem.CPONO === item.CPONO && sditem.CPOREV === item.CPOREV && sditem.DLVDT === item.DLVDT && sditem.CUSTSHIPTO === item.CUSTSHIPTO && sditem.CUSTBILLTO === item.CUSTBILLTO)
+                        .forEach(detitem => {
+                            detData = {
+                                "IONO": sIONO,
+                                "SALDOCNO": detitem.SALESDOCNO,
+                                "SALDOCITEM": detitem.SALESDOCITEM,
+                                "ORDERQTY": detitem.QTY,
+                                "REVORDERQTY": detitem.QTY,
+                                "ACTUALQTY": "0",
+                                "PLANSHPQTY": "0",
+                                "SHIPQTY": "0",
+                                "REVDLVDT": sapDateFormat.format(new Date(detitem.DLVDT)),
+                                "DLVSEQ": dlvSeq + "",
+                                "CUSTCOLOR": detitem.CUSTCOLOR,
+                                "CUSTDEST": detitem.CUSTDEST,
+                                "CUSTSIZE": detitem.CUSTSIZE,
+                                "UNITPRICE1": detitem.UNITPRICE,
+                                "UNITPRICE2": detitem.UNITPRICE,
+                                "UNITPRICE3": detitem.UNITPRICE
+                            }
+
+                            console.log(detData);
+                            oModel.create(detentitySet, detData, mParameters);
+                        });
+
+                    dlvSeq++;
+                })
+
+                oModel.submitChanges({
+                    mParameters,
+                    // groupId: "insert",
+                    success: function (oData, oResponse) {
+                        // Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                    },
+                    error: function (oData, oResponse) {
+                        console.log(oResponse);
+                    }
+                });
+
             },
 
             onIOCancel: function (source) {
@@ -2834,8 +3398,17 @@ sap.ui.define([
 
                     // alert(this._ioNo);
                     // alert(this._newIONo);
-                    if (this._ioNo === "NEW" && this._newIONo !== "") {
-                        this.onNavBack();
+                    if (this._ioNo === "NEW" && (this._newIONo !== "" || this._newIONo !== undefined)) {
+                        // this.onNavBack();
+                        var oHistory = History.getInstance();
+                        var sPreviousHash = oHistory.getPreviousHash();
+
+                        if (sPreviousHash !== undefined) {
+                            window.history.go(-1);
+                        } else {
+                            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                            oRouter.navTo("Routeioinit", {}, true);
+                        }
                     }
 
                 }
@@ -2961,9 +3534,11 @@ sap.ui.define([
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                if (vDlvSeq === undefined || vDlvSeq === "999") {
-                    Common.showMessage("select a Delivery Sequence");
-                    return;
+                if (arg === "IODET") {
+                    if (vDlvSeq === undefined || vDlvSeq === "999") {
+                        Common.showMessage("select a Delivery Sequence");
+                        return;
+                    }
                 }
 
                 if (arg === "IODLV") {
@@ -2973,6 +3548,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(true);
                     this.byId("btnCancelDlvSched").setVisible(true);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -2992,6 +3568,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(false);
                     this.byId("btnCancelDlvSched").setVisible(false);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -3005,25 +3582,32 @@ sap.ui.define([
                     this.byId("btnCancelIODet").setVisible(true);
                     this.byId("btnFullScreenIODet").setVisible(false);
                 }
-                console.log("1");
+                // console.log("1");
                 var oIconTabBar = this.byId("idIconTabBarInlineMode");
                 oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                     .forEach(item => item.setProperty("enabled", false));
 
-                console.log("2");
+                // console.log("2");
                 //GET TABLE
                 var aNewRow = [];
                 var oNewRow = {};
                 var tabName = arg + "Tab";
                 var oTable = this.getView().byId(tabName);
-                console.log("3");
+                // console.log("3");
 
                 oNewRow["New"] = true;
                 aNewRow.push(oNewRow);
 
                 //SET TABLE AS EDITABLE
-                this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
-                console.log("4");
+                if (arg === "IODET") {
+                    this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);
+                }
+
+                if (arg !== "IODET") {
+                    this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
+                }
+
+                // console.log("4");
 
                 this.setRowEditMode(arg);
                 this._validationErrors = [];
@@ -3033,17 +3617,25 @@ sap.ui.define([
                 if (arg !== "IODET")
                     this.setActiveRowHighlightByTableId(arg + "Tab");
 
-                console.log("5");
-                var oModel = this.getView().byId(tabName).getModel();
-                oModel.setProperty("/rows", aNewRow);
-                console.log("6");
+                // console.log("5");
+                if (arg === "IODET") {
+                    var oModel = this.getView().byId(tabName).getModel("DataModel");
+                    oModel.setProperty("/results", aNewRow);
+                }
+
+                if (arg !== "IODET") {
+                    var oModel = this.getView().byId(tabName).getModel();
+                    oModel.setProperty("/rows", aNewRow);
+                }
+
+                // console.log("6");
                 this.getView().getModel("ui").setProperty("/dataMode", 'NEW');
-                console.log("7");
+                // console.log("7");
 
                 if (oTable.getBinding()) {
                     this._aFiltersBeforeChange = jQuery.extend(true, [], oTable.getBinding().aFilters);
 
-                    console.log("8");
+                    // console.log("8");
                     // oTable.getBinding().aSorters = null;
                     oTable.getBinding().aFilters = null;
                 }
@@ -3051,7 +3643,7 @@ sap.ui.define([
                 var oColumns = oTable.getColumns();
                 // console.log(oColumns);
 
-                console.log("9");
+                // console.log("9");
                 for (var i = 0, l = oColumns.length; i < l; i++) {
                     var isFiltered = oColumns[i].getFiltered();
                     // console.log(oColumns[i].getFiltered())
@@ -3060,16 +3652,20 @@ sap.ui.define([
                     }
                 }
 
-                console.log("10");
+                // console.log("10");
 
                 // console.log(oTable);
                 // oTable.getBinding("rows").refresh();
                 // console.log("11");
-                oTable.getModel().refresh(true);
-                console.log("12");
 
-                console.log(oTable);
+                // if (arg === "IODET") {
+                //     oTable.getModel("DataModel").refresh(true);
+                // }
+                // else
+                //     oTable.getModel().refresh(true);
 
+                // console.log("12");
+                // console.log(oTable);
             },
 
             onCopy: async function (TableName) {
@@ -3370,6 +3966,13 @@ sap.ui.define([
                 //     this.reloadIOData("IODETTab", "/IODETSet");
                 // }, 100);
 
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
+
                 _promiseResult = new Promise((resolve, reject) => {
 
                     me._tblChange = true;
@@ -3398,27 +4001,64 @@ sap.ui.define([
                 var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
+                // console.log("reloadIOData");
                 // console.log(cIONo);
                 // console.log(cDlvSeq);
 
-                if (source === "IODET") {
-                    // this._oModel.read(sEntitySet, {
-                    //     urlParameters: {
-                    //         "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
-                    //     },
-                    //     success: function (oData, response) {
-                    //         // console.log("Reload IO Data");
-                    //         // console.log(oData);
-                    //         me.byId(sSource).getModel().setProperty("/rows", oData.results);
-                    //         me.byId(sSource).bindRows("/rows");
-                    //     },
-                    //     error: function (err) { alert(err); }
-                    // })
-                    _promiseResult = new Promise((resolve, reject) => {
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
+
+                if (source === "IODETTab") {
+                    // _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
                         this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                    })
-                    await _promiseResult;
+                    }, 100);
+                    //     resolve();
+                    // })
+                    // await _promiseResult;
+
+                    setTimeout(() => {
+                        this._oModel.read("/IODLVSet", {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + cIONo + "'"
+                            },
+                            success: function (oData, response) {
+                                // console.log("Reload IO Data");
+                                // console.log(ioNo);
+                                // console.log(oData);
+                                oData.results.forEach((item, index) => {
+                                    if (index === 0) {
+                                        item.ACTIVE = "X"
+                                        // console.log("index zero Delivery Sequence");
+                                        // console.log(item.DLVSEQ);
+                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                    } else
+                                        item.ACTIVE = ""
+                                });
+                                me.byId(sSource).getModel().setProperty("/rows", oData.results);
+                                me.byId(sSource).bindRows("/rows");
+                                me._tableRendered = sSource;
+                                // resolve();
+                            },
+                            error: function (err) {
+                                alert(err);
+                                // resolve();
+                            }
+                        })
+                    }, 100);
+                    // })
+                    // await _promiseResult;
+
+                    // console.log("reload Data new active Seq");
+                    // console.log(me.getView().getModel("ui2").setProperty("/currDlvSeq"));
+
+
                 } else {
+                    // _promiseResult = new Promise((resolve, reject) => {
                     this._oModel.read(sEntitySet, {
                         urlParameters: {
                             "$filter": "IONO eq '" + cIONo + "'"
@@ -3427,12 +4067,41 @@ sap.ui.define([
                             // console.log("Reload IO Data");
                             // console.log(ioNo);
                             // console.log(oData);
+                            oData.results.forEach((item, index) => {
+                                // console.log(item);
+                                if (index === 0) {
+                                    item.ACTIVE = "X"
+                                    // console.log("index zero Delivery Sequence");
+                                    // console.log(item.DLVSEQ);
+                                    me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                } else
+                                    item.ACTIVE = ""
+                            });
                             me.byId(sSource).getModel().setProperty("/rows", oData.results);
                             me.byId(sSource).bindRows("/rows");
+                            me._tableRendered = sSource;
+
+                            // resolve();
                         },
-                        error: function (err) { alert(err); }
+                        error: function (err) {
+                            alert(err);
+                            // resolve(); 
+                        }
                     })
-                    this.getReloadIOColumnProp();
+
+                    // })
+                    // await _promiseResult;
+                    // this.getReloadIOColumnProp();
+
+                    // _promiseResult = new Promise((resolve, reject) => {
+                    me._tblChange = true;
+                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    //     resolve();
+                    // })
+                    // await _promiseResult;
+
+                    // console.log("reload Data new active Seq");
+                    // console.log(me.getView().getModel("ui2").getProperty("/currDlvSeq"));
                 }
 
                 // this.getReloadIOColumnProp();
@@ -3443,12 +4112,16 @@ sap.ui.define([
             //******************************************* */
 
             initStyle() {
+                // console.log("Init Style");
                 this._oModelStyle = this.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
-                this._aColumns = {};
-                this._aDataBeforeChange = [];
+                // this._aColumns = {};
+                // this._aDataBeforeChange = [];
                 var me = this;
 
-                if (this._styleNo.trim() === "") this.byId("btnCreateStyle").setVisible(true);
+                let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+
+                // this._styleNo
+                if (strStyle.trim() === "") this.byId("btnCreateStyle").setVisible(true);
                 else this.byId("btnCreateStyle").setVisible(false);
 
                 this.byId("colorTab")
@@ -3502,6 +4175,7 @@ sap.ui.define([
                 // })
 
                 var vIONo = this._ioNo; //"1000115";
+                vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 this._oModelStyle.read('/AttribSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
@@ -3533,7 +4207,10 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
                     },
                     success: function (oData, response) {
-                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                        oData.results.forEach((item, index) => {
+                            item.ACTIVE = index === 0 ? "X" : "";
+                            item.BASEIND = item.BASEIND === "X" ? true : false;
+                        });
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
                         me._tableRendered = "sizeTab";
@@ -3600,6 +4277,22 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ASSIGNSAPMAT" });
                 oDDTextParam.push({ CODE: "AUTOASSIGNSAPMAT" });
                 oDDTextParam.push({ CODE: "CREATESAPMAT" });
+                oDDTextParam.push({ CODE: "REORDER" });
+                oDDTextParam.push({ CODE: "CLOSE" });
+                oDDTextParam.push({ CODE: "VENDOR" });
+                oDDTextParam.push({ CODE: "REORDERQTY" });
+                oDDTextParam.push({ CODE: "REMARKS" });
+                oDDTextParam.push({ CODE: "DELETED" });
+                oDDTextParam.push({ CODE: "ADD" });
+                oDDTextParam.push({ CODE: "INFO_NO_MATLIST" });
+                oDDTextParam.push({ CODE: "INFO_REORDER_CREATED" });
+                oDDTextParam.push({ CODE: "DELETE" });
+                oDDTextParam.push({ CODE: "INFO_DATA_DELETED" });
+                oDDTextParam.push({ CODE: "CREATEDBY" });
+                oDDTextParam.push({ CODE: "CREATEDDT" });
+                oDDTextParam.push({ CODE: "UPDATEDBY" });
+                oDDTextParam.push({ CODE: "UPDATEDDT" });
+                oDDTextParam.push({ CODE: "REFRESH" });
 
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
@@ -3652,8 +4345,19 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_MRPDATA_CREATED" });
                 oDDTextParam.push({ CODE: "INFO_NO_SEL_RECORD_TO_PROC" });
                 oDDTextParam.push({ CODE: "INFO_MATERIAL_CREATED" });
-
+                oDDTextParam.push({ CODE: "INFO_IVALID_RECORD_FOR_MRP" });
+                
                 oDDTextParam.push({ CODE: "PRINT" });
+                oDDTextParam.push({ CODE: "RELCOSTING" });
+                oDDTextParam.push({ CODE: "CSTYPE" });
+                oDDTextParam.push({ CODE: "CSVCD" });
+                oDDTextParam.push({ CODE: "VERDESC" });
+                oDDTextParam.push({ CODE: "SALESTERM" });
+                oDDTextParam.push({ CODE: "CSDATE" });
+                oDDTextParam.push({ CODE: "CREATECOSTING" });
+                oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_REFRESH" });
+                oDDTextParam.push({ CODE: "INFO_COSTING_RELEASE" });
+                oDDTextParam.push({ CODE: "INFO_STATUS_ALREADY_REL" });
 
                 oDDTextParam.push({ CODE: "IOITEM" });
                 oDDTextParam.push({ CODE: "SALDOCNO" });
@@ -3677,6 +4381,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CUSTDEST" });
                 oDDTextParam.push({ CODE: "DLVSEQ" });
                 oDDTextParam.push({ CODE: "REVDLVDT" });
+                // console.log(oDDTextParam);
 
                 setTimeout(() => {
                     oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
@@ -3704,8 +4409,11 @@ sap.ui.define([
                 var me = this;
                 var aStyleHdr = [];
                 var oJSONModel = new JSONModel();
-                var vStyle = this._styleNo; //"1000000272";
+                // var vStyle = this._styleNo; //"1000000272";
+                var vStyle = this.getView().getModel("ui2").getProperty("/currStyleNo"); //"1000000272";
 
+                // console.log("getStyleHeaderData");
+                // console.log(vStyle);
                 setTimeout(() => {
                     this._oModelStyle.read('/HeaderSet', {
                         urlParameters: {
@@ -3714,9 +4422,9 @@ sap.ui.define([
                         success: function (oData, response) {
                             // me._styleVer = oData.results[0].VERNO;
 
+                            me.getStyleColors();
                             me.getStyleDetailedBOM();
                             me.getStyleMaterialList();
-                            me.getStyleColors();
 
                             var oModel = me.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                             var vSBU = me._sbu; //"VER"; 
@@ -3852,23 +4560,43 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
-                        template: new sap.m.Text({
-                            text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
-                            wrapping: false,
-                            tooltip: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
-                        }),
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    if (sColumnDataType !== "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel }),
+                            template: new sap.m.Text({
+                                text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
+                                wrapping: false,
+                                tooltip: sColumnDataType === "BOOLEAN" ? "" : sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
+                    else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel }),
+                            template: new sap.m.CheckBox({
+                                selected: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
                 });
             },
 
@@ -3887,8 +4615,9 @@ sap.ui.define([
                 var entitySet = "/StyleDetailedBOMSet"
                 // console.log(this._styleVer)
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
-                    verno: this._styleVer //"1"
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
@@ -4066,8 +4795,9 @@ sap.ui.define([
                 var me = this;
 
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
-                    verno: this._styleVer //"1"
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"), //"1000000272",
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
                 // console.log(this._styleNo, this._styleVer);
                 oModel.read('/StyleMaterialListSet', {
@@ -4096,12 +4826,14 @@ sap.ui.define([
             },
 
             getStyleColors: function () {
-                //get color attributes
+                // console.log("get color attributes");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+                let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
 
                 oModel.setHeaders({
-                    styleno: this._styleNo //"1000000272"
+                    // styleno: this._styleNo //"1000000272"
+                    styleno: paramStyle //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesColorSet", {
@@ -4114,12 +4846,14 @@ sap.ui.define([
             },
 
             getStyleSizes: function () {
-                //get sizes attributes
+                // console.log("get sizes attributes");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+                let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
 
                 oModel.setHeaders({
-                    styleno: this._styleNo //"1000000272"
+                    // styleno: this._styleNo //"1000000272"
+                    styleno: paramStyle //"1000000272"
                 });
 
                 oModel.read("/StyleAttributesSizeSet", {
@@ -4132,7 +4866,7 @@ sap.ui.define([
             },
 
             getStyleBOMUV: function () {
-                //get BOM by UV 
+                // console.log("get BOM by UV");
                 var me = this;
                 var columnData = [];
                 var oModelUV = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
@@ -4151,7 +4885,7 @@ sap.ui.define([
                     pivotArray = me._sizes;
                 }
 
-                //get dynamic columns of BOM by UV
+                // console.log("get dynamic columns of BOM by UV");
                 oModelUV.read("/DynamicColumnsSet", {
                     success: function (oData, oResponse) {
                         var columns = oData.results;
@@ -4206,15 +4940,16 @@ sap.ui.define([
             },
 
             getBOMUVTableData: function (columnData, pivot) {
-                //Get BOM by UV actual data
+                // console.log("Get BOM by UV actual data");
                 var me = this;
                 var oTable = this.getView().byId("styleBOMUVTab");
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
 
                 oModel.setHeaders({
-                    styleno: this._styleNo, //"1000000272",
-                    verno: this._styleVer, //"1",
+                    // styleno: this._styleNo, //"1000000272",
+                    styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
+                    verno: this.getView().getModel("ui2").getProperty("/currVerNo"),
                     usgcls: usageClass
                 });
                 // console.log(this._styleNo, this._styleVer, usageClass);
@@ -4279,8 +5014,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        console.log("BOM by UV Pivot");
-                        console.log(oTable);
+                        // console.log("BOM by UV Pivot");
+                        // console.log(oTable);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -4378,12 +5113,14 @@ sap.ui.define([
                 else if (arg === "IODLV") this._bIODLVChanged = false;
                 else if (arg === "IODET") this._bIODETChanged = false;
                 else if (arg === "IOATTRIB") this._bIOATTRIBChanged = false;
+                else if (arg === "costHdr") this._bCostHdrChanged = false;
+                else if (arg === "costDtls") this._bCostDtlsChanged = false;
 
                 // console.log("on Edit Check if has Entries");
                 // console.log(this.byId(arg + "Tab").getModel());
                 // return;
 
-                console.log("on Edit - " + arg + "Tab");
+                // console.log("on Edit - " + arg + "Tab");
                 // console.log(this.byId(arg + "Tab").getModel());
                 // console.log(this.byId(arg + "Tab").getModel().getData());
 
@@ -4394,11 +5131,14 @@ sap.ui.define([
                 // }
 
                 if (arg === "IODET") {
+                    // this.byId("idIconTabBarInlineIODET").
                     if (this.byId(arg + "Tab").getModel("DataModel").getData().results.length === 0) {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                        return;
                     }
-                    console.log(this.byId(arg + "Tab").getModel("DataModel").getData());
-                    console.log("Entered Edit Mode");
+
+                    // console.log(this.byId(arg + "Tab").getModel("DataModel").getData());
+                    // console.log("Entered Edit Mode");
 
                     this.byId("btnNewDlvSched").setVisible(false);
                     this.byId("btnImportPODlvSched").setVisible(false);
@@ -4406,6 +5146,7 @@ sap.ui.define([
                     this.byId("btnDeleteDlvSched").setVisible(false);
                     this.byId("btnCopyDlvSched").setVisible(false);
                     this.byId("btnRefreshDlvSched").setVisible(false);
+                    this.byId("btnGenMatList").setVisible(false);
                     this.byId("btnSaveDlvSched").setVisible(false);
                     this.byId("btnCancelDlvSched").setVisible(false);
                     this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -4425,8 +5166,77 @@ sap.ui.define([
                     this._validationErrors = [];
                     this._sTableModel = arg;
                     this._dataMode = "EDIT";
-                } else {
 
+                    var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                    oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
+                        .forEach(item => item.setProperty("enabled", false));
+                }
+                else if (arg === "costHdr" || arg === "costDtls") {
+                    if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                    }
+                    else {
+                        if (arg === "costHdr") {
+                            if (this.byId(arg + "Tab").getModel().getData().rows.filter(fi => fi.COSTSTATUS !== "REL").length === 0) {
+                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                            }
+                            else {
+                                this.byId("btnNewCostHdr").setVisible(false);
+                                this.byId("btnEditCostHdr").setVisible(false);
+                                this.byId("btnRefreshCostHdr").setVisible(false);
+                                this.byId("btnSaveCostHdr").setVisible(true);
+                                this.byId("btnCancelCostHdr").setVisible(true);
+
+                                this.byId("btnEditCostDtl").setEnabled(false);
+                                this.byId("btnPrintCosting").setEnabled(false);
+                                this.byId("btnReleaseCosting").setEnabled(false);
+                                this.byId("btnRefreshCostDtl").setEnabled(false);
+
+                                this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
+                                this.setRowEditMode(arg);
+                                this._validationErrors = [];
+                                this._sTableModel = arg;
+                                this._dataMode = "EDIT";
+
+                                var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));
+                            }
+                        }
+                        else {
+                            var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
+                            var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
+                            var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
+
+                            if (vStatus === "REL") {
+                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                            }
+                            else {
+                                this.byId("btnEditCostDtl").setVisible(false);
+                                this.byId("btnPrintCosting").setVisible(false);
+                                this.byId("btnReleaseCosting").setVisible(false);
+                                this.byId("btnRefreshCostDtl").setVisible(false);
+                                this.byId("btnSaveCostDtl").setVisible(true);
+                                this.byId("btnCancelCostDtl").setVisible(true);
+
+                                this.byId("btnNewCostHdr").setEnabled(false);
+                                this.byId("btnEditCostHdr").setEnabled(false);
+                                this.byId("btnRefreshCostHdr").setEnabled(false);
+
+                                this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
+                                this.setRowEditMode(arg);
+                                this._validationErrors = [];
+                                this._sTableModel = arg;
+                                this._dataMode = "EDIT";
+
+                                var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));
+                            }
+                        }
+                    }
+                }
+                else {
                     if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                     }
@@ -4449,6 +5259,7 @@ sap.ui.define([
                             this.byId("btnExportIOMatList").setVisible(false);
                             this.byId("btnSaveIOMatList").setVisible(true);
                             this.byId("btnCancelIOMatList").setVisible(true);
+                            this.byId("btnReorderIOMatList").setVisible(false);
                         } else if (arg === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(false);
                             this.byId("btnImportPODlvSched").setVisible(false);
@@ -4456,6 +5267,7 @@ sap.ui.define([
                             this.byId("btnDeleteDlvSched").setVisible(false);
                             this.byId("btnCopyDlvSched").setVisible(false);
                             this.byId("btnRefreshDlvSched").setVisible(false);
+                            this.byId("btnGenMatList").setVisible(false);
                             this.byId("btnSaveDlvSched").setVisible(true);
                             this.byId("btnCancelDlvSched").setVisible(true);
                             this.byId("btnFullScreenDlvSched").setVisible(false);
@@ -4497,14 +5309,36 @@ sap.ui.define([
                             // sap.ui.getCore().byId("onIOEdit").setVisible(false);
                             // sap.ui.getCore().byId("onIORelease").setVisible(false);
                         }
+                        else if (arg === "costHdr") {
+                            this.byId("btnNewCostHdr").setVisible(false);
+                            this.byId("btnEditCostHdr").setVisible(false);
+                            this.byId("btnRefreshCostHdr").setVisible(false);
+                            this.byId("btnSaveCostHdr").setVisible(true);
+                            this.byId("btnCancelCostHdr").setVisible(true);
+
+                            this.byId("btnEditCostDtl").setEnabled(false);
+                            this.byId("btnPrintCosting").setEnabled(false);
+                            this.byId("btnReleaseCosting").setEnabled(false);
+                            this.byId("btnRefreshCostDtl").setEnabled(false);
+                        }
+                        else if (arg === "costDtls") {
+                            this.byId("btnEditCostDtl").setVisible(false);
+                            this.byId("btnPrintCosting").setVisible(false);
+                            this.byId("btnReleaseCosting").setVisible(false);
+                            this.byId("btnRefreshCostDtl").setVisible(false);
+                            this.byId("btnSaveCostDtl").setVisible(true);
+                            this.byId("btnCancelCostDtl").setVisible(true);
+
+                            this.byId("btnNewCostHdr").setEnabled(false);
+                            this.byId("btnEditCostHdr").setEnabled(false);
+                            this.byId("btnRefreshCostHdr").setEnabled(false);
+                        }
 
                         this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
-                        // console.log(this._aDataBeforeChange);
                         this.setRowEditMode(arg);
                         this._validationErrors = [];
                         this._sTableModel = arg;
                         this._dataMode = "EDIT";
-
                     }
 
                     if (arg !== "IODET")
@@ -4542,6 +5376,8 @@ sap.ui.define([
                 else if (arg === "ioMatList") bChanged = this._bIOMatListChanged;
                 else if (arg === "IODLV") bChanged = this._bIODVLChanged;
                 else if (arg === "IODET") bChanged = this._bIODETChanged;
+                else if (arg === "costHdr") bChanged = this._bCostHdrChanged;
+                else if (arg === "costDtls") bChanged = this._bCostDtlsChanged;
 
                 if (bChanged) {
                     var oData = {
@@ -4563,6 +5399,8 @@ sap.ui.define([
                     this._ConfirmDialog.open();
                 }
                 else {
+                    Common.openLoadingDialog(this);
+
                     if (arg === "color") {
                         this.byId("btnEditColor").setVisible(true);
                         this.byId("btnSaveColor").setVisible(false);
@@ -4581,6 +5419,7 @@ sap.ui.define([
                         this.byId("btnExportIOMatList").setVisible(true);
                         this.byId("btnSaveIOMatList").setVisible(false);
                         this.byId("btnCancelIOMatList").setVisible(false);
+                        this.byId("btnReorderIOMatList").setVisible(true);
                     } else if (arg === "IODLV") {
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
@@ -4588,6 +5427,7 @@ sap.ui.define([
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
                         this.byId("btnRefreshDlvSched").setVisible(true);
+                        this.byId("btnGenMatList").setVisible(true);
                         this.byId("btnSaveDlvSched").setVisible(false);
                         this.byId("btnCancelDlvSched").setVisible(false);
                         this.byId("btnFullScreenDlvSched").setVisible(true);
@@ -4607,6 +5447,7 @@ sap.ui.define([
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
                         this.byId("btnRefreshDlvSched").setVisible(true);
+                        this.byId("btnGenMatList").setVisible(true);
                         this.byId("btnSaveDlvSched").setVisible(false);
                         this.byId("btnCancelDlvSched").setVisible(false);
                         this.byId("btnFullScreenDlvSched").setVisible(true);
@@ -4627,18 +5468,45 @@ sap.ui.define([
                         // sap.ui.getCore().byId("onIOEdit").setVisible(true);
                         // sap.ui.getCore().byId("onIORelease").setVisible(true);
                     }
+                    else if (arg === "costHdr") {
+                        this.byId("btnNewCostHdr").setVisible(true);
+                        this.byId("btnEditCostHdr").setVisible(true);
+                        this.byId("btnRefreshCostHdr").setVisible(true);
+                        this.byId("btnSaveCostHdr").setVisible(false);
+                        this.byId("btnCancelCostHdr").setVisible(false);
+
+                        this.byId("btnEditCostDtl").setEnabled(true);
+                        this.byId("btnPrintCosting").setEnabled(true);
+                        this.byId("btnReleaseCosting").setEnabled(true);
+                        this.byId("btnRefreshCostDtl").setEnabled(true);
+                    }
+                    else if (arg === "costDtls") {
+                        this.byId("btnEditCostDtl").setVisible(true);
+                        this.byId("btnPrintCosting").setVisible(true);
+                        this.byId("btnReleaseCosting").setVisible(true);
+                        this.byId("btnRefreshCostDtl").setVisible(true);
+                        this.byId("btnSaveCostDtl").setVisible(false);
+                        this.byId("btnCancelCostDtl").setVisible(false);
+
+                        this.byId("btnNewCostHdr").setEnabled(true);
+                        this.byId("btnEditCostHdr").setEnabled(true);
+                        this.byId("btnRefreshCostHdr").setEnabled(true);
+                    }
 
                     this.setRowReadMode(arg);
                     if (arg === "IODET") {
-                        console.log("IO DETAIL aDataBeforeChange");
-                        console.log(this.byId(arg + "Tab").getModel());
-                        this.byId(arg + "Tab").getModel().setProperty("/results", this._aDataBeforeChange);
-                        this.byId(arg + "Tab").bindRows("/results");
+                        // console.log("IO DETAIL aDataBeforeChange");
+                        // console.log(this._aDataBeforeChange);
+                        // console.log(this.byId(arg + "Tab").getModel("DataModel"));
+                        // this.byId(arg + "Tab").getModel("DataModel").setProperty("/results", this._aDataBeforeChange);
+                        // this.byId(arg + "Tab").bindRows("/results");
+                        // console.log(this.byId(arg + "Tab").getModel("DataModel"));
+                        this.reloadIOData("IODETTab", "/IODETSet");
                     }
                     else {
                         this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
-                        console.log("Other Table aDataBeforeChange");
-                        console.log(this.byId(arg + "Tab").getModel());
+                        // console.log("Other Table aDataBeforeChange");
+                        // console.log(this.byId(arg + "Tab").getModel());
                         this.byId(arg + "Tab").bindRows("/rows");
                     }
                     this._dataMode = "READ";
@@ -4678,20 +5546,489 @@ sap.ui.define([
                         oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", true));
                     }
+
+                    Common.closeLoadingDialog(this);
                 }
             },
 
+            onSaveIODET: async function () {
+                var me = this;
+                var arg = "IODET";
+                var aNewRows = this.byId("IODETTab").getModel("DataModel").getData().results.filter(item => item.New === true);
+                var iNew = 0;
+                var aEditedRows = this.byId("IODETTab").getModel("DataModel").getData().results.filter(item => item.EDITED === true && item.New !== true);
+                var iEdited = 0;
+                var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+                var hasMatchingSize = false;
+
+                // console.log("aNewRows");
+                // console.log(aNewRows);
+                // console.log("aEditedRows");
+                // console.log(aEditedRows);
+                // console.log("this._validationErrors");
+                // console.log(this._validationErrors.length);
+
+                Common.openProcessingDialog(me, "Processing...");
+
+                //PROCESS NEW ROW DATA
+                if (aNewRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var oModel;
+
+                        switch (arg) {
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            default: break;
+                        }
+
+                        oModel.setUseBatch(true);
+                        oModel.setDeferredGroups(["insert"]);
+
+                        var mParameters = {
+                            "groupId": "insert"
+                        };
+
+                        // var aDeferredGroup = oModel.getDeferredGroups().push("insert");
+                        // oModel.setDeferredGroups(aDeferredGroup);
+
+                        // var mParameters = {
+                        //     groupId: "insert"
+                        // };
+
+                        //APPLY SIZE DATAMODEL UNPIVOT
+
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                        // console.log("aNewRows");
+                        // console.log(aNewRows);
+                        if (aNewRows[0]["CUSTCOLOR"] === undefined) {
+                            Common.showMessage("Customer Color is required.");
+                            Common.closeProcessingDialog(this);
+                            return;
+                        }
+
+                        //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
+                        aNewRows.forEach(item => {
+                            //LOOP THRU COLLECTION OF SIZES FOR THE IO
+                            this._iosizes.forEach(async colSizes => {
+                                hasMatchingSize = false;
+                                var param = {};
+                                // param["IONO"] = me._ioNo;
+                                param["IONO"] = cIONo;
+                                param["DLVSEQ"] = cDlvSeq;
+
+                                //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
+                                this._aColumns[arg].forEach(col => {
+                                    //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
+                                    if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                        //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
+                                        if (col.DataType === "DATETIME") {
+                                            param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                            //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else {
+                                            //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
+                                            param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                        }
+                                    }
+                                })
+
+                                //IF SIZE COLUMNS AT MODEL HAS NO MATCHING COLUMNS AT SIZE MODEL
+                                //INSERT CUSTSIZE WITH REVORDERQTY = 0
+                                if (!hasMatchingSize) {
+                                    param["CUSTSIZE"] = colSizes.ATTRIBCD;
+                                    param["REVORDERQTY"] = "0";
+                                    param["SHIPQTY"] = "0";
+                                }
+
+                                //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                this._iosizes.forEach(colSizesRemove => {
+                                    delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
+                                    //     delete param[colSizesRemove.ATTRIBCD];
+                                })
+
+                                // if(param["CUSTCOLOR"] === undefined){
+                                //     Common.showMessage("Customer Color entry is required");
+                                //     return;
+                                // }
+
+                                // console.log(this._iosizes);
+                                // console.log(entitySet);
+                                // console.log(param);
+                                // console.log(arg);
+
+                                // return;
+
+                                //CREATE ENTRIES USING BATCH PROCESSING
+                                oModel.create(entitySet, param, mParameters);
+
+
+                                // _promiseResult = new Promise((resolve, reject) => {
+                                //     setTimeout(() => {
+                                //         oModel.create(entitySet, param, {
+                                //             method: "POST",
+                                //             success: function (data, oResponse) {
+                                //                 // console.log("Success : " + entitySet);
+                                //                 resolve();
+                                //             },
+                                //             error: function () {
+                                //                 // console.log("Error : " + entitySet);
+                                //                 iNew++;
+                                //                 // alert("Error");
+                                //                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                //                 resolve();
+                                //             }
+                                //         })
+                                //     }, 1000);
+                                // });
+                                // await _promiseResult;
+
+                            });
+
+                            // return;
+                            // console.log(oModel);
+                            // return;
+                            oModel.submitChanges({
+                                mParameters,
+                                // groupId: "insert",
+                                success: function (oData, oResponse) {
+                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                },
+                                error: function (oData, oResponse) {
+                                }
+                            });
+
+
+                            iNew++;
+                            if (iNew === aNewRows.length) {
+                                // Common.closeProcessingDialog(me);
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                if (arg === "IODET") {
+                                    me.byId("btnNewDlvSched").setVisible(true);
+                                    me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnEditDlvSched").setVisible(true);
+                                    me.byId("btnDeleteDlvSched").setVisible(true);
+                                    me.byId("btnCopyDlvSched").setVisible(true);
+                                    me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnGenMatList").setVisible(true);
+                                    me.byId("btnSaveDlvSched").setVisible(false);
+                                    me.byId("btnCancelDlvSched").setVisible(false);
+                                    me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                    me.byId("btnNewIODet").setVisible(true);
+                                    me.byId("btnEditIODet").setVisible(true);
+                                    me.byId("btnDeleteIODet").setVisible(true);
+                                    // me.byId("btnCopyIODet").setVisible(true);
+                                    me.byId("btnRefreshIODet").setVisible(true);
+                                    me.byId("btnSaveIODet").setVisible(false);
+                                    me.byId("btnCancelIODet").setVisible(false);
+                                    me.byId("btnFullScreenIODet").setVisible(true);
+                                }
+
+                                // if (arg !== "IODET")
+                                //     me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                    me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                })
+
+                                me._dataMode = "READ";
+
+                            }
+                        })
+
+                        // return;
+
+                        // console.log(oModel);
+                        // // return;
+                        // oModel.submitChanges({
+                        //     groupId: "insert",
+                        //     success: function (oData, oResponse) {
+                        //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        //     },
+                        //     error: function (oData, oResponse) {
+                        //     }
+                        // });
+
+                        this.setRowReadMode(arg);
+                    } else {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                    }
+
+                }
+
+                // return;
+
+                //PROCESS EDITED ROW DATA
+                if (aEditedRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var updEntitySet;
+                        var oUpdModel;
+
+                        switch (arg) {
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oUpdModel = me.getOwnerComponent().getModel();
+                                break;
+                            default: break;
+                        }
+
+                        // oUpdModel.setUseBatch(true);
+                        // oUpdModel.setDeferredGroups(["update"]);
+
+                        // var mParameters = {
+                        //     "groupId": "update"
+                        // };
+
+                        //APPLY SIZE DATAMODEL UNPIVOT
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                        //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
+                        aEditedRows.forEach(item => {
+                            //LOOP THRU COLLECTION OF SIZES FOR THE IO
+                            this._iosizes.forEach(async colSizes => {
+                                updEntitySet = entitySet;
+                                updEntitySet += "(IONO='" + item["IONO"] + "',";
+                                hasMatchingSize = false;
+                                var param = {};
+                                var pIOITEM;
+                                // param["IONO"] = me._ioNo;
+                                param["IONO"] = cIONo;
+
+                                //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
+                                this._aColumns[arg].forEach(col => {
+                                    //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
+                                    if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                        //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
+                                        if (col.DataType === "DATETIME") {
+                                            // alert(item[col.ColumnName]);
+                                            // if(item[col.ColumnName] !== "" || item[col.ColumnName] !== "0000-00-00" || item[col.ColumnName] !== null || item[col.ColumnName] !== undefined) {
+                                            //     param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                            // }
+                                            //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET IOITEM 
+                                            param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"]
+                                            updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"] + "'"
+
+                                            // param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
+                                            // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
+
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                            //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                            param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                            //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                            param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                            //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                            hasMatchingSize = true;
+                                        } else {
+                                            //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
+                                            param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                        }
+                                    }
+                                })
+
+                                //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                // console.log("REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT");
+                                this._iosizes.forEach(colSizesRemove => {
+                                    // console.log(colSizesRemove.ATTRIBCD);
+                                    delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                    delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
+                                    //     delete param[colSizesRemove.ATTRIBCD];
+                                    //     delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                    // }
+                                })
+
+                                // //REMOVE IOITEM WITH SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                // this._iosizes.forEach(colSizesRemove => {
+                                //     if (colSizes.ATTRIBCD === colSizesRemove.ATTRIBCD) {
+                                //         delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                //     }
+                                // })
+
+                                updEntitySet += ")";
+
+                                // console.log(updEntitySet);
+                                // console.log(param);
+                                // console.log(arg);
+
+                                // return;
+
+                                // //CREATE ENTRIES USING BATCH PROCESSING
+                                // oUpdModel.update(entitySet, param, mParameters);
+
+                                _promiseResult = new Promise((resolve, reject) => {
+                                    setTimeout(() => {
+                                        oUpdModel.update(updEntitySet, param, {
+                                            method: "PUT",
+                                            success: function (data, oResponse) {
+                                                resolve();
+                                            },
+                                            error: function () {
+                                                iEdited++;
+                                                // alert("Error");
+                                                resolve();
+                                                if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                            }
+                                        })
+
+                                    }, 100);
+                                });
+                                await _promiseResult;
+                            });
+
+
+                            // return;
+
+                            iEdited++;
+                            if (iEdited === aEditedRows.length) {
+                                // Common.closeProcessingDialog(me);
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                if (arg === "IODET") {
+                                    me.byId("btnNewDlvSched").setVisible(true);
+                                    me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnEditDlvSched").setVisible(true);
+                                    me.byId("btnDeleteDlvSched").setVisible(true);
+                                    me.byId("btnCopyDlvSched").setVisible(true);
+                                    me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnSaveDlvSched").setVisible(false);
+                                    me.byId("btnCancelDlvSched").setVisible(false);
+                                    me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                    me.byId("btnNewIODet").setVisible(true);
+                                    me.byId("btnEditIODet").setVisible(true);
+                                    me.byId("btnDeleteIODet").setVisible(true);
+                                    // me.byId("btnCopyIODet").setVisible(true);
+                                    me.byId("btnRefreshIODet").setVisible(true);
+                                    me.byId("btnSaveIODet").setVisible(false);
+                                    me.byId("btnCancelIODet").setVisible(false);
+                                    me.byId("btnFullScreenIODet").setVisible(true);
+                                }
+
+                                // if (arg !== "IODET")
+                                //     me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                    me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                })
+
+                                me._dataMode = "READ";
+                            }
+                        })
+
+                        // return;
+
+                        // console.log(oUpdModel);
+                        // // return;
+                        // oUpdModel.submitChanges({
+                        //     groupId: "update",
+                        //     success: function (oData, oResponse) {
+                        //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        //     },
+                        //     error: function (oData, oResponse) {
+                        //     }
+                        // });
+
+                        this.setRowReadMode(arg);
+                    } else {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                    }
+                }
+
+                // return;
+
+                if (aNewRows.length < 0 && aEditedRows.length < 0) {
+                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                }
+
+                //reload data based on arguments
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
+
+                switch (arg) {
+                    case "IODET":
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
+                        //RELOAD IO DELIVERY DATA PER IO
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
+                        break;
+                    default:
+                        break;
+                }
+
+                Common.closeProcessingDialog(me);
+            },
+
             async onSave(arg) {
-                alert("on Save");
+                // alert("on Save");
                 var me = this;
                 var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
                 var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
 
-                console.log(aNewRows);
-                console.log(aEditedRows);
+                // console.log(aNewRows);
+                // console.log(aEditedRows);
                 // return;
+
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
 
                 if (aNewRows.length > 0) {
                     if (this._validationErrors.length === 0) {
@@ -4710,9 +6047,14 @@ sap.ui.define([
                             default: break;
                         }
 
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                        Common.openProcessingDialog(me, "Processing...");
+
                         aNewRows.forEach(item => {
                             var param = {};
-                            param["IONO"] = me._ioNo;
+                            // param["IONO"] = me._ioNo;
+                            param["IONO"] = cIONo;
 
                             this._aColumns[arg].forEach(col => {
                                 if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
@@ -4730,12 +6072,12 @@ sap.ui.define([
 
                             // return;
 
-                            Common.openProcessingDialog(me, "Processing...");
+                            // Common.openProcessingDialog(me, "Processing...");
 
                             setTimeout(() => {
                                 oModel.create(entitySet, param, {
                                     method: "POST",
-                                    success: function (data, oResponse) {
+                                    success: async function (data, oResponse) {
                                         iNew++;
 
                                         if (iNew === aNewRows.length) {
@@ -4749,6 +6091,7 @@ sap.ui.define([
                                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                                 me.byId("btnCopyDlvSched").setVisible(true);
                                                 me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
                                                 me.byId("btnSaveDlvSched").setVisible(false);
                                                 me.byId("btnCancelDlvSched").setVisible(false);
                                                 me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -4769,6 +6112,480 @@ sap.ui.define([
                                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                                 me.byId("btnCopyDlvSched").setVisible(true);
                                                 me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                // me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+
+                                            if (arg !== "IODET")
+                                                me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                            var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                            oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                            // if (arg === "IODLV" || arg === "IODET") {
+                                            //     var oIconTabBarStyle = me.byId("itfDLVSCHED");
+                                            //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            // }
+
+                                            if (arg === "IODLV") {
+                                                _promiseResult = new Promise((resolve, reject) => {
+                                                    setTimeout(() => {
+                                                        me.reloadIOData("IODLVTab", "/IODLVSet");
+                                                    }, 100);
+                                                    resolve();
+                                                })
+                                                await _promiseResult;
+
+                                                me.setActiveRowHighlightByTableId("IODLVTab");
+
+                                                _promiseResult = new Promise((resolve, reject) => {
+                                                    setTimeout(() => {
+                                                        me._tblChange = true;
+                                                        me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                                    }, 100);
+                                                    resolve();
+                                                })
+                                                await _promiseResult;
+                                            }
+
+                                            me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
+                                                me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
+                                            })
+
+                                            me._dataMode = "READ";
+                                            Common.closeProcessingDialog(me);
+                                        }
+                                    },
+                                    error: function () {
+                                        iNew++;
+                                        // alert("Error");
+                                        // if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                    }
+                                });
+                            }, 100)
+                        })
+
+                        this.setRowReadMode(arg);
+                    }
+                    else {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                    }
+                }
+                else if (aEditedRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var oModel;
+
+                        switch (arg) {
+                            case "color":
+                                entitySet = entitySet + "AttribSet";
+                                oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                break;
+                            case "process":
+                                entitySet = entitySet + "ProcessSet";
+                                oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                break;
+                            case "ioMatList":
+                                entitySet = entitySet + "MainSet";
+                                oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                                oModel.setHeaders({ UPDTYP: "MAIN" });
+                                break;
+                            case "IODLV":
+                                entitySet = entitySet + "IODLVSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            case "costHdr":
+                                entitySet = entitySet + "VersionsSet";
+                                oModel = this._oModelIOCosting;
+                                break;
+                            case "costDtls":
+                                entitySet = entitySet + "DetailsSet";
+                                oModel = this._oModelIOCosting;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        var centitySet = entitySet;
+
+                        Common.openProcessingDialog(me, "Processing...");
+
+                        // console.log("Edited Rows");
+                        // console.log(aEditedRows);
+                        aEditedRows.forEach(async item => {
+
+                            // console.log(item);
+                            // var entitySet = "/" + (arg === "color" ? "AttribSet" : "ProcessSet") + "(";
+                            entitySet = centitySet + "(";
+                            var param = {};
+                            var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                            var itemValue;
+                            // console.log(this._aColumns[arg])
+                            this._aColumns[arg].forEach(col => {
+                                if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
+                                //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
+                                else if (col.DataType === "DATETIME") {
+                                    // console.log(col.ColumnName);
+                                    // console.log(item[col.ColumnName]);
+                                    // console.log(sapDateFormat.format(new Date(item[col.ColumnName])));
+                                    itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
+                                } else {
+                                    itemValue = item[col.ColumnName];
+                                }
+
+                                //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
+                                if (arg === "IODLV" || arg === "IODET") {
+                                    param[col.ColumnName] = itemValue;
+                                }
+                                //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
+                                else {
+                                    if (col.Editable) {
+                                        param[col.ColumnName] = itemValue;
+                                    }
+                                }
+
+                                if (iKeyCount === 1) {
+                                    if (col.Key === "X")
+                                        entitySet += "'" + item[col.ColumnName] + "'"
+                                }
+                                else if (iKeyCount > 1) {
+                                    if (col.Key === "X") {
+                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                    }
+                                }
+                            })
+
+                            if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                            entitySet += ")";
+
+                            // console.log(entitySet);
+                            // console.log(param);
+                            // console.log(arg);
+
+                            // Common.closeProcessingDialog(me);
+
+                            // _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                // console.log(entitySet);
+                                oModel.update(entitySet, param, {
+                                    method: "PUT",
+                                    success: function (data, oResponse) {
+                                        iEdited++;
+                                        // resolve();
+                                        // console.log(oResponse);
+
+                                        if (iEdited === aEditedRows.length) {
+                                            // Common.closeProcessingDialog(me);
+                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                            if (arg === "color") {
+                                                me.byId("btnEditColor").setVisible(true);
+                                                me.byId("btnSaveColor").setVisible(false);
+                                                me.byId("btnCancelColor").setVisible(false);
+                                            }
+                                            else if (arg === "process") {
+                                                me.byId("btnEditProcess").setVisible(true);
+                                                me.byId("btnSaveProcess").setVisible(false);
+                                                me.byId("btnCancelProcess").setVisible(false);
+                                            }
+                                            else if (arg === "ioMatList") {
+                                                me.byId("btnSubmitMRP").setVisible(true);
+                                                me.byId("btnAssignMatNo").setVisible(true);
+                                                me.byId("btnEditIOMatList").setVisible(true);
+                                                me.byId("btnRefreshIOMatList").setVisible(true);
+                                                me.byId("btnExportIOMatList").setVisible(true);
+                                                me.byId("btnSaveIOMatList").setVisible(false);
+                                                me.byId("btnCancelIOMatList").setVisible(false);
+                                                me.byId("btnReorderIOMatList").setVisible(true);
+                                            }
+                                            else if (arg === "IODLV") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                // me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+                                            else if (arg === "IODET") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                // me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+                                            else if (arg === "costHdr") {
+                                                me.byId("btnNewCostHdr").setVisible(true);
+                                                me.byId("btnEditCostHdr").setVisible(true);
+                                                me.byId("btnRefreshCostHdr").setVisible(true);
+                                                me.byId("btnSaveCostHdr").setVisible(false);
+                                                me.byId("btnCancelCostHdr").setVisible(false);
+
+                                                me.byId("btnEditCostDtl").setEnabled(true);
+                                                me.byId("btnPrintCosting").setEnabled(true);
+                                                me.byId("btnReleaseCosting").setEnabled(true);
+                                                me.byId("btnRefreshCostDtl").setEnabled(true);
+                                            }
+                                            else if (arg === "costDtls") {
+                                                me.byId("btnEditCostDtl").setVisible(true);
+                                                me.byId("btnPrintCosting").setVisible(true);
+                                                me.byId("btnReleaseCosting").setVisible(true);
+                                                me.byId("btnRefreshCostDtl").setVisible(true);
+                                                me.byId("btnSaveCostDtl").setVisible(false);
+                                                me.byId("btnCancelCostDtl").setVisible(false);
+
+                                                me.byId("btnNewCostHdr").setEnabled(true);
+                                                me.byId("btnEditCostHdr").setEnabled(true);
+                                                me.byId("btnRefreshCostHdr").setEnabled(true);
+                                            }
+
+                                            if (arg !== "IODET")
+                                                me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                            if (arg === "IODLV") {
+                                                setTimeout(() => {
+                                                    me.reloadIOData("IODLVTab", "/IODLVSet");
+                                                }, 100);
+                                            }
+
+                                            if (arg === "color" || arg === "process") {
+                                                var oIconTabBarStyle = me.byId("itbStyleDetail");
+                                                oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            }
+                                            // else if (arg === "IODLV" || arg === "IODET") {
+                                            //     var oIconTabBarStyle = me.byId("idIconTabBarInlineMode");
+                                            //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                            // } 
+                                            // else {
+                                            var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                            oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                            // }
+
+                                            me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
+                                                me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
+                                            })
+
+                                            me._dataMode = "READ";
+                                            Common.closeProcessingDialog(me);
+                                        }
+                                    },
+                                    error: function () {
+                                        iEdited++;
+                                        // resolve();
+                                        // alert("Error");
+                                        if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                    }
+                                });
+                            }, 500);
+                            // })
+                            // await _promiseResult;
+
+                        })
+
+                        this.setRowReadMode(arg);
+                    }
+                    //this._validationErrors.length
+                    else {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        return;
+                    }
+                }
+                else {
+                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    return;
+                }
+
+                //reload data based on arguments
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
+                switch (arg) {
+                    // case "IODLV":
+                    //     console.log("refresh IO Delivery Data");
+                    //     _promiseResult = new Promise((resolve, reject) => {
+                    //         setTimeout(() => {
+                    //             this.reloadIOData("IODLVTab", "/IODLVSet");
+                    //         }, 100);
+                    //         resolve();
+                    //     });
+                    //     await _promiseResult;
+                    //     break;
+
+                    case "IODET":
+                        //RELOAD IO DETAIL DATA PER IO & DLVSEQ
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
+                        //RELOAD IO DELIVERY DATA PER IO
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
+                        break;
+
+                    case "IOATTRIB":
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IOATTRIBTab", "/IOAttribSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+                        break;
+
+                    default: break;
+                }
+            },
+
+            async onBatchSave(arg) {
+                // alert("on Save");
+                var me = this;
+                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
+                var iNew = 0;
+                var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
+                var iEdited = 0;
+
+                // console.log(aNewRows);
+                // console.log(aEditedRows);
+                // return;
+
+                if (aNewRows.length > 0) {
+                    if (this._validationErrors.length === 0) {
+                        var entitySet = "/";
+                        var oModel;
+
+                        switch (arg) {
+                            case "IODLV":
+                                entitySet = entitySet + "IODLVSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            case "IODET":
+                                entitySet = entitySet + "IODETSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
+                            default: break;
+                        }
+
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                        Common.openProcessingDialog(me, "Processing...");
+
+                        aNewRows.forEach(item => {
+                            var param = {};
+                            // param["IONO"] = me._ioNo;
+                            param["IONO"] = cIONo;
+
+                            this._aColumns[arg].forEach(col => {
+                                if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                    if (col.DataType === "DATETIME") {
+                                        param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                    } else {
+                                        param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                    }
+                                }
+                            })
+
+                            // console.log(entitySet);
+                            // console.log(param);
+                            // console.log(arg);
+
+                            // return;
+
+                            // Common.openProcessingDialog(me, "Processing...");
+
+                            setTimeout(() => {
+                                oModel.create(entitySet, param, {
+                                    method: "POST",
+                                    success: function (data, oResponse) {
+                                        iNew++;
+
+                                        if (iNew === aNewRows.length) {
+                                            Common.closeProcessingDialog(me);
+                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                            if (arg === "IODLV") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
+                                                me.byId("btnSaveDlvSched").setVisible(false);
+                                                me.byId("btnCancelDlvSched").setVisible(false);
+                                                me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                                me.byId("btnNewIODet").setVisible(true);
+                                                me.byId("btnEditIODet").setVisible(true);
+                                                me.byId("btnDeleteIODet").setVisible(true);
+                                                // me.byId("btnCopyIODet").setVisible(true);
+                                                me.byId("btnRefreshIODet").setVisible(true);
+                                                me.byId("btnSaveIODet").setVisible(false);
+                                                me.byId("btnCancelIODet").setVisible(false);
+                                                me.byId("btnFullScreenIODet").setVisible(true);
+                                            }
+                                            else if (arg === "IODET") {
+                                                me.byId("btnNewDlvSched").setVisible(true);
+                                                me.byId("btnImportPODlvSched").setVisible(true);
+                                                me.byId("btnEditDlvSched").setVisible(true);
+                                                me.byId("btnDeleteDlvSched").setVisible(true);
+                                                me.byId("btnCopyDlvSched").setVisible(true);
+                                                me.byId("btnRefreshDlvSched").setVisible(true);
+                                                me.byId("btnGenMatList").setVisible(true);
                                                 me.byId("btnSaveDlvSched").setVisible(false);
                                                 me.byId("btnCancelDlvSched").setVisible(false);
                                                 me.byId("btnFullScreenDlvSched").setVisible(true);
@@ -4799,12 +6616,13 @@ sap.ui.define([
                                             })
 
                                             me._dataMode = "READ";
+                                            Common.closeProcessingDialog(me);
                                         }
                                     },
                                     error: function () {
                                         iNew++;
                                         // alert("Error");
-                                        if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                        // if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
                                     }
                                 });
                             }, 100)
@@ -4812,13 +6630,11 @@ sap.ui.define([
 
                         this.setRowReadMode(arg);
                     }
-
                     else {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
-
-                if (aEditedRows.length > 0) {
+                else if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         var entitySet = "/";
                         var oModel;
@@ -4845,31 +6661,39 @@ sap.ui.define([
                                 entitySet = entitySet + "IODETSet"
                                 oModel = me.getOwnerComponent().getModel();
                                 break;
+                            case "costHdr":
+                                entitySet = entitySet + "VersionsSet";
+                                oModel = this._oModelIOCosting;
+                                break;
+                            case "costDtls":
+                                entitySet = entitySet + "DetailsSet";
+                                oModel = this._oModelIOCosting;
+                                break;
                             default:
                                 break;
+                        }
+
+                        oModel.setUseBatch(true);
+                        oModel.setDeferredGroups(["update"]);
+
+                        var mParameters = {
+                            "groupId": "update"
                         }
 
                         var centitySet = entitySet;
 
                         Common.openProcessingDialog(me, "Processing...");
 
-                        // console.log("Edited Rows");
-                        // console.log(aEditedRows);
-                        aEditedRows.forEach(async item => {
-
-                            // console.log(item);
-                            // var entitySet = "/" + (arg === "color" ? "AttribSet" : "ProcessSet") + "(";
+                        aEditedRows.forEach(item => {
                             entitySet = centitySet + "(";
                             var param = {};
                             var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
                             var itemValue;
-
+                            // console.log(this._aColumns[arg])
                             this._aColumns[arg].forEach(col => {
+                                if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
                                 //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
-                                if (col.DataType === "DATETIME") {
-                                    // console.log(col.ColumnName);
-                                    // console.log(item[col.ColumnName]);
-                                    // console.log(sapDateFormat.format(new Date(item[col.ColumnName])));
+                                else if (col.DataType === "DATETIME") {
                                     itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
                                 } else {
                                     itemValue = item[col.ColumnName];
@@ -4877,13 +6701,11 @@ sap.ui.define([
 
                                 //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
                                 if (arg === "IODLV" || arg === "IODET") {
-
                                     param[col.ColumnName] = itemValue;
                                 }
                                 //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
                                 else {
                                     if (col.Editable) {
-
                                         param[col.ColumnName] = itemValue;
                                     }
                                 }
@@ -4899,166 +6721,184 @@ sap.ui.define([
                                 }
                             })
 
-                            if (iKeyCount > 1) entitySet = entitySet.substr(0, entitySet.length - 1);
+                            if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            console.log(entitySet);
-                            console.log(param);
-                            console.log(arg);
-
-                            // Common.closeProcessingDialog(me);
-
-                            setTimeout(() => {
-                                _promiseResult = new Promise((resolve, reject) => {
-                                    // console.log(entitySet);
-                                    oModel.update(entitySet, param, {
-                                        method: "PUT",
-                                        success: function (data, oResponse) {
-                                            iEdited++;
-                                            resolve();
-
-                                            if (iEdited === aEditedRows.length) {
-                                                Common.closeProcessingDialog(me);
-                                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-
-                                                if (arg === "color") {
-                                                    me.byId("btnEditColor").setVisible(true);
-                                                    me.byId("btnSaveColor").setVisible(false);
-                                                    me.byId("btnCancelColor").setVisible(false);
-                                                }
-                                                else if (arg === "process") {
-                                                    me.byId("btnEditProcess").setVisible(true);
-                                                    me.byId("btnSaveProcess").setVisible(false);
-                                                    me.byId("btnCancelProcess").setVisible(false);
-                                                }
-                                                else if (arg === "ioMatList") {
-                                                    me.byId("btnSubmitMRP").setVisible(true);
-                                                    me.byId("btnAssignMatNo").setVisible(true);
-                                                    me.byId("btnEditIOMatList").setVisible(true);
-                                                    me.byId("btnRefreshIOMatList").setVisible(true);
-                                                    me.byId("btnExportIOMatList").setVisible(true);
-                                                    me.byId("btnSaveIOMatList").setVisible(false);
-                                                    me.byId("btnCancelIOMatList").setVisible(false);
-                                                }
-                                                else if (arg === "IODLV") {
-                                                    me.byId("btnNewDlvSched").setVisible(true);
-                                                    me.byId("btnImportPODlvSched").setVisible(true);
-                                                    me.byId("btnEditDlvSched").setVisible(true);
-                                                    me.byId("btnDeleteDlvSched").setVisible(true);
-                                                    me.byId("btnCopyDlvSched").setVisible(true);
-                                                    me.byId("btnRefreshDlvSched").setVisible(true);
-                                                    me.byId("btnSaveDlvSched").setVisible(false);
-                                                    me.byId("btnCancelDlvSched").setVisible(false);
-                                                    me.byId("btnFullScreenDlvSched").setVisible(true);
-
-                                                    me.byId("btnNewIODet").setVisible(true);
-                                                    me.byId("btnEditIODet").setVisible(true);
-                                                    me.byId("btnDeleteIODet").setVisible(true);
-                                                    // me.byId("btnCopyIODet").setVisible(true);
-                                                    me.byId("btnRefreshIODet").setVisible(true);
-                                                    me.byId("btnSaveIODet").setVisible(false);
-                                                    me.byId("btnCancelIODet").setVisible(false);
-                                                    me.byId("btnFullScreenIODet").setVisible(true);
-                                                }
-                                                else if (arg === "IODET") {
-                                                    me.byId("btnNewDlvSched").setVisible(true);
-                                                    me.byId("btnImportPODlvSched").setVisible(true);
-                                                    me.byId("btnEditDlvSched").setVisible(true);
-                                                    me.byId("btnDeleteDlvSched").setVisible(true);
-                                                    me.byId("btnCopyDlvSched").setVisible(true);
-                                                    me.byId("btnRefreshDlvSched").setVisible(true);
-                                                    me.byId("btnSaveDlvSched").setVisible(false);
-                                                    me.byId("btnCancelDlvSched").setVisible(false);
-                                                    me.byId("btnFullScreenDlvSched").setVisible(true);
-
-                                                    me.byId("btnNewIODet").setVisible(true);
-                                                    me.byId("btnEditIODet").setVisible(true);
-                                                    me.byId("btnDeleteIODet").setVisible(true);
-                                                    // me.byId("btnCopyIODet").setVisible(true);
-                                                    me.byId("btnRefreshIODet").setVisible(true);
-                                                    me.byId("btnSaveIODet").setVisible(false);
-                                                    me.byId("btnCancelIODet").setVisible(false);
-                                                    me.byId("btnFullScreenIODet").setVisible(true);
-                                                }
-
-                                                if (arg !== "IODET")
-                                                    me.setActiveRowHighlightByTableId(arg + "Tab");
-
-                                                if (arg === "color" || arg === "process") {
-                                                    var oIconTabBarStyle = me.byId("itbStyleDetail");
-                                                    oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
-                                                }
-                                                // else if (arg === "IODLV" || arg === "IODET") {
-                                                //     var oIconTabBarStyle = me.byId("idIconTabBarInlineMode");
-                                                //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
-                                                // } 
-                                                else {
-                                                    var oIconTabBar = me.byId("idIconTabBarInlineMode");
-                                                    oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
-
-                                                }
-
-                                                me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
-                                                    me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
-                                                })
-
-                                                me._dataMode = "READ";
-                                            }
-                                        },
-                                        error: function () {
-                                            iEdited++;
-                                            resolve();
-                                            // alert("Error");
-                                            if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
-                                        }
-                                    });
-                                }, 100)
-
-
-
-                            })
-                            await _promiseResult;
+                            // console.log(entitySet);
+                            // console.log(param);
+                            oModel.update(entitySet, param, mParameters);
                         })
 
-                        this.setRowReadMode(arg);
+                        oModel.submitChanges({
+                            groupId: "update",
+                            success: function (oData, oResponse) {
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                if (arg === "color") {
+                                    me.byId("btnEditColor").setVisible(true);
+                                    me.byId("btnSaveColor").setVisible(false);
+                                    me.byId("btnCancelColor").setVisible(false);
+                                }
+                                else if (arg === "process") {
+                                    me.byId("btnEditProcess").setVisible(true);
+                                    me.byId("btnSaveProcess").setVisible(false);
+                                    me.byId("btnCancelProcess").setVisible(false);
+                                }
+                                else if (arg === "ioMatList") {
+                                    me.byId("btnSubmitMRP").setVisible(true);
+                                    me.byId("btnAssignMatNo").setVisible(true);
+                                    me.byId("btnEditIOMatList").setVisible(true);
+                                    me.byId("btnRefreshIOMatList").setVisible(true);
+                                    me.byId("btnExportIOMatList").setVisible(true);
+                                    me.byId("btnSaveIOMatList").setVisible(false);
+                                    me.byId("btnCancelIOMatList").setVisible(false);
+                                    me.byId("btnReorderIOMatList").setVisible(true);
+                                }
+                                else if (arg === "IODLV") {
+                                    me.byId("btnNewDlvSched").setVisible(true);
+                                    me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnEditDlvSched").setVisible(true);
+                                    me.byId("btnDeleteDlvSched").setVisible(true);
+                                    me.byId("btnCopyDlvSched").setVisible(true);
+                                    me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnGenMatList").setVisible(true);
+                                    me.byId("btnSaveDlvSched").setVisible(false);
+                                    me.byId("btnCancelDlvSched").setVisible(false);
+                                    me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                    me.byId("btnNewIODet").setVisible(true);
+                                    me.byId("btnEditIODet").setVisible(true);
+                                    me.byId("btnDeleteIODet").setVisible(true);
+                                    // me.byId("btnCopyIODet").setVisible(true);
+                                    me.byId("btnRefreshIODet").setVisible(true);
+                                    me.byId("btnSaveIODet").setVisible(false);
+                                    me.byId("btnCancelIODet").setVisible(false);
+                                    me.byId("btnFullScreenIODet").setVisible(true);
+                                }
+                                else if (arg === "IODET") {
+                                    me.byId("btnNewDlvSched").setVisible(true);
+                                    me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnEditDlvSched").setVisible(true);
+                                    me.byId("btnDeleteDlvSched").setVisible(true);
+                                    me.byId("btnCopyDlvSched").setVisible(true);
+                                    me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnGenMatList").setVisible(true);
+                                    me.byId("btnSaveDlvSched").setVisible(false);
+                                    me.byId("btnCancelDlvSched").setVisible(false);
+                                    me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                    me.byId("btnNewIODet").setVisible(true);
+                                    me.byId("btnEditIODet").setVisible(true);
+                                    me.byId("btnDeleteIODet").setVisible(true);
+                                    // me.byId("btnCopyIODet").setVisible(true);
+                                    me.byId("btnRefreshIODet").setVisible(true);
+                                    me.byId("btnSaveIODet").setVisible(false);
+                                    me.byId("btnCancelIODet").setVisible(false);
+                                    me.byId("btnFullScreenIODet").setVisible(true);
+                                }
+                                else if (arg === "costHdr") {
+                                    me.byId("btnNewCostHdr").setVisible(true);
+                                    me.byId("btnEditCostHdr").setVisible(true);
+                                    me.byId("btnRefreshCostHdr").setVisible(true);
+                                    me.byId("btnSaveCostHdr").setVisible(false);
+                                    me.byId("btnCancelCostHdr").setVisible(false);
+
+                                    me.byId("btnEditCostDtl").setEnabled(true);
+                                    me.byId("btnPrintCosting").setEnabled(true);
+                                    me.byId("btnReleaseCosting").setEnabled(true);
+                                    me.byId("btnRefreshCostDtl").setEnabled(true);
+                                }
+                                else if (arg === "costDtls") {
+                                    me.byId("btnEditCostDtl").setVisible(true);
+                                    me.byId("btnPrintCosting").setVisible(true);
+                                    me.byId("btnReleaseCosting").setVisible(true);
+                                    me.byId("btnRefreshCostDtl").setVisible(true);
+                                    me.byId("btnSaveCostDtl").setVisible(false);
+                                    me.byId("btnCancelCostDtl").setVisible(false);
+
+                                    me.byId("btnNewCostHdr").setEnabled(true);
+                                    me.byId("btnEditCostHdr").setEnabled(true);
+                                    me.byId("btnRefreshCostHdr").setEnabled(true);
+                                }
+
+                                // if (arg !== "IODET")
+                                me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                if (arg === "color" || arg === "process") {
+                                    var oIconTabBarStyle = me.byId("itbStyleDetail");
+                                    oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                                }
+
+                                var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
+                                    me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
+                                })
+
+                                me._dataMode = "READ";
+                                Common.closeProcessingDialog(me);
+                                me.setRowReadMode(arg);
+                            },
+                            error: function () {
+                                Common.closeProcessingDialog(me);
+                                me.setRowReadMode(arg);
+                            }
+                        })
                     }
-                    //this._validationErrors.length
                     else {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
-
-                if (aNewRows.length < 0 && aEditedRows.length < 0) {
+                else {
                     Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
 
                 //reload data based on arguments
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
+
+                var oColumns = oModelColumns.getData();
                 switch (arg) {
                     case "IODLV":
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                resolve(this.reloadIOData("IODLVTab", "/IODLVSet"));
-                                // this.reloadIOData("IODLVTab", "/IODLVSet")
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
                             }, 100);
+                            resolve();
                         });
                         await _promiseResult;
                         break;
 
                     case "IODET":
+                        //RELOAD IO DETAIL DATA PER IO & DLVSEQ
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
                             }, 100);
+                            resolve();
                         });
-                        resolve();
                         await _promiseResult;
+
+                        //RELOAD IO DELIVERY DATA PER IO
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.reloadIOData("IODLVTab", "/IODLVSet");
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
                         break;
 
                     case "IOATTRIB":
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
-                                rsolve(this.reloadIOData("IOATTRIBTab", "/IOAttribSet"));
+                                this.reloadIOData("IOATTRIBTab", "/IOAttribSet");
                             }, 100);
+                            resolve();
                         });
                         await _promiseResult;
                         break;
@@ -5071,14 +6911,11 @@ sap.ui.define([
                 var oTable = this.byId(arg + "Tab");
                 var me = this;
 
-                console.log("a1");
-                // console.log(oTable.getColumns());
-                // return;
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
                     var oValueHelp = false;
 
-                    console.log("a2 ");
+                    // console.log("a2 ");
 
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
@@ -5086,9 +6923,8 @@ sap.ui.define([
                     else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
                     }
-                    // console.log(sColName + " Column Name " + arg);
+                    // console.log(col.mAggregations.template.mBindingInfos);
                     // console.log(this._aColumns[arg]);
-
                     // console.log("Columne Name " + sColName);
 
                     // this._aColumns[arg].filter(item => item.ColumnName === sColName)
@@ -5131,45 +6967,83 @@ sap.ui.define([
 
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
-                            console.log(sColName);
-                            console.log(ci);
                             if (ci.Editable) {
-                                // console.log("Check Value Help");
-                                // console.log(ci.ValueHelp);
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
+
                                 if (oValueHelp) {
-                                    // console.log("a3 oValueHelp " + sColName);
-                                    col.setTemplate(new sap.m.Input({
-                                        type: "Text",
-                                        value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
-                                        showValueHelp: true,
-                                        valueHelpRequest: this.handleValueHelp.bind(this),
-                                        showSuggestion: true,
-                                        maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
-                                        suggestionItems: {
-                                            path: ci.ValueHelp["SuggestionItems"].path,
-                                            length: 10000,
-                                            template: new sap.ui.core.ListItem({
-                                                key: ci.ValueHelp["SuggestionItems"].text,
-                                                text: ci.ValueHelp["SuggestionItems"].text,
-                                                additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
-                                            }),
-                                            templateShareable: false
-                                        },
-                                        // suggest: this.handleSuggestion.bind(this),
-                                        change: this.handleValueHelpChange.bind(this)
-                                    }));
+                                    if (arg === "costHdr") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            change: this.handleValueHelpChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            // suggest: this.handleSuggestion.bind(this),
+                                            change: this.handleValueHelpChange.bind(this)
+                                        }));
+                                    }
                                 }
                                 else if (ci.DataType === "DATETIME") {
-                                    // console.log("a3 Datetime " + sColName);
-                                    col.setTemplate(new sap.m.DatePicker({
-                                        // id: "ipt" + ci.name,
-                                        value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                        displayFormat: "short",
-                                        change: this.onInputLiveChange.bind(this)
-                                        // change: "handleChange"
-                                        // ,liveChange: this.onInputLiveChange.bind(this)
-                                    }));
+                                    if (arg === "costHdr" && sColName === "CSDATE") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this)
+                                        }));
+                                    }
                                 }
                                 else if (ci.DataType === "NUMBER") {
                                     // console.log("a3 NUMBER " + sColName);
@@ -5196,6 +7070,21 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "costHdr" && sColName === "VERDESC") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "COSTSTATUS",
+                                                formatter: function (COSTSTATUS) {
+                                                    if (COSTSTATUS === "REL") { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: "Text",
@@ -5209,7 +7098,7 @@ sap.ui.define([
                         })
                 })
 
-                console.log("setRowEditMode 2");
+                // console.log("setRowEditMode 2");
 
                 if (arg === "IODET") {
                     var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
@@ -5225,7 +7114,7 @@ sap.ui.define([
                         error: function (err) { }
                     })
                 }
-
+                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 if (arg === "color") {
                     this._oModelStyle.read('/CustColorSet', {
                         urlParameters: {
@@ -5290,7 +7179,32 @@ sap.ui.define([
                     })
                 }
 
-                console.log("setRowEditMode 3");
+                if (arg === "costHdr") {
+                    this._oModelIOCosting.read('/TypeSHSet', {
+                        success: function (oData) {
+                            me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+
+                    this._oModelIOCosting.read('/SalesTermSet', {
+                        success: function (oData) {
+                            me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+
+                    this._oModelIOCosting.setHeaders({
+                        PRODPLANT: this._prodplant
+                    })
+                    this._oModelIOCosting.read('/VariantSHSet', {
+                        success: function (oData) {
+                            me.getView().setModel(new JSONModel(oData.results), "COSTVARIANT_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+                }
+                // console.log("setRowEditMode 3");
             },
 
             setRowReadMode(arg) {
@@ -5351,12 +7265,15 @@ sap.ui.define([
 
             onNumberChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
+                // console.log(oEvent.getSource());
+
+                var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
-                    if (oEvent.getParameters().value.split(".")[1].length > 3) {
+                    if (oEvent.getParameters().value.split(".")[1].length > decPlaces) {
                         // console.log("invalid");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Enter a number with a maximum of 3 decimal places.");
+                        oEvent.getSource().setValueStateText("Enter a number with a maximum of " + decPlaces + " decimal places.");
                         this._validationErrors.push(oEvent.getSource().getId());
                     }
                     else {
@@ -5379,22 +7296,47 @@ sap.ui.define([
 
                 var oSource = oEvent.getSource();
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
-                this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
 
-                if (this._sTableModel === "color") this._bColorChanged = false;
-                else if (this._sTableModel === "process") this._bProcessChanged = false;
-                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = false;
+                if (this._sTableModel === "IODET") {
+                    this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                }
+                else if (this._sTableModel === "reorder") {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+                else {
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+
+                if (this._sTableModel === "color") this._bColorChanged = true;
+                else if (this._sTableModel === "process") this._bProcessChanged = true;
+                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
             },
 
             onInputLiveChange: function (oEvent) {
                 var oSource = oEvent.getSource();
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
-                this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                if (this._sTableModel === "IODET") {
+                    this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                }
+                else if (this._sTableModel === "reorder") {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+                else {
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
 
-                if (this._sTableModel === "color") this._bColorChanged = false;
-                else if (this._sTableModel === "process") this._bProcessChanged = false;
-                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = false;
-                else if (this._sTableModel === "IODLV") this._bIODETChanged = false;
+                if (this._sTableModel === "color") this._bColorChanged = true;
+                else if (this._sTableModel === "process") this._bProcessChanged = true;
+                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                else if (this._sTableModel === "IODLV") this._bIODETChanged = true;
+                else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
             },
 
             handleValueHelp: function (oEvent) {
@@ -5408,12 +7350,10 @@ sap.ui.define([
                 this._inputField = oSource.getBindingInfo("value").parts[0].path;
 
                 var vColProp = this._aColumns[sModel].filter(item => item.ColumnName === this._inputField);
-                console.log(vColProp);
+                // console.log(vColProp);
                 var vItemValue = vColProp[0].ValueHelp.items.value;
                 var vItemDesc = vColProp[0].ValueHelp.items.text;
                 var sPath = vColProp[0].ValueHelp.items.path;
-
-                console.log(sPath);
                 var vh = this.getView().getModel(sPath).getData();
 
                 vh.forEach(item => {
@@ -5449,23 +7389,38 @@ sap.ui.define([
 
             handleValueHelpClose: function (oEvent) {
                 if (oEvent.sId === "confirm") {
-                    var oSelectedItem = oEvent.getParameter("selectedItem");
-
-                    if (oSelectedItem) {
-                        this._inputSource.setValue(oSelectedItem.getTitle());
-
-                        if (this._inputValue !== oSelectedItem.getTitle()) {
-                            var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
-
-                            this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
-                            // this._bColorChanged = true;
-                            if (this._sTableModel === "color") this._bColorChanged = true;
-                            else if (this._sTableModel === "process") this._bProcessChanged = true;
-                            else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
-                        }
+                    if (oEvent.getSource().getModel().getData().process !== undefined) {
+                        if (oEvent.getSource().getModel().getData().process === "CREATECOSTING") { this.handleValueHelpCloseCosting(oEvent); }
+                        // else if (oEvent.getSource().getModel().getData().process === "REORDER") { this.handleReorderValueHelpClose(oEvent); }
                     }
+                    else {
+                        var oSelectedItem = oEvent.getParameter("selectedItem");
 
-                    this._inputSource.setValueState("None");
+                        if (oSelectedItem) {
+                            this._inputSource.setValue(oSelectedItem.getTitle());
+
+                            if (this._inputValue !== oSelectedItem.getTitle()) {
+                                var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
+
+                                if (this._sTableModel === "reorder") {
+                                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                                    this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getDescription());
+                                }
+                                else {
+                                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                                }
+
+                                if (this._sTableModel === "color") this._bColorChanged = true;
+                                else if (this._sTableModel === "process") this._bProcessChanged = true;
+                                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
+                            }
+                        }
+
+                        this._inputSource.setValueState("None");
+                    }
                 }
             },
 
@@ -5492,11 +7447,24 @@ sap.ui.define([
 
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
 
-                this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                if (this.__sTableModel === "IODET") {
+                    this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                }
+                else if (this.__sTableModel === "reorder") {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+                else {
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
 
                 if (this._sTableModel === "color") this._bColorChanged = true;
                 else if (this._sTableModel === "process") this._bProcessChanged = true;
                 else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                else if (this._sTableModel === "IODLV") this._bIODETChanged = true;
+                else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
             },
 
             handleSuggestion: function (oEvent) {
@@ -5529,47 +7497,139 @@ sap.ui.define([
 
             onCloseConfirmDialog: function (oEvent) {
                 if (this._ConfirmDialog.getModel().getData().Action === "update-cancel") {
-                    if (this._sTableModel === "color") {
-                        this.byId("btnEditColor").setVisible(true);
-                        this.byId("btnSaveColor").setVisible(false);
-                        this.byId("btnCancelColor").setVisible(false);
-                    }
-                    else if (this._sTableModel === "process") {
-                        this.byId("btnEditProcess").setVisible(true);
-                        this.byId("btnSaveProcess").setVisible(false);
-                        this.byId("btnCancelProcess").setVisible(false);
-                    }
-                    else if (this._sTableModel === "ioMatList") {
-                        this.byId("btnSubmitMRP").setVisible(true);
-                        this.byId("btnAssignMatNo").setVisible(true);
-                        this.byId("btnEditIOMatList").setVisible(true);
-                        this.byId("btnRefreshIOMatList").setVisible(true);
-                        this.byId("btnExportIOMatList").setVisible(true);
-                        this.byId("btnSaveIOMatList").setVisible(false);
-                        this.byId("btnCancelIOMatList").setVisible(false);
-                    }
+                    if (this._sTableModel === "reorder") {
+                        var oTable = sap.ui.getCore().byId("reorderTab");
+                        this._ReorderDialog.getModel().setProperty("/rowCount", this._aDataBeforeChange.length);
+                        oTable.getModel().setProperty("/rows", this._aDataBeforeChange);
+                        oTable.bindRows("/rows");
 
-                    this.setRowReadMode(this._sTableModel);
-
-                    if (arg === "IODET") {
-                        this.byId(this._sTableModel + "Tab").getModel().setProperty("/results", this._aDataBeforeChange);
-                        this.byId(this._sTableModel + "Tab").bindRows("/results");
-                    } else {
-                        this.byId(this._sTableModel + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
-                        this.byId(this._sTableModel + "Tab").bindRows("/rows");
+                        this.setReorderReadMode();
+                        this._dataMode = "READ";
+                        sap.ui.getCore().byId("btnNewReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnEditReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnAddReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnSaveReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnDeleteReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnRefreshReorder").setVisible(true);
                     }
-                    this._dataMode = "READ";
+                    else {
+                        if (this._sTableModel === "color") {
+                            this.byId("btnEditColor").setVisible(true);
+                            this.byId("btnSaveColor").setVisible(false);
+                            this.byId("btnCancelColor").setVisible(false);
+                        }
+                        else if (this._sTableModel === "process") {
+                            this.byId("btnEditProcess").setVisible(true);
+                            this.byId("btnSaveProcess").setVisible(false);
+                            this.byId("btnCancelProcess").setVisible(false);
+                        }
+                        else if (this._sTableModel === "ioMatList") {
+                            this.byId("btnSubmitMRP").setVisible(true);
+                            this.byId("btnAssignMatNo").setVisible(true);
+                            this.byId("btnEditIOMatList").setVisible(true);
+                            this.byId("btnRefreshIOMatList").setVisible(true);
+                            this.byId("btnExportIOMatList").setVisible(true);
+                            this.byId("btnSaveIOMatList").setVisible(false);
+                            this.byId("btnCancelIOMatList").setVisible(false);
+                            this.byId("btnReorderIOMatList").setVisible(true);
+                        } else if (this._sTableModel === "IODLV") {
+                            this.byId("btnNewDlvSched").setVisible(true);
+                            this.byId("btnImportPODlvSched").setVisible(true);
+                            this.byId("btnEditDlvSched").setVisible(true);
+                            this.byId("btnDeleteDlvSched").setVisible(true);
+                            this.byId("btnCopyDlvSched").setVisible(true);
+                            this.byId("btnRefreshDlvSched").setVisible(true);
+                            this.byId("btnSaveDlvSched").setVisible(false);
+                            this.byId("btnCancelDlvSched").setVisible(false);
+                            this.byId("btnFullScreenDlvSched").setVisible(true);
 
-                    if (arg !== "IODET")
-                        this.setActiveRowHighlightByTableId(this._sTableModel + "Tab");
+                            this.byId("btnNewIODet").setVisible(true);
+                            this.byId("btnEditIODet").setVisible(true);
+                            this.byId("btnDeleteIODet").setVisible(true);
+                            // this.byId("btnCopyIODet").setVisible(true);
+                            this.byId("btnRefreshIODet").setVisible(true);
+                            this.byId("btnSaveIODet").setVisible(false);
+                            this.byId("btnCancelIODet").setVisible(false);
+                            this.byId("btnFullScreenIODet").setVisible(true);
+                        } else if (this._sTableModel === "IODET") {
+                            this.byId("btnNewDlvSched").setVisible(true);
+                            this.byId("btnImportPODlvSched").setVisible(true);
+                            this.byId("btnEditDlvSched").setVisible(true);
+                            this.byId("btnDeleteDlvSched").setVisible(true);
+                            this.byId("btnCopyDlvSched").setVisible(true);
+                            this.byId("btnRefreshDlvSched").setVisible(true);
+                            this.byId("btnSaveDlvSched").setVisible(false);
+                            this.byId("btnCancelDlvSched").setVisible(false);
+                            this.byId("btnFullScreenDlvSched").setVisible(true);
 
-                    var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                    oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+                            this.byId("btnNewIODet").setVisible(true);
+                            this.byId("btnEditIODet").setVisible(true);
+                            this.byId("btnDeleteIODet").setVisible(true);
+                            // this.byId("btnCopyIODet").setVisible(true);
+                            this.byId("btnRefreshIODet").setVisible(true);
+                            this.byId("btnSaveIODet").setVisible(false);
+                            this.byId("btnCancelIODet").setVisible(false);
+                            this.byId("btnFullScreenIODet").setVisible(true);
+                        } else if (arg === "IOATTRIB") {
+                            this.byId("onIOAttribEdit").setVisible(true);
+                            this.byId("onIOAttribSave").setVisible(false);
+                            this.byId("onIOAttribCancel").setVisible(false);
 
-                    if (this._sTableModel === "color" || this._sTableModel === "process") {
-                        var oIconTabBarStyle = this.byId("itbStyleDetail");
-                        oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                            // sap.ui.getCore().byId("onIOEdit").setVisible(true);
+                            // sap.ui.getCore().byId("onIORelease").setVisible(true);
+                        }
+                        else if (this._sTableModel === "costHdr") {
+                            this.byId("btnNewCostHdr").setVisible(true);
+                            this.byId("btnEditCostHdr").setVisible(true);
+                            this.byId("btnRefreshCostHdr").setVisible(true);
+                            this.byId("btnSaveCostHdr").setVisible(false);
+                            this.byId("btnCancelCostHdr").setVisible(false);
+
+                            this.byId("btnEditCostDtl").setEnabled(true);
+                            this.byId("btnPrintCosting").setEnabled(true);
+                            this.byId("btnReleaseCosting").setEnabled(true);
+                            this.byId("btnRefreshCostDtl").setEnabled(true);
+                        }
+                        else if (this._sTableModel === "costDtls") {
+                            this.byId("btnEditCostDtl").setVisible(true);
+                            this.byId("btnPrintCosting").setVisible(true);
+                            this.byId("btnReleaseCosting").setVisible(true);
+                            this.byId("btnRefreshCostDtl").setVisible(true);
+                            this.byId("btnSaveCostDtl").setVisible(false);
+                            this.byId("btnCancelCostDtl").setVisible(false);
+
+                            this.byId("btnNewCostHdr").setEnabled(true);
+                            this.byId("btnEditCostHdr").setEnabled(true);
+                            this.byId("btnRefreshCostHdr").setEnabled(true);
+                        }
+
+                        this.setRowReadMode(this._sTableModel);
+
+                        if (arg === "IODET") {
+                            this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty("/results", this._aDataBeforeChange);
+                            this.byId(this._sTableModel + "Tab").bindRows("/results");
+                        } else {
+                            this.byId(this._sTableModel + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
+                            this.byId(this._sTableModel + "Tab").bindRows("/rows");
+                        }
+                        this._dataMode = "READ";
+
+                        if (arg !== "IODET")
+                            this.setActiveRowHighlightByTableId(this._sTableModel + "Tab");
+
+                        var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                        oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                        if (this._sTableModel === "color" || this._sTableModel === "process") {
+                            var oIconTabBarStyle = this.byId("itbStyleDetail");
+                            oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                        }
                     }
+                }
+                else if (this._ConfirmDialog.getModel().getData().Action === "createcosting-cancel") {
+                    this._CreateCostingDialog.close();
                 }
 
                 this._ConfirmDialog.close();
@@ -5582,6 +7642,7 @@ sap.ui.define([
             onManageStyle: function (oEvent) {
                 var vStyle = this._styleNo;
                 var me = this;
+                let iono = me._ioNo.length > 0 ? me._ioNo : this.getView().getModel("ui2").getProperty("/currIONo");
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
@@ -5600,6 +7661,8 @@ sap.ui.define([
                         shellHash: hash
                     }
                 }); // navigate to Supplier application
+
+                this._routeToStyle = true;
 
                 // sap.ushell.Container.getServiceAsync("CrossApplicationNavigation").then( function (oService) {
                 //     oService.hrefForExternalAsync({
@@ -5626,12 +7689,13 @@ sap.ui.define([
                 // console.log()
                 var me = this;
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-                let iono= this.getView().getModel("ui2").getProperty("/currIONo");
+                var pIONO = me.getView().getModel("ui2").getProperty("/currIONo");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + iono
+                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
+                        // action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": "NEW",
@@ -5644,6 +7708,8 @@ sap.ui.define([
                         shellHash: hash
                     }
                 }); // navigate to Supplier application
+
+                this._routeToStyle = true;
             },
 
             onSaveTableLayout(arg) {
@@ -5728,9 +7794,95 @@ sap.ui.define([
                 }
             },
 
+            onIOGenMatList: async function () {
+                var me = this;
+
+                var iAccRowCount = this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length;
+                var iFabRowCount = this.byId("styleFabBOMTab").getModel("DataModel").getData().results.items.length;
+
+                var oParam = {};
+                var oMessage;
+                var hasValid = false;
+                var vIONo = this._ioNo
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                if (iAccRowCount + iFabRowCount > 0) {
+                    oParam = {
+                        "SBU": this._sbu,
+                        "IONO": vIONo,
+                        "MATTYPGRP": "FAB"
+                    };
+                    // console.log(oParam)
+
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this._oModelStyle.create("/GenIOMatListSet", oParam, {
+                                method: "POST",
+                                success: function (data, oResponse) {
+                                    oMessage = JSON.parse(oResponse.headers["sap-message"]);
+                                    // console.log("FAB - " + oMessage.message);
+
+                                    if (oMessage.message === "1")
+                                        hasValid = true;
+
+                                    resolve();
+                                },
+                                error: function (err) {
+                                    // sap.m.MessageBox.error(err);
+                                    resolve();
+                                }
+                            });
+                        }, 100);
+                    })
+                    await _promiseResult;
+
+                    oParam = {
+                        "SBU": this._sbu,
+                        "IONO": vIONo,
+                        "MATTYPGRP": "ACC"
+                    };
+                    // console.log(oParam)
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this._oModelStyle.create("/GenIOMatListSet", oParam, {
+                                method: "POST",
+                                success: function (data, oResponse) {
+                                    oMessage = JSON.parse(oResponse.headers["sap-message"]);
+                                    // console.log("ACC - " + oMessage.message);
+
+                                    if (oMessage.message === "1")
+                                        hasValid = true;
+
+                                    resolve();
+                                },
+                                error: function (err) {
+                                    // sap.m.MessageBox.error(err);
+                                    resolve();
+                                }
+                            });
+                        }, 100);
+                    })
+                    await _promiseResult;
+
+
+                    if (hasValid === false) {
+                        Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
+                    } else {
+                        me.onRefresh("ioMatList");
+                        Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                    }
+                } else {
+                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                }
+            },
+
             onGenMatList(arg) {
                 var me = this;
                 var iRowCount = 0;
+                var vIONo = this._ioNo
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (arg === "ACC") {
                     // console.log(this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length)
@@ -5744,10 +7896,10 @@ sap.ui.define([
                 if (iRowCount > 0) {
                     var oParam = {
                         "SBU": this._sbu,
-                        "IONO": this._ioNo,
+                        "IONO": vIONo,
                         "MATTYPGRP": arg
                     };
-
+                    // console.log(oParam)
                     this._oModelStyle.create("/GenIOMatListSet", oParam, {
                         method: "POST",
                         success: function (data, oResponse) {
@@ -5756,8 +7908,10 @@ sap.ui.define([
                             if (oMessage.message === "0") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                             }
-                            else if (oMessage.message === "0") {
+                            else if (oMessage.message === "1") {
                                 Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+
+                                me.onRefresh("ioMatList");
                             }
                         },
                         error: function (err) {
@@ -5798,6 +7952,8 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "'"
                     },
                     success: function (oData, response) {
+                        oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+
                         oData.results.forEach((row, index) => {
                             row.ACTIVE = index === 0 ? "X" : "";
                             row.POQTY = row.POQTY + "";
@@ -5992,22 +8148,24 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        // console.log(aData.at(item))
-                        aParam.push({
-                            Mrptyp: "IOMRP",
-                            Plantcd: aData.at(item).PURPLANT,
-                            Iono: aData.at(item).IONO,
-                            Matno: aData.at(item).MATNO,
-                            Baseuom: aData.at(item).UOM,
-                            Reqqty: aData.at(item).REQDQTY,
-                            Purgrp: aData.at(item).PURGRP,
-                            Supplytyp: aData.at(item).SUPPLYTYP,
-                            Vendorcd: aData.at(item).VENDORCD,
-                            Unitprice: aData.at(item).UNITPRICE,
-                            Orderuom: aData.at(item).ORDERUOM,
-                            Umrez: aData.at(item).UMREZ,
-                            Umren: aData.at(item).UMREN
-                        });
+                        if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "") {
+                            aParam.push({
+                                Mrptyp: "IOMRP",
+                                Plantcd: me._prodplant,
+                                Iono: aData.at(item).IONO,
+                                Matno: aData.at(item).MATNO,
+                                Baseuom: aData.at(item).UOM,
+                                Reqqty: aData.at(item).VARIANCE,
+                                Purgrp: aData.at(item).PURGRP,
+                                Supplytyp: aData.at(item).SUPPLYTYP,
+                                Vendorcd: aData.at(item).VENDORCD,
+                                Unitprice: aData.at(item).UNITPRICE,
+                                Orderuom: aData.at(item).ORDERUOM,
+                                Umrez: aData.at(item).UMREZ,
+                                Umren: aData.at(item).UMREN,
+                                Purplant: aData.at(item).PURPLANT
+                            });
+                        }
                     })
 
                     if (aParam.length > 0) {
@@ -6017,17 +8175,18 @@ sap.ui.define([
                         oParam["MRPTYP"] = "IOMRP";
                         oParam["N_CreateMRPDataParam"] = aParam;
                         oParam["N_CreateMRPDataReturn"] = [];
-
+                        console.log(oParam)
                         oModel.create("/CreateMRPDataSet", oParam, {
                             method: "POST",
                             success: function (oDataReturn, oResponse) {
                                 //assign the materials based on the return
-                                console.log(oDataReturn)
+                                // console.log(oDataReturn)
 
                                 Common.closeLoadingDialog(me);
 
                                 if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
                                     Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
+                                    me.onRefresh("ioMatList");
                                 }
 
                                 me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
@@ -6039,7 +8198,7 @@ sap.ui.define([
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
                     }
                 }
                 else {
@@ -6054,7 +8213,8 @@ sap.ui.define([
 
                 aData.forEach(item => {
                     oParam["IMATNR"] = item.Matno;
-                    oParam["IWERKS"] = item.Plantcd;
+                    oParam["IWERKSFROM"] = item.Purplant;
+                    oParam["IWERKSTO"] = item.Plantcd;
                     oParam["ERETCODE"] = "";
                     oParam["N_ExtendMaterialReturn"] = [];
 
@@ -6071,6 +8231,688 @@ sap.ui.define([
                 })
             },
 
+            onReorder: function (oEvent) {
+                if (this.byId("ioMatListTab").getModel().getData().rows.length > 0) {
+                    this._bRefreshIOMatlist = false;
+                    this.getReorderData(true);
+                }
+                else {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_MATLIST"]);
+                }
+            },
+
+            getReorderData(arg) {
+                Common.openProcessingDialog(this, "Processing...");
+                var me = this;
+                var vIONo = this._ioNo;
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                this._oModelIOMatList.read('/ReorderSet', {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + vIONo + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+
+                        oData.results.forEach((item, index) => {
+                            item.DELETED = item.DELETED === "X" ? true : false;
+                            item.NEW = false;
+                            item.EDITED = false;
+                            item.ACTIVE = index === 0 ? "X" : "";
+
+                            if (item.CREATEDDT !== null)
+                                item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+
+                            if (item.UPDATEDDT !== null)
+                                item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+
+                            var sSeqNo = item.SEQNO;
+                            if (!isNaN(sSeqNo)) {
+                                while (sSeqNo.length < 3) sSeqNo = "0" + sSeqNo;
+                            }
+
+                            item.SEQNO = sSeqNo;
+                        });
+
+                        me._bReorderChanged = false;
+                        me._sTableModel = "reorder";
+                        Common.closeProcessingDialog(me);
+
+                        if (arg) me.showReorder(oData);
+                        else {
+                            var oTable = sap.ui.getCore().byId("reorderTab");
+                            me._ReorderDialog.getModel().setProperty("/rowCount", oData.results.length);
+                            oTable.getModel().setProperty("/rows", oData.results);
+                            oTable.bindRows("/rows");
+                        }
+                    },
+                    error: function (err) { }
+                })
+            },
+
+            showReorder(arg) {
+                var me = this;
+                var oData = arg;
+
+                if (!me._ReorderDialog) {
+                    me._ReorderDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ReorderDialog", me);
+
+                    me._ReorderDialog.setModel(
+                        new JSONModel({
+                            rows: oData.results,
+                            rowCount: oData.results.length
+                        })
+                    )
+
+                    me.getView().addDependent(me._ReorderDialog);
+
+                    var oTableEventDelegate = {
+                        onkeyup: function (oEvent) {
+                            me.onKeyUp(oEvent);
+                        },
+
+                        onAfterRendering: function (oEvent) {
+                            var oControl = oEvent.srcControl;
+                            var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+
+                            if (sTabId.substr(sTabId.length - 3) === "Tab") me._tableRendered = sTabId;
+                            else me._tableRendered = "";
+
+                            me.onAfterTableRendering();
+                        }
+                    };
+
+                    sap.ui.getCore().byId("reorderTab").addEventDelegate(oTableEventDelegate);
+                }
+                else {
+                    me._ReorderDialog.getModel().setProperty("/rows", oData.results);
+                    me._ReorderDialog.getModel().setProperty("/rowCount", oData.results.length);
+                }
+
+                me._ReorderDialog.setTitle("Reorder");
+                me._ReorderDialog.open();
+            },
+
+            onNewReorder: function (oEvent) {
+                this.getView().setModel(new JSONModel(this.byId("ioMatListTab").getModel().getData().rows), "IOMATLIST_MODEL");
+                this._validationErrors = [];
+                this._aDataBeforeChange = jQuery.extend(true, [], this._ReorderDialog.getModel().getData().rows);
+
+                var oTable = sap.ui.getCore().byId("reorderTab");
+                var aNewRow = [];
+                var oNewRow = {};
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+
+                    if (sColName === "MATNO") {
+                        oNewRow[sColName] = "";
+                        col.setTemplate(new sap.m.Input({
+                            // id: "reorderMATNO",
+                            type: "Text",
+                            value: "{" + sColName + "}",
+                            showValueHelp: true,
+                            valueHelpRequest: this.handleReorderValueHelp.bind(this),
+                            showSuggestion: true,
+                            maxSuggestionWidth: "225px",
+                            suggestionItems: {
+                                path: "IOMATLIST_MODEL>/",
+                                length: 10000,
+                                template: new sap.ui.core.ListItem({
+                                    key: "{IOMATLIST_MODEL>MATNO}",
+                                    text: "{IOMATLIST_MODEL>MATNO}",
+                                    additionalText: "{IOMATLIST_MODEL>SEQNO}",
+                                }),
+                                templateShareable: false
+                            },
+                            // suggest: this.handleSuggestion.bind(this),
+                            change: this.handleValueHelpChange.bind(this),
+                            suggestionItemSelected: this.handleSuggestionItemSelected.bind(this),
+                            enabled: {
+                                path: "NEW",
+                                formatter: function (NEW) {
+                                    if (NEW === true) { return true }
+                                    else { return false }
+                                }
+                            }
+                        }));
+                    }
+                    else if (sColName === "REORDERQTY") {
+                        oNewRow[sColName] = "0";
+                        col.setTemplate(new sap.m.Input({
+                            type: sap.m.InputType.Number,
+                            textAlign: sap.ui.core.TextAlign.Right,
+                            value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:5, maxFractionDigits:5 }, constraints:{ precision:18, scale:5 }}",
+                            change: this.onNumberChange.bind(this),
+                            enabled: {
+                                path: "NEW",
+                                formatter: function (NEW) {
+                                    if (NEW === true) { return true }
+                                    else { return false }
+                                }
+                            }
+                        }));
+                    }
+                    else if (sColName === "DELETED") {
+                        oNewRow[sColName] = false;
+                    }
+                    else if (sColName === "REMARKS") {
+                        oNewRow[sColName] = "";
+                        col.setTemplate(new sap.m.Input({
+                            type: "Text",
+                            value: "{" + sColName + "}",
+                            maxLength: 1000,
+                            change: this.onInputLiveChange.bind(this),
+                            enabled: {
+                                path: "NEW",
+                                formatter: function (NEW) {
+                                    if (NEW === true) { return true }
+                                    else { return false }
+                                }
+                            }
+                        }));
+                    }
+                })
+
+                oNewRow["NEW"] = true;
+                aNewRow.push(oNewRow);
+                var aDataAfterChange = aNewRow.concat(oTable.getModel().getData().rows);
+
+                this._ReorderDialog.getModel().setProperty("/rowCount", aDataAfterChange.length);
+                oTable.getModel().setProperty("/rows", aDataAfterChange);
+                oTable.bindRows("/rows");
+
+                this._bReorderChanged = true;
+                this._dataMode = "NEW";
+                sap.ui.getCore().byId("btnNewReorder").setVisible(false);
+                sap.ui.getCore().byId("btnEditReorder").setVisible(false);
+                sap.ui.getCore().byId("btnAddReorder").setVisible(true);
+                sap.ui.getCore().byId("btnSaveReorder").setVisible(true);
+                sap.ui.getCore().byId("btnCancelReorder").setVisible(true);
+                sap.ui.getCore().byId("btnCloseReorder").setVisible(false);
+                sap.ui.getCore().byId("btnDeleteReorder").setVisible(false);
+                sap.ui.getCore().byId("btnRefreshReorder").setVisible(false);
+                oTable.focus();
+            },
+
+            onAddReorder: function (oEvent) {
+                this.addReorder();
+            },
+
+            addReorder() {
+                var oTable = sap.ui.getCore().byId("reorderTab");
+                var aNewRow = [];
+                var oNewRow = {};
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.value !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
+                    }
+
+                    if (sColName === "REORDERQTY") oNewRow[sColName] = "0";
+                    else if (sColName === "DELETED") oNewRow[sColName] = false;
+                    else oNewRow[sColName] = "";
+                })
+
+                oNewRow["NEW"] = true;
+                aNewRow.push(oNewRow);
+
+                var aDataAfterChange = aNewRow.concat(oTable.getModel().getData().rows);
+
+                oTable.getModel().setProperty("/rows", aDataAfterChange);
+                oTable.bindRows("/rows");
+                this._ReorderDialog.getModel().setProperty("/rowCount", aDataAfterChange.length);
+            },
+
+            onEditReorder: function (oEvent) {
+                if (this._ReorderDialog.getModel().getData().rows.length === 0) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                    return;
+                }
+
+                var oTable = sap.ui.getCore().byId("reorderTab");
+
+                this._validationErrors = [];
+                this._aDataBeforeChange = jQuery.extend(true, [], this._ReorderDialog.getModel().getData().rows);
+
+                oTable.getColumns().forEach((col, idx) => {
+                    var sColName = "";
+
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+
+                    if (sColName === "REORDERQTY") {
+                        col.setTemplate(new sap.m.Input({
+                            type: sap.m.InputType.Number,
+                            textAlign: sap.ui.core.TextAlign.Right,
+                            value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:5, maxFractionDigits:5 }, constraints:{ precision:18, scale:5 }}",
+                            change: this.onNumberChange.bind(this)
+                        }));
+                    }
+                    // else if (sColName === "DELETED") {
+                    //     col.setTemplate(new sap.m.CheckBox({selected: "{" + sColName + "}", editable: false}));
+                    // }
+                    else if (sColName === "REMARKS") {
+                        col.setTemplate(new sap.m.Input({
+                            type: "Text",
+                            value: "{" + sColName + "}",
+                            maxLength: 1000,
+                            change: this.onInputLiveChange.bind(this)
+                        }));
+                    }
+                })
+
+                this._ReorderDialog.getModel().getData().rows.forEach(item => item.EDITED = false);
+
+                this._dataMode = "EDIT";
+                sap.ui.getCore().byId("btnNewReorder").setVisible(false);
+                sap.ui.getCore().byId("btnEditReorder").setVisible(false);
+                sap.ui.getCore().byId("btnAddReorder").setVisible(false);
+                sap.ui.getCore().byId("btnSaveReorder").setVisible(true);
+                sap.ui.getCore().byId("btnCancelReorder").setVisible(true);
+                sap.ui.getCore().byId("btnCloseReorder").setVisible(false);
+                sap.ui.getCore().byId("btnDeleteReorder").setVisible(false);
+                sap.ui.getCore().byId("btnRefreshReorder").setVisible(false);
+                oTable.focus();
+            },
+
+            onCancelReorder: function (oEvent) {
+                if (this._dataMode === "NEW" || this._dataMode === "EDIT") {
+                    if (this._bReorderChanged) {
+                        var oData = {
+                            Action: "update-cancel",
+                            Text: this.getView().getModel("ddtext").getData()["CONFIRM_DISREGARD_CHANGE"]
+                        }
+
+                        var oJSONModel = new JSONModel();
+                        oJSONModel.setData(oData);
+
+                        if (!this._ConfirmDialog) {
+                            this._ConfirmDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ConfirmDialog", this);
+
+                            this._ConfirmDialog.setModel(oJSONModel);
+                            this.getView().addDependent(this._ConfirmDialog);
+                        }
+                        else this._ConfirmDialog.setModel(oJSONModel);
+
+                        this._ConfirmDialog.open();
+                    }
+                    else {
+                        var oTable = sap.ui.getCore().byId("reorderTab");
+                        this._ReorderDialog.getModel().setProperty("/rowCount", this._aDataBeforeChange.length);
+                        oTable.getModel().setProperty("/rows", this._aDataBeforeChange);
+                        oTable.bindRows("/rows");
+
+                        this.setReorderReadMode();
+                        this._dataMode = "READ";
+                        sap.ui.getCore().byId("btnNewReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnEditReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnAddReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnSaveReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
+                        sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnDeleteReorder").setVisible(true);
+                        sap.ui.getCore().byId("btnRefreshReorder").setVisible(true);
+                    }
+                }
+            },
+
+            onBatchSaveReorder: function (oEvent) {
+                if (this._dataMode === "NEW" || this._dataMode === "EDIT") {
+                    var oTable = sap.ui.getCore().byId("reorderTab");
+                    var me = this;
+                    var aNewRows = this._ReorderDialog.getModel().getData().rows.filter(item => item.NEW === true);
+                    var aEditedRows = this._ReorderDialog.getModel().getData().rows.filter(item => item.EDITED === true && item.NEW !== true);
+
+                    if (aNewRows.length > 0) {
+                        if (this._validationErrors.length === 0) {
+                            var oParam = {};
+                            var oParamItems = [];
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aNewRows.forEach(item => {
+                                oParamItems.push({
+                                    IONO: this.getView().getModel("ui2").getProperty("/currIONo"),
+                                    MATNO: item.MATNO,
+                                    SEQNO: item.SEQNO,
+                                    REORDERQTY: item.REORDERQTY === null || item.REORDERQTY === "" ? "0" : item.REORDERQTY,
+                                    REMARKS: item.REMARKS,
+                                    DELETED: ""
+                                })
+                            })
+
+                            oParam["IONO"] = this.getView().getModel("ui2").getProperty("/currIONo");
+                            oParam["N_ReorderItems"] = oParamItems;
+                            console.log(oParam);
+                            // return;
+                            this._oModelIOMatList.create("/ChangeReorderSet", oParam, {
+                                method: "POST",
+                                success: function (oData, oResponse) {
+                                    console.log(oData)
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_REORDER_CREATED"]);
+                                    me.setReorderReadMode();
+                                    me._dataMode = "READ";
+                                    sap.ui.getCore().byId("btnNewReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnEditReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnAddReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnSaveReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnDeleteReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnRefreshReorder").setVisible(true);
+
+                                    // const aDataAfterChange = me._aDataBeforeChange.concat(aNewRows);
+                                    // aDataAfterChange.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+
+                                    // me._ReorderDialog.getModel().setProperty("/rowCount", aDataAfterChange.length);
+                                    // oTable.getModel().setProperty("/rows", aDataAfterChange);
+                                    // oTable.bindRows("/rows");
+
+                                    me.getReorderData(false);
+                                    me._bRefreshIOMatlist = true;
+                                    Common.closeProcessingDialog(me);
+                                },
+                                error: function (oResponse) {
+                                    var oError = JSON.parse(oResponse.responseText);
+                                    MessageBox.information(oError.error.message.value.split(":").join("\n"));
+                                    Common.closeProcessingDialog(me);
+                                }
+                            });
+                        }
+                        else {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        }
+                    }
+                    else if (aEditedRows.length > 0) {
+                        if (this._validationErrors.length === 0) {
+                            var sEntitySet = "/ReorderSet";
+
+                            this._oModelIOMatList.setUseBatch(true);
+                            this._oModelIOMatList.setDeferredGroups(["update"]);
+
+                            var mParameters = {
+                                "groupId": "update"
+                            }
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aEditedRows.forEach(item => {
+                                var entitySet = sEntitySet + "(IONO='" + item.IONO + "',MATNO='" + item.MATNO + "',SEQNO='" + item.SEQNO + "')";
+                                var param = {};
+
+                                param["REORDERQTY"] = item.REORDERQTY;
+                                param["REMARKS"] = item.REMARKS;
+
+                                console.log(entitySet);
+                                console.log(param);
+                                this._oModelIOMatList.update(entitySet, param, mParameters);
+                            })
+
+                            this._oModelIOMatList.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+                                    Common.closeProcessingDialog(me);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                    me.setReorderReadMode();
+                                    me._dataMode = "READ";
+                                    sap.ui.getCore().byId("btnNewReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnEditReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnAddReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnSaveReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnCancelReorder").setVisible(false);
+                                    sap.ui.getCore().byId("btnCloseReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnDeleteReorder").setVisible(true);
+                                    sap.ui.getCore().byId("btnRefreshReorder").setVisible(true);
+                                    me._bRefreshIOMatlist = true;
+                                    me.getReorderData(false);
+                                },
+                                error: function () {
+                                    Common.closeProcessingDialog(me);
+                                }
+                            })
+                        }
+                        else {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        }
+                    }
+                    else {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    }
+                }
+            },
+
+            onDeleteReorder: function (oEvent) {
+                if (this._dataMode === "READ") {
+                    var me = this;
+                    var oTable = sap.ui.getCore().byId("reorderTab");
+                    var aSelIndices = oTable.getSelectedIndices();
+                    var oTmpSelectedIndices = [];
+                    var aData = this._ReorderDialog.getModel().getData().rows;
+                    var sEntitySet = "/ReorderSet";
+
+                    this._oModelIOMatList.setUseBatch(true);
+                    this._oModelIOMatList.setDeferredGroups(["update"]);
+
+                    var mParameters = {
+                        "groupId": "update"
+                    }
+
+                    if (aSelIndices.length > 0) {
+                        aSelIndices.forEach(item => {
+                            oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                        })
+
+                        aSelIndices = oTmpSelectedIndices;
+
+                        MessageBox.confirm("Proceed to delete " + aSelIndices.length + " record(s)?", {
+                            actions: ["Yes", "No"],
+                            onClose: function (sAction) {
+                                if (sAction === "Yes") {
+                                    Common.openProcessingDialog(me, "Processing...");
+
+                                    aSelIndices.forEach(item => {
+                                        var entitySet = sEntitySet + "(IONO='" + aData.at(item).IONO + "',MATNO='" + aData.at(item).MATNO + "',SEQNO='" + aData.at(item).SEQNO + "')";
+                                        var param = {};
+
+                                        param["DELETED"] = "X";
+
+                                        // console.log(param);
+                                        me._oModelIOMatList.update(entitySet, param, mParameters);
+                                    })
+
+                                    me._oModelIOMatList.submitChanges({
+                                        groupId: "update",
+                                        success: function (oData, oResponse) {
+                                            Common.closeProcessingDialog(me);
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_DELETED"]);
+                                            me.getReorderData(false);
+
+                                            // aSelIndices.forEach(item => {
+                                            //     aData.at(item).DELETED = true;
+                                            // })
+
+                                            // oTable.getModel().setProperty("/rows", aData);
+                                            // oTable.bindRows("/rows");
+                                        },
+                                        error: function () {
+                                            Common.closeProcessingDialog(me);
+                                        }
+                                    })
+                                }
+                            }
+                        })
+                    }
+                    else {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                    }
+                }
+            },
+
+            setReorderReadMode() {
+                var oTable = sap.ui.getCore().byId("reorderTab");
+                var sColName = "";
+
+                oTable.getColumns().forEach((col, idx) => {
+                    if (col.mAggregations.template.mBindingInfos.text !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.selected !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.selected.parts[0].path;
+                    }
+                    else if (col.mAggregations.template.mBindingInfos.value !== undefined) {
+                        sColName = col.mAggregations.template.mBindingInfos.value.parts[0].path;
+                    }
+
+                    if (sColName === "MATNO" || sColName === "REORDERQTY" || sColName === "REMARKS") {
+                        col.setTemplate(new sap.m.Text({
+                            text: "{" + sColName + "}",
+                            wrapping: false,
+                            tooltip: "{" + sColName + "}"
+                        }));
+                    }
+                })
+
+                this._ReorderDialog.getModel().getData().rows.forEach(item => item.EDITED = false);
+            },
+
+            onRefreshReorder: function (oEvent) {
+                this.getReorderData(false);
+            },
+
+            onCloseReorder: function (oEvent) {
+                this._ReorderDialog.close();
+
+                if (this._bRefreshIOMatlist) this.onRefresh('ioMatList');
+            },
+
+            handleReorderValueHelp: function (oEvent) {
+                var oSource = oEvent.getSource();
+                var vh = this.getView().getModel("IOMATLIST_MODEL").getData();
+
+                this._inputSource = oSource;
+                this._inputId = oSource.getId();
+                this._inputValue = oSource.getValue();
+                this._inputField = oSource.getBindingInfo("value").parts[0].path;
+
+                vh.forEach(item => {
+                    item.VHTitle = item.MATNO;
+                    item.VHDesc = item.SEQNO;
+                    item.VHSelected = (item.MATNO === this._inputValue);
+                })
+
+                vh.sort((a, b) => (a.VHTitle > b.VHTitle ? 1 : -1));
+
+                var oVHModel = new JSONModel({
+                    items: vh,
+                    title: "Material No.",
+                    table: "reorder"
+                });
+
+                // create value help dialog
+                if (!this._valueHelpDialog) {
+                    this._valueHelpDialog = sap.ui.xmlfragment(
+                        "zuiio2.view.fragments.valuehelp.ValueHelpDialog",
+                        this
+                    );
+
+                    this._valueHelpDialog.setModel(oVHModel);
+                    this.getView().addDependent(this._valueHelpDialog);
+                }
+                else {
+                    this._valueHelpDialog.setModel(oVHModel);
+                }
+
+                this._valueHelpDialog.open();
+            },
+
+            handleReorderValueHelpClose: function (oEvent) {
+                if (oEvent.sId === "confirm") {
+                    var oSelectedItem = oEvent.getParameter("selectedItem");
+
+                    if (oSelectedItem) {
+                        this._inputSource.setValue(oSelectedItem.getTitle());
+
+                        if (this._inputValue !== oSelectedItem.getTitle()) {
+                            var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
+                            // var sVendor = this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.MATNO === oSelectedItem.getTitle() && fItem.SEQNO === oSelectedItem.getDescription())[0].VENDORCD;
+
+                            this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                            this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getDescription());
+                            // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', sVendor);
+                            this._bReorderChanged = true;
+                        }
+                    }
+
+                    this._inputSource.setValueState("None");
+                }
+            },
+
+            handleReorderValueHelpChange: function (oEvent) {
+                var oSource = oEvent.getSource();
+                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
+                oSource.setValueState(isInvalid ? "Error" : "None");
+
+                oSource.getSuggestionItems().forEach(item => {
+                    if (item.getProperty("key") === oSource.getValue().trim()) {
+                        isInvalid = false;
+                        oSource.setValueState(isInvalid ? "Error" : "None");
+                    }
+                })
+
+                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
+                else {
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                }
+
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+
+                this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                this._bReorderChanged = true;
+            },
+
+            handleSuggestionItemSelected: function (oEvent) {
+                var oSelectedItem = oEvent.getParameter("selectedItem");
+                var sRowPath = oEvent.getSource().getBindingInfo("value").binding.oContext.sPath;
+
+                if (oSelectedItem !== null) {
+                    // var sVendor = this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.MATNO === oSelectedItem.getKey() && fItem.SEQNO === oSelectedItem.getAdditionalText())[0].VENDORCD;
+
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getAdditionalText());
+                    // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', sVendor);
+                }
+                else {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', "");
+                    // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', "");
+                }
+
+                this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                this._bReorderChanged = true;
+            },
+
             //******************************************* */
             // COSTING
             //******************************************* */            
@@ -6081,6 +8923,36 @@ sap.ui.define([
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
+
+                this._oModelIOCosting.read('/TypeSHSet', {
+                    async: false,
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.read('/SalesTermSet', {
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.setHeaders({
+                    PRODPLANT: this._prodplant
+                })
+                this._oModelIOCosting.read('/VariantSHSet', {
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTVARIANT_MODEL");
+
+                        // sap.ui.getCore().byId("ETEXT").setValueAndText("01","CSVCD","DESC1",me.getView().getModel("COSTVARIANT_MODEL").getData());
+                        // console.log(sap.ui.getCore().byId("ETEXT"));
+                        // console.log(sap.ui.getCore().byId("ETEXT").getProperty("text"));
+                        // console.log(sap.ui.getCore().byId("ETEXT").value);
+                    },
+                    error: function (err) { }
+                })
 
                 this.byId("costHdrTab")
                     .setModel(new JSONModel({
@@ -6102,7 +8974,13 @@ sap.ui.define([
                     },
                     success: function (oData) {
                         oData.results.forEach((row, index) => {
-                            row.ACTIVE = index === 0 ? "X" : "";
+                            if (index === 0) {
+                                row.ACTIVE = "X";
+                                me.getIOCostDetails(row.CSTYPE, row.VERSION, false);
+                            }
+                            else row.ACTIVE = "";
+
+                            row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                         });
 
                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -6117,12 +8995,12 @@ sap.ui.define([
             },
 
             getIOCostingColumnProp: async function () {
-                // var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
 
-                // var oModelColumns = new JSONModel();
-                // await oModelColumns.loadData(sPath);
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
 
-                var oColumns = []; //oModelColumns.getData();
+                var oColumns = oModelColumns.getData();
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 setTimeout(() => {
@@ -6152,7 +9030,7 @@ sap.ui.define([
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            console.log(oData)
+                            // console.log(oData)
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
@@ -6189,14 +9067,48 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
+                    // var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+                    var oText = new sap.m.Text({
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
+                    })
+
+                    oText.bindText({
+                        parts: [
+                            { path: sColumnId }
+                        ]
+                    });
+
+                    // if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp !== undefined) {
+                    //     oText.bindText({  
+                    //         parts: [  
+                    //             { path: sColumnId }
+                    //         ],  
+                    //         formatter: function(sColumnId) {
+                    //             if (oColProp[0].ValueHelp.items.value === oColProp[0].ValueHelp.items.text) return sColumnId;
+                    //             else {
+                    //                 var oValue = me.getView().getModel(oColProp[0].ValueHelp.items.path).getData().filter(v => v[oColProp[0].ValueHelp.items.value] === sColumnId);
+
+                    //                 if (oValue && oValue.length > 0) {
+                    //                     return oValue[0][oColProp[0].ValueHelp.items.text] + " (" + sColumnId + ")";
+                    //                 }
+                    //                 else return sColumnId;
+                    //             }
+                    //         }
+                    //     });                        
+                    // }
+                    // else {
+                    //     oText.bindText({  
+                    //         parts: [  
+                    //             { path: sColumnId }
+                    //         ]
+                    //     }); 
+                    // }
+
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                         label: new sap.m.Text({ text: sColumnLabel }),
-                        template: new sap.m.Text({
-                            text: "{" + sColumnId + "}",
-                            wrapping: false,
-                            tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
-                        }),
+                        template: oText,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
                         filterProperty: sColumnId,
@@ -6207,22 +9119,387 @@ sap.ui.define([
                         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                     });
                 });
+
+                // this._tableRendered = sTabId;
+            },
+
+            getIOCostDetails(arg1, arg2, arg3) {
+                var me = this;
+                var vIONo = this._ioNo
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                this._oModelIOCosting.read('/DetailsSet', {
+                    urlParameters: {
+                        "$filter": "IONO eq '" + vIONo + "' and CSTYPE eq '" + arg1 + "' and VERSION eq '" + arg2 + "'"
+                    },
+                    success: function (oData) {
+                        if (arg3) { Common.closeProcessingDialog(me); }
+
+                        oData.results.forEach(item => {
+                            if (item.COSTCOMPCD === "NETBAL") { item.TOPSEQ = 1; }
+                            else if (item.COSTCOMPCD === "% TO FOB") { item.TOPSEQ = 2; }
+                            else { item.TOPSEQ = 100 + (+item.SEQNO) }
+                        })
+
+                        oData.results.sort((a, b) => (a.TOPSEQ > b.TOPSEQ ? 1 : -1));
+                        // oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+
+                        oData.results.forEach((row, index) => {
+                            row.ACTIVE = index === 0 ? "X" : "";
+                        });
+
+                        me.byId("costDtlsTab").getModel().setProperty("/rows", oData.results);
+                        me.byId("costDtlsTab").bindRows("/rows");
+                        me._tableRendered = "costDtlsTab";
+                    },
+                    error: function (err) {
+                        Common.closeProcessingDialog(me);
+                    }
+                })
+            },
+
+            onCreateCosting: function (oEvent) {
+                var me = this;
+                var oJSONModel = new JSONModel();
+                oJSONModel.setData(this.getView().getModel("ddtext").getData(), "ddtext");
+
+                this._oModelIOCosting.read('/TypeSHSet', {
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.read('/SalesTermSet', {
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.setHeaders({
+                    PRODPLANT: this._prodplant
+                })
+                this._oModelIOCosting.read('/VariantSHSet', {
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTVARIANT_MODEL");
+
+                        // sap.ui.getCore().byId("ETEXT").setValueAndText("01","CSVCD","DESC1",me.getView().getModel("COSTVARIANT_MODEL").getData());
+                        // console.log(sap.ui.getCore().byId("ETEXT"));
+                        // console.log(sap.ui.getCore().byId("ETEXT").getProperty("text"));
+                        // console.log(sap.ui.getCore().byId("ETEXT").value);
+                    },
+                    error: function (err) { }
+                })
+
+                if (!this._CreateCostingDialog) {
+                    this._CreateCostingDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.CreateCostingDialog", this);
+                    this._CreateCostingDialog.setModel(oJSONModel);
+                    this.getView().addDependent(this._CreateCostingDialog);
+                }
+                else {
+                    this._CreateCostingDialog.setModel(oJSONModel);
+                }
+
+                this._CreateCostingDialog.setTitle(this.getView().getModel("ddtext").getData()["CREATECOSTING"]);
+                this._CreateCostingDialog.open();
+                this._validationErrors = [];
+            },
+
+            beforeOpenCreateCosting: function (oEvent) {
+                oEvent.getSource().setInitialFocus(sap.ui.getCore().byId("CSTYPE"));
+
+                sap.ui.getCore().byId("COSTSTATUS").setValue("CRT");
+                sap.ui.getCore().byId("VERDESC").setValue("");
+
+                //set CS DATE value to today's date
+                var today = new Date();
+                sap.ui.getCore().byId("CSDATE").setValue(sapDateFormat.format(today));
+
+                if (this.getView().byId("CUSSALTERM").getValue() !== "") {
+                    sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").getValue());
+                }
+                else {
+                    //set value of fields if resource has only 1 data
+                    if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1) { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                    else { sap.ui.getCore().byId("SALESTERM").setValue(""); }    
+                }
+
+                //set value of fields if resource has only 1 data
+                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1) { 
+                    sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); 
+                
+                    //get default value
+                    var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                    
+                    if (aDef.length > 0) {
+                        sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                        if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                    }
+                    // else {
+                    //     //set value of fields if resource has only 1 data
+                    //     if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                    //     else { sap.ui.getCore().byId("CSVCD").setValue(""); }    
+                    // }                    
+                }
+                else { 
+                    sap.ui.getCore().byId("CSTYPE").setValue(""); 
+                    sap.ui.getCore().byId("CSVCD").setValue("");
+                }
+                // console.log(sapDateFormat.format("11/28/2022"))
+            },
+
+            afterOpenCreateCosting: function (oEvent) {
+                oEvent.getSource().setInitialFocus(sap.ui.getCore().byId("CSTYPE"));
+
+                // //set value of fields if resource has only 1 data
+                // if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD); }
+                // else { sap.ui.getCore().byId("CSTYPE").setValue(""); }
+
+                // if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                // else { sap.ui.getCore().byId("CSVCD").setValue(""); }
+
+                // if (this.getView().getModel("COSTTERMS_MODEL").getData().length === 1)
+                // { sap.ui.getCore().byId("SALESTERM").setValue(this.getView().getModel("COSTTERMS_MODEL").getData()[0].INCO1); }
+                // else { sap.ui.getCore().byId("SALESTERM").setValue(""); }
+
+                // sap.ui.getCore().byId("VERDESC").setValue("");
+            },
+
+            onSaveCreateCosting: function (oEvent) {
+                var me = this;
+                var oParam = {
+                    "IONO": this._ioNo,
+                    "CSTYPE": sap.ui.getCore().byId("CSTYPE").getValue(),
+                    "CSVCD": sap.ui.getCore().byId("CSVCD").getValue(),
+                    "VERDESC": sap.ui.getCore().byId("VERDESC").getValue(),
+                    "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
+                    "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
+                    "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
+                }
+                console.log(oParam);
+
+                Common.openProcessingDialog(this, "Processing...");
+
+                this._oModelIOCosting.create('/VersionsSet', oParam, {
+                    method: "POST",
+                    success: function (oCreateData) {
+                        me._oModelIOCosting.read('/VersionsSet', {
+                            urlParameters: {
+                                "$filter": "IONO eq '" + me._ioNo + "'"
+                            },
+                            success: function (oReadData) {
+                                Common.openProcessingDialog(me);
+
+                                oReadData.results.forEach((row, index) => {
+                                    if ((index + 1) === oReadData.results.length) {
+                                        row.ACTIVE = "X";
+                                        me.getIOCostDetails(row.CSTYPE, row.VERSION, true);
+                                    }
+                                    else row.ACTIVE = "";
+                                });
+
+                                me.byId("costHdrTab").getModel().setProperty("/rows", oReadData.results);
+                                me.byId("costHdrTab").bindRows("/rows");
+                                me._tableRendered = "costHdrTab";
+                                me._CreateCostingDialog.close();
+                            },
+                            error: function (err) { }
+                        })
+                    },
+                    error: function (err) { }
+                })
+            },
+
+            onCancelCreateCosting: function (oEvent) {
+                var oData = {
+                    Action: "createcosting-cancel",
+                    Text: this.getView().getModel("ddtext").getData()["CONFIRM_DISREGARD_CHANGE"]
+                }
+
+                if (!this._ConfirmDialog) {
+                    this._ConfirmDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.ConfirmDialog", this);
+
+                    this._ConfirmDialog.setModel(new JSONModel(oData));
+                    this.getView().addDependent(this._ConfirmDialog);
+                }
+                else this._ConfirmDialog.setModel(new JSONModel(oData));
+
+                this._ConfirmDialog.open();
+            },
+
+            handleValueHelpCosting: function (oEvent) {
+                var me = this;
+                var oSource = oEvent.getSource();
+                var sModel = oSource.getBindingInfo("suggestionItems").model;
+                var vh = this.getView().getModel(sModel).getData();
+                var sVHTitle = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("text").parts[0].path;
+                var sVHDesc = sVHTitle;
+
+                this._inputSource = oSource;
+                this._inputId = oSource.getId();
+                this._inputValue = oSource.getValue();
+
+                if (oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText") !== undefined) { sVHDesc = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText").parts[0].path }
+
+                vh.forEach(item => {
+                    item.VHTitle = item[sVHTitle];
+                    item.VHDesc = sVHTitle === sVHDesc ? "" : item[sVHDesc];
+                    item.VHSelected = (item[sVHTitle] === this._inputValue);
+                })
+
+                // console.log(vh)
+                vh.sort((a, b) => (a.VHTitle > b.VHTitle ? 1 : -1));
+
+                var oVHModel = new JSONModel({
+                    items: vh,
+                    title: this._inputId,
+                    table: sModel,
+                    process: "CREATECOSTING"
+                });
+
+                // create value help dialog
+                if (!this._valueHelpDialog) {
+                    this._valueHelpDialog = sap.ui.xmlfragment(
+                        "zuiio2.view.fragments.valuehelp.ValueHelpDialog",
+                        this
+                    );
+
+                    this._valueHelpDialog.setModel(oVHModel);
+                    this.getView().addDependent(this._valueHelpDialog);
+                }
+                else {
+                    this._valueHelpDialog.setModel(oVHModel);
+                }
+
+                this._valueHelpDialog.open();
+            },
+
+            handleValueHelpCloseCosting(arg) {
+                if (arg.sId === "confirm") {
+                    var oSelectedItem = arg.getParameter("selectedItem");
+                    // console.log(oSelectedItem)
+                    if (oSelectedItem) {
+                        this._inputSource.setValue(oSelectedItem.getTitle());
+
+                        //get default value
+                        var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                        
+                        if (aDef.length > 0) {
+                            sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                            if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                        }
+                    }
+
+                    this._inputSource.setValueState("None");
+                }
+            },
+
+            handleValueHelpChangeCosting: function (oEvent) {
+                var oSource = oEvent.getSource();
+                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
+                oSource.setValueState(isInvalid ? "Error" : "None");
+
+                oSource.getSuggestionItems().forEach(item => {
+                    if (item.getProperty("key") === oSource.getValue().trim()) {
+                        isInvalid = false;
+                        oSource.setValueState(isInvalid ? "Error" : "None");
+                    }
+                })
+
+                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
+                else {
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                }
+
+                // console.log(this._validationErrors);
+            },
+
+            onReleaseCosting: function (oEvent) {
+                var me = this;
+                var oTable = oEvent.getSource().oParent.oParent;
+                var oData = oTable.getModel().getData().rows;
+
+                if (oData.length > 0) {
+                    var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === oData[0].CSTYPE && fi.VERSION === oData[0].VERSION)[0].COSTSTATUS;
+
+                    if (vStatus === "REL") {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                    }
+                    else {
+                        Common.openProcessingDialog(me, "Processing");
+
+                        this._oModelIOCosting.update("/VersionsSet(IONO='" + oData[0].IONO + "',CSTYPE='" + oData[0].CSTYPE + "',VERSION='" + oData[0].VERSION + "')", { COSTSTATUS: "ACTION-REL" }, {
+                            method: "PUT",
+                            success: function (data, oResponse) {
+                                Common.closeProcessingDialog(me);
+                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_COSTING_RELEASE"]);
+
+                                me._oModelIOCosting.read('/VersionsSet', {
+                                    urlParameters: {
+                                        "$filter": "IONO eq '" + oData[0].IONO + "'"
+                                    },
+                                    success: function (oData) {
+                                        me.byId("costHdrTab").getModel().getData().rows.filter(fItem => fItem.ACTIVE === "X")
+                                            .forEach(item => {
+                                                oData.results.filter(fItem2 => fItem2.CSTYPE === item.CSTYPE && fItem2.VERSION === item.VERSION)
+                                                    .forEach(item2 => item2.ACTIVE = "X")
+                                            })
+
+                                        oData.results.forEach((row, index) => {
+                                            row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                        });
+
+                                        me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
+                                        me.byId("costHdrTab").bindRows("/rows");
+                                        // me._tableRendered = "costHdrTab";
+                                    },
+                                    error: function (err) {
+                                        Common.closeProcessingDialog(me);
+                                    }
+                                })
+                            },
+                            error: function (err) {
+                                Common.closeProcessingDialog(me);
+                            }
+                        });
+                    }
+                }
+                else {
+                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                }
             },
 
             onRefresh(arg) {
                 var me = this;
+                var vIONo = this._ioNo
+
+                if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (arg === "ioMatList") {
+                    Common.openProcessingDialog(this, "Processing...");
+
                     this._oModelIOMatList.setHeaders({
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
                     });
-
+                    // console.log(this._sbu, this._prodplant, vIONo)
                     this._oModelIOMatList.read('/MainSet', {
                         urlParameters: {
-                            "$filter": "IONO eq '" + this._ioNo + "'"
+                            "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
+                            Common.closeProcessingDialog(me);
+                            oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
                                 row.ACTIVE = index === 0 ? "X" : "";
                                 row.POQTY = row.POQTY + "";
@@ -6244,8 +9521,48 @@ sap.ui.define([
                             //     me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
                             // }, 50);
                         },
-                        error: function (err) { }
+                        error: function (err) {
+                            Common.closeProcessingDialog(me);
+                        }
                     })
+                }
+                else if (arg === "costHdr") {
+                    Common.openProcessingDialog(this, "Processing...");
+
+                    this._oModelIOCosting.read('/VersionsSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "'"
+                        },
+                        success: function (oData) {
+                            oData.results.forEach((row, index) => {
+                                if (index === 0) {
+                                    row.ACTIVE = "X";
+                                    me.getIOCostDetails(row.CSTYPE, row.VERSION, true);
+                                }
+                                else row.ACTIVE = "";
+
+                                row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                            });
+
+                            me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("costHdrTab").bindRows("/rows");
+                            me._tableRendered = "costHdrTab";
+                        },
+                        error: function (err) {
+                            Common.closeProcessingDialog(me);
+                        }
+                    })
+                }
+                else if (arg === "costDtls") {
+                    if (this.byId("costHdrTab").getModel().getData().rows.length === 0) {
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
+                    }
+                    else {
+                        var activeCostHdrData = this.byId("costHdrTab").getModel().getData().rows.filter(fItem => fItem.ACTIVE === "X");
+                        // console.log(activeCostHdrData[0].CSTYPE, activeCostHdrData[0].VERSION);
+                        Common.openProcessingDialog(this, "Processing...");
+                        this.getIOCostDetails(activeCostHdrData[0].CSTYPE, activeCostHdrData[0].VERSION, true);
+                    }
                 }
             },
 
@@ -6267,12 +9584,33 @@ sap.ui.define([
 
                     this._tableRendered = "ioMatListTab";
                 }
+
+                if (arg1 === "ioDet") {
+                    if (arg2 === "max") {
+                        this.byId("idIconTabBarInlineIODET").setVisible(false);
+                        this.byId("btnFullScreenIODet").setVisible(false);
+                        this.byId("btnExitFullScreenIODet").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("idIconTabBarInlineIODET").setVisible(true);
+                        this.byId("btnFullScreenIODet").setVisible(true);
+                        this.byId("btnExitFullScreenIODet").setVisible(false);
+                    }
+
+                    this._tableRendered = "IODETTab";
+                }
             },
 
             onCellClick: function (oEvent) {
                 if (oEvent.getParameters().rowBindingContext) {
                     var oTable = oEvent.getSource(); //this.byId("ioMatListTab");
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+
+                    if (oTable.getId().indexOf("costHdrTab") >= 0) {
+                        var vType = oTable.getModel().getProperty(sRowPath + "/CSTYPE");
+                        var vVersion = oTable.getModel().getProperty(sRowPath + "/VERSION");
+                        this.getIOCostDetails(vType, vVersion, false);
+                    }
 
                     oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
                     oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
@@ -6299,6 +9637,9 @@ sap.ui.define([
             onFirstVisibleRowChanged: function (oEvent) {
                 var oTable = oEvent.getSource();
                 var sTableId = oTable.getId();
+
+                console.log("onFirstVisibleRowChanged");
+                // console.log(oTable);
 
                 setTimeout(() => {
                     var oData = [];
@@ -6334,10 +9675,11 @@ sap.ui.define([
 
             onKeyUp(oEvent) {
                 if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
-                    var oTable = this.byId(oEvent.srcControl.sId).oParent;
+                    var oControl = this._sTableModel === "reorder" ? sap.ui.getCore().byId(oEvent.srcControl.sId) : this.byId(oEvent.srcControl.sId);
+                    var oTable = oControl.oParent;
 
-                    if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
-                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
+                    if (oControl.getBindingContext()) {
+                        var sRowPath = oControl.getBindingContext().sPath;
 
                         oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
                         oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
@@ -6348,6 +9690,11 @@ sap.ui.define([
                             }
                             else row.removeStyleClass("activeRow")
                         })
+                    }
+                }
+                else if (oEvent.key === "Enter" && oEvent.srcControl.sParentAggregationName === "cells") {
+                    if (this._dataMode === "NEW" && this._sTableModel === "reorder") {
+                        this.addReorder();
                     }
                 }
             },
@@ -6361,6 +9708,8 @@ sap.ui.define([
 
             setActiveRowHighlightByTable(arg) {
                 var oTable = arg;
+                var sTableId = oTable.getId();
+
                 setTimeout(() => {
                     if (sTableId.indexOf("styleBOMUVTab") >= 0) {
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
@@ -6402,18 +9751,68 @@ sap.ui.define([
             },
 
             setActiveRowHighlightByTableId(arg) {
-                var oTable = this.byId(arg);
+                var oTable = arg === "reorderTab" ? sap.ui.getCore().byId("reorderTab") : this.byId(arg);
+                var sTableId = oTable.getId();
 
                 setTimeout(() => {
-                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                    console.log(iActiveRowIndex)
-                    oTable.getRows().forEach(row => {
-                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            row.addStyleClass("activeRow");
-                        }
-                        else row.removeStyleClass("activeRow");
-                    })
-                }, 1);
+
+                    // if(sTableId.indexOf("styleBOMUVTab") >= 0){
+                    //     console.log("IO Attrib Data Model");
+                    //     console.log(oTable);
+                    //     return;
+                    // }
+
+                    // console.log(oTable);
+                    // console.log(arg);
+
+                    if (sTableId.indexOf("styleBOMUVTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
+                    else if (sTableId.indexOf("styleFabBOMTab") >= 0 || sTableId.indexOf("styleAccBOMTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.items.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/items/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    } else if (sTableId.indexOf("IODLVTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+
+                    } else if (sTableId.indexOf("IODETTab") >= 0) {
+                        var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
+
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext("DataModel") && +row.getBindingContext("DataModel").sPath.replace("/results/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    } else {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        // console.log(iActiveRowIndex)
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+                    }
+                }, 10);
             },
 
             onExport: Utils.onExport,
@@ -6677,6 +10076,7 @@ sap.ui.define([
             enableOtherTabs: function () {
                 var oIconTabBar = this.byId("idIconTabBarInlineMode");
                 oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
-            }
+            },
+
         });
     });
