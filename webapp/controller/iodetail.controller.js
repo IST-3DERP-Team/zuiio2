@@ -12,11 +12,12 @@ sap.ui.define([
     "./fragments/FASummary",
     "sap/m/MessageBox",
     "sap/ui/core/routing/History",
+    "sap/m/UploadCollectionParameter",
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History,UploadCollectionParameter) {
         "use strict";
 
         var that;
@@ -36,6 +37,8 @@ sap.ui.define([
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
         var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "YYYY-MM-dd" });
         var Core = sap.ui.getCore();
+
+        var _seqNo =0;
 
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
@@ -9841,12 +9844,16 @@ sap.ui.define([
                 oUploadCollection.attachChange(that.onFileSelected);
                 oUploadCollection.setMode(sap.m.ListMode.SingleSelectLeft);
                 oUploadCollection.attachBeforeUploadStarts(that.onBeforeUploadStarts);
+                //oUploadCollection.attachChange(that.onUploadChange);
                 oUploadCollection.setMultiple(true);
                 //set the odata path of the upload collection
                 oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/FileIOSet");
                 //attach function when an upload is completed
                 oUploadCollection.attachUploadComplete(that.onUploadComplete);
+                oUploadCollection.setMode(sap.m.ListMode.None);
             },
+
+           
 
             bindUploadCollection: function () {
                 var oUploadCollection = this.getView().byId('UploadCollection');
@@ -9901,7 +9908,7 @@ sap.ui.define([
                 this.getView().setModel(oJSONModel, "FilesEditModeModel");
                 //make upload button visible
                 var oUploadCollection = this.getView().byId('UploadCollection');
-                oUploadCollection.setUploadButtonInvisible(true);
+                //oUploadCollection.setUploadButtonInvisible(true);
                 oUploadCollection.setMode(sap.m.ListMode.None);
 
                 this.enableOtherTabs();
@@ -9936,15 +9943,17 @@ sap.ui.define([
                 this._UploadFileDialog.close();
                 var oUploadCollection = this.getView().byId('UploadCollection');
                 var cFiles = oUploadCollection.getItems().length;
+
                 if (cFiles > 0) {
                     oUploadCollection.upload();
                 }
+                _seqNo = 0;
                 this.enableOtherTabs();
             },
 
-            onBeforeUploadStarts: function (oEvent) {
+            onBeforeUploadStarts: async function (oEvent) {
                 //setting the HTTP headers for additional information
-
+            
                 //SBU
                 var oStylenoParam = new sap.m.UploadCollectionParameter({
                     name: "sbu",
@@ -9966,7 +9975,7 @@ sap.ui.define([
                     value: fileDesc1.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc1Param);
-                fileDesc1.setValue('');
+                //fileDesc1.setValue('');
 
                 //file description 2
                 var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
@@ -9975,7 +9984,7 @@ sap.ui.define([
                     value: fileDesc2.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc2Param);
-                fileDesc2.setValue('');
+                //fileDesc2.setValue('');
 
                 //remarks
                 var fileRemarks = sap.ui.getCore().byId("FileRemarks");
@@ -9984,7 +9993,16 @@ sap.ui.define([
                     value: fileRemarks.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileRemarksParam);
-                fileRemarks.setValue('');
+                //fileRemarks.setValue('');
+
+                //seqno
+                _seqNo ++ ;
+                var seqno = new sap.m.UploadCollectionParameter({
+                    name: "seqno",
+                    value: _seqNo
+                });
+                oEvent.getParameters().addHeaderParameter(seqno);
+
 
                 //filename selected
                 var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
@@ -9992,6 +10010,16 @@ sap.ui.define([
                     value: oEvent.getParameter("fileName")
                 });
                 oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+
+                // _promiseResult = new Promise((resolve, reject) => {
+                //     resolve();
+                //  });
+                //  await _promiseResult;
+                 
+
+                // setTimeout(function() {
+                //     console.log("Event beforeUploadStarts triggered");
+                // }, 400000);
 
                 var oModel = that.getView().getModel("FileModel");
                 oModel.refreshSecurityToken();
@@ -10007,11 +10035,58 @@ sap.ui.define([
                 oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
             },
 
-            onUploadComplete: function () {
+            onUploadChange: function(oEvent) {
+                var oUploadCollection = oEvent.getSource();
+              //    add the HTTP headers
+
+               var oModel = that.getView().getModel("FileModel");
+                oModel.refreshSecurityToken();
+                var oHeaders = oModel.oHeaders;
+                var sToken = oHeaders['x-csrf-token'];
+
+                // var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+                //     name: "x-csrf-token",
+                //     value: sToken
+                // });
+                // oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
+          //  },
+
+                // Header Token
+                var oCustomerHeaderToken = new UploadCollectionParameter({
+                    name: "x-csrf-token",
+                    value: sToken
+                });
+                oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
+                //MessageToast.show("Event change triggered");
+            },
+
+            onUploadComplete: function (oEvent) {
                 //on upload complete refresh the list
                 that.getView().getModel("FileModel").refresh();
                 var oUploadCollection = that.getView().byId('UploadCollection');
                 oUploadCollection.removeAllItems();
+
+                var fileDesc1 = sap.ui.getCore().byId("FileDesc1");
+                var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
+                var fileRemarks = sap.ui.getCore().byId("FileRemarks");
+                fileDesc1.setValue('');
+                fileDesc2.setValue('');
+                fileRemarks.setValue('');
+
+                // var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
+                // setTimeout(function() {
+                //     var oUploadCollection = that.getView().byId('UploadCollection');
+    
+                //     for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+                //         if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
+                //             oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
+                //             break;
+                //         }
+                //     }
+    
+                //     // delay the success message in order to see other messages before
+                //     MessageBox.information("Event uploadComplete triggered");
+                // }.bind(this), 8000);
             },
 
             onDeleteFile: function () {
@@ -10028,7 +10103,7 @@ sap.ui.define([
                     this._ConfirmDeleteFileDialog.addStyleClass("sapUiSizeCompact");
                     this._ConfirmDeleteFileDialog.open();
                 } else {
-                    Common.showMessage(this._i18n.getText('t10'));
+                    Common.showMessage(this._i18n.getText('No items selected'));
                 }
             },
 
