@@ -3,12 +3,13 @@ sap.ui.define([
     'sap/ui/model/Filter',
     "../js/Common",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/core/routing/History"
+    "sap/ui/core/routing/History",
+    "sap/m/MessageBox",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Common, JSONModel, History) {
+    function (Controller, Filter, Common, JSONModel, History, MessageBox) {
         "use strict";
 
         var that;
@@ -135,7 +136,7 @@ sap.ui.define([
                                         try {
                                             if (item.MATNO !== "") {
                                                 aData[i].MATNO = item.MATNO;
-                                                aData[i].EDITED = true;
+                                                // aData[i].EDITED = true;
                                                 materialListChanged = true;
                                             }
                                         } catch(err) {}
@@ -148,21 +149,21 @@ sap.ui.define([
     
                                 if (materialListChanged) {
                                     me._materialListChanged = true;
-                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_MATNO_ASSIGNED"]);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MATNO_ASSIGNED"]);
+                                    me.onBatchSaveAutoAssignMaterialList(oReturnItems);
                                 }
                             },
                             error: function(err) {
                                 Common.closeProcessingDialog(that);
-                                // Common.showMessage(me._i18n.getText('t5'));
                             }
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
                 }
             },
 
@@ -213,18 +214,23 @@ sap.ui.define([
                         var oEntry = {
                             SBU: this._sbu,
                             IONO: this._ioNo,
-                            N_MaterialParam: aParam
+                            N_MaterialParam: aParam,
+                            N_MaterialReturn: []
                         }
     
                         Common.openProcessingDialog(this);
-                        console.log(oEntry)
+
                         oModel.create("/MaterialSet", oEntry, {
                             method: "POST",
                             success: function(oDataReturn, oResponse) {
                                 //assign the materials based on the return
-                                var oReturnItems = oDataReturn.N_MaterialParam.results;
-                                Common.closeProcessingDialog(me);
                                 console.log(oDataReturn)
+                                var oReturnItems = oDataReturn.N_MaterialParam.results;
+                                var oReturnMsg = oDataReturn.N_MaterialReturn.results;
+                                var sMessage = "";
+
+                                Common.closeProcessingDialog(me);
+                                console.log(oReturnItems)
                                 for (var i = 0; i < aData.length; i++) {
                                     var seqno = aData[i].SEQNO;
                                     var item = oReturnItems.find((result) => result.SEQNO === seqno);
@@ -233,7 +239,7 @@ sap.ui.define([
                                         try {
                                             if (item.MATNO !== "") {
                                                 aData[i].MATNO = item.MATNO;
-                                                aData[i].EDITED = true;
+                                                // aData[i].EDITED = true;
                                                 materialListChanged = true;
                                             }
                                         } catch(err) {}
@@ -246,21 +252,30 @@ sap.ui.define([
     
                                 if (materialListChanged) {
                                     me._materialListChanged = true;
-                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_MATERIAL_CREATED"]);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MATERIAL_CREATED"]);
+                                    me.onBatchSaveAutoAssignMaterialList(oReturnItems);
+                                }
+                                else {
+                                    oReturnItems.forEach((item, index) => {
+                                        if (item.MATNO === "") {
+                                            sMessage = sMessage + "GMC " + item.GMC + ": " + oReturnMsg[index].Message + ". ";
+                                        }
+                                    })
+
+                                    MessageBox.information(sMessage);
                                 }
                             },
                             error: function(err) {
                                 Common.closeProcessingDialog(me);
-                                // Common.showMessage(me._i18n.getText('t5'));
                             }
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_RECORD_TO_PROC"]);
                 }
             },
 
@@ -280,7 +295,7 @@ sap.ui.define([
                 var oEditedData = oData.filter(fItem => fItem.MATNO !== "");
 
                 if (oEditedData.length === 0) {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 } else {                  
                     var param = {};
                     Common.openProcessingDialog(me);
@@ -297,7 +312,7 @@ sap.ui.define([
         
                                     if (iEdited === oEditedData.length) {
                                         Common.closeProcessingDialog(me);
-                                        Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);    
+                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);    
                                     }
                                 },
                                 error: function () {
@@ -311,16 +326,16 @@ sap.ui.define([
                 }
             },
 
-            onBatchSaveMaterialList(arg) {
+            onBatchSaveMaterialList() {
                 // alert("on Save");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
                 var oTableModel = this.getView().byId("materialListTab").getModel("materialList");
                 var oData = oTableModel.getData();
-                var oEditedData = oData.filter(fItem => fItem.MATNO !== "");
-                console.log(oEditedData)
+                var oEditedData = oData.filter(fItem => fItem.EDITED === true);
+                // console.log(oEditedData)
                 if (oEditedData.length === 0) {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
                 else {
                     Common.openProcessingDialog(me);
@@ -345,13 +360,37 @@ sap.ui.define([
                         groupId: "update",
                         success: function (oData, oResponse) {
                             Common.closeProcessingDialog(me);
-                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                         },
                         error: function () {
                             Common.closeProcessingDialog(me);
                         }
                     })
                 }
+            },
+
+            onBatchSaveAutoAssignMaterialList(arg) {
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                var oData = arg;
+
+                oModel.setUseBatch(true);
+                oModel.setDeferredGroups(["update"]);
+                oModel.setHeaders({ UPDTYP: "MAT" });
+
+                // var param = {};
+                var mParameters = {
+                    "groupId":"update"
+                }
+
+                oData.forEach(item => {
+                    oModel.update("/MainSet(IONO='" + this._ioNo + "',SEQNO='" + item.SEQNO + "')", { MATNO: item.MATNO }, mParameters);
+                })
+                
+                oModel.submitChanges({
+                    groupId: "update",
+                    success: function (oData, oResponse) { },
+                    error: function () { }
+                })
             },
 
             //******************************************* */

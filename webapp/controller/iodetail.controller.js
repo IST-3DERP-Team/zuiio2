@@ -174,7 +174,7 @@ sap.ui.define([
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
-
+                console.log(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
                 // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
                 // // console.log(cIconTabBar);
 
@@ -190,7 +190,11 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/sbu", oEvent.getParameter("arguments").sbu);
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
-                this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+                // this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+
+                if (this.getView().getModel("ui2").getProperty("/icontabfilterkey") === '') {
+                    this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+                }
 
                 var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
                 cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
@@ -7949,7 +7953,7 @@ sap.ui.define([
                     SBU: this._sbu,
                     PRODPLANT: this._prodplant
                 });
-
+                console.log(this._sbu,this._prodplant)
                 this._oModelIOMatList.read('/MainSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
@@ -8123,6 +8127,8 @@ sap.ui.define([
                             iono: this._ioNo,
                             sbu: this._sbu
                         });
+
+                        this.getView().getModel("ui2").setProperty("/icontabfilterkey", "itfMATLIST");
                     }
                     else {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
@@ -9388,17 +9394,50 @@ sap.ui.define([
                     // console.log(oSelectedItem)
                     if (oSelectedItem) {
                         this._inputSource.setValue(oSelectedItem.getTitle());
+                        console.log(this.getView().getModel("COSTVARIANT_MODEL").getData())
+                        var aDef = [];
+                        var oHdrData = this.getView().getModel("headerData").getData();
+                        var sCustDlvDt = "";
 
-                        //get default value
-                        var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
-                        
-                        if (aDef.length > 0) {
-                            sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                        //get default value option 1
+                        this.getView().getModel("COSTVARIANT_MODEL").getData().forEach(item => {
+                            if (!(item.EFFECTDT === null || item.EFFECTDT === "")) {
+                                aDef.push(item);
+                            }
+                        })
 
-                            if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                        if (!(oHdrData.REVCUSTDLVDT === "" || oHdrData.REVCUSTDLVDT === null || oHdrData.REVCUSTDLVDT === "0000-00-00")) {
+                            sCustDlvDt = oHdrData.REVCUSTDLVDT;
+                        }
+                        else if (!(oHdrData.CUSTDLVDT === "" || oHdrData.CUSTDLVDT === null || oHdrData.CUSTDLVDT === "0000-00-00")) {
+                            sCustDlvDt = oHdrData.CUSTDLVDT;
+                        }
+
+                        if (aDef.length > 0 && sCustDlvDt !== "") {
+                            if (aDef.length > 1) {
+                                if (this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X").length > 0) {
+                                    aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                };
+
+                                if (new Date(sCustDlvDt) >= new Date(aDef[0].EFFECTDT)) {
+                                    sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                                    
+                                    if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                                }
+                            }
+                        }
+                        else {
+                            //get default value option 2
+                            aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                                    
+                            if (aDef.length > 0) {
+                                sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                                if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                            }
                         }
                     }
-
+                    
                     this._inputSource.setValueState("None");
                 }
             },
