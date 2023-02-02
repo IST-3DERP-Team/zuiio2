@@ -552,19 +552,19 @@ sap.ui.define([
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
                     success: function (oData, oResponse) {
-                        // oData.results.forEach(item => {
-                        //     item.CUSTDLVDT = dateFormat.format(item.CUSTDLVDT);
-                        //     item.REVCUSTDLVDT = dateFormat.format(item.REVCUSTDLVDT);
-                        //     item.REQEXFTYDT = dateFormat.format(item.REQEXFTYDT);                            
-                        //     item.MATETA = dateFormat.format(item.MATETA);
-                        //     item.MAINMATETA = dateFormat.format(item.MAINMATETA);
-                        //     item.SUBMATETA = dateFormat.format(item.SUBMATETA);
-                        //     item.CUTMATETA = dateFormat.format(item.CUTMATETA);
-                        //     item.PLANDLVDT = dateFormat.format(item.PLANDLVDT);
-                        //     item.PRODSTART = dateFormat.format(item.PLANDLVDT);
-                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);
-                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);   
-                        // })
+                        oData.results.forEach(item => {
+                            item.CUSTDLVDT = dateFormat.format(new Date(item.CUSTDLVDT));
+                            item.REVCUSTDLVDT = dateFormat.format(new Date(item.REVCUSTDLVDT));
+                            item.REQEXFTYDT = dateFormat.format(new Date(item.REQEXFTYDT));                            
+                            item.MATETA = dateFormat.format(new Date(item.MATETA));
+                            item.MAINMATETA = dateFormat.format(new Date(item.MAINMATETA));
+                            item.SUBMATETA = dateFormat.format(new Date(item.SUBMATETA));
+                            item.CUTMATETA = dateFormat.format(new Date(item.CUTMATETA));
+                            item.PLANDLVDT = dateFormat.format(new Date(item.PLANDLVDT));
+                            item.PRODSTART = dateFormat.format(new Date(item.PLANDLVDT));
+                            item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+                            item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT)); 
+                        })
 
                         oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
 

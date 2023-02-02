@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectShipTo}"
+		class="sapUiPopupWithPadding"
+		items="{ShipToModel>/results}"
+        search="_shiptoGroupValueHelpSearch"
+		confirm="_shiptoGroupValueHelpClose"
+		cancel="_shiptoGroupValueHelpClose">
+		<StandardListItem title="{ShipToModel>KUNNR}" description="{ShipToModel>KUNNR}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

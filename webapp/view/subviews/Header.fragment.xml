@@ -447,10 +447,10 @@
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
                                 autocomplete="true" 
-                                valueHelpRequest="onPlantValueHelp"
-                                suggestionItems="{CustomerModel>/results}">
+                                valueHelpRequest="onSoldToValueHelp"
+                                suggestionItems="{SOLDTOModel>/results}">
                                 <suggestionItems>
-                                    <core:ListItem text="{CustomerModel>SOLDTOCUST}" additionalText=""/>
+                                    <core:ListItem text="{SOLDTOModel>KUNNR}" additionalText=""/>
                                 </suggestionItems>
                                 </Input>
                         </f:fields>
@@ -483,7 +483,7 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}" 
                                 class="sapUiSmallMarginBottom"
-                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
+                                valueFormat="dd/MM/yyy" displayFormat="short"/>
                             <!-- <Input id="CUSTDLVDT"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement> 
