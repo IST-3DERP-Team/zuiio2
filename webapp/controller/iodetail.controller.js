@@ -12,11 +12,12 @@ sap.ui.define([
     "./fragments/FASummary",
     "sap/m/MessageBox",
     "sap/ui/core/routing/History",
+    "sap/m/UploadCollectionParameter",
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History,UploadCollectionParameter) {
         "use strict";
 
         var that;
@@ -36,6 +37,8 @@ sap.ui.define([
         var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "MM/dd/yyyy" });
         var sapDateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "YYYY-MM-dd" });
         var Core = sap.ui.getCore();
+
+        var _seqNo =0;
 
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
@@ -171,7 +174,7 @@ sap.ui.define([
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
-
+                console.log(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
                 // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
                 // // console.log(cIconTabBar);
 
@@ -187,7 +190,11 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/sbu", oEvent.getParameter("arguments").sbu);
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
-                this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+                // this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+
+                if (this.getView().getModel("ui2").getProperty("/icontabfilterkey") === '') {
+                    this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+                }
 
                 var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
                 cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
@@ -7994,7 +8001,7 @@ sap.ui.define([
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
                         semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + iono
+                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": vStyle,
@@ -8292,7 +8299,7 @@ sap.ui.define([
                     SBU: this._sbu,
                     PRODPLANT: this._prodplant
                 });
-
+                console.log(this._sbu,this._prodplant)
                 this._oModelIOMatList.read('/MainSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
@@ -8466,6 +8473,8 @@ sap.ui.define([
                             iono: this._ioNo,
                             sbu: this._sbu
                         });
+
+                        this.getView().getModel("ui2").setProperty("/icontabfilterkey", "itfMATLIST");
                     }
                     else {
                         Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
@@ -9731,17 +9740,50 @@ sap.ui.define([
                     // console.log(oSelectedItem)
                     if (oSelectedItem) {
                         this._inputSource.setValue(oSelectedItem.getTitle());
+                        console.log(this.getView().getModel("COSTVARIANT_MODEL").getData())
+                        var aDef = [];
+                        var oHdrData = this.getView().getModel("headerData").getData();
+                        var sCustDlvDt = "";
 
-                        //get default value
-                        var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
-                        
-                        if (aDef.length > 0) {
-                            sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                        //get default value option 1
+                        this.getView().getModel("COSTVARIANT_MODEL").getData().forEach(item => {
+                            if (!(item.EFFECTDT === null || item.EFFECTDT === "")) {
+                                aDef.push(item);
+                            }
+                        })
 
-                            if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                        if (!(oHdrData.REVCUSTDLVDT === "" || oHdrData.REVCUSTDLVDT === null || oHdrData.REVCUSTDLVDT === "0000-00-00")) {
+                            sCustDlvDt = oHdrData.REVCUSTDLVDT;
+                        }
+                        else if (!(oHdrData.CUSTDLVDT === "" || oHdrData.CUSTDLVDT === null || oHdrData.CUSTDLVDT === "0000-00-00")) {
+                            sCustDlvDt = oHdrData.CUSTDLVDT;
+                        }
+
+                        if (aDef.length > 0 && sCustDlvDt !== "") {
+                            if (aDef.length > 1) {
+                                if (this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X").length > 0) {
+                                    aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                };
+
+                                if (new Date(sCustDlvDt) >= new Date(aDef[0].EFFECTDT)) {
+                                    sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                                    
+                                    if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                                }
+                            }
+                        }
+                        else {
+                            //get default value option 2
+                            aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                                    
+                            if (aDef.length > 0) {
+                                sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                                if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                            }
                         }
                     }
-
+                    
                     this._inputSource.setValueState("None");
                 }
             },
@@ -10188,12 +10230,16 @@ sap.ui.define([
                 oUploadCollection.attachChange(that.onFileSelected);
                 oUploadCollection.setMode(sap.m.ListMode.SingleSelectLeft);
                 oUploadCollection.attachBeforeUploadStarts(that.onBeforeUploadStarts);
+                //oUploadCollection.attachChange(that.onUploadChange);
                 oUploadCollection.setMultiple(true);
                 //set the odata path of the upload collection
                 oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/FileIOSet");
                 //attach function when an upload is completed
                 oUploadCollection.attachUploadComplete(that.onUploadComplete);
+                oUploadCollection.setMode(sap.m.ListMode.None);
             },
+
+           
 
             bindUploadCollection: function () {
                 var oUploadCollection = this.getView().byId('UploadCollection');
@@ -10248,7 +10294,7 @@ sap.ui.define([
                 this.getView().setModel(oJSONModel, "FilesEditModeModel");
                 //make upload button visible
                 var oUploadCollection = this.getView().byId('UploadCollection');
-                oUploadCollection.setUploadButtonInvisible(true);
+                //oUploadCollection.setUploadButtonInvisible(true);
                 oUploadCollection.setMode(sap.m.ListMode.None);
 
                 this.enableOtherTabs();
@@ -10283,15 +10329,17 @@ sap.ui.define([
                 this._UploadFileDialog.close();
                 var oUploadCollection = this.getView().byId('UploadCollection');
                 var cFiles = oUploadCollection.getItems().length;
+
                 if (cFiles > 0) {
                     oUploadCollection.upload();
                 }
+                _seqNo = 0;
                 this.enableOtherTabs();
             },
 
-            onBeforeUploadStarts: function (oEvent) {
+            onBeforeUploadStarts: async function (oEvent) {
                 //setting the HTTP headers for additional information
-
+            
                 //SBU
                 var oStylenoParam = new sap.m.UploadCollectionParameter({
                     name: "sbu",
@@ -10313,7 +10361,7 @@ sap.ui.define([
                     value: fileDesc1.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc1Param);
-                fileDesc1.setValue('');
+                //fileDesc1.setValue('');
 
                 //file description 2
                 var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
@@ -10322,7 +10370,7 @@ sap.ui.define([
                     value: fileDesc2.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc2Param);
-                fileDesc2.setValue('');
+                //fileDesc2.setValue('');
 
                 //remarks
                 var fileRemarks = sap.ui.getCore().byId("FileRemarks");
@@ -10331,7 +10379,16 @@ sap.ui.define([
                     value: fileRemarks.getValue()
                 });
                 oEvent.getParameters().addHeaderParameter(oFileRemarksParam);
-                fileRemarks.setValue('');
+                //fileRemarks.setValue('');
+
+                //seqno
+                _seqNo ++ ;
+                var seqno = new sap.m.UploadCollectionParameter({
+                    name: "seqno",
+                    value: _seqNo
+                });
+                oEvent.getParameters().addHeaderParameter(seqno);
+
 
                 //filename selected
                 var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
@@ -10339,6 +10396,16 @@ sap.ui.define([
                     value: oEvent.getParameter("fileName")
                 });
                 oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
+
+                // _promiseResult = new Promise((resolve, reject) => {
+                //     resolve();
+                //  });
+                //  await _promiseResult;
+                 
+
+                // setTimeout(function() {
+                //     console.log("Event beforeUploadStarts triggered");
+                // }, 400000);
 
                 var oModel = that.getView().getModel("FileModel");
                 oModel.refreshSecurityToken();
@@ -10354,11 +10421,58 @@ sap.ui.define([
                 oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
             },
 
-            onUploadComplete: function () {
+            onUploadChange: function(oEvent) {
+                var oUploadCollection = oEvent.getSource();
+              //    add the HTTP headers
+
+               var oModel = that.getView().getModel("FileModel");
+                oModel.refreshSecurityToken();
+                var oHeaders = oModel.oHeaders;
+                var sToken = oHeaders['x-csrf-token'];
+
+                // var oCustomerHeaderToken = new sap.m.UploadCollectionParameter({
+                //     name: "x-csrf-token",
+                //     value: sToken
+                // });
+                // oEvent.getParameters().addHeaderParameter(oCustomerHeaderToken);
+          //  },
+
+                // Header Token
+                var oCustomerHeaderToken = new UploadCollectionParameter({
+                    name: "x-csrf-token",
+                    value: sToken
+                });
+                oUploadCollection.addHeaderParameter(oCustomerHeaderToken);
+                //MessageToast.show("Event change triggered");
+            },
+
+            onUploadComplete: function (oEvent) {
                 //on upload complete refresh the list
                 that.getView().getModel("FileModel").refresh();
                 var oUploadCollection = that.getView().byId('UploadCollection');
                 oUploadCollection.removeAllItems();
+
+                var fileDesc1 = sap.ui.getCore().byId("FileDesc1");
+                var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
+                var fileRemarks = sap.ui.getCore().byId("FileRemarks");
+                fileDesc1.setValue('');
+                fileDesc2.setValue('');
+                fileRemarks.setValue('');
+
+                // var sUploadedFileName = oEvent.getParameter("files")[0].fileName;
+                // setTimeout(function() {
+                //     var oUploadCollection = that.getView().byId('UploadCollection');
+    
+                //     for (var i = 0; i < oUploadCollection.getItems().length; i++) {
+                //         if (oUploadCollection.getItems()[i].getFileName() === sUploadedFileName) {
+                //             oUploadCollection.removeItem(oUploadCollection.getItems()[i]);
+                //             break;
+                //         }
+                //     }
+    
+                //     // delay the success message in order to see other messages before
+                //     MessageBox.information("Event uploadComplete triggered");
+                // }.bind(this), 8000);
             },
 
             onDeleteFile: function () {
@@ -10375,7 +10489,7 @@ sap.ui.define([
                     this._ConfirmDeleteFileDialog.addStyleClass("sapUiSizeCompact");
                     this._ConfirmDeleteFileDialog.open();
                 } else {
-                    Common.showMessage(this._i18n.getText('t10'));
+                    Common.showMessage(this._i18n.getText('No items selected'));
                 }
             },
 
