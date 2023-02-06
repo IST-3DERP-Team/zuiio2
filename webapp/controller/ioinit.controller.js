@@ -553,17 +553,30 @@ sap.ui.define([
                     filters: aFilters,
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
-                            item.CUSTDLVDT = dateFormat.format(new Date(item.CUSTDLVDT));
-                            item.REVCUSTDLVDT = dateFormat.format(new Date(item.REVCUSTDLVDT));
-                            item.REQEXFTYDT = dateFormat.format(new Date(item.REQEXFTYDT));                            
-                            item.MATETA = dateFormat.format(new Date(item.MATETA));
-                            item.MAINMATETA = dateFormat.format(new Date(item.MAINMATETA));
-                            item.SUBMATETA = dateFormat.format(new Date(item.SUBMATETA));
-                            item.CUTMATETA = dateFormat.format(new Date(item.CUTMATETA));
-                            item.PLANDLVDT = dateFormat.format(new Date(item.PLANDLVDT));
-                            item.PRODSTART = dateFormat.format(new Date(item.PLANDLVDT));
-                            item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                            item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT)); 
+                            // console.log(item.CUSTDLVDT);
+                            item.CUSTDLVDT = item.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CUSTDLVDT));
+                            item.REVCUSTDLVDT = item.REVCUSTDLVDT === "0000-00-00" || item.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVCUSTDLVDT));
+                            item.REQEXFTYDT = item.REQEXFTYDT === "0000-00-00" || item.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REQEXFTYDT));
+                            item.MATETA = item.MATETA === "0000-00-00" || item.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(item.MATETA));
+                            item.MAINMATETA = item.MAINMATETA === "0000-00-00" || item.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(item.MAINMATETA));
+                            item.SUBMATETA = item.SUBMATETA === "0000-00-00" || item.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(item.SUBMATETA));
+                            item.CUTMATETA = item.CUTMATETA === "0000-00-00" || item.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(item.CUTMATETA));
+                            item.PLANDLVDT = item.PLANDLVDT === "0000-00-00" || item.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.PLANDLVDT));
+                            item.PRODSTART = item.PRODSTART === "0000-00-00" || item.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(item.PRODSTART));
+                            item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+
+                            // item.CUSTDLVDT = dateFormat.format(new Date(item.CUSTDLVDT));
+                            // item.REVCUSTDLVDT = dateFormat.format(new Date(item.REVCUSTDLVDT));
+                            // item.REQEXFTYDT = dateFormat.format(new Date(item.REQEXFTYDT));                            
+                            // item.MATETA = dateFormat.format(new Date(item.MATETA));
+                            // item.MAINMATETA = dateFormat.format(new Date(item.MAINMATETA));
+                            // item.SUBMATETA = dateFormat.format(new Date(item.SUBMATETA));
+                            // item.CUTMATETA = dateFormat.format(new Date(item.CUTMATETA));
+                            // item.PLANDLVDT = dateFormat.format(new Date(item.PLANDLVDT));
+                            // item.PRODSTART = dateFormat.format(new Date(item.PLANDLVDT));
+                            // item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+                            // item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
                         })
 
                         oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
@@ -651,6 +664,7 @@ sap.ui.define([
 
             columnTemplate: function (sColumnId, sColumnType) {
                 var oColumnTemplate;
+                // console.log(sColumnType);
 
                 //different component based on field
                 if (sColumnId === "STATUS") { //display infolabel for Status Code
@@ -683,7 +697,8 @@ sap.ui.define([
                         tooltip: "Copy this style"
                     });
                     oColumnTemplate.data("IONO", "{}"); //custom data to hold style number
-                } else {
+                } 
+                else {
                     oColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}" }); //default text
                 }
 

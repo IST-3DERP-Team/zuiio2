@@ -692,11 +692,11 @@ sap.ui.define([
                                 // console.log("getIODLVData");
                                 // console.log(oData);
                                 oData.results.forEach(item => {
-                                    item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    item.DLVDT = dateFormat.format(new Date(item.DLVDT));
-                                    item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
@@ -799,7 +799,7 @@ sap.ui.define([
                                 // console.log(oData);
 
                                 oData.results.forEach(item => {
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
 
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
@@ -1470,9 +1470,9 @@ sap.ui.define([
                             },
                             success: function (oData, oResponse) {
                                 oData.results.forEach(item => {
-                                    item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 oJSONModel.setData(oData);
@@ -1566,7 +1566,7 @@ sap.ui.define([
                 oTable.setModel(oJSONModel, "DataModel");
                 // console.log("Data Model Pivot");
                 // console.log(oTable.setModel(oJSONModel, "DataModel"));
-                oTable.attachPaste();
+                // oTable.attachPaste();
 
                 // console.log(oTable);
                 // oTable.getModel().setProperty("/columns", columnData);
@@ -1819,11 +1819,17 @@ sap.ui.define([
                     },
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
-                            item.CPODT = dateFormat.format(new Date(item.CPODT));
-                            item.DLVDT = dateFormat.format(new Date(item.DLVDT));
-                            item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                            item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                            item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                            item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                            item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                            item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                            item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+
+                            // item.CPODT = dateFormat.format(new Date(item.CPODT));
+                            // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
+                            // item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
+                            // item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+                            // item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
                         })
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DlvSchedDataModel");
@@ -1933,7 +1939,7 @@ sap.ui.define([
                         // oText.setText(oData.Results.length + "");
 
                         oData.results.forEach(item => {
-                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                         })
 
                         oJSONDataModel.setData(oData);
@@ -2538,17 +2544,41 @@ sap.ui.define([
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
 
-                        oData.CUSTDLVDT = dateFormat.format(new Date(oData.CUSTDLVDT));
-                        oData.REVCUSTDLVDT = dateFormat.format(new Date(oData.REVCUSTDLVDT));
-                        oData.REQEXFTYDT = dateFormat.format(new Date(oData.REQEXFTYDT));
-                        oData.PRODSTART = dateFormat.format(new Date(oData.PRODSTART));
-                        oData.MATETA = dateFormat.format(new Date(oData.MATETA));
-                        oData.MAINMATETA = dateFormat.format(new Date(oData.MAINMATETA));
-                        oData.SUBMATETA = dateFormat.format(new Date(oData.SUBMATETA));
-                        oData.CUTMATETA = dateFormat.format(new Date(oData.CUTMATETA));
-                        oData.PLANDLVDT = dateFormat.format(new Date(oData.PLANDLVDT));
-                        oData.CREATEDDT = dateFormat.format(new Date(oData.CREATEDDT));
-                        oData.UPDATEDDT = dateFormat.format(new Date(oData.UPDATEDDT));
+                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        oData.MATETA = oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
+                        // oData.CUSTDLVDT = oData.CUSTDLVDT === null ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === null ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        // oData.REQEXFTYDT = oData.REQEXFTYDT === null ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        // oData.PRODSTART = oData.PRODSTART === null ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        // oData.MATETA = oData.MATETA === null ? "" : dateFormat.format(new Date(oData.MATETA));
+                        // oData.MAINMATETA = oData.MAINMATETA === null ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        // oData.SUBMATETA = oData.SUBMATETA === null ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        // oData.CUTMATETA = oData.CUTMATETA === null ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        // oData.PLANDLVDT = oData.PLANDLVDT === null ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        // oData.CREATEDDT = oData.CREATEDDT === null ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        // oData.UPDATEDDT = oData.UPDATEDDT === null ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
+                        // oData.CUSTDLVDT = dateFormat.format(new Date(oData.CUSTDLVDT));
+                        // oData.REVCUSTDLVDT = dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        // oData.REQEXFTYDT = dateFormat.format(new Date(oData.REQEXFTYDT));
+                        // oData.PRODSTART = dateFormat.format(new Date(oData.PRODSTART));
+                        // oData.MATETA = dateFormat.format(new Date(oData.MATETA));
+                        // oData.MAINMATETA = dateFormat.format(new Date(oData.MAINMATETA));
+                        // oData.SUBMATETA = dateFormat.format(new Date(oData.SUBMATETA));
+                        // oData.CUTMATETA = dateFormat.format(new Date(oData.CUTMATETA));
+                        // oData.PLANDLVDT = dateFormat.format(new Date(oData.PLANDLVDT));
+                        // oData.CREATEDDT = dateFormat.format(new Date(oData.CREATEDDT));
+                        // oData.UPDATEDDT = dateFormat.format(new Date(oData.UPDATEDDT));
 
                         me._styleVer = oData.VERNO;
                         me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
@@ -2590,6 +2620,18 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
+                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || item.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || item.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || item.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        oData.MATETA = oData.MATETA === "0000-00-00" || item.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || item.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || item.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || item.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || item.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
                         Common.closeLoadingDialog(that);
@@ -3581,9 +3623,9 @@ sap.ui.define([
                         "CPONO": item.CPONO,
                         "CPOREV": item.CPOREV,
                         "CPOITEM": item.CPOITEM,
-                        "CPODT": sapDateFormat.format(new Date(item.CPODT)),
-                        "DLVDT": sapDateFormat.format(new Date(item.DLVDT)),
-                        "REVDLVDT": sapDateFormat.format(new Date(item.DLVDT)),
+                        "CPODT": item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT)),
+                        "DLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
+                        "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
                         "CUSTSHIPTO": item.CUSTSHIPTO,
                         "CUSTBILLTO": item.CUSTBILLTO,
                         "SHIPMODE": item.SHIPMODE,
@@ -3604,7 +3646,7 @@ sap.ui.define([
                                 "ACTUALQTY": "0",
                                 "PLANSHPQTY": "0",
                                 "SHIPQTY": "0",
-                                "REVDLVDT": sapDateFormat.format(new Date(detitem.DLVDT)),
+                                "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
                                 "DLVSEQ": dlvSeq + "",
                                 "CUSTCOLOR": detitem.CUSTCOLOR,
                                 "CUSTDEST": detitem.CUSTDEST,
@@ -4302,11 +4344,11 @@ sap.ui.define([
                                 // console.log(ioNo);
                                 // console.log(oData);
                                 oData.results.forEach(item => {
-                                    item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    item.DLVDT = dateFormat.format(new Date(item.DLVDT));
-                                    item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
 
                                 oData.results.forEach((item, index) => {
@@ -4345,26 +4387,26 @@ sap.ui.define([
                         success: function (oData, response) {
                             if(sSource === "IOSTATUSTab") {
                                 oData.results.forEach(item => {
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })	
                             }
 
                             if(sSource === "IODLVTab") {
                                 oData.results.forEach(item => {
-                                    item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    item.DLVDT = dateFormat.format(new Date(item.DLVDT));
-                                    item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                             }
 
                             if(sSource === "IODETTab")
                             {
                                 oData.results.forEach(item => {
-                                    item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
-                                    item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                             }
                             // console.log("Reload IO Data");
@@ -5929,7 +5971,7 @@ sap.ui.define([
                                 var param = {};
                                 // param["IONO"] = me._ioNo;
                                 param["IONO"] = cIONo;
-                                param["DLVSEQ"] = cDlvSeq;
+                                param["DLVSEQ"] = JSON.stringify(cDlvSeq);
 
                                 //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
                                 this._aColumns[arg].forEach(col => {
@@ -6577,8 +6619,11 @@ sap.ui.define([
                                 }
                                 else if (iKeyCount > 1) {
                                     if (col.Key === "X") {
+                                        if(col.ColumnName === "DLVSEQ")
+                                            entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                        else
                                         entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                    }
+                                        }
                                 }
                             })
 
