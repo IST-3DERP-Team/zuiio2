@@ -2620,17 +2620,17 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
-                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
-                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || item.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
-                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || item.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
-                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || item.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
-                        oData.MATETA = oData.MATETA === "0000-00-00" || item.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
-                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || item.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
-                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || item.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
-                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || item.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
-                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || item.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
-                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
-                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        oData.MATETA = oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
 
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
@@ -3328,14 +3328,14 @@ sap.ui.define([
                             TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                             CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
                             BASEUOM: this.getView().byId("BASEUOM").getValue(),
-                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
+                            PLANDLVDT: sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                             REFIONO: this.getView().byId("REFIONO").getValue(),
                             STYLENO: this.getView().byId("STYLENO").getValue(),
                             VERNO: this.getView().byId("VERNO").getValue(),
                             PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
-                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
+                            CUSTDLVDT: sapDateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue())),
                             PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
-                            PRODSTART: this.getView().byId("PRODSTART").getValue(),
+                            PRODSTART: sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                             REMARKS: this.getView().byId("REMARKS").getValue(),
                             SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
                             STATUSCD: this.getView().byId("REMARKS").getValue().length > 0 ? this.getView().byId("REMARKS").getValue() : "CRT"
@@ -3373,9 +3373,9 @@ sap.ui.define([
                                             }, 100);
                                         }
 
-                                        setTimeout(() => {
-                                            me.createIOPreCost(_newIONo);
-                                        }, 100);
+                                        // setTimeout(() => {
+                                        //     me.createIOPreCost(_newIONo);
+                                        // }, 100);
 
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
@@ -3790,7 +3790,7 @@ sap.ui.define([
                                 sap.m.MessageBox.error(resultDescription);
                             }
                             if (resultType !== "E") {
-                                sap.m.MessageBox.information(resultDescription);
+                                sap.m.MessageBox.information(sIONo + " Released.");
                             }
                         }, 100);
                     },

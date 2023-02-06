@@ -83,6 +83,7 @@ sap.ui.define([
                 // console.log("IO from Style");
                 if (sTableName === "IOStyleSelectTab") {
 
+                    this.getOwnerComponent().getModel("routeModel").setData([]);
                     // console.log("IOStyleSelectTab");
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
@@ -167,7 +168,7 @@ sap.ui.define([
 
                         })
 
-                        // console.log("Route Model 1");
+                        // console.log("Route Model 1");                        
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
@@ -1547,6 +1548,7 @@ sap.ui.define([
                 that.onIOCreateSelect(screateTyp);
                 if (screateTyp === "Manual") {
                     // that.navToDetail("NEW"); //navigate straight to detail page if Manual
+                    this.getOwnerComponent().getModel("routeModel").setData([]);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
