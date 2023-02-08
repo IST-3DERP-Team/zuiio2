@@ -20,6 +20,17 @@
             "ValueHelp": {"show": true, "items": {"path": "IOCUSTCOLOR_MODEL", "value": "ATTRIBCD", "text": "DESC1"},
             "SuggestionItems": {"path": "IOCUSTCOLOR_MODEL>/", "text": "{IOCUSTCOLOR_MODEL>ATTRIBCD}"}}}
         ],    
+    "IODLV": [
+            {"ColumnName": "CUSTSHIPTO",
+                "ValueHelp": {"show": true, "items": {"path": "SHIPTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
+                "SuggestionItems": {"path": "SHIPTO_MODEL>/", "text": "{SHIPTO_MODEL>KUNNR}"}}},
+            {"ColumnName": "CUSTBILLTO",
+                "ValueHelp": {"show": true, "items": {"path": "BILLTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
+                "SuggestionItems": {"path": "BILLTO_MODEL>/", "text": "{BILLTO_MODEL>KUNNR}"}}},
+                {"ColumnName": "CUSTSOLDTO",
+                    "ValueHelp": {"show": true, "items": {"path": "SOLDTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
+                    "SuggestionItems": {"path": "SOLDTO_MODEL>/", "text": "{SOLDTO_MODEL>KUNNR}"}}}
+            ], 
     "costHdr": [
         {"ColumnName": "CSTYPE", 
             "ValueHelp": {"show": true, "items": {"path": "COSTTYPE_MODEL", "value": "CSTYPECD", "text": "CSTYPEDESC"},

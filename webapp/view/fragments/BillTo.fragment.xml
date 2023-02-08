@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectBillTo}"
+		class="sapUiPopupWithPadding"
+		items="{BillToModel>/results}"
+        search="_billtoGroupValueHelpSearch"
+		confirm="_billtoGroupValueHelpClose"
+		cancel="_billtoGroupValueHelpClose">
+		<StandardListItem title="{BillToModel>KUNNR}" description="{BillToModel>KUNNR}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

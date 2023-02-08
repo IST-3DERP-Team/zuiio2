@@ -45,6 +45,17 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>  
+                    <f:FormElement label="{i18n>IODESC}" visible="{= ${VisibleFieldsData>/IODESC} === true ? true : false }">
+                        <f:fields>
+                            <Input id="IODESC" 
+                            value="{headerData>/IODESC}" 
+                            showSuggestion="true" 
+                            showValueHelp="true"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IODESC} : false }" 
+                            valueStateText="Required">
+                            </Input>
+                        </f:fields>
+                    </f:FormElement>  
                     <f:FormElement label="{i18n>STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
                         <f:fields>
                             <Input id="STYLECD" 
@@ -424,6 +435,25 @@
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
+                    </f:FormElement> 
+                    <f:FormElement label="{i18n>SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
+                        <f:fields>
+                            <Input id="SOLDTOCUST" 
+                                value="{headerData>/SOLDTOCUST}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onSoldToValueHelp"
+                                suggestionItems="{SOLDTOModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SOLDTOModel>KUNNR}" additionalText=""/>
+                                </suggestionItems>
+                                </Input>
+                        </f:fields>
                     </f:FormElement>                                                                                 
                     <f:FormElement label="{i18n>PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                         <f:fields>
@@ -453,7 +483,7 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}" 
                                 class="sapUiSmallMarginBottom"
-                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
+                                valueFormat="dd/MM/yyy" displayFormat="short"/>
                             <!-- <Input id="CUSTDLVDT"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement> 

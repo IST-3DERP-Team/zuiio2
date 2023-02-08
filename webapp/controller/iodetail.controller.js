@@ -443,6 +443,7 @@ sap.ui.define([
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this.getIOATTRIBData(ioNo);
+                        this._bIOATTRIBChanged = false;
                     }, 100);
                     resolve();
                 });
@@ -452,6 +453,7 @@ sap.ui.define([
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this.getIOSTATUSData(ioNo);
+                        this._bIOSTATUSChanged = false;
                     }, 100);
                     resolve();
                 });
@@ -531,6 +533,7 @@ sap.ui.define([
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         resolve(this.getIOATTRIBData(ioNo));
+                        this._bIOATTRIBChanged = false;
                     }, 100);
                 });
                 await _promiseResult;
@@ -538,6 +541,7 @@ sap.ui.define([
                 // console.log("getIOSTATUSData");
                 _promiseResult = new Promise((resolve, reject) => {
                     resolve(this.getIOSTATUSData(ioNo));
+                    this._bIOSTATUSChanged = false;
                 });
                 await _promiseResult;
 
@@ -585,16 +589,19 @@ sap.ui.define([
                 //     return;
 
                 if (!oEvent.getParameters().rowBindingContext) {
+                    console.log("oEvent.getParameters().rowBindingContext");
                     return;
                 }
 
 
                 if (this._bIODETChanged === true) {
+                    console.log(_bIODETChanged);
                     return;
                 }
 
                 if (this.byId("btnSaveDlvSched").Visible === true) {
                     // alert("btnSaveDlvSched");
+                    console.log("btnSaveDlvSched");
                     return;
                 }
 
@@ -684,6 +691,13 @@ sap.ui.define([
                             success: function (oData, response) {
                                 // console.log("getIODLVData");
                                 // console.log(oData);
+                                oData.results.forEach(item => {
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
                                         item.ACTIVE = "X"
@@ -783,10 +797,16 @@ sap.ui.define([
                             success: function (oData, response) {
                                 // console.log("IO Status Data");
                                 // console.log(oData);
+
+                                oData.results.forEach(item => {
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
+
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOSTATUSTab").bindRows("/rows");
                                 me._tableRendered = "IOSTATUSTab";
+
                                 resolve();
                             },
                             error: function (err) {
@@ -1449,6 +1469,11 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "' and DLVSEQ eq '" + cDlvSeq + "'"
                             },
                             success: function (oData, oResponse) {
+                                oData.results.forEach(item => {
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 oJSONModel.setData(oData);
                                 me.getView().setModel(oJSONModel, "IODETrowData");
@@ -1541,7 +1566,7 @@ sap.ui.define([
                 oTable.setModel(oJSONModel, "DataModel");
                 // console.log("Data Model Pivot");
                 // console.log(oTable.setModel(oJSONModel, "DataModel"));
-                oTable.attachPaste();
+                // oTable.attachPaste();
 
                 // console.log(oTable);
                 // oTable.getModel().setProperty("/columns", columnData);
@@ -1793,6 +1818,19 @@ sap.ui.define([
                         "$filter": "IONO eq '" + ioNo + "'"
                     },
                     success: function (oData, oResponse) {
+                        oData.results.forEach(item => {
+                            item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                            item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                            item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                            item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+
+                            // item.CPODT = dateFormat.format(new Date(item.CPODT));
+                            // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
+                            // item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
+                            // item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
+                            // item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
+                        })
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DlvSchedDataModel");
                         // console.log("Delivery Schedule Data");
@@ -1901,7 +1939,7 @@ sap.ui.define([
                         // oText.setText(oData.Results.length + "");
 
                         oData.results.forEach(item => {
-                            item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                         })
 
                         oJSONDataModel.setData(oData);
@@ -2319,9 +2357,11 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
-                            if (sModelName === "SalesGrpModel") {
-                                // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
-                            }
+                            console.log(sModelName);
+                            console.log(oView.setModel(oJSONModel, sModelName));
+                            // if (sModelName === "SHIPTOModel") {
+                            //     console.log(oView.setModel(oJSONModel, sModelName));
+                            // }
                         },
                         error: function (err) { }
                     });
@@ -2455,15 +2495,35 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                oModel.read("/GetIOPrefixSet", {
-                    urlParameters: {
-                        "$filter": "Sbu eq '" + ssbu + "'"
-                    },
+                var oParam = {
+                    "SBU": ssbu,
+                    "SOLDTOCUST": this.getView().byId("SOLDTOCUST").getValue(),
+                    "PRODSCEN": this.getView().byId("PRODSCEN").getValue(),
+                    "PRODPLANT": this.getView().byId("PRODPLANT").getValue(),
+                    "SALESORG": this.getView().byId("SALESORG").getValue(),
+                    "PLANMONTH": this.getView().byId("PLANMONTH").getValue()
+                };
+
+                oModel.create("/GetIOPrefixSet", oParam, {
+                    method: "POST",
                     success: function (oData, oResponse) {
-                        for (var i = 0; i < oData.results.length; i++) {
-                            sIOPrefix = oData.results[i].Ioprefix;
-                            sIODesc = oData.results[i].Iodesc;
-                        }
+                        console.log("GetIOPrefixSet");
+                        console.log(oData);
+                        // for (var i = 0; i < oData.results.length; i++) {
+                        //     sIOPrefix = oData.results[i].IOPREFIX;
+                        //     sIODesc = oData.results[i].IODESC;
+
+                        //     this.getView().byId("IOPREFIX").setValue(oData.results[i].IOPREFIX);
+                        //     this.getView().byId("IODESC").setValue(oData.results[i].IODESC);
+                            
+                        // }
+
+                            sIOPrefix = oData.IOPREFIX;
+                            sIODesc = oData.IODESC;
+
+                            console.log(oData.IOPREFIX);
+                            console.log(oData.IODESC);
+
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOPrefixModel");
                     },
@@ -2483,6 +2543,43 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
+
+                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        oData.MATETA = oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
+                        // oData.CUSTDLVDT = oData.CUSTDLVDT === null ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === null ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        // oData.REQEXFTYDT = oData.REQEXFTYDT === null ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        // oData.PRODSTART = oData.PRODSTART === null ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        // oData.MATETA = oData.MATETA === null ? "" : dateFormat.format(new Date(oData.MATETA));
+                        // oData.MAINMATETA = oData.MAINMATETA === null ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        // oData.SUBMATETA = oData.SUBMATETA === null ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        // oData.CUTMATETA = oData.CUTMATETA === null ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        // oData.PLANDLVDT = oData.PLANDLVDT === null ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        // oData.CREATEDDT = oData.CREATEDDT === null ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        // oData.UPDATEDDT = oData.UPDATEDDT === null ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
+                        // oData.CUSTDLVDT = dateFormat.format(new Date(oData.CUSTDLVDT));
+                        // oData.REVCUSTDLVDT = dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        // oData.REQEXFTYDT = dateFormat.format(new Date(oData.REQEXFTYDT));
+                        // oData.PRODSTART = dateFormat.format(new Date(oData.PRODSTART));
+                        // oData.MATETA = dateFormat.format(new Date(oData.MATETA));
+                        // oData.MAINMATETA = dateFormat.format(new Date(oData.MAINMATETA));
+                        // oData.SUBMATETA = dateFormat.format(new Date(oData.SUBMATETA));
+                        // oData.CUTMATETA = dateFormat.format(new Date(oData.CUTMATETA));
+                        // oData.PLANDLVDT = dateFormat.format(new Date(oData.PLANDLVDT));
+                        // oData.CREATEDDT = dateFormat.format(new Date(oData.CREATEDDT));
+                        // oData.UPDATEDDT = dateFormat.format(new Date(oData.UPDATEDDT));
+
                         me._styleVer = oData.VERNO;
                         me.getView().getModel("ui2").setProperty("/currVerNo", oData.VERNO);
                         me._prodplant = oData.PRODPLANT;
@@ -2494,7 +2591,7 @@ sap.ui.define([
                         me._styleNo = oData.STYLENO;
 
                         if (oData.STYLENO != "" || oData.STYLENO != undefined)
-                            me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);
+                            me.getView().getModel("ui2").setProperty("/currStyleNo", oData.STYLENO);                           
 
                         // alert("Init Style");
                         me.initStyle();
@@ -2523,6 +2620,18 @@ sap.ui.define([
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
+                        oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                        oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                        oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                        oData.PRODSTART = oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                        oData.MATETA = oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                        oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                        oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                        oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                        oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                        oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                        oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "headerData");
                         Common.closeLoadingDialog(that);
@@ -2562,6 +2671,9 @@ sap.ui.define([
                 this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
                 this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
                 this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
+                this.getVHSet("/BILLTOvhSet", "BILLTOModel", false);
+                this.getVHSet("/SHIPTOvhSet", "SHIPTOModel", false);
+                this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false);
             },
 
             cancelHeaderEdit: function () {
@@ -2677,6 +2789,105 @@ sap.ui.define([
                         }
                     }
 
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onSoldToValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._soldtoHelpDialog) {
+                    that._soldtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.SoldTo", that);
+                    that._soldtoHelpDialog.attachSearch(that._soldtoGroupValueHelpSearch);
+                    that.getView().addDependent(that._soldtoHelpDialog);
+                }
+                that._soldtoHelpDialog.open(sInputValue);
+            },
+
+            _soldtoGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _soldtoGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onBillToValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._billtoHelpDialog) {
+                    that._billtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.BillTo", that);
+                    that._billtoHelpDialog.attachSearch(that._billtoGroupValueHelpSearch);
+                    that.getView().addDependent(that._billtoHelpDialog);
+                }
+                that._billtoHelpDialog.open(sInputValue);
+            },
+
+            _billtoGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _billtoGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+
+            onShipToValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+                that.inputId = oEvent.getSource().getId();
+                if (!that._shiptoHelpDialog) {
+                    that._shiptoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ShipTo", that);
+                    that._shiptoHelpDialog.attachSearch(that._shiptoGroupValueHelpSearch);
+                    that.getView().addDependent(that._shiptoHelpDialog);
+                }
+                that._shiptoHelpDialog.open(sInputValue);
+            },
+
+            _shiptoGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                var andFilter = [], orFilter = [];
+                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _shiptoGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
                     this.onHeaderChange();
                 }
                 evt.getSource().getBinding("items").filter([]);
@@ -3052,7 +3263,7 @@ sap.ui.define([
                     if (me.hasSDData === true) {
                         me.SalDocData.forEach(item => {
                             // if (isNumeric(item.QTY))
-                                IOQty += +item.QTY;
+                            IOQty += +item.QTY;
                         })
 
                         oParamIOHeaderData = {
@@ -3088,7 +3299,8 @@ sap.ui.define([
                             PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
                             PRODSTART: this.getView().byId("PRODSTART").getValue(),
                             REMARKS: this.getView().byId("REMARKS").getValue(),
-                            STATUSCD: "CRT"
+                            SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
+                            STATUSCD: this.getView().byId("REMARKS").getValue().length > 0 ? this.getView().byId("REMARKS").getValue() : "CRT"
                         };
                     } else {
 
@@ -3116,16 +3328,17 @@ sap.ui.define([
                             TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                             CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
                             BASEUOM: this.getView().byId("BASEUOM").getValue(),
-                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
+                            PLANDLVDT: sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                             REFIONO: this.getView().byId("REFIONO").getValue(),
                             STYLENO: this.getView().byId("STYLENO").getValue(),
                             VERNO: this.getView().byId("VERNO").getValue(),
                             PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
-                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
+                            CUSTDLVDT: sapDateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue())),
                             PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
-                            PRODSTART: this.getView().byId("PRODSTART").getValue(),
+                            PRODSTART: sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                             REMARKS: this.getView().byId("REMARKS").getValue(),
-                            STATUSCD: "CRT"
+                            SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
+                            STATUSCD: this.getView().byId("REMARKS").getValue().length > 0 ? this.getView().byId("REMARKS").getValue() : "CRT"
                         };
                     }
 
@@ -3149,9 +3362,9 @@ sap.ui.define([
                                         if (me.hasSDData === true) {
                                             // console.log("has SD Data - Save New IO");
                                             // _promiseResult = new Promise((resolve, reject) => {
-                                                setTimeout(() => {
-                                                    me.SaveSDData(_newIONo);
-                                                }, 100);
+                                            setTimeout(() => {
+                                                me.SaveSDData(_newIONo);
+                                            }, 100);
                                             // });
                                             // await _promiseResult;
 
@@ -3159,6 +3372,10 @@ sap.ui.define([
                                                 me.UpdateSD_IO(_newIONo);
                                             }, 100);
                                         }
+
+                                        // setTimeout(() => {
+                                        //     me.createIOPreCost(_newIONo);
+                                        // }, 100);
 
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
@@ -3173,6 +3390,7 @@ sap.ui.define([
                         });
                         await _promiseResult;
                     } else {
+                        console.log(oParamIOHeaderData);
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 oModel.update("/IOHDRSet(IONO='" + me._ioNo + "')", oParamIOHeaderData, {
@@ -3253,7 +3471,90 @@ sap.ui.define([
                 return /^-?\d+$/.test(value);
             },
 
-            UpdateSD_IO: function(iono) {
+            createIOPreCost: function (iono) {
+                var me = this;
+                let sIONO = iono;
+                var entitySet = "/VariantSHSet";
+                var csvcd;
+                var cstype;
+                var companycd;
+                var csstat;
+                var hasFilter = false;
+
+                this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
+
+                this._oModelIOCosting.setHeaders({
+                    PRODPLANT: this.getView().byId("PRODPLANT").getValue()
+                })
+
+                if (hasFilter === false && this.getView().byId("CUSTGRP").getValue() !== "") {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.CUSTGRP === this.getView().byId("CUSTGRP").getValue())
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if (hasFilter === false && this.getView().byId("PRODPLANT").getValue() !== "") {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.PLANTCD === this.getView().byId("PRODPLANT").getValue())
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if (hasFilter === false) {
+                    hasFilter = true;
+                    this._oModelIOCosting.read(entitySet, {
+                        success: function (oData) {
+                            oData.filter(fitem => fitem.ZDEFAULT === "X")
+                                .forEach(costitem => {
+                                    csvcd = costitem.CSVCD;
+                                    cstype = costitem.CSTYPE;
+                                    companycd = costitem.COMPANYCD;
+                                    csstat = costitem.AUTOAPRV;
+                                })
+                        },
+                        error: function (err) { }
+                    })
+                }
+
+                if(hasFilter) {
+                    var oParam = {
+                        "IONO": sIONO,
+                        "CSTYPE": cstype,
+                        "CSVCD": csvcd,
+                        "VERDESC": "Initial Pre-Costing",
+                        "SALESTERM": this.getView().byId("CUSSALTERM").getValue(),
+                        "CSDATE": sapDateFormat.format(new Date()) + "T00:00:00",
+                        "COSTSTATUS": csstat === true ? "REL" : "CRT"			
+                    }
+
+                    this._oModelIOCosting.create("/VersionsSet", oParam, {
+                        method: "POST",
+                        success: function (oData) { },
+                        error: function (err) { }
+                    })
+                }
+            },
+
+            UpdateSD_IO: function (iono) {
                 var me = this;
                 var sIONO = iono;
                 var sdData = [];
@@ -3322,9 +3623,9 @@ sap.ui.define([
                         "CPONO": item.CPONO,
                         "CPOREV": item.CPOREV,
                         "CPOITEM": item.CPOITEM,
-                        "CPODT": sapDateFormat.format(new Date(item.CPODT)),
-                        "DLVDT": sapDateFormat.format(new Date(item.DLVDT)),
-                        "REVDLVDT": sapDateFormat.format(new Date(item.DLVDT)),
+                        "CPODT": item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT)),
+                        "DLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
+                        "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
                         "CUSTSHIPTO": item.CUSTSHIPTO,
                         "CUSTBILLTO": item.CUSTBILLTO,
                         "SHIPMODE": item.SHIPMODE,
@@ -3345,7 +3646,7 @@ sap.ui.define([
                                 "ACTUALQTY": "0",
                                 "PLANSHPQTY": "0",
                                 "SHIPQTY": "0",
-                                "REVDLVDT": sapDateFormat.format(new Date(detitem.DLVDT)),
+                                "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
                                 "DLVSEQ": dlvSeq + "",
                                 "CUSTCOLOR": detitem.CUSTCOLOR,
                                 "CUSTDEST": detitem.CUSTDEST,
@@ -3478,6 +3779,7 @@ sap.ui.define([
                 oModelRelease.create(sEntitySet, oParam, {
                     method: sMethod,
                     success: function (oData, oResponse) {
+                        console.log(oData);
                         //capture oData output if needed
                         resultType = oData.Type;
                         resultDescription = oData.Description;
@@ -3488,11 +3790,15 @@ sap.ui.define([
                                 sap.m.MessageBox.error(resultDescription);
                             }
                             if (resultType !== "E") {
-                                sap.m.MessageBox.information(resultDescription);
+                                sap.m.MessageBox.information(sIONo + " Released.");
                             }
                         }, 100);
                     },
-                    error: function (err) { }
+                    error: function (err) {
+                        console.log(err);
+                        resultDescription = err.responseText;
+                        sap.m.MessageBox.error(resultDescription);
+                    }
                 });
 
                 //reload data for both IO Delivery and IO Detail
@@ -4037,6 +4343,14 @@ sap.ui.define([
                                 // console.log("Reload IO Data");
                                 // console.log(ioNo);
                                 // console.log(oData);
+                                oData.results.forEach(item => {
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
+
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
                                         item.ACTIVE = "X"
@@ -4071,6 +4385,30 @@ sap.ui.define([
                             "$filter": "IONO eq '" + cIONo + "'"
                         },
                         success: function (oData, response) {
+                            if(sSource === "IOSTATUSTab") {
+                                oData.results.forEach(item => {
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })	
+                            }
+
+                            if(sSource === "IODLVTab") {
+                                oData.results.forEach(item => {
+                                    item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
+                                    item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
+                            }
+
+                            if(sSource === "IODETTab")
+                            {
+                                oData.results.forEach(item => {
+                                    item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                })
+                            }
                             // console.log("Reload IO Data");
                             // console.log(ioNo);
                             // console.log(oData);
@@ -5364,6 +5702,12 @@ sap.ui.define([
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                         .forEach(item => item.setProperty("enabled", false));
 
+                    if(arg === "IOATTRIB" || arg === "IOSTATUS"){
+                        var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", false));
+                    }
+
                     if (arg === "color" || arg === "process") {
                         var oIconTabBarStyle = this.byId("itbStyleDetail");
                         oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
@@ -5394,6 +5738,7 @@ sap.ui.define([
                 else if (arg === "IODET") bChanged = this._bIODETChanged;
                 else if (arg === "costHdr") bChanged = this._bCostHdrChanged;
                 else if (arg === "costDtls") bChanged = this._bCostDtlsChanged;
+                else if (arg === "IOATTRIB") bChanged = this._bIOATTRIBChanged;
 
                 if (bChanged) {
                     var oData = {
@@ -5518,6 +5863,7 @@ sap.ui.define([
                         // this.byId(arg + "Tab").bindRows("/results");
                         // console.log(this.byId(arg + "Tab").getModel("DataModel"));
                         this.reloadIOData("IODETTab", "/IODETSet");
+                        this._bIODETChanged = false;
                     }
                     else {
                         this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
@@ -5557,8 +5903,8 @@ sap.ui.define([
                         // await _promiseResult;
                     }
 
-                    if (arg === "IOATTRIB") {
-                        var oIconTabBarStyle = this.byId("itfIOATTRIB");
+                    if (arg === "IOATTRIB" || arg === "IOSTATUS") {
+                        var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
                         oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", true));
                     }
@@ -5794,7 +6140,7 @@ sap.ui.define([
                                 var param = {};
                                 // param["IONO"] = me._ioNo;
                                 param["IONO"] = cIONo;
-                                param["DLVSEQ"] = cDlvSeq;
+                                param["DLVSEQ"] = JSON.stringify(cDlvSeq);
 
                                 //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
                                 this._aColumns[arg].forEach(col => {
@@ -6184,6 +6530,7 @@ sap.ui.define([
                         break;
                 }
 
+                this._bIODETChanged = false;
                 Common.closeProcessingDialog(me);
             },
 
@@ -6441,8 +6788,11 @@ sap.ui.define([
                                 }
                                 else if (iKeyCount > 1) {
                                     if (col.Key === "X") {
+                                        if(col.ColumnName === "DLVSEQ")
+                                            entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                        else
                                         entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                    }
+                                        }
                                 }
                             })
 
@@ -6657,6 +7007,7 @@ sap.ui.define([
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.reloadIOData("IOATTRIBTab", "/IOAttribSet");
+                                this._bIOATTRIBChanged = false;
                             }, 100);
                             resolve();
                         });
@@ -7073,6 +7424,7 @@ sap.ui.define([
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.reloadIOData("IOATTRIBTab", "/IOAttribSet");
+                                this._bIOATTRIBChanged = false;
                             }, 100);
                             resolve();
                         });
@@ -7356,6 +7708,44 @@ sap.ui.define([
 
                 // console.log("setRowEditMode 2");
 
+                if(arg === "IODLV") {
+                    this._oModel.read('/BILLTOvhSet', {                        
+                        success: function (oData, response) {
+                            oData.results.forEach(item => {
+                                item.KUNNR = "000" + item.KUNNR
+                            })
+                            // console.log(oData);
+                            // console.log("IODET_MODEL");
+                            me.getView().setModel(new JSONModel(oData.results), "BILLTO_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+
+                    this._oModel.read('/SHIPTOvhSet', {                        
+                        success: function (oData, response) {
+                            oData.results.forEach(item => {
+                                item.KUNNR = "000" + item.KUNNR
+                            })
+                            // console.log(oData);
+                            // console.log("IODET_MODEL");
+                            me.getView().setModel(new JSONModel(oData.results), "SHIPTO_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+
+                    this._oModel.read('/SOLDTOvhSet', {                        
+                        success: function (oData, response) {
+                            oData.results.forEach(item => {
+                                item.KUNNR = "000" + item.KUNNR
+                            })
+                            // console.log(oData);
+                            // console.log("IODET_MODEL");
+                            me.getView().setModel(new JSONModel(oData.results), "SOLDTO_MODEL");
+                        },
+                        error: function (err) { }
+                    })
+                }
+
                 if (arg === "IODET") {
                     var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                     this._oModel.read('/IOCUSTCOLORSet', {
@@ -7612,6 +8002,7 @@ sap.ui.define([
                 var vItemValue = vColProp[0].ValueHelp.items.value;
                 var vItemDesc = vColProp[0].ValueHelp.items.text;
                 var sPath = vColProp[0].ValueHelp.items.path;
+                console.log(sPath);
                 var vh = this.getView().getModel(sPath).getData();
 
                 vh.forEach(item => {
@@ -10168,6 +10559,7 @@ sap.ui.define([
                         })
 
                     } else if (sTableId.indexOf("IODETTab") >= 0) {
+                        // console.log(oTable);
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
 
                         oTable.getRows().forEach(row => {

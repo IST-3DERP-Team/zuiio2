@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectSoldTo}"
+		class="sapUiPopupWithPadding"
+		items="{SoldToModel>/results}"
+        search="_soldtoGroupValueHelpSearch"
+		confirm="_soldtoGroupValueHelpClose"
+		cancel="_soldtoGroupValueHelpClose">
+		<StandardListItem title="{SoldToModel>KUNNR}" description="{SoldToModel>KUNNR}"/>
+	</SelectDialog>
+</core:FragmentDefinition>
