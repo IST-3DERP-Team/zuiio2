@@ -5,7 +5,7 @@
         xmlns:uit="sap.ui.table"
         id="fragment-createcosting" 
         fragmentName="createcosting">
-    <Dialog contentWidth="350px"
+    <Dialog contentWidth="375px"
         contentHeight="315px"
         title="Create Costing"
         beforeOpen="beforeOpenCreateCosting"
@@ -24,8 +24,12 @@
                                 <form:fields>
                                     <Input id="CSTYPE"
                                         type="Text"
-                                        enabled="true"
-                                        value=""
+                                        enabled="true" 
+                                        value="{ 
+                                            parts: [{ path: 'data>/CSTYPE' }, { value: 'COSTTYPE_MODEL' }, { value: 'CSTYPECD' }, { value: 'CSTYPEDESC' }, { value: 'ValueKey' }],
+                                            formatter: '.formatValueHelp'
+                                        }" 
+                                        textFormatMode="ValueKey"	
                                         required="true"
                                         change="handleValueHelpChangeCosting"
                                         showValueHelp="true"
@@ -34,7 +38,7 @@
                                         maxSuggestionWidth="325px"
                                         suggestionItems="{path:'COSTTYPE_MODEL>/', templateShareable:false}">
                                         <suggestionItems>
-                                            <core:ListItem text="{COSTTYPE_MODEL>CSTYPECD}" key="{COSTTYPE_MODEL>CSTYPECD}" additionalText="{COSTTYPE_MODEL>CSTYPEDESC}" />
+                                            <core:ListItem key="{COSTTYPE_MODEL>CSTYPECD}" text="{COSTTYPE_MODEL>CSTYPEDESC}" additionalText="{COSTTYPE_MODEL>CSTYPECD}" />
                                         </suggestionItems>
                                     </Input>                                    
                                 </form:fields>
@@ -44,7 +48,11 @@
                                     <Input id="CSVCD"
                                         type="Text"
                                         enabled="true"
-                                        value=""
+                                        value="{ 
+                                            parts: [{ path: 'data>/CSVCD' }, { value: 'COSTVARIANT_MODEL' }, { value: 'CSVCD' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                            formatter: '.formatValueHelp'
+                                        }"
+                                        textFormatMode="ValueKey"
                                         required="true"
                                         change="handleValueHelpChangeCosting"
                                         showValueHelp="true"
@@ -53,7 +61,7 @@
                                         maxSuggestionWidth="325px"
                                         suggestionItems="{path:'COSTVARIANT_MODEL>/', templateShareable:false}">
                                         <suggestionItems>
-                                            <core:ListItem text="{COSTVARIANT_MODEL>CSVCD}" key="{COSTVARIANT_MODEL>CSVCD}" additionalText="{COSTVARIANT_MODEL>DESC1}" />
+                                            <core:ListItem key="{COSTVARIANT_MODEL>CSVCD}" text="{COSTVARIANT_MODEL>DESC1}" additionalText="{COSTVARIANT_MODEL>CSVCD}" />
                                         </suggestionItems>
                                     </Input>
                                 </form:fields>
@@ -76,7 +84,7 @@
                                         showSuggestion="true" 
                                         suggestionItems="{path:'COSTTERMS_MODEL>/', templateShareable:false}">
                                         <suggestionItems>
-                                            <core:ListItem text="{COSTTERMS_MODEL>INCO1}" key="{COSTTERMS_MODEL>INCO1}" />
+                                            <core:ListItem key="{COSTTERMS_MODEL>INCO1}" text="{COSTTERMS_MODEL>INCO1}" />
                                         </suggestionItems>
                                     </Input>
                                 </form:fields>
@@ -88,7 +96,7 @@
                                         placeholder="Enter Date"
                                         displayFormat="MM/dd/yyyy"
                                         valueFormat="yyyy-MM-dd"
-                                        value=""
+                                        value="data>/CSDATE"
                                         required="true"
                                     />
                                 </form:fields>

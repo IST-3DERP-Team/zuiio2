@@ -174,7 +174,7 @@ sap.ui.define([
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
-                console.log(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
+                // console.log(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
                 // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
                 // // console.log(cIconTabBar);
 
@@ -393,7 +393,7 @@ sap.ui.define([
                 }
 
                 // console.log(this.getView());
-
+                this._aFunction = {};
                 this._aIOColumns = {};
                 this._aColumns = {};
                 this._aDataBeforeChange = [];
@@ -4353,6 +4353,15 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_NO_SEL_RECORD_TO_PROC" });
                 oDDTextParam.push({ CODE: "INFO_MATERIAL_CREATED" });
                 oDDTextParam.push({ CODE: "INFO_IVALID_RECORD_FOR_MRP" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_ALREADY_DELETED" });
+                oDDTextParam.push({ CODE: "INFO_DELETE_NOT_ALLOW" });
+                oDDTextParam.push({ CODE: "INFO_FF_REC_CANNOT_DELETE" });
+                oDDTextParam.push({ CODE: "INFO_NO_DELETE_PENDINGDOC" });
+                oDDTextParam.push({ CODE: "INFO_NO_DELETE_PLANTAVAIL" });
+                oDDTextParam.push({ CODE: "INFO_NO_DELETE_ISSTOPROD" });
+                oDDTextParam.push({ CODE: "INFO_FF_REC_DELETED" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_DELETED" });
+                oDDTextParam.push({ CODE: "INFO_INVALID_RECORD_FOR_MATNO_CREATE" });
                 
                 oDDTextParam.push({ CODE: "PRINT" });
                 oDDTextParam.push({ CODE: "RELCOSTING" });
@@ -5555,6 +5564,166 @@ sap.ui.define([
                     }
 
                     Common.closeLoadingDialog(this);
+                }
+            },
+
+            onDelete(arg) {
+                var me = this;
+                var oFunction = {};
+                var oCondition = "", vCondition = "";
+                var bProceed = true;
+                var oTable = this.byId(arg + "Tab");
+                var oTmpSelectedIndices = [];
+                var aSelectedData = [];
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var aData = oTable.getModel().getData().rows;
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach((item, index) => {
+                        if (!item.DELETED) {
+                            aSelectedData.push(aData.at(item));
+                        }
+                    })
+                }
+                else {
+                    bProceed = false;
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+
+                if (bProceed) {
+                    if (aSelectedData.length === 0) {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_ALREADY_DELETED"]);
+                    }
+                    else {
+                        if (arg === "ioMatList") {
+                            if (this._aFunction[arg + "Tab"] !== undefined) {
+                                oFunction = this._aFunction[arg + "Tab"].filter(fItem => fItem.NAME === "DELETE");
+                                
+                                if (oFunction.length > 0) {
+                                    oCondition = oFunction[0].VALUE;
+                                }
+                            }
+        
+                            // oCondition = "23";
+                            var aParam = [];
+                            var sValidated = "", sValidated2 = "", sValidated3 = "", sValidated4 = "";
+                            var sDeleted = "";
+                            
+                            if (oCondition === "5") {
+                                bProceed = false;
+                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_DELETE_NOT_ALLOW"]);
+                            }
+                            else {
+                                if (oCondition === "" || oCondition === "1") {
+                                    aParam = aSelectedData;
+                                }
+                                else {
+                                    console.log(aSelectedData);
+                                    var bToDelete = true;
+    
+                                    aSelectedData.forEach(item => {
+                                        if (oCondition.indexOf("2") >= 0 && (+item.MRPQTY > 0 || +item.PRQTY > 0 || +item.POQTY > 0)) {
+                                            if (sValidated2.length === 0) { sValidated2 = this.getView().getModel("ddtext").getData()["INFO_NO_DELETE_PENDINGDOC"] + ": \r\n"; }
+                                            sValidated2 = sValidated2 + item.SEQNO + "/" + item.MATNO + "\r\n";
+                                            bToDelete = false;
+                                        }
+                                        else if (oCondition.indexOf("3") >= 0 && (+item.PLANTAVAILQTY > 0)) {
+                                            if (sValidated3.length === 0) { sValidated3 = this.getView().getModel("ddtext").getData()["INFO_NO_DELETE_PLANTAVAIL"] + ": \r\n"; }
+                                            sValidated3 = sValidated3 + item.SEQNO + "/" + item.MATNO +"\r\n";
+                                            bToDelete = false;
+                                        }
+                                        else if (oCondition.indexOf("4") >= 0 && (+item.ISSTOPROD > 0)) {
+                                            if (sValidated4.length === 0) { sValidated4 = this.getView().getModel("ddtext").getData()["INFO_NO_DELETE_ISSTOPROD"] + ": \r\n"; }
+                                            sValidated4 = sValidated4 + item.SEQNO + "/" + item.MATNO +"\r\n";
+                                            bToDelete = false;
+                                        }
+    
+                                        if (bToDelete) { 
+                                            aParam.push(item); 
+                                            if (sDeleted.length === 0) { sDeleted = this.getView().getModel("ddtext").getData()["INFO_FF_REC_DELETED"] + ": \r\n"; }
+                                            sDeleted = sDeleted + item.SEQNO + "/" + item.MATNO + "\r\n";
+                                        }
+                                    })
+    
+                                    sValidated = this.getView().getModel("ddtext").getData()["INFO_FF_REC_CANNOT_DELETE"] + "\r\n" + sValidated2 + sValidated3 + sValidated4;
+                                    console.log(aParam);
+    
+                                    // if (sValidated.length > 0) MessageBox.information("The following cannot be deleted. " + "\r\n" + sValidated);
+                                }
+                                console.log(aParam)
+                                if (aParam.length > 0) {
+                                    var entitySet = "/MainSet";
+                                    
+                                    this._oModelIOMatList.setHeaders({ UPDTYP: "DELETE" });
+                                    this._oModelIOMatList.setUseBatch(true);
+                                    this._oModelIOMatList.setDeferredGroups(["update"]);
+
+                                    var mParameters = {
+                                        "groupId": "update"
+                                    }
+
+                                    var centitySet = entitySet;
+
+                                    Common.openProcessingDialog(me, "Processing...");
+
+                                    aParam.forEach(item => {
+                                        entitySet = centitySet + "(";
+                                        var param = {};
+                                        var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                                        // console.log(this._aColumns[arg])
+                                        this._aColumns[arg].forEach(col => {               
+                                            if (iKeyCount === 1) {
+                                                if (col.Key === "X") {
+                                                    entitySet += "'" + item[col.ColumnName] + "'"
+                                                    param[col.ColumnName] = item[col.ColumnName];
+                                                }
+                                            }
+                                            else if (iKeyCount > 1) {
+                                                if (col.Key === "X") {
+                                                    entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                                    param[col.ColumnName] = item[col.ColumnName];
+                                                }
+                                            }
+                                        })
+            
+                                        if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                        entitySet += ")";
+            
+                                        console.log(entitySet);
+                                        console.log(param);
+                                        this._oModelIOMatList.update(entitySet, param, mParameters);
+                                    })
+            
+                                    this._oModelIOMatList.submitChanges({
+                                        groupId: "update",
+                                        success: function (oData, oResponse) {
+                                            if (aParam.length === aSelectedData.length) {
+                                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_DELETED"]);
+                                            }
+                                            else {
+                                                MessageBox.information(sDeleted + "\r\n" + sValidated);
+                                            }
+
+                                            Common.closeProcessingDialog(me);
+                                            me.onRefresh("ioMatList");
+                                        },
+                                        error: function () {
+                                            Common.closeProcessingDialog(me);
+                                        }
+                                    })                                        
+                                }
+                                else {
+                                    MessageBox.information(sValidated);
+                                }                                
+                            }
+                        }
+                    }
                 }
             },
 
@@ -7006,6 +7175,35 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "ioMatList") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            // suggest: this.handleSuggestion.bind(this),
+                                            change: this.handleValueHelpChange.bind(this),
+                                            enabled: {
+                                                path: "DELETED",
+                                                formatter: function (DELETED) {
+                                                    if (DELETED) { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }                                    
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: "Text",
@@ -7044,6 +7242,20 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "ioMatList") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "DELETED",
+                                                formatter: function (DELETED) {
+                                                    if (DELETED) { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
@@ -7054,28 +7266,65 @@ sap.ui.define([
                                 }
                                 else if (ci.DataType === "NUMBER") {
                                     // console.log("a3 NUMBER " + sColName);
-                                    col.setTemplate(new sap.m.Input({
-                                        type: sap.m.InputType.Number,
-                                        textAlign: sap.ui.core.TextAlign.Right,
-                                        value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
-                                        change: this.onNumberChange.bind(this)
-                                    }));
-                                }
-                                else {
-                                    if (arg === "ioMatList" && sColName === "MATDESC1") {
+                                    if (arg === "ioMatList") {
                                         col.setTemplate(new sap.m.Input({
-                                            type: "Text",
-                                            value: "{" + sColName + "}",
-                                            maxLength: ci.Length,
-                                            change: this.onInputLiveChange.bind(this),
+                                            type: sap.m.InputType.Number,
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            change: this.onNumberChange.bind(this),
                                             enabled: {
-                                                path: "MATNO",
-                                                formatter: function (MATNO) {
-                                                    if (MATNO !== "") { return false }
+                                                path: "DELETED",
+                                                formatter: function (DELETED) {
+                                                    if (DELETED) { return false }
                                                     else { return true }
                                                 }
                                             }
                                         }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: sap.m.InputType.Number,
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            change: this.onNumberChange.bind(this)
+                                        }));
+                                    }
+                                }
+                                else {
+                                    if (arg === "ioMatList") {
+                                        if (sColName === "MATDESC1") {
+                                            col.setTemplate(new sap.m.Input({
+                                                type: "Text",
+                                                value: "{" + sColName + "}",
+                                                maxLength: ci.Length,
+                                                change: this.onInputLiveChange.bind(this),
+                                                enabled: {
+                                                    parts: [
+                                                        {path: 'MATNO'},
+								                        {path: 'DELETED'}
+                                                    ],
+                                                    formatter: function (MATNO,DELETED) {
+                                                        if (MATNO !== "" || DELETED) { return false }
+                                                        else { return true }
+                                                    }
+                                                }
+                                            }));
+                                        }
+                                        else {
+                                            col.setTemplate(new sap.m.Input({
+                                                type: "Text",
+                                                value: "{" + sColName + "}",
+                                                maxLength: ci.Length,
+                                                change: this.onInputLiveChange.bind(this),
+                                                enabled: {
+                                                    path: "DELETED",
+                                                    formatter: function (DELETED) {
+                                                        if (DELETED) { return false }
+                                                        else { return true }
+                                                    }
+                                                }
+                                            }));
+                                        }
                                     }
                                     else if (arg === "costHdr" && sColName === "VERDESC") {
                                         col.setTemplate(new sap.m.Input({
@@ -7121,7 +7370,9 @@ sap.ui.define([
                         error: function (err) { }
                     })
                 }
+
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                
                 if (arg === "color") {
                     this._oModelStyle.read('/CustColorSet', {
                         urlParameters: {
@@ -7953,7 +8204,7 @@ sap.ui.define([
                     SBU: this._sbu,
                     PRODPLANT: this._prodplant
                 });
-                console.log(this._sbu,this._prodplant)
+                // console.log(this._sbu,this._prodplant)
                 this._oModelIOMatList.read('/MainSet', {
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "'"
@@ -7972,6 +8223,7 @@ sap.ui.define([
                             row.PLANTAVAILQTY = row.PLANTAVAILQTY + "";
                             row.PRQTY = row.PRQTY + "";
                             row.VARIANCE = row.VARIANCE + "";
+                            row.DELETED = row.DELETED === "X" ? true : false;
                         });
 
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
@@ -7983,6 +8235,7 @@ sap.ui.define([
 
                 //get column value help prop
                 this.getIOMatListColumnProp();
+                this.getIOMatListFunctionConfig("IOMATLIST");
             },
 
             getIOMatListColumnProp: async function () {
@@ -8096,6 +8349,39 @@ sap.ui.define([
                 });
             },
 
+            getIOMatListFunctionConfig(arg) {
+                var me = this;
+                var sType = arg;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                var vSBU = this._sbu; //"VER"; //this.getView().getModel("ui").getData().sbu;
+
+                oModel.setHeaders({
+                    sbu: vSBU,
+                    type: sType
+                });
+
+                oModel.read("/FunctionSet", {
+                    success: function (oData, oResponse) {
+                        // console.log(sTabId, oData)
+                        if (oData.results.length > 0) {
+                            me._aFunction["ioMatListTab"] = oData.results;
+
+                            oData.results.forEach(item => {
+                                while (item.VALUE.substring(0,1) === "0") item.VALUE = item.VALUE.substring(1, item.VALUE.length);
+                            })
+                            
+                            var oFunction = oData.results.filter(fItem => fItem.NAME === "DELETE");
+                            if (oFunction.length > 0) {
+                                if (oFunction[0].VALUE === "5") {
+                                    me.byId("btnDeleteIOMatList").setVisible(false);
+                                }
+                            }
+                        }
+                    },
+                    error: function (err) { }
+                });                
+            },
+
             onAssignMatNo: function (oEvent) {
                 var oTable = this.byId("ioMatListTab");
                 var oSelectedIndices = oTable.getSelectedIndices();
@@ -8112,7 +8398,7 @@ sap.ui.define([
 
                     oSelectedIndices.forEach((item, index) => {
                         // console.log(aData.at(item));
-                        if (aData.at(item).MATNO === "") {
+                        if (aData.at(item).MATNO === "" && aData.at(item).DELETED === false) {
                             aParam.push(aData.at(item));
                         }
                     })
@@ -8131,7 +8417,7 @@ sap.ui.define([
                         this.getView().getModel("ui2").setProperty("/icontabfilterkey", "itfMATLIST");
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_MATNO_ALREADY_EXIST"]);
+                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_INVALID_RECORD_FOR_MATNO_CREATE"]);
                     }
                 }
                 else {
@@ -8157,7 +8443,7 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "") {
+                        if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "" && aData.at(item).DELETED === false) {
                             aParam.push({
                                 Mrptyp: "IOMRP",
                                 Plantcd: me._prodplant,
@@ -8343,7 +8629,8 @@ sap.ui.define([
             },
 
             onNewReorder: function (oEvent) {
-                this.getView().setModel(new JSONModel(this.byId("ioMatListTab").getModel().getData().rows), "IOMATLIST_MODEL");
+                var vhMatNo = this.byId("ioMatListTab").getModel().getData().rows.filter(fItem => fItem.DELETED === false);
+                this.getView().setModel(new JSONModel(vhMatNo), "IOMATLIST_MODEL");
                 this._validationErrors = [];
                 this._aDataBeforeChange = jQuery.extend(true, [], this._ReorderDialog.getModel().getData().rows);
 
@@ -9170,8 +9457,22 @@ sap.ui.define([
 
             onCreateCosting: function (oEvent) {
                 var me = this;
-                var oJSONModel = new JSONModel();
-                oJSONModel.setData(this.getView().getModel("ddtext").getData(), "ddtext");
+                var today = new Date();
+
+                var aCreateCostingModel = {
+                    data: {
+                        CSTYPE: "",
+                        CSVCD: "",
+                        VERDESC: "",
+                        SALESTERM: "",
+                        CSDATE: "",
+                        COSTSTATUS: ""
+                    },
+                    ddtext: this.getView().getModel("ddtext").getData()
+                }
+
+                // var oJSONModel = new JSONModel();
+                // oJSONModel.setData(this.getView().getModel("ddtext").getData(), "ddtext");
 
                 this._oModelIOCosting.read('/TypeSHSet', {
                     success: function (oData) {
@@ -9204,11 +9505,11 @@ sap.ui.define([
 
                 if (!this._CreateCostingDialog) {
                     this._CreateCostingDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.CreateCostingDialog", this);
-                    this._CreateCostingDialog.setModel(oJSONModel);
+                    this._CreateCostingDialog.setModel(new JSONModel(aCreateCostingModel));
                     this.getView().addDependent(this._CreateCostingDialog);
                 }
                 else {
-                    this._CreateCostingDialog.setModel(oJSONModel);
+                    this._CreateCostingDialog.setModel(new JSONModel(aCreateCostingModel));
                 }
 
                 this._CreateCostingDialog.setTitle(this.getView().getModel("ddtext").getData()["CREATECOSTING"]);
@@ -9283,14 +9584,14 @@ sap.ui.define([
                 var me = this;
                 var oParam = {
                     "IONO": this._ioNo,
-                    "CSTYPE": sap.ui.getCore().byId("CSTYPE").getValue(),
-                    "CSVCD": sap.ui.getCore().byId("CSVCD").getValue(),
+                    "CSTYPE": sap.ui.getCore().byId("CSTYPE").getSelectedKey(),
+                    "CSVCD": sap.ui.getCore().byId("CSVCD").getSelectedKey(),
                     "VERDESC": sap.ui.getCore().byId("VERDESC").getValue(),
                     "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
                     "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
                     "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
                 }
-                console.log(oParam);
+                // console.log(oParam);
 
                 Common.openProcessingDialog(this, "Processing...");
 
@@ -9346,22 +9647,47 @@ sap.ui.define([
                 var oSource = oEvent.getSource();
                 var sModel = oSource.getBindingInfo("suggestionItems").model;
                 var vh = this.getView().getModel(sModel).getData();
-                var sVHTitle = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("text").parts[0].path;
+                var sVHTitle = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("key").parts[0].path;
                 var sVHDesc = sVHTitle;
+                var sTextFormatMode = oSource.getProperty("textFormatMode");
 
                 this._inputSource = oSource;
                 this._inputId = oSource.getId();
                 this._inputValue = oSource.getValue();
 
-                if (oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText") !== undefined) { sVHDesc = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText").parts[0].path }
-
+                if (oSource.getBindingInfo("suggestionItems").template.getBindingInfo("additionalText") !== undefined) { 
+                    sVHDesc = oSource.getBindingInfo("suggestionItems").template.getBindingInfo("text").parts[0].path 
+                
+                    vh.forEach(item => {
+                        item.VHTitle = item[sVHTitle];
+                        item.VHDesc = sVHTitle === sVHDesc ? "" : item[sVHDesc];
+                        item.VHSelected = (item[sVHTitle] === this._inputValue);
+                    })
+                }
+                else {
+                    vh.forEach(item => {
+                        item.VHTitle = item[sVHTitle];
+                        item.VHDesc = sVHTitle === sVHDesc ? "" : item[sVHDesc];
+                    })
+                }
+                
                 vh.forEach(item => {
-                    item.VHTitle = item[sVHTitle];
-                    item.VHDesc = sVHTitle === sVHDesc ? "" : item[sVHDesc];
-                    item.VHSelected = (item[sVHTitle] === this._inputValue);
+                    if (sTextFormatMode === "Key") {
+                        item.VHSelected = this._inputValue === item[sVHTitle];
+                    }
+                    else if (sTextFormatMode === "Value") {
+                        item.VHSelected = this._inputValue === (sVHTitle === sVHDesc ? item[sVHTitle] : item[sVHDesc]);
+                    }
+                    else if (sTextFormatMode === "KeyValue") {
+                        item.VHSelected = this._inputValue === (item[sVHTitle] + " (" + item[sVHDesc] + ")");
+                    }
+                    else if (sTextFormatMode === "ValueKey") {
+                        item.VHSelected = this._inputValue === (item[sVHDesc] + " (" + item[sVHTitle] + ")");
+                    }
+
+                    if (item.VHSelected) { this._inputKey = item[sVHTitle]; }
                 })
 
-                // console.log(vh)
                 vh.sort((a, b) => (a.VHTitle > b.VHTitle ? 1 : -1));
 
                 var oVHModel = new JSONModel({
@@ -9391,49 +9717,54 @@ sap.ui.define([
             handleValueHelpCloseCosting(arg) {
                 if (arg.sId === "confirm") {
                     var oSelectedItem = arg.getParameter("selectedItem");
-                    // console.log(oSelectedItem)
+
                     if (oSelectedItem) {
-                        this._inputSource.setValue(oSelectedItem.getTitle());
-                        console.log(this.getView().getModel("COSTVARIANT_MODEL").getData())
-                        var aDef = [];
-                        var oHdrData = this.getView().getModel("headerData").getData();
-                        var sCustDlvDt = "";
-
-                        //get default value option 1
-                        this.getView().getModel("COSTVARIANT_MODEL").getData().forEach(item => {
-                            if (!(item.EFFECTDT === null || item.EFFECTDT === "")) {
-                                aDef.push(item);
+                        // this._inputSource.setValue(oSelectedItem.getTitle());
+                        this._inputSource.setSelectedKey(oSelectedItem.getTitle());
+                        
+                        if (this._inputId === "CSTYPE") {
+                            var aDef = [];
+                            var oHdrData = this.getView().getModel("headerData").getData();
+                            var sCustDlvDt = "";
+                            
+                            //get default value option 1
+                            this.getView().getModel("COSTVARIANT_MODEL").getData().forEach(item => {
+                                if (!(item.EFFECTDT === null || item.EFFECTDT === "")) {
+                                    aDef.push(item);
+                                }
+                            })
+    
+                            if (!(oHdrData.REVCUSTDLVDT === "" || oHdrData.REVCUSTDLVDT === null || oHdrData.REVCUSTDLVDT === "0000-00-00")) {
+                                sCustDlvDt = oHdrData.REVCUSTDLVDT;
                             }
-                        })
-
-                        if (!(oHdrData.REVCUSTDLVDT === "" || oHdrData.REVCUSTDLVDT === null || oHdrData.REVCUSTDLVDT === "0000-00-00")) {
-                            sCustDlvDt = oHdrData.REVCUSTDLVDT;
-                        }
-                        else if (!(oHdrData.CUSTDLVDT === "" || oHdrData.CUSTDLVDT === null || oHdrData.CUSTDLVDT === "0000-00-00")) {
-                            sCustDlvDt = oHdrData.CUSTDLVDT;
-                        }
-
-                        if (aDef.length > 0 && sCustDlvDt !== "") {
-                            if (aDef.length > 1) {
-                                if (this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X").length > 0) {
-                                    aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
-                                };
-
-                                if (new Date(sCustDlvDt) >= new Date(aDef[0].EFFECTDT)) {
-                                    sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
-                                    
-                                    if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                            else if (!(oHdrData.CUSTDLVDT === "" || oHdrData.CUSTDLVDT === null || oHdrData.CUSTDLVDT === "0000-00-00")) {
+                                sCustDlvDt = oHdrData.CUSTDLVDT;
+                            }
+    
+                            if (aDef.length > 0 && sCustDlvDt !== "") {
+                                if (aDef.length > 1) {
+                                    if (this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X").length > 0) {
+                                        aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                    };
+    
+                                    if (new Date(sCustDlvDt) >= new Date(aDef[0].EFFECTDT)) {
+                                        // sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                                        sap.ui.getCore().byId("CSVCD").setSelectedKey(aDef[0].CSVCD);
+                                        
+                                        if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                                    }
                                 }
                             }
-                        }
-                        else {
-                            //get default value option 2
-                            aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
-                                                    
-                            if (aDef.length > 0) {
-                                sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
-
-                                if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                            else {
+                                //get default value option 2
+                                aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                                                        
+                                if (aDef.length > 0) {
+                                    // sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                                    sap.ui.getCore().byId("CSVCD").setSelectedKey(aDef[0].CSVCD);
+    
+                                    if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                                }
                             }
                         }
                     }
@@ -9553,6 +9884,7 @@ sap.ui.define([
                                 row.PLANTAVAILQTY = row.PLANTAVAILQTY + "";
                                 row.PRQTY = row.PRQTY + "";
                                 row.VARIANCE = row.VARIANCE + "";
+                                row.DELETED = row.DELETED === "X" ? true : false;
                             });
 
                             me.byId(arg + "Tab").getModel().setProperty("/rows", oData.results);
@@ -10190,6 +10522,24 @@ sap.ui.define([
             enableOtherTabs: function () {
                 var oIconTabBar = this.byId("idIconTabBarInlineMode");
                 oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+            },
+
+            formatValueHelp: function(sValue, sPath, sKey, sText, sFormat) {
+                // console.log(sValue, sPath, sKey, sText, sFormat);
+                var oValue = this.getView().getModel(sPath).getData().filter(v => v[sKey] === sValue);
+    
+                if (oValue && oValue.length > 0) {
+                    if (sFormat === "Value") {
+                        return oValue[0][sText];
+                    }
+                    else if (sFormat === "ValueKey") {
+                        return oValue[0][sText] + " (" + sValue + ")";
+                    }
+                    else if (sFormat === "KeyValue") {
+                        return sValue + " (" + oValue[0][sText] + ")";
+                    }
+                }
+                else return sValue;
             },
 
         });

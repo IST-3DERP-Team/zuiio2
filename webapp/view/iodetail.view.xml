@@ -548,6 +548,7 @@
                                     <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
                                     <Button id="btnReorderIOMatList" text="{ddtext>/REORDER}" icon="sap-icon://redo" press="onReorder" tooltip="{ddtext>/REORDER}" visible="true" />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
+                                    <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onDelete('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
                                     <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onBatchSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIOMatList" icon="sap-icon://sys-cancel" press="onCancel('ioMatList')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
