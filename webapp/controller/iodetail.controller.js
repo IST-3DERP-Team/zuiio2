@@ -3379,7 +3379,7 @@ sap.ui.define([
 
 
                                         // console.log("NEW IO# " + me.getView().getModel("ui2").getProperty("/currIONo"));
-                                        Common.showMessage("IO# " + _newIONo + " generated.");
+                                        MessageBox.information("IO# " + _newIONo + " generated.");
                                         resolve();
                                     },
                                     error: function (err) {
@@ -3398,7 +3398,7 @@ sap.ui.define([
                                     success: function (oData, oResponse) {
                                         _newIONo = me.getView().getModel("ui2").getProperty("/currIONo");
 
-                                        Common.showMessage("IO# " + me.getView().getModel("ui2").getProperty("/currIONo") + " updated.");
+                                        MessageBox.information("IO# " + me.getView().getModel("ui2").getProperty("/currIONo") + " updated.");
                                         resolve();
                                     },
                                     error: function (err) {
@@ -3667,7 +3667,7 @@ sap.ui.define([
                     mParameters,
                     // groupId: "insert",
                     success: function (oData, oResponse) {
-                        // Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                     },
                     error: function (oData, oResponse) {
                         console.log(oResponse);
@@ -3681,7 +3681,7 @@ sap.ui.define([
                 // alert(sSource);
                 if (sSource === "IOHDR") {
                     //prompt Dialog for Cancel
-                    // Common.showMessage("Cancel IO");
+                    // MessageBox.information("Cancel IO");
                     //if 
 
                     //Set Button Visibility for Read Mode
@@ -3849,7 +3849,7 @@ sap.ui.define([
 
                 if (arg === "IODET") {
                     if (vDlvSeq === undefined || vDlvSeq === "999") {
-                        Common.showMessage("select a Delivery Sequence");
+                        MessageBox.information("select a Delivery Sequence");
                         return;
                     }
                 }
@@ -3983,7 +3983,7 @@ sap.ui.define([
 
             onCopy: async function (TableName) {
                 sTableName = TableName;
-                // Common.showMessage(sTableName);
+                // MessageBox.information(sTableName);
 
                 var me = this;
                 var oTable = this.byId(sTableName);
@@ -4150,7 +4150,7 @@ sap.ui.define([
 
             onDelete: function (TableName) {
                 sTableName = TableName;
-                // Common.showMessage(sTableName);
+                // MessageBox.information(sTableName);
 
                 var me = this;
                 var oTable = this.byId(sTableName);
@@ -4160,7 +4160,7 @@ sap.ui.define([
                 var bProceed = true;
 
                 if (oSelectedIndices.length <= 0) {
-                    Common.showMessage("No data to delete.");
+                    MessageBox.information("No data to delete.");
                     return;
                 }
 
@@ -4192,12 +4192,12 @@ sap.ui.define([
                     // console.log(sIOItem);
 
                     if (sDeleted === true) {
-                        Common.showMessage("Record already tagged as Deleted.");
+                        MessageBox.information("Record already tagged as Deleted.");
                         return;
                     }
 
                     if (sIONo === "") {
-                        Common.showMessage("No Row Selected");
+                        MessageBox.information("No Row Selected");
                         me.closeLoadingDialog();
                     } else {
 
@@ -5480,14 +5480,14 @@ sap.ui.define([
 
                 // if(this.byId(arg + "Tab").getModel().getData() === null)
                 // {
-                //     Common.showMessage("No GetData retrieved");
+                //     MessageBox.information("No GetData retrieved");
                 //     return;
                 // }
 
                 if (arg === "IODET") {
                     // this.byId("idIconTabBarInlineIODET").
                     if (this.byId(arg + "Tab").getModel("DataModel").getData().results.length === 0) {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                         return;
                     }
 
@@ -5527,12 +5527,12 @@ sap.ui.define([
                 }
                 else if (arg === "costHdr" || arg === "costDtls") {
                     if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                     }
                     else {
                         if (arg === "costHdr") {
                             if (this.byId(arg + "Tab").getModel().getData().rows.filter(fi => fi.COSTSTATUS !== "REL").length === 0) {
-                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
                             }
                             else {
                                 this.byId("btnNewCostHdr").setVisible(false);
@@ -5563,7 +5563,7 @@ sap.ui.define([
                             var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
 
                             if (vStatus === "REL") {
-                                Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
                             }
                             else {
                                 this.byId("btnEditCostDtl").setVisible(false);
@@ -5592,7 +5592,7 @@ sap.ui.define([
                 }
                 else {
                     if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_EDIT"]);
                     }
                     else {
                         if (arg === "color") {
@@ -5614,6 +5614,7 @@ sap.ui.define([
                             this.byId("btnSaveIOMatList").setVisible(true);
                             this.byId("btnCancelIOMatList").setVisible(true);
                             this.byId("btnReorderIOMatList").setVisible(false);
+                            this.byId("btnDeleteIOMatList").setVisible(false);
                         } else if (arg === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(false);
                             this.byId("btnImportPODlvSched").setVisible(false);
@@ -5781,6 +5782,7 @@ sap.ui.define([
                         this.byId("btnSaveIOMatList").setVisible(false);
                         this.byId("btnCancelIOMatList").setVisible(false);
                         this.byId("btnReorderIOMatList").setVisible(true);
+                        this.byId("btnDeleteIOMatList").setVisible(true);
                     } else if (arg === "IODLV") {
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
@@ -5932,7 +5934,7 @@ sap.ui.define([
                     oSelectedIndices = oTmpSelectedIndices;
 
                     oSelectedIndices.forEach((item, index) => {
-                        if (!item.DELETED) {
+                        if (!aData.at(item).DELETED) {
                             aSelectedData.push(aData.at(item));
                         }
                     })
@@ -5941,7 +5943,7 @@ sap.ui.define([
                     bProceed = false;
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
                 }
-
+                // console.log(aSelectedData);
                 if (bProceed) {
                     if (aSelectedData.length === 0) {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_ALREADY_DELETED"]);
@@ -6127,7 +6129,7 @@ sap.ui.define([
                         // console.log("aNewRows");
                         // console.log(aNewRows);
                         if (aNewRows[0]["CUSTCOLOR"] === undefined) {
-                            Common.showMessage("Customer Color is required.");
+                            MessageBox.information("Customer Color is required.");
                             Common.closeProcessingDialog(this);
                             return;
                         }
@@ -6188,7 +6190,7 @@ sap.ui.define([
                                 })
 
                                 // if(param["CUSTCOLOR"] === undefined){
-                                //     Common.showMessage("Customer Color entry is required");
+                                //     MessageBox.information("Customer Color entry is required");
                                 //     return;
                                 // }
 
@@ -6232,7 +6234,7 @@ sap.ui.define([
                                 mParameters,
                                 // groupId: "insert",
                                 success: function (oData, oResponse) {
-                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                                 },
                                 error: function (oData, oResponse) {
                                 }
@@ -6242,7 +6244,7 @@ sap.ui.define([
                             iNew++;
                             if (iNew === aNewRows.length) {
                                 // Common.closeProcessingDialog(me);
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 if (arg === "IODET") {
                                     me.byId("btnNewDlvSched").setVisible(true);
@@ -6288,7 +6290,7 @@ sap.ui.define([
                         // oModel.submitChanges({
                         //     groupId: "insert",
                         //     success: function (oData, oResponse) {
-                        //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                         //     },
                         //     error: function (oData, oResponse) {
                         //     }
@@ -6296,7 +6298,7 @@ sap.ui.define([
 
                         this.setRowReadMode(arg);
                     } else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.informationshowMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
 
                 }
@@ -6437,7 +6439,7 @@ sap.ui.define([
                             iEdited++;
                             if (iEdited === aEditedRows.length) {
                                 // Common.closeProcessingDialog(me);
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 if (arg === "IODET") {
                                     me.byId("btnNewDlvSched").setVisible(true);
@@ -6481,7 +6483,7 @@ sap.ui.define([
                         // oUpdModel.submitChanges({
                         //     groupId: "update",
                         //     success: function (oData, oResponse) {
-                        //         Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                        //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                         //     },
                         //     error: function (oData, oResponse) {
                         //     }
@@ -6489,14 +6491,14 @@ sap.ui.define([
 
                         this.setRowReadMode(arg);
                     } else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
 
                 // return;
 
                 if (aNewRows.length < 0 && aEditedRows.length < 0) {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
 
                 //reload data based on arguments
@@ -6605,7 +6607,7 @@ sap.ui.define([
 
                                         if (iNew === aNewRows.length) {
                                             Common.closeProcessingDialog(me);
-                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                             if (arg === "IODLV") {
                                                 me.byId("btnNewDlvSched").setVisible(true);
@@ -6702,7 +6704,7 @@ sap.ui.define([
                         this.setRowReadMode(arg);
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
                 else if (aEditedRows.length > 0) {
@@ -6817,7 +6819,7 @@ sap.ui.define([
 
                                         if (iEdited === aEditedRows.length) {
                                             // Common.closeProcessingDialog(me);
-                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                             if (arg === "color") {
                                                 me.byId("btnEditColor").setVisible(true);
@@ -6838,6 +6840,7 @@ sap.ui.define([
                                                 me.byId("btnSaveIOMatList").setVisible(false);
                                                 me.byId("btnCancelIOMatList").setVisible(false);
                                                 me.byId("btnReorderIOMatList").setVisible(true);
+                                                me.byId("btnDeleteIOMatList").setVisible(true);
                                             }
                                             else if (arg === "IODLV") {
                                                 me.byId("btnNewDlvSched").setVisible(true);
@@ -6954,12 +6957,12 @@ sap.ui.define([
                     }
                     //this._validationErrors.length
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                         return;
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                     return;
                 }
 
@@ -7082,7 +7085,7 @@ sap.ui.define([
 
                                         if (iNew === aNewRows.length) {
                                             Common.closeProcessingDialog(me);
-                                            Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                             if (arg === "IODLV") {
                                                 me.byId("btnNewDlvSched").setVisible(true);
@@ -7158,7 +7161,7 @@ sap.ui.define([
                         this.setRowReadMode(arg);
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
                 else if (aEditedRows.length > 0) {
@@ -7259,7 +7262,7 @@ sap.ui.define([
                         oModel.submitChanges({
                             groupId: "update",
                             success: function (oData, oResponse) {
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 if (arg === "color") {
                                     me.byId("btnEditColor").setVisible(true);
@@ -7280,6 +7283,7 @@ sap.ui.define([
                                     me.byId("btnSaveIOMatList").setVisible(false);
                                     me.byId("btnCancelIOMatList").setVisible(false);
                                     me.byId("btnReorderIOMatList").setVisible(true);
+                                    me.byId("btnDeleteIOMatList").setVisible(true);
                                 }
                                 else if (arg === "IODLV") {
                                     me.byId("btnNewDlvSched").setVisible(true);
@@ -7374,11 +7378,11 @@ sap.ui.define([
                         })
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
 
                 //reload data based on arguments
@@ -7899,11 +7903,10 @@ sap.ui.define([
                                     }));
                                 }
                                 else if (ci.DataType === "BOOLEAN") {
-                                    col.setTemplate(new sap.m.Text({
-                                        text: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
+                                    col.setTemplate(new sap.m.CheckBox({
+                                        selected: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
                                         wrapping: false,
-                                        editable: false,
-                                        tooltip: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}"
+                                        editable: false
                                     }));
                                 }
                             })
@@ -8183,6 +8186,7 @@ sap.ui.define([
                             this.byId("btnSaveIOMatList").setVisible(false);
                             this.byId("btnCancelIOMatList").setVisible(false);
                             this.byId("btnReorderIOMatList").setVisible(true);
+                            this.byId("btnDeleteIOMatList").setVisible(true);
                         } else if (this._sTableModel === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(true);
                             this.byId("btnImportPODlvSched").setVisible(true);
@@ -8432,7 +8436,7 @@ sap.ui.define([
                             oModel.create("/TableLayoutSet", oParam, {
                                 method: "POST",
                                 success: function (data, oResponse) {
-                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_LAYOUT_SAVE"]);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_LAYOUT_SAVE"]);
                                 },
                                 error: function (err) {
                                     sap.m.MessageBox.error(err);
@@ -8516,13 +8520,13 @@ sap.ui.define([
 
 
                     if (hasValid === false) {
-                        Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
+                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                     } else {
                         me.onRefresh("ioMatList");
-                        Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                     }
                 } else {
-                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
             },
 
@@ -8555,10 +8559,10 @@ sap.ui.define([
                             var oMessage = JSON.parse(oResponse.headers["sap-message"]);
 
                             if (oMessage.message === "0") {
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                             }
                             else if (oMessage.message === "1") {
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
 
                                 me.onRefresh("ioMatList");
                             }
@@ -8569,7 +8573,7 @@ sap.ui.define([
                     });
                 }
                 else {
-                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
             },
 
@@ -8720,14 +8724,26 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
-                        template: new sap.m.Text({
+                    var oTemplate;
+
+                    if (sColumnDataType !== "BOOLEAN") {
+                        oTemplate = new sap.m.Text({
                             text: "{" + sColumnId + "}",
                             wrapping: false,
                             tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
-                        }),
+                        })
+                    }
+                    else {
+                        oTemplate = new sap.m.CheckBox({
+                            selected: "{" + sColumnId + "}",
+                            editable: false
+                        })
+                    }
+
+                    return new sap.ui.table.Column({ 
+                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                        label: new sap.m.Text({ text: sColumnLabel }),
+                        template: oTemplate,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
                         filterProperty: sColumnId,
@@ -8808,11 +8824,11 @@ sap.ui.define([
                         this.getView().getModel("ui2").setProperty("/icontabfilterkey", "itfMATLIST");
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_INVALID_RECORD_FOR_MATNO_CREATE"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_INVALID_RECORD_FOR_MATNO_CREATE"]);
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
                 }
             },
 
@@ -8871,7 +8887,7 @@ sap.ui.define([
                                 Common.closeLoadingDialog(me);
 
                                 if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
-                                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
                                     me.onRefresh("ioMatList");
                                 }
 
@@ -8879,16 +8895,15 @@ sap.ui.define([
                             },
                             error: function (err) {
                                 Common.closeLoadingDialog(me);
-                                // Common.showMessage(me._i18n.getText('t5'));
                             }
                         });
                     }
                     else {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
                     }
                 }
                 else {
-                    Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
                 }
             },
 
@@ -10197,7 +10212,7 @@ sap.ui.define([
                     var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === oData[0].CSTYPE && fi.VERSION === oData[0].VERSION)[0].COSTSTATUS;
 
                     if (vStatus === "REL") {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
                     }
                     else {
                         Common.openProcessingDialog(me, "Processing");
@@ -10206,7 +10221,7 @@ sap.ui.define([
                             method: "PUT",
                             success: function (data, oResponse) {
                                 Common.closeProcessingDialog(me);
-                                Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_COSTING_RELEASE"]);
+                                MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_COSTING_RELEASE"]);
 
                                 me._oModelIOCosting.read('/VersionsSet', {
                                     urlParameters: {
@@ -10239,7 +10254,7 @@ sap.ui.define([
                     }
                 }
                 else {
-                    Common.showMessage(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
+                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
             },
 
@@ -10320,7 +10335,7 @@ sap.ui.define([
                 }
                 else if (arg === "costDtls") {
                     if (this.byId("costHdrTab").getModel().getData().rows.length === 0) {
-                        Common.showMessage(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
                     }
                     else {
                         var activeCostHdrData = this.byId("costHdrTab").getModel().getData().rows.filter(fItem => fItem.ACTIVE === "X");
@@ -10866,7 +10881,7 @@ sap.ui.define([
                     this._ConfirmDeleteFileDialog.addStyleClass("sapUiSizeCompact");
                     this._ConfirmDeleteFileDialog.open();
                 } else {
-                    Common.showMessage(this._i18n.getText('No items selected'));
+                    MessageBox.information(this._i18n.getText('No items selected'));
                 }
             },
 
