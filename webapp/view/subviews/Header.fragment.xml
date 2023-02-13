@@ -510,7 +510,13 @@
                             <Input id="REMARKS" value="{headerData>/REMARKS}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REMARKS} : false }" valueStateText="Required"/>
                         </f:fields>
-                    </f:FormElement>                            
+                    </f:FormElement> 
+                    <f:FormElement label="{i18n>STATUSCD}"  visible="false">
+                        <f:fields>
+                            <Input id="STATUSCD" value="{headerData>/STATUSCD}" 
+                            editable="false" valueStateText="Required"/>
+                        </f:fields>
+                    </f:FormElement>                           
                 </f:formElements>
             </f:FormContainer>
 
