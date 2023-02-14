@@ -716,37 +716,39 @@ sap.ui.define([
                         aSelectedItems.push(aData.at(item));
 
                         oParamData.push({
-                            SALDOCNO:      aData.at(item).SALESDOCNO === undefined ? "" : aData.at(item).SALESDOCNO,
-                            SALDOCITEM:    aData.at(item).SALESDOCITEM === undefined ? "" : aData.at(item).SALESDOCITEM,
-                            ORDERQTY:       aData.at(item).QTY === undefined ? "" : aData.at(item).QTY,
-                            UNITPRICE:       aData.at(item).UNITPRICE === undefined ? "" : aData.at(item).UNITPRICE,
-                            CPONO:       aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
-                            CPOREV:       aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
-                            CPODT:       aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
-                            DLVDT:       aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),
-                            STYLENO:       aData.at(item).STYLENO === undefined ? "" : aData.at(item).STYLENO,
-                            CUSTCOLOR:       aData.at(item).CUSTCOLOR === undefined ? "" : aData.at(item).CUSTCOLOR,
-                            CUSTSIZE:       aData.at(item).CUSTSIZE === undefined ? "" : aData.at(item).CUSTSIZE,
-                            CUSTSHIPTO:       aData.at(item).CUSTSHIPTO === undefined ? "" : aData.at(item).CUSTSHIPTO,
-                            CUSTBILLTO:       aData.at(item).CUSTBILLTO === undefined ? "" : aData.at(item).CUSTBILLTO
+                            Saldocno: aData.at(item).SALESDOCNO === undefined ? "" : aData.at(item).SALESDOCNO,
+                            Saldocitem: aData.at(item).SALESDOCITEM === undefined ? "" : aData.at(item).SALESDOCITEM,
+                            Orderqty: aData.at(item).QTY === undefined ? "" : aData.at(item).QTY,
+                            Unitprice: aData.at(item).UNITPRICE === undefined ? "" : aData.at(item).UNITPRICE,
+                            Cpono: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
+                            Cporev: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
+                            Cpodt: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
+                            Dlvdt: aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),
+                            Styleno: aData.at(item).STYLENO === undefined ? "" : aData.at(item).STYLENO,
+                            Custcolor: aData.at(item).CUSTCOLOR === undefined ? "" : aData.at(item).CUSTCOLOR,
+                            Custsize: aData.at(item).CUSTSIZE === undefined ? "" : aData.at(item).CUSTSIZE,
+                            Custshipto: aData.at(item).CUSTSHIPTO === undefined ? "" : aData.at(item).CUSTSHIPTO,
+                            Custbillto: aData.at(item).CUSTBILLTO === undefined ? "" : aData.at(item).CUSTBILLTO
                         })
                     })
 
                     oParam = oParamHdr;
                     oParam['N_IMPORT_SALDOCITEM'] = oParamData;
 
-                    console.log(oParam);                    
-                }     
+                    console.log(oParam);
+                }
 
+                Common.closeLoadingDialog(that);
                 return;
 
-                _promiseResult = new Promise((resolve, reject)=>{
+                _promiseResult = new Promise((resolve, reject) => {
                     oModel.create("/IMPORTSALDOCSet", oParam, {
                         method: "POST",
-                        success: function(oData, oResponse){
+                        success: function (oData, oResponse) {
                             Common.closeLoadingDialog(that);
+                            MessageBox.success("Sales Document Item/s Successfully added.");
                             resolve();
-                        },error: function(error){
+                        }, error: function (error) {
                             Common.closeLoadingDialog(that);
                             MessageBox.error("Error Encountered in Process!");
                             resolve();
@@ -754,6 +756,8 @@ sap.ui.define([
                     })
                 })
                 await _promiseResult;
+
+                this.onCancelImportPO();
             },
 
             getImportPOData: async function () {
@@ -761,7 +765,11 @@ sap.ui.define([
                 var oView = this.getView();
                 var oJSONModel = new JSONModel();
                 var currStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+
                 var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
+
+                // alert(currStyle);
+                // alert(currCustSoldTo);
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -770,6 +778,8 @@ sap.ui.define([
                                 "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
                             },
                             success: function (oData, response) {
+                                console.log("Import PO Data");
+                                console.log(oData);
                                 oData.results.forEach(item => {
                                     item.CPODT = dateFormat.format(new Date(item.CPODT));
                                     item.DLVDT = dateFormat.format(new Date(item.DLVDT));
@@ -914,11 +924,56 @@ sap.ui.define([
             onImportPO: async function (source) {
                 var me = this;
                 var sSource = source;
+                var hasData = false;
                 if (sSource === "IODLVTab") {
-                    // alert("Import PO");
 
-                    // sap.ui.getCore().byId("ImportPOTab").getModel().refresh(true);
+                    var currStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+                    var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
+                    _promiseResult = new Promise((resolve, reject) => {
+                        setTimeout(() => {
+                            this._oModel.read('/IMPORTPOSet', {
+                                urlParameters: {
+                                    "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
+                                },
+                                success: function (oData, response) {
+                                    if (oData.results.length > 0) {
+                                        hasData = true;
+                                    }
+                                    resolve();
+                                    return;
+                                },
+                                error: function (err) {
+                                    MessageBox.error("Error encountered: " + err.responseText);
+                                    resolve();
+                                }
+                            })
+                        }, 100);
+                    });
+                    await _promiseResult;
+
+                    if (!hasData) {
+                        MessageBox.information("No Sales Document Data found for Style# " + currStyle + " and Sold-To Customer# " + currCustSoldTo + "");
+
+                        setTimeout(() => {
+                            this.reloadIOData("IODLVTab", "/IODLVSet");
+                        }, 100);
+
+                        _promiseResult = new Promise((resolve, reject) => {
+
+                            me._tblChange = true;
+                            // setTimeout(() => {
+                            this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                            resolve();
+                            // }, 100);
+                        })
+                        await _promiseResult;
+
+                        // do not continue with fragment initialization / no data to select
+                        return;
+                    }
+
                     if (!me._ImportPODialog) {
+                        console.log("initialize Import PO Dialog");
                         me._ImportPODialog = sap.ui.xmlfragment("zuiio2.view.fragments.ImportPO", me);
                         // me.getView().addDependent(me._ImportPODialog);
 
@@ -935,13 +990,10 @@ sap.ui.define([
                             rows: []
                         }));
 
-                        // this.getImportPOData();
-
-                        // alert("onImportPO");
                         this.getSearchDynamicTableColumns("IMPORTPO", "ZDV_IMPORT_PO", "ImportPOTab", oColumns);
 
                         me.getView().addDependent(me._ImportPODialog);
-                        // this.getImportPOData();
+
                     }
                     me._ImportPODialog.open();
                 }
@@ -2918,6 +2970,27 @@ sap.ui.define([
 
                         },
                         success: function (oData, oResponse) {
+                            if(sModelName === "BILLTOModel")
+                            {
+                                oData.results.forEach(item => {
+                                    item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : "000" + item.CUSTBILLTO;
+                                })
+                            }
+
+                            if(sModelName === "SHIPTOModel")
+                            {
+                                oData.results.forEach(item => {
+                                    item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : "000" + item.CUSTSHIPTO;
+                                })
+                            }
+
+                            if(sModelName === "SOLDTOModel")
+                            {
+                                oData.results.forEach(item => {
+                                    item.KUNNR = item.KUNNR === undefined ? "" : "000" + item.KUNNR;
+                                })
+                            }
+
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
                             // console.log(sModelName);
@@ -3066,6 +3139,9 @@ sap.ui.define([
                     "SALESORG": this.getView().byId("SALESORG").getValue(),
                     "PLANMONTH": this.getView().byId("PLANMONTH").getValue()
                 };
+
+                console.log("IO Prefix oParam");
+                console.log(oParam);
 
                 oModel.create("/GetIOPrefixSet", oParam, {
                     method: "POST",
@@ -3853,14 +3929,14 @@ sap.ui.define([
                             TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                             CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
                             BASEUOM: this.getView().byId("BASEUOM").getValue(),
-                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue(),
+                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                             REFIONO: this.getView().byId("REFIONO").getValue(),
                             STYLENO: this.getView().byId("STYLENO").getValue(),
                             VERNO: this.getView().byId("VERNO").getValue(),
                             PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
-                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue(),
+                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue() === undefined || this.getView().byId("CUSTDLVDT").getValue() === "" || this.getView().byId("CUSTDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue())),
                             PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
-                            PRODSTART: this.getView().byId("PRODSTART").getValue(),
+                            PRODSTART: this.getView().byId("PRODSTART").getValue() === undefined || this.getView().byId("PRODSTART").getValue() === "" || this.getView().byId("PRODSTART").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                             REMARKS: this.getView().byId("REMARKS").getValue(),
                             SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
                             STATUSCD: this.getView().byId("STATUSCD").getValue().length > 0 ? this.getView().byId("STATUSCD").getValue() : "CRT"
@@ -3891,21 +3967,22 @@ sap.ui.define([
                             TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                             CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
                             BASEUOM: this.getView().byId("BASEUOM").getValue(),
-                            PLANDLVDT: sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
+                            PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                             REFIONO: this.getView().byId("REFIONO").getValue(),
                             STYLENO: this.getView().byId("STYLENO").getValue(),
                             VERNO: this.getView().byId("VERNO").getValue(),
                             PLANPLANT: this.getView().byId("PLANPLANT").getValue(),
-                            CUSTDLVDT: sapDateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue())),
+                            CUSTDLVDT: this.getView().byId("CUSTDLVDT").getValue() === undefined || this.getView().byId("CUSTDLVDT").getValue() === "" || this.getView().byId("CUSTDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue())),
                             PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
-                            PRODSTART: sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
+                            PRODSTART: this.getView().byId("PRODSTART").getValue() === undefined || this.getView().byId("PRODSTART").getValue() === "" || this.getView().byId("PRODSTART").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                             REMARKS: this.getView().byId("REMARKS").getValue(),
                             SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
                             STATUSCD: this.getView().byId("STATUSCD").getValue().length > 0 ? this.getView().byId("STATUSCD").getValue() : "CRT"
                         };
                     }
 
-                    // console.log(oParamIOHeaderData);
+                    console.log("oParamIOHeaderData");
+                    console.log(oParamIOHeaderData);
 
                     var oModel = this.getOwnerComponent().getModel();
 
@@ -11486,8 +11563,8 @@ sap.ui.define([
 
             onCancelImportPO: function () {
                 this._ImportPODialog.close();
-                sap.ui.getCore().byId("ImportPOTab").getModel().refresh(true);
-                // alert("Cancel");
+                this._ImportPODialog.destroy();
+                this._ImportPODialog = null;
             },
 
             disableOtherTabs: function () {

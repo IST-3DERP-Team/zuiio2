@@ -4,10 +4,10 @@
 	<SelectDialog
 		title="{i18n>SelectSoldTo}"
 		class="sapUiPopupWithPadding"
-		items="{SoldToModel>/results}"
+		items="{SOLDTOModel>/results}"
         search="_soldtoGroupValueHelpSearch"
 		confirm="_soldtoGroupValueHelpClose"
 		cancel="_soldtoGroupValueHelpClose">
-		<StandardListItem title="{SoldToModel>KUNNR}" description="{SoldToModel>KUNNR}"/>
+		<StandardListItem title="{SOLDTOModel>KUNNR}" description="{SOLDTOModel>KUNNR}"/>
 	</SelectDialog>
 </core:FragmentDefinition>
