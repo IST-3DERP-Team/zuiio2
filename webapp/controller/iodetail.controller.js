@@ -90,7 +90,9 @@ sap.ui.define([
                     currDlvSeq: '999',
                     currDlvItem: '999',
                     hasSDData: false,
-                    icontabfilterkey: ''
+                    icontabfilterkey: '',
+                    IODesc: '',
+                    IOPrefix: ''
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -144,7 +146,9 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                }
 
                 window.onhashchange = function () {
                     if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
@@ -282,7 +286,8 @@ sap.ui.define([
                                 "SALESGRP": "",
                                 "SEASONCD": "",
                                 "CUSTGRP": "",
-                                "BASEUOM": ""
+                                "BASEUOM": "",
+                                "PRODSTART": ""
                             };
                         } else {
                             var IOQty = "0";
@@ -304,7 +309,8 @@ sap.ui.define([
                                     "STYLECD": item.STYLECD,
                                     "VERNO": item.VERNO,
                                     "CUSTGRP": item.CUSTGRP,
-                                    "ORDQTY": IOQty
+                                    "ORDQTY": IOQty,
+                                    "PRODSTART": ""
                                 };
                             });
                         }
@@ -953,7 +959,9 @@ sap.ui.define([
 
                     if (!hasData) {
                         MessageBox.information("No Sales Document Data found for Style# " + currStyle + " and Sold-To Customer# " + currCustSoldTo + "");
-
+                        return;
+                    }
+                    else {
                         setTimeout(() => {
                             this.reloadIOData("IODLVTab", "/IODLVSet");
                         }, 100);
@@ -969,7 +977,7 @@ sap.ui.define([
                         await _promiseResult;
 
                         // do not continue with fragment initialization / no data to select
-                        return;
+                        // return;
                     }
 
                     if (!me._ImportPODialog) {
@@ -2889,7 +2897,7 @@ sap.ui.define([
 
             },
 
-            onHeaderChange: function (oEvent) {
+            onHeaderChange: async function (oEvent) {
                 var me = this;
                 if (oEvent === undefined)
                     return;
@@ -2921,7 +2929,7 @@ sap.ui.define([
                     // console.log(oData);     
                     for (var i = 0; i < oData.results.length; i++) {
                         if (oData.results[i].STYLENO === sStyleNo) {
-                            this.getView().byId("VERNO").setValue(oData.results[i].PRODPLANT);
+                            this.getView().byId("VERNO").setValue(oData.results[i].VERNO);
                             this.getView().byId("PRODTYPE").setValue(oData.results[i].PRODTYP);
                             this.getView().byId("STYLECD").setValue(oData.results[i].STYLECD);
                             this.getView().byId("SEASONCD").setValue(oData.results[i].SEASONCD);
@@ -2930,6 +2938,17 @@ sap.ui.define([
                         }
                     }
                 }
+
+                // if(srcInput === "/PRODSCEN" || srcInput === "/SOLDTOCUST" || srcInput === "/PRODPLANT" || srcInput === "/SALESORG" || srcInput === "/PLANMONTH") {
+                //     _promiseResult = new Promise((resolve, reject) => {
+                //         resolve(this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, ""));
+                //     });
+                //     await _promiseResult;
+
+                //     this.getView().byId("IOPREFIX").setValue(sIOPrefix);
+                //     this.getView().byId("IODESC").setValue(sIODesc);
+                // }
+
                 //set change flag for header
                 this._headerChanged = true;
                 this.setChangeStatus(true);
@@ -2970,22 +2989,19 @@ sap.ui.define([
 
                         },
                         success: function (oData, oResponse) {
-                            if(sModelName === "BILLTOModel")
-                            {
+                            if (sModelName === "BILLTOModel") {
                                 oData.results.forEach(item => {
                                     item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : "000" + item.CUSTBILLTO;
                                 })
                             }
 
-                            if(sModelName === "SHIPTOModel")
-                            {
+                            if (sModelName === "SHIPTOModel") {
                                 oData.results.forEach(item => {
                                     item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : "000" + item.CUSTSHIPTO;
                                 })
                             }
 
-                            if(sModelName === "SOLDTOModel")
-                            {
+                            if (sModelName === "SOLDTOModel") {
                                 oData.results.forEach(item => {
                                     item.KUNNR = item.KUNNR === undefined ? "" : "000" + item.KUNNR;
                                 })
@@ -3122,7 +3138,8 @@ sap.ui.define([
                 });
             },
 
-            getIOPrefixSet: async function (model, sbu, wvtyp) {
+            getIOPrefixSet: function (model, sbu, wvtyp) {
+                var me = this;
                 var sModel = model;
                 var ssbu = sbu;
                 var swvtyp = wvtyp;
@@ -3146,28 +3163,16 @@ sap.ui.define([
                 oModel.create("/GetIOPrefixSet", oParam, {
                     method: "POST",
                     success: function (oData, oResponse) {
-                        // console.log("GetIOPrefixSet");
-                        // console.log(oData);
-                        // for (var i = 0; i < oData.results.length; i++) {
-                        //     sIOPrefix = oData.results[i].IOPREFIX;
-                        //     sIODesc = oData.results[i].IODESC;
-
-                        //     this.getView().byId("IOPREFIX").setValue(oData.results[i].IOPREFIX);
-                        //     this.getView().byId("IODESC").setValue(oData.results[i].IODESC);
-
-                        // }
-
-                        sIOPrefix = oData.IOPREFIX;
-                        sIODesc = oData.IODESC;
-
-                        // console.log(oData.IOPREFIX);
-                        // console.log(oData.IODESC);
+                        me.getView().getModel("ui2").setProperty("/IODesc", oData.IODESC);
+                        me.getView().getModel("ui2").setProperty("/IOPrefix", oData.IOPREFIX);
 
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOPrefixModel");
                     },
                     error: function (err) { }
                 });
+
+                console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
             },
 
             getHeaderData: function () {
@@ -3416,6 +3421,8 @@ sap.ui.define([
                     var sProdScen = this.getView().byId("PRODSCEN").getValue();
 
                     var oData = this.getView().getModel("ProdScenModel").oData;
+                    console.log("ProdScenModel");
+                    console.log(oData);
                     for (var i = 0; i < oData.results.length; i++) {
                         if (oData.results[i].PRODSCEN === sProdScen) {
                             // alert(oData.results[i].PRODPLANT);
@@ -3881,6 +3888,10 @@ sap.ui.define([
                     if (this.getView().byId("IOTYPE").getValue() === "") sErrMsg = "IO Type";
                     else if (this.getView().byId("PRODSCEN").getValue() === "") sErrMsg = "Production Scenario";
                     else if (this._sbu.Length <= 0) sErrMsg = "SBU";
+                    else if (this.getView().byId("PLANMONTH").getValue() === "") sErrMsg = "Prod. Period";
+                    else if (this.getView().byId("SALESORG").getValue() === "") sErrMsg = "Sales Org.";
+                    else if (this.getView().byId("SOLDTOCUST").getValue() === "") sErrMsg = "Sold-To Customer";
+                    else if (this.getView().byId("PRODPLANT").getValue() === "") sErrMsg = "Prod. Plant";
 
                     if (sErrMsg.length > 0) {
                         sErrMsg += " is required."
@@ -3895,6 +3906,18 @@ sap.ui.define([
 
                     strStyleNo = this.getView().byId("STYLENO").getValue();
                     strVerNo = this.getView().byId("VERNO").getValue();
+
+                    // console.log(this.getView());
+                    // var IOPrefixData = this.getView().getModel("IOPrefixModel").getData();
+
+                    console.log("IOPrefixData");
+                    console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
+
+
+                    // this.getView().byId("IODESC").setValue(sIODesc);
+                    // this.getView().byId("IOPREFIX").setValue(sIOPrefix);
+
+                    return;
 
                     var oParamIOHeaderData;
                     var IOQty = 0;
@@ -4023,6 +4046,7 @@ sap.ui.define([
                                         resolve();
                                     },
                                     error: function (err) {
+                                        MessageBox.error("Error encountered when saving the IO");
                                         resolve();
                                     }
                                 });
@@ -4042,6 +4066,7 @@ sap.ui.define([
                                         resolve();
                                     },
                                     error: function (err) {
+                                        MessageBox.error("Error encountered when saving the IO");
                                         resolve();
                                     }
                                 });

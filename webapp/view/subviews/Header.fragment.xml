@@ -516,7 +516,13 @@
                             <Input id="STATUSCD" value="{headerData>/STATUSCD}" 
                             editable="false" valueStateText="Required"/>
                         </f:fields>
-                    </f:FormElement>                           
+                    </f:FormElement>       
+                    <f:FormElement label="{i18n>IOPREFIX}"  visible="false">
+                        <f:fields>
+                            <Input id="IOPREFIX" value="{headerData>/IOPREFIX}" 
+                            editable="false" valueStateText="Required"/>
+                        </f:fields>
+                    </f:FormElement>                      
                 </f:formElements>
             </f:FormContainer>
 

@@ -27,7 +27,7 @@
                 icon="sap-icon://multiselect-none"
                 class="sapUiResponsivePadding--header"
                 title="IO# {headerData>/IOPREFIX}-{headerData>/IONO}-{headerData>/IOSUFFIX}     ({headerData>/IODESC})"
-                intro="{i18n>STYLENO} : {headerData>/STYLENO}"
+                intro="{i18n>STYLENO} : {headerData>/STYLENO} / {headerData>/VERNO}"
                 number="{headerData>/STATUSCD}"
                 numberUnit="{i18n>Status}"
                 numberState="{= ${headerData>/STATUSCD} === 'REL' ? 'Success' : ${headerData>/STATUSCD} === 'CNL' ? 'Error' : 'Information'}"
