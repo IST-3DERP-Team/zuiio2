@@ -144,15 +144,15 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
+                this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;               
 
-                // window.onhashchange = function () {
-                //     if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
-                //         window.history.state.sap.history.forEach((item, index) => {
-                //             if (item === "ZSO_IO2-display") window.history.go((index + 1) - window.history.state.sap.history.length);
-                //         })
-                //     }
-                // }
+                window.onhashchange = function () {
+                    if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
+                        window.history.state.sap.history.forEach((item, index) => {
+                            if (item === "ZSO_IO2-display") window.history.go((index + 1) - window.history.state.sap.history.length);
+                        })
+                    }
+                }
             },
 
             // onExit: function() {
