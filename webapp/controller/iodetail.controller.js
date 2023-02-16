@@ -287,7 +287,12 @@ sap.ui.define([
                                 "SEASONCD": "",
                                 "CUSTGRP": "",
                                 "BASEUOM": "",
-                                "PRODSTART": ""
+                                "PRODSTART": "",
+                                "ORDQTY": 0,
+                                "ACTUALQTY": 0,
+                                "REVORDQTY": 0,
+                                "SHIPQTY": 0,
+                                "PLANQTY": 0
                             };
                         } else {
                             var IOQty = "0";
@@ -310,7 +315,12 @@ sap.ui.define([
                                     "VERNO": item.VERNO,
                                     "CUSTGRP": item.CUSTGRP,
                                     "ORDQTY": IOQty,
-                                    "PRODSTART": ""
+                                    "PRODSTART": "",
+                                    "ORDQTY": 0,
+                                    "ACTUALQTY": 0,
+                                    "REVORDQTY": 0,
+                                    "SHIPQTY": 0,
+                                    "PLANQTY": 0
                                 };
                             });
                         }
@@ -391,7 +401,10 @@ sap.ui.define([
                                 "VERNO": item.VERNO,
                                 "CUSTGRP": item.CUSTGRP,
                                 "ORDQTY": +IOQty,
-                                "REVORDQTY": +IOQty
+                                "REVORDQTY": +IOQty,
+                                "ACTUALQTY": 0,
+                                "SHIPQTY": 0,
+                                "PLANQTY": 0
                             };
                         });
 
@@ -692,6 +705,7 @@ sap.ui.define([
                 var oParamHdr = {};
                 var oParamData = [];
 
+                var oModel = this.getOwnerComponent().getModel();
                 var oTable = sap.ui.getCore().byId(sTableName);
                 var oSelectedIndices = oTable.getSelectedIndices();
                 var oTmpSelectedIndices = [];
@@ -702,7 +716,7 @@ sap.ui.define([
                     return;
                 }
 
-                Common.openLoadingDialog(that);
+                Common.openLoadingDialog(me);
 
                 if (oSelectedIndices.length > 0) {
                     oSelectedIndices.forEach(item => {
@@ -744,24 +758,28 @@ sap.ui.define([
                     console.log(oParam);
                 }
 
-                Common.closeLoadingDialog(that);
-                return;
+                // Common.closeLoadingDialog(that);
+                // return;
 
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.create("/IMPORTSALDOCSet", oParam, {
                         method: "POST",
                         success: function (oData, oResponse) {
-                            Common.closeLoadingDialog(that);
+                            Common.closeLoadingDialog(me);
                             MessageBox.success("Sales Document Item/s Successfully added.");
                             resolve();
                         }, error: function (error) {
-                            Common.closeLoadingDialog(that);
+                            Common.closeLoadingDialog(me);
                             MessageBox.error("Error Encountered in Process!");
                             resolve();
                         }
                     })
                 })
                 await _promiseResult;
+
+                this.getHeaderData();
+                this.reloadIOData('IODLVTab', '/IODLVSet');
+                this.reloadIOData('IODETTab', '/IODETSet');
 
                 this.onCancelImportPO();
             },
@@ -1473,7 +1491,13 @@ sap.ui.define([
                                     "SALESGRP": item.SALESGRP,
                                     "SEASONCD": item.SEASONCD,
                                     "CUSTGRP": item.CUSTGRP,
-                                    "BASEUOM": item.UOM
+                                    "BASEUOM": item.UOM,
+                                    "SOLDTOCUST": "000" + item.SOLDTOCUST,
+                                    "ORDQTY": 0,
+                                    "ACTUALQTY": 0,
+                                    "REVORDQTY": 0,
+                                    "SHIPQTY": 0,
+                                    "PLANQTY": 0
                                 }
                                 oJSONModel.setData(styleData);
                                 oView.setModel(oJSONModel, "headerData");
@@ -3138,7 +3162,7 @@ sap.ui.define([
                 });
             },
 
-            getIOPrefixSet: function (model, sbu, wvtyp) {
+            getIOPrefixSet: async function (model, sbu, wvtyp) {
                 var me = this;
                 var sModel = model;
                 var ssbu = sbu;
@@ -3157,22 +3181,30 @@ sap.ui.define([
                     "PLANMONTH": this.getView().byId("PLANMONTH").getValue()
                 };
 
-                console.log("IO Prefix oParam");
-                console.log(oParam);
+                // console.log("IO Prefix oParam");
+                // console.log(oParam);
 
-                oModel.create("/GetIOPrefixSet", oParam, {
-                    method: "POST",
-                    success: function (oData, oResponse) {
-                        me.getView().getModel("ui2").setProperty("/IODesc", oData.IODESC);
-                        me.getView().getModel("ui2").setProperty("/IOPrefix", oData.IOPREFIX);
+                return new Promise((resolve, reject) => {
+                    oModel.create("/GetIOPrefixSet", oParam, {
+                        method: "POST",
+                        success: function (oData, oResponse) {
+                            me.getView().getModel("ui2").setProperty("/IODesc", oData.IODESC);
+                            me.getView().getModel("ui2").setProperty("/IOPrefix", oData.IOPREFIX);
 
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "IOPrefixModel");
-                    },
-                    error: function (err) { }
+                            oJSONModel.setData(oData);
+                            oView.setModel(oJSONModel, "IOPrefixModel");
+                            resolve();
+                        },
+                        error: function (err) {
+                            resolve();
+                        }
+                    });
+
+                    // console.log("IO Prefix");
+                    // console.log(this.getView().getModel("ui2").getProperty("/IOPrefix"));
+                    // console.log("IO Desc");
+                    // console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
                 });
-
-                console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
             },
 
             getHeaderData: function () {
@@ -3899,10 +3931,12 @@ sap.ui.define([
                         return;
                     }
 
-                    _promiseResult = new Promise((resolve, reject) => {
-                        resolve(this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, ""));
-                    });
-                    await _promiseResult;
+                    // _promiseResult = new Promise((resolve, reject) => {
+                    //     resolve(this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, ""));
+                    // });
+                    // await _promiseResult;
+
+                    await this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
 
                     strStyleNo = this.getView().byId("STYLENO").getValue();
                     strVerNo = this.getView().byId("VERNO").getValue();
@@ -3910,14 +3944,15 @@ sap.ui.define([
                     // console.log(this.getView());
                     // var IOPrefixData = this.getView().getModel("IOPrefixModel").getData();
 
-                    console.log("IOPrefixData");
-                    console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
+                    // console.log("IOPrefixData");
+                    // console.log(this.getView().getModel("ui2").getProperty("/IOPrefix"));
+                    // console.log(this.getView().getModel("ui2").getProperty("/IODesc"));
 
 
-                    // this.getView().byId("IODESC").setValue(sIODesc);
-                    // this.getView().byId("IOPREFIX").setValue(sIOPrefix);
+                    this.getView().byId("IODESC").setValue(this.getView().getModel("ui2").getProperty("/IODesc"));
+                    this.getView().byId("IOPREFIX").setValue(this.getView().getModel("ui2").getProperty("/IOPrefix"));
 
-                    return;
+                    // return;
 
                     var oParamIOHeaderData;
                     var IOQty = 0;
@@ -3937,8 +3972,8 @@ sap.ui.define([
                             ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
                             PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
                             IOTYPE: this.getView().byId("IOTYPE").getValue(),
-                            IOPREFIX: sIOPrefix,
-                            IODESC: sIODesc,
+                            IOPREFIX: this.getView().byId("IOPREFIX").getValue(),
+                            IODESC: this.getView().byId("IODESC").getValue(),
                             SBU: this._sbu,
                             SALESGRP: this.getView().byId("SALESGRP").getValue(),
                             PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
@@ -3975,8 +4010,8 @@ sap.ui.define([
                             ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
                             PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
                             IOTYPE: this.getView().byId("IOTYPE").getValue(),
-                            IOPREFIX: sIOPrefix,
-                            IODESC: sIODesc,
+                            IOPREFIX: this.getView().byId("IOPREFIX").getValue(),
+                            IODESC: this.getView().byId("IODESC").getValue(),
                             SBU: this._sbu,
                             SALESGRP: this.getView().byId("SALESGRP").getValue(),
                             PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
@@ -6741,6 +6776,24 @@ sap.ui.define([
                 }
             },
 
+            UpdateIOHdrQuantity: async function () {
+                var oModel = this.getOwnerComponent().getModel();
+                let pIONO = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                var oParam = {
+                    "IONO": pIONO
+                };
+
+                console.log(oParam);
+
+                oModel.create("/ORDERQTYSET", oParam, {
+                    method: "POST",
+                    success: function (oData, oResponse) {
+                    },
+                    error: function (err) { }
+                });
+            },
+
             onSaveIODET: async function () {
                 var me = this;
                 var arg = "IODET";
@@ -6796,12 +6849,12 @@ sap.ui.define([
                         // console.log(aNewRows);
                         if (aNewRows[0]["CUSTCOLOR"] === undefined) {
                             MessageBox.information("Customer Color is required.");
-                            Common.closeProcessingDialog(this);
+                            Common.closeProcessingDialog(me);
                             return;
                         }
 
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
-                        aNewRows.forEach(item => {
+                        aNewRows.forEach(async item => {
                             //LOOP THRU COLLECTION OF SIZES FOR THE IO
                             this._iosizes.forEach(async colSizes => {
                                 hasMatchingSize = false;
@@ -6909,7 +6962,7 @@ sap.ui.define([
 
                             iNew++;
                             if (iNew === aNewRows.length) {
-                                // Common.closeProcessingDialog(me);
+
                                 MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 if (arg === "IODET") {
@@ -6949,19 +7002,6 @@ sap.ui.define([
                             }
                         })
 
-                        // return;
-
-                        // console.log(oModel);
-                        // // return;
-                        // oModel.submitChanges({
-                        //     groupId: "insert",
-                        //     success: function (oData, oResponse) {
-                        //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                        //     },
-                        //     error: function (oData, oResponse) {
-                        //     }
-                        // });
-
                         this.setRowReadMode(arg);
                     } else {
                         MessageBox.informationshowMessage(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
@@ -6997,7 +7037,7 @@ sap.ui.define([
                         var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                         //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
-                        aEditedRows.forEach(item => {
+                        aEditedRows.forEach(async item => {
                             //LOOP THRU COLLECTION OF SIZES FOR THE IO
                             this._iosizes.forEach(async colSizes => {
                                 updEntitySet = entitySet;
@@ -7105,6 +7145,7 @@ sap.ui.define([
                             iEdited++;
                             if (iEdited === aEditedRows.length) {
                                 // Common.closeProcessingDialog(me);
+
                                 MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 if (arg === "IODET") {
@@ -7176,6 +7217,15 @@ sap.ui.define([
 
                 switch (arg) {
                     case "IODET":
+                        //UPDATE IOHDR QUANTITY
+                        _promiseResult = new Promise((resolve, reject) => {
+                            setTimeout(() => {
+                                this.UpdateIOHdrQuantity();
+                            }, 100);
+                            resolve();
+                        });
+                        await _promiseResult;
+
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
