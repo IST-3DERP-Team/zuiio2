@@ -4555,6 +4555,7 @@ sap.ui.define([
                         oData.results.forEach((item, index) => {
                             item.ACTIVE = index === 0 ? "X" : "";
                             item.BASEIND = item.BASEIND === "X" ? true : false;
+                            item.DELETED = item.DELETED === "X" ? true : false;
                         });
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
@@ -5915,7 +5916,7 @@ sap.ui.define([
                 }
             },
 
-            onDelete(arg) {
+            onTagAsDeleted(arg) {
                 var me = this;
                 var oFunction = {};
                 var oCondition = "", vCondition = "";
@@ -5972,7 +5973,6 @@ sap.ui.define([
                                     aParam = aSelectedData;
                                 }
                                 else {
-                                    console.log(aSelectedData);
                                     var bToDelete = true;
     
                                     aSelectedData.forEach(item => {
@@ -6000,11 +6000,8 @@ sap.ui.define([
                                     })
     
                                     sValidated = this.getView().getModel("ddtext").getData()["INFO_FF_REC_CANNOT_DELETE"] + "\r\n" + sValidated2 + sValidated3 + sValidated4;
-                                    console.log(aParam);
-    
-                                    // if (sValidated.length > 0) MessageBox.information("The following cannot be deleted. " + "\r\n" + sValidated);
                                 }
-                                console.log(aParam)
+
                                 if (aParam.length > 0) {
                                     var entitySet = "/MainSet";
                                     
@@ -6070,6 +6067,64 @@ sap.ui.define([
                                     MessageBox.information(sValidated);
                                 }                                
                             }
+                        }
+                        else if (arg === "size") {
+                            var entitySet = "/AttribSet";
+                                    
+                            this._oModelIOMatList.setHeaders({ UPDTYP: "DELETE" });
+                            this._oModelIOMatList.setUseBatch(true);
+                            this._oModelIOMatList.setDeferredGroups(["update"]);
+
+                            var mParameters = {
+                                "groupId": "update"
+                            }
+
+                            var centitySet = entitySet;
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aSelectedData.forEach(item => {
+                                entitySet = centitySet + "(";
+                                var param = {};
+                                var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                                // console.log(this._aColumns[arg])
+                                this._aColumns[arg].forEach(col => {               
+                                    if (iKeyCount === 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += "'" + item[col.ColumnName] + "'"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                    else if (iKeyCount > 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                })
+    
+                                if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                entitySet += ")";
+    
+                                this._oModelIOMatList.update(entitySet, param, mParameters);
+                            })
+    
+                            this._oModelIOMatList.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+                                    // if (aParam.length === aSelectedData.length) {
+                                    //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_DELETED"]);
+                                    // }
+                                    // else {
+                                    //     MessageBox.information(sDeleted + "\r\n" + sValidated);
+                                    // }
+                                    Common.closeProcessingDialog(me);
+                                    me.onRefresh("size");
+                                },
+                                error: function () {
+                                    Common.closeProcessingDialog(me);
+                                }
+                            }) 
                         }
                     }
                 }
@@ -10343,6 +10398,28 @@ sap.ui.define([
                         Common.openProcessingDialog(this, "Processing...");
                         this.getIOCostDetails(activeCostHdrData[0].CSTYPE, activeCostHdrData[0].VERSION, true);
                     }
+                }
+                else if (arg === "size") {
+                    Common.openProcessingDialog(this, "Processing...");
+
+                    this._oModelStyle.read('/AttribSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => {
+                                item.ACTIVE = index === 0 ? "X" : "";
+                                item.BASEIND = item.BASEIND === "X" ? true : false;
+                            });
+
+                            me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("sizeTab").bindRows("/rows");
+                            me._tableRendered = "sizeTab";
+
+                            Common.closeProcessingDialog(me)
+   ;                     },
+                        error: function (err) { }
+                    })
                 }
             },
 
