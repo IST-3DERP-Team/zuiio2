@@ -227,7 +227,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
-                                                selectionMode="Single"
+                                                selectionMode="MultiToggle"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
                                                 cellClick="onCellClick"

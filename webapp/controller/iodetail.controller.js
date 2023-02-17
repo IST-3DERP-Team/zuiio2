@@ -5340,7 +5340,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "UPDATEDBY" });
                 oDDTextParam.push({ CODE: "UPDATEDDT" });
                 oDDTextParam.push({ CODE: "REFRESH" });
-
+                oDDTextParam.push({ CODE: "UNDELETE" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_UNDELETED" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_NOT_DELETED" });
+                
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
                 oDDTextParam.push({ CODE: "COLORS" });
@@ -6772,16 +6775,16 @@ sap.ui.define([
                         else if (arg === "size") {
                             var entitySet = "/AttribSet";
                                     
-                            this._oModelIOMatList.setHeaders({ UPDTYP: "DELETE" });
-                            this._oModelIOMatList.setUseBatch(true);
-                            this._oModelIOMatList.setDeferredGroups(["update"]);
+                            this._oModelStyle.setHeaders({ UPDTYP: "DELETE" });
+                            this._oModelStyle.setUseBatch(true);
+                            this._oModelStyle.setDeferredGroups(["update"]);
 
                             var mParameters = {
                                 "groupId": "update"
                             }
 
                             var centitySet = entitySet;
-
+                            console.log("delete")
                             Common.openProcessingDialog(me, "Processing...");
 
                             aSelectedData.forEach(item => {
@@ -6807,10 +6810,10 @@ sap.ui.define([
                                 if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                 entitySet += ")";
     
-                                this._oModelIOMatList.update(entitySet, param, mParameters);
+                                this._oModelStyle.update(entitySet, param, mParameters);
                             })
     
-                            this._oModelIOMatList.submitChanges({
+                            this._oModelStyle.submitChanges({
                                 groupId: "update",
                                 success: function (oData, oResponse) {
                                     // if (aParam.length === aSelectedData.length) {
@@ -6819,6 +6822,122 @@ sap.ui.define([
                                     // else {
                                     //     MessageBox.information(sDeleted + "\r\n" + sValidated);
                                     // }
+                                    console.log(oResponse);
+                                    var sMessage = "";
+                                    var wError = false, bDeleted = false;;
+
+                                    oResponse.data.__batchResponses[0].__changeResponses.forEach(resp => {
+                                        var oMessage = JSON.parse(resp.headers["sap-message"]);
+    
+                                        if (oMessage.severity === "error") {
+                                            wError = true;
+                                        }
+                                        else {
+                                            bDeleted = true;
+                                        }
+
+                                        sMessage = sMessage + oMessage.message + "\r\n";
+                                    })
+
+                                    if (wError) {
+                                        MessageBox.information(sMessage);
+                                    }
+                                    else {
+                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_DELETED"]);
+                                    }                                    
+                                    
+                                    Common.closeProcessingDialog(me);
+                                    if (bDeleted) me.onRefresh("size");
+                                },
+                                error: function () {
+                                    Common.closeProcessingDialog(me);
+                                }
+                            }) 
+                        }
+                    }
+                }
+            },
+
+            onUndelete(arg) {
+                var me = this;
+                var oFunction = {};
+                var oCondition = "", vCondition = "";
+                var bProceed = true;
+                var oTable = this.byId(arg + "Tab");
+                var oTmpSelectedIndices = [];
+                var aSelectedData = [];
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var aData = oTable.getModel().getData().rows;
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach((item, index) => {
+                        if (aData.at(item).DELETED) {
+                            aSelectedData.push(aData.at(item));
+                        }
+                    })
+                }
+                else {
+                    bProceed = false;
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+                // console.log(aSelectedData);
+                if (bProceed) {
+                    if (aSelectedData.length === 0) {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_NOT_DELETED"]);
+                    }
+                    else {
+                        if (arg === "size") {
+                            var entitySet = "/AttribSet";
+                                    
+                            this._oModelStyle.setHeaders({ UPDTYP: "UNDELETE" });
+                            this._oModelStyle.setUseBatch(true);
+                            this._oModelStyle.setDeferredGroups(["update"]);
+
+                            var mParameters = {
+                                "groupId": "update"
+                            }
+
+                            var centitySet = entitySet;
+                            console.log("delete")
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aSelectedData.forEach(item => {
+                                entitySet = centitySet + "(";
+                                var param = {};
+                                var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                                // console.log(this._aColumns[arg])
+                                this._aColumns[arg].forEach(col => {               
+                                    if (iKeyCount === 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += "'" + item[col.ColumnName] + "'"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                    else if (iKeyCount > 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                })
+    
+                                if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                entitySet += ")";
+    
+                                this._oModelStyle.update(entitySet, param, mParameters);
+                            })
+    
+                            this._oModelStyle.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_UNDELETED"]);                                   
+                                    
                                     Common.closeProcessingDialog(me);
                                     me.onRefresh("size");
                                 },
@@ -11126,6 +11245,7 @@ sap.ui.define([
                             oData.results.forEach((item, index) => {
                                 item.ACTIVE = index === 0 ? "X" : "";
                                 item.BASEIND = item.BASEIND === "X" ? true : false;
+                                item.DELETED = item.DELETED === "X" ? true : false;
                             });
 
                             me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
