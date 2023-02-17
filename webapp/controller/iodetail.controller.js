@@ -1677,6 +1677,23 @@ sap.ui.define([
                 });
             },
 
+            getIOSizes: function () {
+                //get color attributes
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+
+                oModel.setHeaders({
+                    styleno: this._styleNo //"1000000272"
+                });
+
+                oModel.read("/StyleAttributesSizeSet", {
+                    success: function (oData, oResponse) {
+                        me._iosizes = oData.results;
+                    },
+                    error: function (err) { }
+                });
+            },
+
             getIODynamicColumns: async function (arg1, arg2, arg3, arg4) {
                 var me = this;
                 var columnData = [];
@@ -6847,7 +6864,10 @@ sap.ui.define([
                                     }                                    
                                     
                                     Common.closeProcessingDialog(me);
-                                    if (bDeleted) me.onRefresh("size");
+                                    if (bDeleted) {
+                                        me.onRefresh("size");
+                                        me.getIOSizes();
+                                    }
                                 },
                                 error: function () {
                                     Common.closeProcessingDialog(me);
@@ -6904,7 +6924,7 @@ sap.ui.define([
                             }
 
                             var centitySet = entitySet;
-                            console.log("delete")
+
                             Common.openProcessingDialog(me, "Processing...");
 
                             aSelectedData.forEach(item => {
@@ -6940,6 +6960,7 @@ sap.ui.define([
                                     
                                     Common.closeProcessingDialog(me);
                                     me.onRefresh("size");
+                                    me.getIOSizes();
                                 },
                                 error: function () {
                                     Common.closeProcessingDialog(me);
