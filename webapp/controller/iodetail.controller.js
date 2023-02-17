@@ -7627,6 +7627,7 @@ sap.ui.define([
                             case "color":
                                 entitySet = entitySet + "AttribSet";
                                 oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                oModel.setHeaders({ UPDTYP: "UPDATE" });
                                 break;
                             case "process":
                                 entitySet = entitySet + "ProcessSet";
@@ -8084,6 +8085,7 @@ sap.ui.define([
                             case "color":
                                 entitySet = entitySet + "AttribSet";
                                 oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                oModel.setHeaders({ UPDTYP: "UPDATE" });
                                 break;
                             case "process":
                                 entitySet = entitySet + "ProcessSet";
