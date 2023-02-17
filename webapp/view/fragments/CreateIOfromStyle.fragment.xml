@@ -157,7 +157,7 @@
         </Panel>
         <buttons>
             <Button text="{i18n>Select}" press="onfragmentIOSelect('IOStyleSelectTab')" tooltip="Select" />
-            <Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel" />
+            <Button text="{i18n>Cancel}" press="onCloseIOStyle" tooltip="Cancel" />
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

@@ -172,7 +172,7 @@
 		</Panel>
 		<buttons>
 			<Button text="{i18n>Copy}" press="onfragmentCopyIO" tooltip="Copy"/>
-			<Button text="{i18n>Cancel}" press="onCloseDialog" tooltip="Cancel"/>
+			<Button text="{i18n>Cancel}" press="onCloseCopyIO" tooltip="Cancel"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

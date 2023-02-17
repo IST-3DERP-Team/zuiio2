@@ -483,7 +483,7 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}" 
                                 class="sapUiSmallMarginBottom"
-                                valueFormat="dd/MM/yyy" displayFormat="short"/>
+                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
                             <!-- <Input id="CUSTDLVDT"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement> 
@@ -510,7 +510,19 @@
                             <Input id="REMARKS" value="{headerData>/REMARKS}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REMARKS} : false }" valueStateText="Required"/>
                         </f:fields>
-                    </f:FormElement>                            
+                    </f:FormElement> 
+                    <f:FormElement label="{i18n>STATUSCD}"  visible="false">
+                        <f:fields>
+                            <Input id="STATUSCD" value="{headerData>/STATUSCD}" 
+                            editable="false" valueStateText="Required"/>
+                        </f:fields>
+                    </f:FormElement>       
+                    <f:FormElement label="{i18n>IOPREFIX}"  visible="false">
+                        <f:fields>
+                            <Input id="IOPREFIX" value="{headerData>/IOPREFIX}" 
+                            editable="false" valueStateText="Required"/>
+                        </f:fields>
+                    </f:FormElement>                      
                 </f:formElements>
             </f:FormContainer>
 

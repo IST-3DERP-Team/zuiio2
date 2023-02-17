@@ -321,6 +321,9 @@ sap.ui.define([
                 // });
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
+                        oData.results.forEach(item => {
+                            item.SOLDTOCUST = "000" + item.SOLDTOCUST;
+                        })
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
                         // console.log("IOSTYSELDataModel");
@@ -1530,6 +1533,25 @@ sap.ui.define([
 
             onCloseDialog: function (oEvent) {
                 oEvent.getSource().getParent().close();
+            },
+
+            
+            onCloseCopyIO: function() {
+                this._CopyIODialog.close();
+                this._CopyIODialog.destroy();
+                this._CopyIODialog = null;                
+            },
+
+            onCloseIOSD: function() {
+                this._IOfromSalesDocDialog.close();
+                this._IOfromSalesDocDialog.destroy();
+                this._IOfromSalesDocDialog = null;
+            },
+
+            onCloseIOStyle: function() {
+                this._IOfromStyleDialog.close();
+                this._IOfromStyleDialog.destroy();
+                this._IOfromStyleDialog = null;
             },
 
             onCreateIO: function (createTyp) {

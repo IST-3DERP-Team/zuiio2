@@ -27,7 +27,7 @@
                 icon="sap-icon://multiselect-none"
                 class="sapUiResponsivePadding--header"
                 title="IO# {headerData>/IOPREFIX}-{headerData>/IONO}-{headerData>/IOSUFFIX}     ({headerData>/IODESC})"
-                intro="{i18n>STYLENO} : {headerData>/STYLENO}"
+                intro="{i18n>STYLENO} : {headerData>/STYLENO} / {headerData>/VERNO}"
                 number="{headerData>/STATUSCD}"
                 numberUnit="{i18n>Status}"
                 numberState="{= ${headerData>/STATUSCD} === 'REL' ? 'Success' : ${headerData>/STATUSCD} === 'CNL' ? 'Error' : 'Information'}"
@@ -480,7 +480,7 @@
                     <!-- DELIVERY SCHEDULE -->                    
                     <IconTabFilter text="Order Details" key="itfDLVSCHED">
                         <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
-                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
+                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                 </t:rowSettingsTemplate>
@@ -506,7 +506,7 @@
                                 </t:extension>
                             </t:Table>
                         </Panel>
-                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </t:rowSettingsTemplate>
