@@ -6321,11 +6321,13 @@ sap.ui.define([
                             this.byId("btnEditColor").setVisible(false);
                             this.byId("btnSaveColor").setVisible(true);
                             this.byId("btnCancelColor").setVisible(true);
+                            this.byId("btnRefreshColor").setVisible(false);
                         }
                         else if (arg === "process") {
                             this.byId("btnEditProcess").setVisible(false);
                             this.byId("btnSaveProcess").setVisible(true);
                             this.byId("btnCancelProcess").setVisible(true);
+                            this.byId("btnRefreshProcess").setVisible(false);
                         }
                         else if (arg === "ioMatList") {
                             this.byId("btnSubmitMRP").setVisible(false);
@@ -6416,37 +6418,37 @@ sap.ui.define([
                         this._validationErrors = [];
                         this._sTableModel = arg;
                         this._dataMode = "EDIT";
-                    }
 
-                    if (arg !== "IODET")
+                        if (arg !== "IODET")
                         this.setActiveRowHighlightByTableId(arg + "Tab");
 
-                    var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                    oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
-                        .forEach(item => item.setProperty("enabled", false));
-
-                    if (arg === "IOATTRIB" || arg === "IOSTATUS") {
-                        var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                        var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                        oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", false));
-                    }
 
-                    if (arg === "color" || arg === "process") {
-                        var oIconTabBarStyle = this.byId("itbStyleDetail");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                            .forEach(item => item.setProperty("enabled", false));
-                    }
+                        if (arg === "IOATTRIB" || arg === "IOSTATUS") {
+                            var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }
 
-                    // if (arg === "IODLV" || arg === "IODET") {
-                    //     var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                    //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                    //         .forEach(item => item.setProperty("enabled", false));
-                    // }
+                        if (arg === "color" || arg === "process") {
+                            var oIconTabBarStyle = this.byId("itbStyleDetail");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }
 
-                    if (arg === "IOATTRIB") {
-                        var oIconTabBarStyle = this.byId("itfIOATTRIB");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                            .forEach(item => item.setProperty("enabled", false));
+                        // if (arg === "IODLV" || arg === "IODET") {
+                        //     var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                        //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                        //         .forEach(item => item.setProperty("enabled", false));
+                        // }
+
+                        if (arg === "IOATTRIB") {
+                            var oIconTabBarStyle = this.byId("itfIOATTRIB");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }                        
                     }
                 }
             },
@@ -6489,11 +6491,13 @@ sap.ui.define([
                         this.byId("btnEditColor").setVisible(true);
                         this.byId("btnSaveColor").setVisible(false);
                         this.byId("btnCancelColor").setVisible(false);
+                        this.byId("btnRefreshColor").setVisible(true);
                     }
                     else if (arg === "process") {
                         this.byId("btnEditProcess").setVisible(true);
                         this.byId("btnSaveProcess").setVisible(false);
                         this.byId("btnCancelProcess").setVisible(false);
+                        this.byId("btnRefreshProcess").setVisible(true);
                     }
                     else if (arg === "ioMatList") {
                         this.byId("btnSubmitMRP").setVisible(true);
@@ -7737,11 +7741,13 @@ sap.ui.define([
                                                 me.byId("btnEditColor").setVisible(true);
                                                 me.byId("btnSaveColor").setVisible(false);
                                                 me.byId("btnCancelColor").setVisible(false);
+                                                me.byId("btnRefreshColor").setVisible(true);
                                             }
                                             else if (arg === "process") {
                                                 me.byId("btnEditProcess").setVisible(true);
                                                 me.byId("btnSaveProcess").setVisible(false);
                                                 me.byId("btnCancelProcess").setVisible(false);
+                                                me.byId("btnRefreshProcess").setVisible(true);
                                             }
                                             else if (arg === "ioMatList") {
                                                 me.byId("btnSubmitMRP").setVisible(true);
@@ -8181,11 +8187,13 @@ sap.ui.define([
                                     me.byId("btnEditColor").setVisible(true);
                                     me.byId("btnSaveColor").setVisible(false);
                                     me.byId("btnCancelColor").setVisible(false);
+                                    me.byId("btnRefreshColor").setVisible(true);
                                 }
                                 else if (arg === "process") {
                                     me.byId("btnEditProcess").setVisible(true);
                                     me.byId("btnSaveProcess").setVisible(false);
                                     me.byId("btnCancelProcess").setVisible(false);
+                                    me.byId("btnRefreshProcess").setVisible(true);
                                 }
                                 else if (arg === "ioMatList") {
                                     me.byId("btnSubmitMRP").setVisible(true);
@@ -9084,11 +9092,13 @@ sap.ui.define([
                             this.byId("btnEditColor").setVisible(true);
                             this.byId("btnSaveColor").setVisible(false);
                             this.byId("btnCancelColor").setVisible(false);
+                            this.byId("btnRefreshColor").setVisible(true);
                         }
                         else if (this._sTableModel === "process") {
                             this.byId("btnEditProcess").setVisible(true);
                             this.byId("btnSaveProcess").setVisible(false);
                             this.byId("btnCancelProcess").setVisible(false);
+                            this.byId("btnRefreshProcess").setVisible(true);
                         }
                         else if (this._sTableModel === "ioMatList") {
                             this.byId("btnSubmitMRP").setVisible(true);
@@ -11279,6 +11289,40 @@ sap.ui.define([
    ;                     },
                         error: function (err) { }
                     })
+                }
+                else if (arg === "color") {
+                    Common.openProcessingDialog(this, "Processing...");
+
+                    this._oModelStyle.read('/AttribSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            me.byId("colorTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("colorTab").bindRows("/rows");
+                            me._tableRendered = "colorTab";
+                            Common.closeProcessingDialog(me)
+                        },
+                        error: function (err) { }
+                    })                   
+                }
+                else if (arg === "process") {
+                    Common.openProcessingDialog(this, "Processing...");
+    
+                    this._oModelStyle.read('/ProcessSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            me.byId("processTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("processTab").bindRows("/rows");
+                            me._tableRendered = "processTab";
+                            Common.closeProcessingDialog(me)
+                        },
+                        error: function (err) { }
+                    })                    
                 }
             },
 

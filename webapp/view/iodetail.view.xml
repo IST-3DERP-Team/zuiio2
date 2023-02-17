@@ -185,6 +185,12 @@
                                                             press="onCancel('color')" 
                                                             tooltip="{ddtext>/CANCEL}"
                                                             visible="false" />
+                                                        <Button id="btnRefreshColor" 
+                                                            text="{ddtext>/REFRESH}" 
+                                                            icon="sap-icon://refresh" 
+                                                            press="onRefresh('color')" 
+                                                            tooltip="{ddtext>/REFRESH}" 
+                                                            visible="true" />                                                            
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
@@ -217,6 +223,7 @@
                                                         <Button id="btnEditProcess" text="{ddtext>/EDIT}" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
                                                         <Button id="btnSaveProcess" text="{ddtext>/SAVE}" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
                                                         <Button id="btnCancelProcess" text="{ddtext>/CANCEL}" icon="sap-icon://sys-cancel" press="onCancel('process')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                                        <Button id="btnRefreshProcess" text="{ddtext>/REFRESH}" icon="sap-icon://refresh" press="onRefresh('process')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
