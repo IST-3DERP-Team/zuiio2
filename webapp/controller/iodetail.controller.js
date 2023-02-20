@@ -484,9 +484,10 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                // console.log("getIOSizes");
+                console.log("getIOSizes 1");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
+                        console.log("getIOSizes 2");
                         this.getIOSizes();
                     }, 100);
                     resolve();
@@ -1636,11 +1637,13 @@ sap.ui.define([
 
             getIOSizes: async function () {
                 //get color attributes
+                console.log("IOATTRIBTYPSet 1");
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel();
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 // console.log("getIOSizes");
-                // console.log(vIONo);
+                console.log(vIONo);
+                console.log("IOATTRIBTYPSet 2");
 
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.read("/IOATTRIBTYPSet", {
@@ -1648,6 +1651,8 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
                         },
                         success: function (oData, oResponse) {
+                            console.log("IOATTRIBTYPSet");
+                            console.log(oData);
                             me._iosizes = oData.results;
                             resolve();
                         },
@@ -1677,22 +1682,22 @@ sap.ui.define([
                 });
             },
 
-            getIOSizes: function () {
-                //get color attributes
-                var me = this;
-                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+            // getIOSizes: function () {
+            //     //get color attributes
+            //     var me = this;
+            //     var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
 
-                oModel.setHeaders({
-                    styleno: this._styleNo //"1000000272"
-                });
+            //     oModel.setHeaders({
+            //         styleno: this._styleNo //"1000000272"
+            //     });
 
-                oModel.read("/StyleAttributesSizeSet", {
-                    success: function (oData, oResponse) {
-                        me._iosizes = oData.results;
-                    },
-                    error: function (err) { }
-                });
-            },
+            //     oModel.read("/StyleAttributesSizeSet", {
+            //         success: function (oData, oResponse) {
+            //             me._iosizes = oData.results;
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
             getIODynamicColumns: async function (arg1, arg2, arg3, arg4) {
                 var me = this;
@@ -1715,6 +1720,9 @@ sap.ui.define([
                     var columns;
                     var ccolumns;
                     var pivotArray;
+
+                    console.log("me._iosizes");
+                    console.log(me._iosizes);
                     pivotArray = me._iosizes;
 
                     // console.log("pivotArray");
@@ -5057,9 +5065,9 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "'"
                             },
                             success: function (oData, response) {
-                                // console.log("Reload IO Data");
-                                // console.log(ioNo);
-                                // console.log(oData);
+                                console.log("Reload IO Data");
+                                // console.log(cIONo);
+                                console.log(oData);
                                 oData.results.forEach(item => {
                                     item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
                                     item.DLVDT = item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT));
