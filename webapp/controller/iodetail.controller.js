@@ -4039,8 +4039,8 @@ sap.ui.define([
                         };
                     }
 
-                    console.log("oParamIOHeaderData");
-                    console.log(oParamIOHeaderData);
+                    // console.log("oParamIOHeaderData");
+                    // console.log(oParamIOHeaderData);
 
                     var oModel = this.getOwnerComponent().getModel();
 
@@ -6834,13 +6834,6 @@ sap.ui.define([
                             "groupId": "insert"
                         };
 
-                        // var aDeferredGroup = oModel.getDeferredGroups().push("insert");
-                        // oModel.setDeferredGroups(aDeferredGroup);
-
-                        // var mParameters = {
-                        //     groupId: "insert"
-                        // };
-
                         //APPLY SIZE DATAMODEL UNPIVOT
 
                         var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
@@ -6950,9 +6943,20 @@ sap.ui.define([
                             // console.log(oModel);
                             // return;
                             oModel.submitChanges({
-                                mParameters,
-                                // groupId: "insert",
+                                // mParameters,
+                                groupId: "insert",
                                 success: function (oData, oResponse) {
+
+                                    setTimeout(() => {
+                                        me.UpdateIOHdrQuantity();
+                                    }, 100);
+
+                                    setTimeout(() => {
+                                        me.getHeaderData();
+                                        me.getView().getId("ORDQTY").value = me.getView().getModel("headerData").getData()["ORDQTY"];
+                                        me.getView().getId("REVORDQTY").value = me.getView().getModel("headerData").getData()["REVORDQTY"];
+                                    }, 100);
+
                                     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                                 },
                                 error: function (oData, oResponse) {
@@ -7139,12 +7143,40 @@ sap.ui.define([
                                 await _promiseResult;
                             });
 
+                            // oUpdModel.submitChanges({
+                            //     groupId: "update",
+                            //     success: function (oData, oResponse) {
+
+                            //         setTimeout(() => {
+                            //             me.UpdateIOHdrQuantity();
+                            //         }, 100);
+
+                            //         setTimeout(() => {
+                            //             me.getHeaderData();
+                            //         }, 100);
+
+                            //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                            //     },
+                            //     error: function (oData, oResponse) {
+                            //     }
+                            // });
+
 
                             // return;
 
                             iEdited++;
                             if (iEdited === aEditedRows.length) {
                                 // Common.closeProcessingDialog(me);
+
+                                setTimeout(() => {
+                                    me.UpdateIOHdrQuantity();
+                                }, 100);
+
+                                setTimeout(() => {
+                                    me.getHeaderData();
+                                    me.getView().getId("ORDQTY").value = me.getView().getModel("headerData").getData()["ORDQTY"];
+                                    me.getView().getId("REVORDQTY").value = me.getView().getModel("headerData").getData()["REVORDQTY"];
+                                }, 100);
 
                                 MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
@@ -7183,19 +7215,6 @@ sap.ui.define([
                             }
                         })
 
-                        // return;
-
-                        // console.log(oUpdModel);
-                        // // return;
-                        // oUpdModel.submitChanges({
-                        //     groupId: "update",
-                        //     success: function (oData, oResponse) {
-                        //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                        //     },
-                        //     error: function (oData, oResponse) {
-                        //     }
-                        // });
-
                         this.setRowReadMode(arg);
                     } else {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
@@ -7217,15 +7236,6 @@ sap.ui.define([
 
                 switch (arg) {
                     case "IODET":
-                        //UPDATE IOHDR QUANTITY
-                        _promiseResult = new Promise((resolve, reject) => {
-                            setTimeout(() => {
-                                this.UpdateIOHdrQuantity();
-                            }, 100);
-                            resolve();
-                        });
-                        await _promiseResult;
-
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
