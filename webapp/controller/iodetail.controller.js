@@ -1677,6 +1677,23 @@ sap.ui.define([
                 });
             },
 
+            getIOSizes: function () {
+                //get color attributes
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+
+                oModel.setHeaders({
+                    styleno: this._styleNo //"1000000272"
+                });
+
+                oModel.read("/StyleAttributesSizeSet", {
+                    success: function (oData, oResponse) {
+                        me._iosizes = oData.results;
+                    },
+                    error: function (err) { }
+                });
+            },
+
             getIODynamicColumns: async function (arg1, arg2, arg3, arg4) {
                 var me = this;
                 var columnData = [];
@@ -5256,6 +5273,7 @@ sap.ui.define([
                         oData.results.forEach((item, index) => {
                             item.ACTIVE = index === 0 ? "X" : "";
                             item.BASEIND = item.BASEIND === "X" ? true : false;
+                            item.DELETED = item.DELETED === "X" ? true : false;
                         });
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
@@ -5339,7 +5357,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "UPDATEDBY" });
                 oDDTextParam.push({ CODE: "UPDATEDDT" });
                 oDDTextParam.push({ CODE: "REFRESH" });
-
+                oDDTextParam.push({ CODE: "UNDELETE" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_UNDELETED" });
+                oDDTextParam.push({ CODE: "INFO_SEL_RECORD_NOT_DELETED" });
+                
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
                 oDDTextParam.push({ CODE: "COLORS" });
@@ -6300,11 +6321,13 @@ sap.ui.define([
                             this.byId("btnEditColor").setVisible(false);
                             this.byId("btnSaveColor").setVisible(true);
                             this.byId("btnCancelColor").setVisible(true);
+                            this.byId("btnRefreshColor").setVisible(false);
                         }
                         else if (arg === "process") {
                             this.byId("btnEditProcess").setVisible(false);
                             this.byId("btnSaveProcess").setVisible(true);
                             this.byId("btnCancelProcess").setVisible(true);
+                            this.byId("btnRefreshProcess").setVisible(false);
                         }
                         else if (arg === "ioMatList") {
                             this.byId("btnSubmitMRP").setVisible(false);
@@ -6395,37 +6418,37 @@ sap.ui.define([
                         this._validationErrors = [];
                         this._sTableModel = arg;
                         this._dataMode = "EDIT";
-                    }
 
-                    if (arg !== "IODET")
+                        if (arg !== "IODET")
                         this.setActiveRowHighlightByTableId(arg + "Tab");
 
-                    var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                    oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
-                        .forEach(item => item.setProperty("enabled", false));
-
-                    if (arg === "IOATTRIB" || arg === "IOSTATUS") {
-                        var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                        var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                        oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", false));
-                    }
 
-                    if (arg === "color" || arg === "process") {
-                        var oIconTabBarStyle = this.byId("itbStyleDetail");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                            .forEach(item => item.setProperty("enabled", false));
-                    }
+                        if (arg === "IOATTRIB" || arg === "IOSTATUS") {
+                            var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }
 
-                    // if (arg === "IODLV" || arg === "IODET") {
-                    //     var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                    //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                    //         .forEach(item => item.setProperty("enabled", false));
-                    // }
+                        if (arg === "color" || arg === "process") {
+                            var oIconTabBarStyle = this.byId("itbStyleDetail");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }
 
-                    if (arg === "IOATTRIB") {
-                        var oIconTabBarStyle = this.byId("itfIOATTRIB");
-                        oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                            .forEach(item => item.setProperty("enabled", false));
+                        // if (arg === "IODLV" || arg === "IODET") {
+                        //     var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                        //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                        //         .forEach(item => item.setProperty("enabled", false));
+                        // }
+
+                        if (arg === "IOATTRIB") {
+                            var oIconTabBarStyle = this.byId("itfIOATTRIB");
+                            oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }                        
                     }
                 }
             },
@@ -6468,11 +6491,13 @@ sap.ui.define([
                         this.byId("btnEditColor").setVisible(true);
                         this.byId("btnSaveColor").setVisible(false);
                         this.byId("btnCancelColor").setVisible(false);
+                        this.byId("btnRefreshColor").setVisible(true);
                     }
                     else if (arg === "process") {
                         this.byId("btnEditProcess").setVisible(true);
                         this.byId("btnSaveProcess").setVisible(false);
                         this.byId("btnCancelProcess").setVisible(false);
+                        this.byId("btnRefreshProcess").setVisible(true);
                     }
                     else if (arg === "ioMatList") {
                         this.byId("btnSubmitMRP").setVisible(true);
@@ -6616,7 +6641,7 @@ sap.ui.define([
                 }
             },
 
-            onDelete(arg) {
+            onTagAsDeleted(arg) {
                 var me = this;
                 var oFunction = {};
                 var oCondition = "", vCondition = "";
@@ -6673,7 +6698,6 @@ sap.ui.define([
                                     aParam = aSelectedData;
                                 }
                                 else {
-                                    console.log(aSelectedData);
                                     var bToDelete = true;
 
                                     aSelectedData.forEach(item => {
@@ -6701,11 +6725,8 @@ sap.ui.define([
                                     })
 
                                     sValidated = this.getView().getModel("ddtext").getData()["INFO_FF_REC_CANNOT_DELETE"] + "\r\n" + sValidated2 + sValidated3 + sValidated4;
-                                    console.log(aParam);
-
-                                    // if (sValidated.length > 0) MessageBox.information("The following cannot be deleted. " + "\r\n" + sValidated);
                                 }
-                                console.log(aParam)
+
                                 if (aParam.length > 0) {
                                     var entitySet = "/MainSet";
 
@@ -6771,6 +6792,184 @@ sap.ui.define([
                                     MessageBox.information(sValidated);
                                 }
                             }
+                        }
+                        else if (arg === "size") {
+                            var entitySet = "/AttribSet";
+                                    
+                            this._oModelStyle.setHeaders({ UPDTYP: "DELETE" });
+                            this._oModelStyle.setUseBatch(true);
+                            this._oModelStyle.setDeferredGroups(["update"]);
+
+                            var mParameters = {
+                                "groupId": "update"
+                            }
+
+                            var centitySet = entitySet;
+                            console.log("delete")
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aSelectedData.forEach(item => {
+                                entitySet = centitySet + "(";
+                                var param = {};
+                                var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                                // console.log(this._aColumns[arg])
+                                this._aColumns[arg].forEach(col => {               
+                                    if (iKeyCount === 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += "'" + item[col.ColumnName] + "'"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                    else if (iKeyCount > 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                })
+    
+                                if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                entitySet += ")";
+    
+                                this._oModelStyle.update(entitySet, param, mParameters);
+                            })
+    
+                            this._oModelStyle.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+                                    // if (aParam.length === aSelectedData.length) {
+                                    //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_DELETED"]);
+                                    // }
+                                    // else {
+                                    //     MessageBox.information(sDeleted + "\r\n" + sValidated);
+                                    // }
+                                    console.log(oResponse);
+                                    var sMessage = "";
+                                    var wError = false, bDeleted = false;;
+
+                                    oResponse.data.__batchResponses[0].__changeResponses.forEach(resp => {
+                                        var oMessage = JSON.parse(resp.headers["sap-message"]);
+    
+                                        if (oMessage.severity === "error") {
+                                            wError = true;
+                                        }
+                                        else {
+                                            bDeleted = true;
+                                        }
+
+                                        sMessage = sMessage + oMessage.message + "\r\n";
+                                    })
+
+                                    if (wError) {
+                                        MessageBox.information(sMessage);
+                                    }
+                                    else {
+                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_DELETED"]);
+                                    }                                    
+                                    
+                                    Common.closeProcessingDialog(me);
+                                    if (bDeleted) {
+                                        me.onRefresh("size");
+                                        me.getIOSizes();
+                                    }
+                                },
+                                error: function () {
+                                    Common.closeProcessingDialog(me);
+                                }
+                            }) 
+                        }
+                    }
+                }
+            },
+
+            onUndelete(arg) {
+                var me = this;
+                var oFunction = {};
+                var oCondition = "", vCondition = "";
+                var bProceed = true;
+                var oTable = this.byId(arg + "Tab");
+                var oTmpSelectedIndices = [];
+                var aSelectedData = [];
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var aData = oTable.getModel().getData().rows;
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach((item, index) => {
+                        if (aData.at(item).DELETED) {
+                            aSelectedData.push(aData.at(item));
+                        }
+                    })
+                }
+                else {
+                    bProceed = false;
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+                // console.log(aSelectedData);
+                if (bProceed) {
+                    if (aSelectedData.length === 0) {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_NOT_DELETED"]);
+                    }
+                    else {
+                        if (arg === "size") {
+                            var entitySet = "/AttribSet";
+                                    
+                            this._oModelStyle.setHeaders({ UPDTYP: "UNDELETE" });
+                            this._oModelStyle.setUseBatch(true);
+                            this._oModelStyle.setDeferredGroups(["update"]);
+
+                            var mParameters = {
+                                "groupId": "update"
+                            }
+
+                            var centitySet = entitySet;
+
+                            Common.openProcessingDialog(me, "Processing...");
+
+                            aSelectedData.forEach(item => {
+                                entitySet = centitySet + "(";
+                                var param = {};
+                                var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                                // console.log(this._aColumns[arg])
+                                this._aColumns[arg].forEach(col => {               
+                                    if (iKeyCount === 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += "'" + item[col.ColumnName] + "'"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                    else if (iKeyCount > 1) {
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                            param[col.ColumnName] = item[col.ColumnName];
+                                        }
+                                    }
+                                })
+    
+                                if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                                entitySet += ")";
+    
+                                this._oModelStyle.update(entitySet, param, mParameters);
+                            })
+    
+                            this._oModelStyle.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_SEL_RECORD_UNDELETED"]);                                   
+                                    
+                                    Common.closeProcessingDialog(me);
+                                    me.onRefresh("size");
+                                    me.getIOSizes();
+                                },
+                                error: function () {
+                                    Common.closeProcessingDialog(me);
+                                }
+                            }) 
                         }
                     }
                 }
@@ -7442,6 +7641,7 @@ sap.ui.define([
                             case "color":
                                 entitySet = entitySet + "AttribSet";
                                 oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                oModel.setHeaders({ UPDTYP: "UPDATE" });
                                 break;
                             case "process":
                                 entitySet = entitySet + "ProcessSet";
@@ -7551,11 +7751,13 @@ sap.ui.define([
                                                 me.byId("btnEditColor").setVisible(true);
                                                 me.byId("btnSaveColor").setVisible(false);
                                                 me.byId("btnCancelColor").setVisible(false);
+                                                me.byId("btnRefreshColor").setVisible(true);
                                             }
                                             else if (arg === "process") {
                                                 me.byId("btnEditProcess").setVisible(true);
                                                 me.byId("btnSaveProcess").setVisible(false);
                                                 me.byId("btnCancelProcess").setVisible(false);
+                                                me.byId("btnRefreshProcess").setVisible(true);
                                             }
                                             else if (arg === "ioMatList") {
                                                 me.byId("btnSubmitMRP").setVisible(true);
@@ -7899,6 +8101,7 @@ sap.ui.define([
                             case "color":
                                 entitySet = entitySet + "AttribSet";
                                 oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                                oModel.setHeaders({ UPDTYP: "UPDATE" });
                                 break;
                             case "process":
                                 entitySet = entitySet + "ProcessSet";
@@ -7994,11 +8197,13 @@ sap.ui.define([
                                     me.byId("btnEditColor").setVisible(true);
                                     me.byId("btnSaveColor").setVisible(false);
                                     me.byId("btnCancelColor").setVisible(false);
+                                    me.byId("btnRefreshColor").setVisible(true);
                                 }
                                 else if (arg === "process") {
                                     me.byId("btnEditProcess").setVisible(true);
                                     me.byId("btnSaveProcess").setVisible(false);
                                     me.byId("btnCancelProcess").setVisible(false);
+                                    me.byId("btnRefreshProcess").setVisible(true);
                                 }
                                 else if (arg === "ioMatList") {
                                     me.byId("btnSubmitMRP").setVisible(true);
@@ -8897,11 +9102,13 @@ sap.ui.define([
                             this.byId("btnEditColor").setVisible(true);
                             this.byId("btnSaveColor").setVisible(false);
                             this.byId("btnCancelColor").setVisible(false);
+                            this.byId("btnRefreshColor").setVisible(true);
                         }
                         else if (this._sTableModel === "process") {
                             this.byId("btnEditProcess").setVisible(true);
                             this.byId("btnSaveProcess").setVisible(false);
                             this.byId("btnCancelProcess").setVisible(false);
+                            this.byId("btnRefreshProcess").setVisible(true);
                         }
                         else if (this._sTableModel === "ioMatList") {
                             this.byId("btnSubmitMRP").setVisible(true);
@@ -11069,6 +11276,63 @@ sap.ui.define([
                         Common.openProcessingDialog(this, "Processing...");
                         this.getIOCostDetails(activeCostHdrData[0].CSTYPE, activeCostHdrData[0].VERSION, true);
                     }
+                }
+                else if (arg === "size") {
+                    Common.openProcessingDialog(this, "Processing...");
+
+                    this._oModelStyle.read('/AttribSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => {
+                                item.ACTIVE = index === 0 ? "X" : "";
+                                item.BASEIND = item.BASEIND === "X" ? true : false;
+                                item.DELETED = item.DELETED === "X" ? true : false;
+                            });
+
+                            me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("sizeTab").bindRows("/rows");
+                            me._tableRendered = "sizeTab";
+
+                            Common.closeProcessingDialog(me)
+   ;                     },
+                        error: function (err) { }
+                    })
+                }
+                else if (arg === "color") {
+                    Common.openProcessingDialog(this, "Processing...");
+
+                    this._oModelStyle.read('/AttribSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            me.byId("colorTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("colorTab").bindRows("/rows");
+                            me._tableRendered = "colorTab";
+                            Common.closeProcessingDialog(me)
+                        },
+                        error: function (err) { }
+                    })                   
+                }
+                else if (arg === "process") {
+                    Common.openProcessingDialog(this, "Processing...");
+    
+                    this._oModelStyle.read('/ProcessSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + vIONo + "'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            me.byId("processTab").getModel().setProperty("/rows", oData.results);
+                            me.byId("processTab").bindRows("/rows");
+                            me._tableRendered = "processTab";
+                            Common.closeProcessingDialog(me)
+                        },
+                        error: function (err) { }
+                    })                    
                 }
             },
 

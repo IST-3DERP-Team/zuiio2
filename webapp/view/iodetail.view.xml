@@ -185,6 +185,12 @@
                                                             press="onCancel('color')" 
                                                             tooltip="{ddtext>/CANCEL}"
                                                             visible="false" />
+                                                        <Button id="btnRefreshColor" 
+                                                            text="{ddtext>/REFRESH}" 
+                                                            icon="sap-icon://refresh" 
+                                                            press="onRefresh('color')" 
+                                                            tooltip="{ddtext>/REFRESH}" 
+                                                            visible="true" />                                                            
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
@@ -217,6 +223,7 @@
                                                         <Button id="btnEditProcess" text="{ddtext>/EDIT}" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
                                                         <Button id="btnSaveProcess" text="{ddtext>/SAVE}" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
                                                         <Button id="btnCancelProcess" text="{ddtext>/CANCEL}" icon="sap-icon://sys-cancel" press="onCancel('process')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                                        <Button id="btnRefreshProcess" text="{ddtext>/REFRESH}" icon="sap-icon://refresh" press="onRefresh('process')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
@@ -227,7 +234,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
-                                                selectionMode="Single"
+                                                selectionMode="MultiToggle"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
                                                 cellClick="onCellClick"
@@ -239,7 +246,16 @@
                                                 columnSelect="onColumnUpdated"
                                                 columnVisibility="onColumnUpdated"
                                                 alternateRowColors="true"
-                                            />
+                                            >
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <ToolbarSpacer />
+                                                        <Button id="btnDeleteSize" text="{ddtext>/DELETE}" icon="sap-icon://delete" press="onTagAsDeleted('size')" tooltip="{ddtext>/DELETE}" visible="true" />
+                                                        <Button id="btnUndeleteSize" text="{ddtext>/UNDELETE}" icon="sap-icon://undo" press="onUndelete('size')" tooltip="{ddtext>/UNDELETE}" visible="true" />
+                                                        <Button id="btnRefreshSize" text="{ddtext>/REFRESH}" icon="sap-icon://refresh" press="onRefresh('size')" tooltip="{ddtext>/REFRESH}" visible="true" />
+                                                    </Toolbar>
+                                                </t:extension>
+                                            </t:Table>                                            
                                         </IconTabFilter>
                                         <!-- <IconTabFilter text="{ddtext>/DTLDBOM}" key="bom">
                                             <t:TreeTable id="styleDetldBOMTab"
@@ -548,7 +564,7 @@
                                     <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
                                     <Button id="btnReorderIOMatList" text="{ddtext>/REORDER}" icon="sap-icon://redo" press="onReorder" tooltip="{ddtext>/REORDER}" visible="true" />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
-                                    <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onDelete('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
+                                    <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onTagAsDeleted('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
                                     <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onBatchSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIOMatList" icon="sap-icon://sys-cancel" press="onCancel('ioMatList')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
