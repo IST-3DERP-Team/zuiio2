@@ -1493,7 +1493,7 @@ sap.ui.define([
                                     "SEASONCD": item.SEASONCD,
                                     "CUSTGRP": item.CUSTGRP,
                                     "BASEUOM": item.UOM,
-                                    "SOLDTOCUST": "000" + item.SOLDTOCUST,
+                                    "SOLDTOCUST": item.SOLDTOCUST,
                                     "ORDQTY": 0,
                                     "ACTUALQTY": 0,
                                     "REVORDQTY": 0,
@@ -3040,19 +3040,19 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             if (sModelName === "BILLTOModel") {
                                 oData.results.forEach(item => {
-                                    item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : "000" + item.CUSTBILLTO;
+                                    item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : item.CUSTBILLTO;
                                 })
                             }
 
                             if (sModelName === "SHIPTOModel") {
                                 oData.results.forEach(item => {
-                                    item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : "000" + item.CUSTSHIPTO;
+                                    item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : item.CUSTSHIPTO;
                                 })
                             }
 
                             if (sModelName === "SOLDTOModel") {
                                 oData.results.forEach(item => {
-                                    item.KUNNR = item.KUNNR === undefined ? "" : "000" + item.KUNNR;
+                                    item.KUNNR = item.KUNNR === undefined ? "" : item.KUNNR;
                                 })
                             }
 
@@ -8655,7 +8655,7 @@ sap.ui.define([
                     this._oModel.read('/BILLTOvhSet', {
                         success: function (oData, response) {
                             oData.results.forEach(item => {
-                                item.KUNNR = "000" + item.KUNNR
+                                item.KUNNR = item.KUNNR
                             })
                             // console.log(oData);
                             // console.log("IODET_MODEL");
@@ -8667,7 +8667,7 @@ sap.ui.define([
                     this._oModel.read('/SHIPTOvhSet', {
                         success: function (oData, response) {
                             oData.results.forEach(item => {
-                                item.KUNNR = "000" + item.KUNNR
+                                item.KUNNR = item.KUNNR
                             })
                             // console.log(oData);
                             // console.log("IODET_MODEL");
@@ -8679,7 +8679,7 @@ sap.ui.define([
                     this._oModel.read('/SOLDTOvhSet', {
                         success: function (oData, response) {
                             oData.results.forEach(item => {
-                                item.KUNNR = "000" + item.KUNNR
+                                item.KUNNR = item.KUNNR
                             })
                             // console.log(oData);
                             // console.log("IODET_MODEL");

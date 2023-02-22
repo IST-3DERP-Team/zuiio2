@@ -322,7 +322,7 @@ sap.ui.define([
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
-                            item.SOLDTOCUST = "000" + item.SOLDTOCUST;
+                            item.SOLDTOCUST = item.SOLDTOCUST;
                         })
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
