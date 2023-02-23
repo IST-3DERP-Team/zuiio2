@@ -779,6 +779,8 @@ sap.ui.define([
                 await _promiseResult;
 
                 this.getHeaderData();
+                me.getView().getId("ORDQTY").value = me.getView().getModel("headerData").getData()["ORDQTY"];
+                me.getView().getId("REVORDQTY").value = me.getView().getModel("headerData").getData()["REVORDQTY"];
                 this.reloadIOData('IODLVTab', '/IODLVSet');
                 this.reloadIOData('IODETTab', '/IODETSet');
 
@@ -1402,7 +1404,16 @@ sap.ui.define([
                             success: function (oData, response) {
                                 // console.log("ATTRIBSet");
                                 // console.log(oData.results);
-                                oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                                oData.results.forEach((item, index) => 
+                                item.ACTIVE = index === 0 ? "X" : "");
+
+                                oData.results.forEach(item => {
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
+                                    item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                })
+
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
                                 me._tableRendered = "IOATTRIBTab";
@@ -8584,7 +8595,14 @@ sap.ui.define([
                                             change: this.onNumberChange.bind(this)
                                         }));
                                     }
-                                }
+                                } else if (ci.DataType === "BOOLEAN") {
+                                    col.setTemplate(new sap.m.Input({
+                                        type: sap.m.Checkbox,
+                                        textAlign: sap.ui.core.TextAlign.Right,
+                                        value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                        change: this.onNumberChange.bind(this)
+                                    }));
+                                }                                    
                                 else {
                                     if (arg === "ioMatList") {
                                         if (sColName === "MATDESC1") {
@@ -8825,9 +8843,11 @@ sap.ui.define([
                                     }));
                                 }
                                 else if (ci.DataType === "BOOLEAN") {
-                                    col.setTemplate(new sap.m.Text({
-                                        text: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
-                                        wrapping: false
+                                    col.setTemplate(new sap.m.CheckBox({
+                                        selected: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
+                                        // text: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
+                                        wrapping: false,
+                                        editable: false
                                     }));
                                 }
                             })
