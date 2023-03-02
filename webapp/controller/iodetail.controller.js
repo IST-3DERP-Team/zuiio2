@@ -5074,7 +5074,7 @@ sap.ui.define([
                 // console.log(sIOItem);
 
                 if (sTableName === "IODLVTab") {
-                    sEntitySet = "/IODLVSet(IONO='" + sIONo + "',DLVSEQ='" + sDlvSeq + "')";
+                    sEntitySet = "/IODLVSet(IONO='" + sIONo + "',DLVSEQ=" + sDlvSeq + ")";
                     // console.log(sEntitySet)
 
                     oParam = {
@@ -5083,10 +5083,12 @@ sap.ui.define([
                         "DELETED": "X"
                     };
                     // console.log(oParam);
+                    alert(sEntitySet);
+                    console.log(oParam);
                 }
 
                 if (sTableName === "IODETTab") {
-                    sEntitySet = "/IODETSet(IONO='" + sIONo + "',IOITEM='" + sIOItem + "')";
+                    sEntitySet = "/IODETSet(IONO='" + sIONo + "',IOITEM=" + sIOItem + ")";
 
                     oParam = {
                         "IONO": sIONo,
@@ -5094,8 +5096,8 @@ sap.ui.define([
                         "DELETED": "X"
                     };
 
-                    // alert(sEntitySet);
-                    // alert(oParam);
+                    alert(sEntitySet);
+                    alert(oParam);
                 }
 
                 // me._ConfirmMarkAsDelete.close();
@@ -7278,17 +7280,8 @@ sap.ui.define([
                                 groupId: "insert",
                                 success: function (oData, oResponse) {
 
-                                    setTimeout(() => {
-                                        me.UpdateIOHdrQuantity();
-                                    }, 100);
 
-                                    setTimeout(() => {
-                                        me.getHeaderData();
-                                        me.getView().getId("ORDQTY").value = me.getView().getModel("headerData").getData()["ORDQTY"];
-                                        me.getView().getId("REVORDQTY").value = me.getView().getModel("headerData").getData()["REVORDQTY"];
-                                    }, 100);
-
-                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                    // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
                                 },
                                 error: function (oData, oResponse) {
                                 }
@@ -7297,6 +7290,16 @@ sap.ui.define([
 
                             iNew++;
                             if (iNew === aNewRows.length) {
+
+                                setTimeout(() => {
+                                    me.UpdateIOHdrQuantity();
+                                }, 100);
+
+                                setTimeout(() => {
+                                    me.getHeaderData();
+                                    me.getView().getId("ORDQTY").value = me.getView().getModel("headerData").getData()["ORDQTY"];
+                                    me.getView().getId("REVORDQTY").value = me.getView().getModel("headerData").getData()["REVORDQTY"];
+                                }, 100);
 
                                 MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
@@ -9446,6 +9449,7 @@ sap.ui.define([
             },
 
             onSaveTableLayout(arg) {
+                
                 if (arg === "style") {
                     //saving of the layout of table
                     var me = this;
@@ -12102,6 +12106,68 @@ sap.ui.define([
                     }
                 }
                 else return sValue;
+            },
+
+            onIOSaveTableLayout: function (tablename) {
+                //saving of the layout of table
+                var me = this;
+                var ctr = 1;
+
+                if (tablename === "IODLVTab") {
+                    var oTable = this.getView().byId(tablename);
+                    var oColumns = oTable.getColumns();
+                    var vSBU = this._sbu;
+
+                    var oParam = {
+                        "SBU": vSBU,
+                        "TYPE": "IODLV",
+                        "TABNAME": "ZDV_3DERP_IODLV",
+                        "TableLayoutToItems": []
+                    };
+                }
+
+                if (tablename === "ioMatListTab") {
+                    var oTable = this.getView().byId(tablename);
+                    var oColumns = oTable.getColumns();
+                    var vSBU = this._sbu;
+
+                    var oParam = {
+                        "SBU": vSBU,
+                        "TYPE": "IOMATLIST",
+                        "TABNAME": "ZDV_3DERP_MATLST",
+                        "TableLayoutToItems": []
+                    };
+                }
+
+                //get information of columns, add to payload
+                oColumns.forEach((column) => {
+                    if (column.sId !== "Manage" && column.sId !== "Copy") {
+                        oParam.TableLayoutToItems.push({
+                            // COLUMNNAME: column.sId,
+                            COLUMNNAME: column.mProperties.sortProperty,
+                            ORDER: ctr.toString(),
+                            SORTED: column.mProperties.sorted,
+                            SORTORDER: column.mProperties.sortOrder,
+                            SORTSEQ: "1",
+                            VISIBLE: column.mProperties.visible,
+                            WIDTH: column.mProperties.width.replace('px', '')
+                        });
+
+                        ctr++;
+                    }
+                });
+                //call the layout save
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                oModel.create("/TableLayoutSet", oParam, {
+                    method: "POST",
+                    success: function (data, oResponse) {
+                        sap.m.MessageBox.information("Layout saved.");
+                    },
+                    error: function (err) {
+                        // console.log(err);
+                        sap.m.MessageBox.error(err);
+                    }
+                });
             },
 
         });
