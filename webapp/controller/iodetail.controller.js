@@ -11661,21 +11661,53 @@ sap.ui.define([
 
                     this._tableRendered = "ioMatListTab";
                 }
-
-                if (arg1 === "ioDet") {
+                else if (arg1 === "IODLV") {
                     if (arg2 === "max") {
-                        this.byId("idIconTabBarInlineIODET").setVisible(false);
-                        this.byId("btnFullScreenIODet").setVisible(false);
-                        this.byId("btnExitFullScreenIODet").setVisible(true);
+                        this.byId("objectHeader").setVisible(false);
+                        this.byId("btnFullScreenDlvSched").setVisible(false);
+                        this.byId("btnExitFullScreenDlvSched").setVisible(true);
+                        this.byId("IODETTab").setVisible(false);
                     }
                     else if (arg2 === "min") {
-                        this.byId("idIconTabBarInlineIODET").setVisible(true);
+                        this.byId("objectHeader").setVisible(true);
+                        this.byId("btnFullScreenDlvSched").setVisible(true);
+                        this.byId("btnExitFullScreenDlvSched").setVisible(false);
+                        this.byId("IODETTab").setVisible(true);
+                    }
+
+                    this._tableRendered = "IODLVTab";
+                }
+                else if (arg1 === "IODET") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        this.byId("btnFullScreenIODet").setVisible(false);
+                        this.byId("btnExitFullScreenIODet").setVisible(true);
+                        this.byId("IODLVTab").setVisible(false);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
                         this.byId("btnFullScreenIODet").setVisible(true);
                         this.byId("btnExitFullScreenIODet").setVisible(false);
+                        this.byId("IODLVTab").setVisible(true);
                     }
 
                     this._tableRendered = "IODETTab";
                 }
+
+                // if (arg1 === "ioDet") {
+                //     if (arg2 === "max") {
+                //         this.byId("idIconTabBarInlineIODET").setVisible(false);
+                //         this.byId("btnFullScreenIODet").setVisible(false);
+                //         this.byId("btnExitFullScreenIODet").setVisible(true);
+                //     }
+                //     else if (arg2 === "min") {
+                //         this.byId("idIconTabBarInlineIODET").setVisible(true);
+                //         this.byId("btnFullScreenIODet").setVisible(true);
+                //         this.byId("btnExitFullScreenIODet").setVisible(false);
+                //     }
+
+                //     this._tableRendered = "IODETTab";
+                // }
             },
 
             onCellClick: function (oEvent) {
