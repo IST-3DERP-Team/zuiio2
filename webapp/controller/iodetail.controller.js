@@ -1228,6 +1228,7 @@ sap.ui.define([
                                     item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                                     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.DELETED = item.DELETED === "X" ? true : false;
                                 })
                                 oData.results.forEach((item, index) => {
                                     if (index === 0) {
@@ -5502,7 +5503,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_SEL_RECORD_UNDELETED" });
                 oDDTextParam.push({ CODE: "INFO_SEL_RECORD_NOT_DELETED" });
                 oDDTextParam.push({ CODE: "INFO_INPUT_REQD_FIELDS" });
-                
+                oDDTextParam.push({ CODE: "INFO_INVALID_IOMATLIST_GENERATED" });
+
                 oDDTextParam.push({ CODE: "CONFIRM_DISREGARD_CHANGE" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_EDIT" });
                 oDDTextParam.push({ CODE: "COLORS" });
@@ -9555,6 +9557,7 @@ sap.ui.define([
                 var oMessage;
                 var hasValid = false;
                 var vIONo = this._ioNo
+                var retMsg = "";
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -9574,8 +9577,11 @@ sap.ui.define([
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
                                     // console.log("FAB - " + oMessage.message);
 
-                                    if (oMessage.message === "1")
+                                    retMsg = oMessage.message;
+
+                                    if (oMessage.message === "1") {
                                         hasValid = true;
+                                    }
 
                                     resolve();
                                 },
@@ -9588,40 +9594,61 @@ sap.ui.define([
                     })
                     await _promiseResult;
 
-                    oParam = {
-                        "SBU": this._sbu,
-                        "IONO": vIONo,
-                        "MATTYPGRP": "ACC"
-                    };
-                    // console.log(oParam)
                     _promiseResult = new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            this._oModelStyle.create("/GenIOMatListSet", oParam, {
-                                method: "POST",
-                                success: function (data, oResponse) {
-                                    oMessage = JSON.parse(oResponse.headers["sap-message"]);
-                                    // console.log("ACC - " + oMessage.message);
+                        if (retMsg === "2") {
+                            oParam = {
+                                "SBU": this._sbu,
+                                "IONO": vIONo,
+                                "MATTYPGRP": "ACC"
+                            };
+                            // console.log(oParam)
+                            
+                            setTimeout(() => {
+                                this._oModelStyle.create("/GenIOMatListSet", oParam, {
+                                    method: "POST",
+                                    success: function (data, oResponse) {
+                                        oMessage = JSON.parse(oResponse.headers["sap-message"]);
+                                        // console.log("ACC - " + oMessage.message);
 
-                                    if (oMessage.message === "1")
-                                        hasValid = true;
+                                        if (oMessage.message === "1")
+                                            hasValid = true;
 
-                                    resolve();
-                                },
-                                error: function (err) {
-                                    // sap.m.MessageBox.error(err);
-                                    resolve();
-                                }
-                            });
-                        }, 100);
+                                        resolve();
+                                    },
+                                    error: function (err) {
+                                        // sap.m.MessageBox.error(err);
+                                        resolve();
+                                    }
+                                });
+                            }, 100);
+                        }
+                        else resolve();
                     })
                     await _promiseResult;
 
-
-                    if (hasValid === false) {
+                    if (retMsg === "0") {
                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
-                    } else {
+                    } else if (retMsg === "1") {
                         me.onRefresh("ioMatList");
                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                    }
+                    else if (retMsg === "2") {
+                        // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"]);
+                        MessageBox.information(
+                            me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"],
+                            {
+                                actions: [MessageBox.Action.OK, "Go To Color Mapping"],
+                                onClose: function(sAction) {
+                                    if (sAction !== "OK") {
+                                        var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
+                                        cIconTabBar.setSelectedKey("itfSTYLE");
+
+                                        var cIconTabBarStyle = me.getView().byId("itbStyleDetail");
+                                        cIconTabBarStyle.setSelectedKey("color"); 
+                                    }
+                                }
+                            }
+                        );
                     }
                 } else {
                     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
@@ -9634,6 +9661,9 @@ sap.ui.define([
                 var vIONo = this._ioNo
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                //check if with color mapping
+
 
                 if (arg === "ACC") {
                     // console.log(this.byId("styleAccBOMTab").getModel("DataModel").getData().results.items.length)
@@ -9663,6 +9693,21 @@ sap.ui.define([
                                 MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
 
                                 me.onRefresh("ioMatList");
+                            }
+                            else if (oMessage.message === "2") {
+                                // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"]);
+                                MessageBox.information(
+                                    me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"],
+                                    {
+                                        actions: [MessageBox.Action.OK, "Go To Color Mapping"],
+                                        onClose: function(sAction) {
+                                            if (sAction !== "OK") {
+                                                var cIconTabBarStyle = me.getView().byId("itbStyleDetail");
+                                                cIconTabBarStyle.setSelectedKey("color"); 
+                                            }
+                                        }
+                                    }
+                                );
                             }
                         },
                         error: function (err) {
