@@ -1163,6 +1163,7 @@ sap.ui.define([
                             sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                         });
                     } else if (sColumnDataType === "BOOLEAN") {
+                        console.log("BOOLEAN : " +sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                             label: sColumnLabel,
