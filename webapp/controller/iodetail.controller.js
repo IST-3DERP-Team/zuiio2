@@ -2513,7 +2513,7 @@ sap.ui.define([
                             item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                             item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                             item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-
+                            item.DELETED = item.DELETED === "X" ? true : false;
                             // item.CPODT = dateFormat.format(new Date(item.CPODT));
                             // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
                             // item.REVDLVDT = dateFormat.format(new Date(item.REVDLVDT));
@@ -4768,7 +4768,7 @@ sap.ui.define([
 
                 //SET TABLE AS EDITABLE
                 if (arg === "IODET") {
-                    this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);
+                    this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);                    
                 }
 
                 if (arg !== "IODET") {
@@ -4776,19 +4776,33 @@ sap.ui.define([
                 }
 
                 // console.log("4");
-
-                this.setRowEditMode(arg);
-                this._validationErrors = [];
-                this._sTableModel = arg;
-                this._dataMode = "EDIT";
-
                 if (arg !== "IODET")
                     this.setActiveRowHighlightByTableId(arg + "Tab");
 
                 // console.log("5");
                 if (arg === "IODET") {
                     var oModel = this.getView().byId(tabName).getModel("DataModel");
-                    oModel.setProperty("/results", aNewRow);
+                    var oData = aNewRow;                    
+
+                    if (oModel.getData().results.length > 0) {
+                        // oNewRow = {};
+
+                        // Object.keys(oModel.getData().results[0]).forEach(prop => {
+                        //     if (prop === "DELETED") oNewRow[prop] = false;
+                        //     else oNewRow[prop] = "";
+                        // })
+                        
+                        // oNewRow["New"] = true;
+                        // oData.push(oNewRow);
+
+                        oModel.getData().results.forEach(item => {
+                            item.New = false;
+                            oData.push(item);
+                        })
+                    }
+                    // else oData = aNewRow;
+
+                    oModel.setProperty("/results", oData);
                 }
 
                 if (arg !== "IODET") {
@@ -4819,6 +4833,11 @@ sap.ui.define([
                         oColumns[i].filter("");
                     }
                 }
+
+                this.setRowEditMode(arg);
+                this._validationErrors = [];
+                this._sTableModel = arg;
+                this._dataMode = "ADD";
 
                 // console.log("10");
 
@@ -5206,6 +5225,7 @@ sap.ui.define([
                                     item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                                     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                    item.DELETED = item.DELETED === "X" ? true : false;
                                 })
 
                                 oData.results.forEach((item, index) => {
@@ -7360,11 +7380,8 @@ sap.ui.define([
                     }
 
                 }
-
-                // return;
-
                 //PROCESS EDITED ROW DATA
-                if (aEditedRows.length > 0) {
+                else if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         var entitySet = "/";
                         var updEntitySet;
@@ -7571,42 +7588,44 @@ sap.ui.define([
 
                 // return;
 
-                if (aNewRows.length < 0 && aEditedRows.length < 0) {
+                if (aNewRows.length <= 0 && aEditedRows.length <= 0) {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
                 }
+                else {
+                    //reload data based on arguments
+                    var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                    var oModelColumns = new JSONModel();
+                    await oModelColumns.loadData(sPath);
 
-                //reload data based on arguments
-                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-                var oModelColumns = new JSONModel();
-                await oModelColumns.loadData(sPath);
+                    var oColumns = oModelColumns.getData();
 
-                var oColumns = oModelColumns.getData();
+                    switch (arg) {
+                        case "IODET":
+                            _promiseResult = new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                }, 100);
+                                resolve();
+                            });
+                            await _promiseResult;
 
-                switch (arg) {
-                    case "IODET":
-                        _promiseResult = new Promise((resolve, reject) => {
-                            setTimeout(() => {
-                                this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                            }, 100);
-                            resolve();
-                        });
-                        await _promiseResult;
+                            //RELOAD IO DELIVERY DATA PER IO
+                            _promiseResult = new Promise((resolve, reject) => {
+                                setTimeout(() => {
+                                    this.reloadIOData("IODLVTab", "/IODLVSet");
+                                }, 100);
+                                resolve();
+                            });
+                            await _promiseResult;
 
-                        //RELOAD IO DELIVERY DATA PER IO
-                        _promiseResult = new Promise((resolve, reject) => {
-                            setTimeout(() => {
-                                this.reloadIOData("IODLVTab", "/IODLVSet");
-                            }, 100);
-                            resolve();
-                        });
-                        await _promiseResult;
+                            break;
+                        default:
+                            break;
+                    }
 
-                        break;
-                    default:
-                        break;
+                    this._bIODETChanged = false;
                 }
 
-                this._bIODETChanged = false;
                 Common.closeProcessingDialog(me);
             },
 
@@ -8640,6 +8659,35 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "IODET") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
+                                            showValueHelp: true,
+                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            showSuggestion: true,
+                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                            suggestionItems: {
+                                                path: ci.ValueHelp["SuggestionItems"].path,
+                                                length: 10000,
+                                                template: new sap.ui.core.ListItem({
+                                                    key: ci.ValueHelp["SuggestionItems"].text,
+                                                    text: ci.ValueHelp["SuggestionItems"].text,
+                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                }),
+                                                templateShareable: false
+                                            },
+                                            // suggest: this.handleSuggestion.bind(this),
+                                            change: this.handleValueHelpChange.bind(this),
+                                            enabled: {
+                                                path: "DataModel>New",
+                                                formatter: function (New) {
+                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                    else { return false }
+                                                }
+                                            }
+                                        }));
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: "Text",
@@ -8692,6 +8740,20 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "IODET") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "DataModel>New",
+                                                formatter: function (New) {
+                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                    else { return false }
+                                                }
+                                            }
+                                        }));
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
@@ -8717,6 +8779,21 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg === "IODET") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: sap.m.InputType.Number,
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            change: this.onNumberChange.bind(this),
+                                            enabled: {
+                                                path: "DataModel>New",
+                                                formatter: function (New) {
+                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                    else { return false }
+                                                }
+                                            }
+                                        }));
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: sap.m.InputType.Number,
@@ -8725,13 +8802,31 @@ sap.ui.define([
                                             change: this.onNumberChange.bind(this)
                                         }));
                                     }
-                                } else if (ci.DataType === "BOOLEAN") {
-                                    col.setTemplate(new sap.m.Input({
-                                        type: sap.m.Checkbox,
-                                        textAlign: sap.ui.core.TextAlign.Right,
-                                        value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
-                                        change: this.onNumberChange.bind(this)
-                                    }));
+                                } 
+                                else if (ci.DataType === "BOOLEAN") {
+                                    if (arg === "IODET") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: sap.m.Checkbox,
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            change: this.onNumberChange.bind(this),
+                                            enabled: {
+                                                path: "DataModel>New",
+                                                formatter: function (New) {
+                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                    else { return false }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: sap.m.Checkbox,
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            change: this.onNumberChange.bind(this)
+                                        }));
+                                    }
                                 }
                                 else {
                                     if (arg === "ioMatList") {
@@ -8780,6 +8875,21 @@ sap.ui.define([
                                                 formatter: function (COSTSTATUS) {
                                                     if (COSTSTATUS === "REL") { return false }
                                                     else { return true }
+                                                }
+                                            }
+                                        }));
+                                    }
+                                    else if (arg === "IODET") {
+                                        col.setTemplate(new sap.m.Input({
+                                            type: "Text",
+                                            value: "{" + sColName + "}",
+                                            maxLength: ci.Length,
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "DataModel>New",
+                                                formatter: function (New) {
+                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                    else { return false }
                                                 }
                                             }
                                         }));
