@@ -228,3 +228,7 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 .titleTab {
     font-weight: bold;
 }
+
+.sapMLabelRequired, .sapMLabelRequired::before {
+    color: #c75858 !important;
+}
