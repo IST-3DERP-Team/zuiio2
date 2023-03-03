@@ -1181,6 +1181,7 @@ sap.ui.define([
                             sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                         });
                     } else {
+                        console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                             label: sColumnLabel,
@@ -2059,6 +2060,7 @@ sap.ui.define([
                             sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                         });
                     } else if (sColumnDataType === "BOOLEAN") {
+                        console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                             label: sColumnLabel,
@@ -2076,6 +2078,7 @@ sap.ui.define([
                             sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                         });
                     } else {
+                        console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                             label: sColumnLabel,
@@ -2355,6 +2358,7 @@ sap.ui.define([
                 if (column.DataType === "STRING") {
                     oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });
                 } else if (sColumnDataType === "BOOLEAN") {
+                    console.log(sColumnDataType + " : " + sColumnId);
                     oColumnTemplate = new new sap.m.CheckBox({ selected: true, editable: false });
                 }
                 return oColumnTemplate;
