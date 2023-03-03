@@ -55,12 +55,12 @@
                                 <IconTabFilter text="Attributes" key="itfIOATTRIB">
                                     <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
-                                    <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
+                                    <!-- <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
                                         <ToolbarSpacer />
                                         <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit" press="onEdit('IOATTRIB')" visible="true" />
                                         <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="Save" press="onSave('IOATTRIB')" visible="false" />
                                         <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
-                                    </OverflowToolbar>
+                                    </OverflowToolbar> -->
 
                                     <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
                                         <t:Table id="IOATTRIBTab" 
@@ -86,10 +86,10 @@
                                 <IconTabFilter text="Status" key="itfIOSTATUS">
                                     <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
 
-                                    <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
+                                    <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
                                         <ToolbarSpacer />
                                         <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
-                                    </OverflowToolbar>
+                                    </OverflowToolbar> -->
 
                                     <t:Table id="IOSTATUSTab" 
                                             class="sapUiSizeCompact sidePadding" 
@@ -509,6 +509,7 @@
                                         <Button id="btnSaveDlvSched" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                         <Button id="btnFullScreenDlvSched" icon="sap-icon://zoom-in" press="onFullScreen('dlvsched')" tooltip="view Full Screen" visible="true" />
+                                        <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onIOSaveTableLayout('IODLVTab')"/>
                                     </Toolbar>
                                 </t:extension>
                             </t:Table>
@@ -575,7 +576,7 @@
                                     </Button>
                                     <Button id="btnFullScreenIOMatList" icon="sap-icon://full-screen" press="onTableResize('ioMatList', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
                                     <Button id="btnExitFullScreenIOMatList" icon="sap-icon://exit-full-screen" press="onTableResize('ioMatList', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
-                                    <Button id="btnTabLayoutIOMatList" icon="sap-icon://grid" press="onSaveTableLayout('ioMatList')" tooltip="{ddtext>/SAVELAYOUT}" visible="true" />  
+                                    <Button id="btnTabLayoutIOMatList" icon="sap-icon://grid" press="onIOSaveTableLayout('ioMatListTab')" tooltip="{ddtext>/SAVELAYOUT}" visible="true" />  
                                 </Toolbar>
                             </t:extension>
                         </t:Table>

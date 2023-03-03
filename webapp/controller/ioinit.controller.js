@@ -322,7 +322,7 @@ sap.ui.define([
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
-                            item.SOLDTOCUST = "000" + item.SOLDTOCUST;
+                            item.SOLDTOCUST = item.SOLDTOCUST;
                         })
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
@@ -487,6 +487,34 @@ sap.ui.define([
                 oSmartFilter.setModel(oModel);
             },
 
+            setColumnFilters(sTable, aFilters) {
+                if (aFilters) {
+                    var oTable = this.byId(sTable);
+                    var oColumns = oTable.getColumns();
+            
+                    aFilters.forEach(item => {
+                        oColumns.filter(fItem => fItem.getFilterProperty() === item.sPath)
+                            .forEach(col => {
+                                col.filter(item.oValue1);
+                            })
+                    })
+                } 
+            },
+
+            setColumnSorters(sTable, aSorters) {
+                if (aSorters) {
+                    var oTable = this.byId(sTable);
+                    var oColumns = oTable.getColumns();
+            
+                    aSorters.forEach(item => {
+                        oColumns.filter(fItem => fItem.getSortProperty() === item.sPath)
+                            .forEach(col => {
+                                col.sort(item.bDescending);
+                            })
+                    })
+                } 
+            },
+
             onRowChange: function (oEvent) {
                 var sPath = oEvent.getParameter("rowContext").getPath();
                 var oTable = this.getView().byId("IODynTable");
@@ -569,26 +597,28 @@ sap.ui.define([
                             item.PRODSTART = item.PRODSTART === "0000-00-00" || item.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(item.PRODSTART));
                             item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                             item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-
-                            // item.CUSTDLVDT = dateFormat.format(new Date(item.CUSTDLVDT));
-                            // item.REVCUSTDLVDT = dateFormat.format(new Date(item.REVCUSTDLVDT));
-                            // item.REQEXFTYDT = dateFormat.format(new Date(item.REQEXFTYDT));                            
-                            // item.MATETA = dateFormat.format(new Date(item.MATETA));
-                            // item.MAINMATETA = dateFormat.format(new Date(item.MAINMATETA));
-                            // item.SUBMATETA = dateFormat.format(new Date(item.SUBMATETA));
-                            // item.CUTMATETA = dateFormat.format(new Date(item.CUTMATETA));
-                            // item.PLANDLVDT = dateFormat.format(new Date(item.PLANDLVDT));
-                            // item.PRODSTART = dateFormat.format(new Date(item.PLANDLVDT));
-                            // item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
-                            // item.UPDATEDDT = dateFormat.format(new Date(item.UPDATEDDT));
                         })
 
                         oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
+
+                        var aFilters = [], aSorters = [];
+                        if (me.byId("IODynTable").getBinding("rows")) {
+                            aFilters = me.byId("IODynTable").getBinding("rows").aFilters;
+                            aSorters = me.byId("IODynTable").getBinding("rows").aSorters;
+                        }
+
+                        // me.byId("Tab").getModel.setProperty("/rows", oData.results);
+                        // me.byId("Tab").bindRows("/rows");
+                        // me.getView().getModel("counts").setProperty("/detail", oData.results.length);
 
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "DataModel");
                         me.setTableData();
+
+                        if(aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
+                        if(aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
+
                         me.setChangeStatus(false);
                     },
                     error: function (err) { }
