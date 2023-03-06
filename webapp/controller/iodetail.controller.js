@@ -245,6 +245,14 @@ sap.ui.define([
                 this._prodplant = "";
                 this._tableRendered = "";
 
+                this._aFunction = {};
+                this._aIOColumns = {};
+                this._aColumns = {};
+                this._aSortableColumns = {};
+                this._aFilterableColumns = {};
+                this._aDataBeforeChange = [];
+                this._aIODataBeforeChange = [];
+
                 // alert(this._ioNo);
 
                 //set all as no changes at first load
@@ -254,9 +262,38 @@ sap.ui.define([
                 this.setChangeStatus(false);
                 Common.openLoadingDialog(that);
 
+                console.log("getHeaderConfig");
+                _promiseResult = new Promise((resolve, reject) => {
+                    // setTimeout(() => {
+                        this.getHeaderConfig();
+                    // }, 100);
+                    resolve();
+                });
+                await _promiseResult;
+
+                // console.log("getHeaderData");
+                // _promiseResult = new Promise((resolve, reject) => {
+                //     // setTimeout(() => {
+                //         this.getHeaderData();
+                //     // }, 100);
+                //     resolve();
+                // });
+                // await _promiseResult;
+
                 if (this._ioNo === "NEW") {
                     // console.log("setHeaderEditMode");
+                    // this.setHeaderEditMode();
+                    _promiseResult = new Promise((resolve, reject) => {
+                        // setTimeout(() => {
+                            this.getHeaderConfig();
+                            this.setHeaderEditMode();
+                        // }, 100);
+                        resolve();
+                    });
+                    await _promiseResult;
+
                     this.setHeaderEditMode();
+
                     this.byId("onIOEdit").setVisible(false);
                     this.byId("onIORelease").setVisible(false);
                     // this.byId("onIOAttribEdit").setVisible(false);
@@ -347,6 +384,7 @@ sap.ui.define([
                     this.enableOtherTabs();
                 }
 
+                console.log("getHeaderConfig");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this.getHeaderConfig();
@@ -355,6 +393,7 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
+                console.log("getHeaderData");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this.getHeaderData();
@@ -416,13 +455,13 @@ sap.ui.define([
                 }
 
                 // console.log(this.getView());
-                this._aFunction = {};
-                this._aIOColumns = {};
-                this._aColumns = {};
-                this._aSortableColumns = {};
-                this._aFilterableColumns = {};
-                this._aDataBeforeChange = [];
-                this._aIODataBeforeChange = [];
+                // this._aFunction = {};
+                // this._aIOColumns = {};
+                // this._aColumns = {};
+                // this._aSortableColumns = {};
+                // this._aFilterableColumns = {};
+                // this._aDataBeforeChange = [];
+                // this._aIODataBeforeChange = [];
                 var me = this;
 
                 this.byId("IODLVTab")
@@ -2942,13 +2981,18 @@ sap.ui.define([
                 });
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
-                        // console.log(oData);
+                        
+                        console.log("IO Hedaer Tab");
+                        console.log(oData);
+                        me._aColumns["IOHDRTab"] = oData.results;
+                        console.log("_aColumns IOHDRTab");
+                        console.log(me._aColumns["IOHDRTab"]);
+
                         var visibleFields = new JSONModel();
                         var visibleFields = {};
 
                         var editableFields = new JSONModel();
                         var editableFields = {};
-
 
                         for (var i = 0; i < oData.results.length; i++) {
                             //get only visible fields
@@ -2957,7 +3001,7 @@ sap.ui.define([
                             editableFields[oData.results[i].ColumnName] = oData.results[i].Editable;
                         }
 
-                        me._aColumns["IOHDRTab"] = oData.results;
+                        
 
                         var JSONdata = JSON.stringify(visibleFields);
                         var JSONparse = JSON.parse(JSONdata);
@@ -2970,7 +3014,8 @@ sap.ui.define([
                         oJSONModelEdit.setData(JSONparseEdit);
                         oView.setModel(oJSONModelEdit, "EditableFieldsData");
                     },
-                    error: function (err) { }
+                    error: function (err) {
+                     }
                 });
 
             },
@@ -3380,8 +3425,9 @@ sap.ui.define([
                 })
             },
 
-            setHeaderEditMode: function () {
+            setHeaderEditMode: async function () {
                 //unlock editable fields of style header
+                var me = this;
                 var oJSONModel = new JSONModel();
                 var data = {};
                 this._headerChanged = false;
@@ -3392,11 +3438,12 @@ sap.ui.define([
                 // console.log(this.getView().getModel("EditableFieldsData"));
                 // var EditableFields = this.getView().getModel("EditableFieldsData").oData;
 
-                // console.log(this._aColumns["IOHDRTab"]);
+                console.log("3438 - setHeaderEditMode");
+                console.log(this._aColumns["IOHDRTab"]);
 
                 var feCName = "";
-                this._aColumns["IOHDRTab"].forEach(ci => {
-                    // console.log(ci.ColumnName);
+                me._aColumns["IOHDRTab"].forEach(ci => {
+                    console.log(ci.ColumnName);
                     if (ci.Mandatory === true && ci.Editable === true) {
                         feCName = "fe" + ci.ColumnName;
                         this.getView().byId(feCName)._oLabel.addStyleClass("sapMLabelRequired");
