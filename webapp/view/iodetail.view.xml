@@ -48,67 +48,71 @@
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="IO Header" key="itfIOHDR">
-                        <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
-                        <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" class="IODetailSection"  stretchContentHeight="true" applyContentPadding="false">
-                            <items>
-                                <!-- ATTRIBUTES -->
-                                <IconTabFilter text="Attributes" key="itfIOATTRIB">
-                                    <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
+                        <VBox height="100%">
+                            <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
+                            <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
+                                <items>                                
+                                    <!-- ATTRIBUTES -->
+                                    <IconTabFilter text="Attributes" key="itfIOATTRIB">
+                                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
-                                    <!-- <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
-                                        <ToolbarSpacer />
-                                        <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit" press="onEdit('IOATTRIB')" visible="true" />
-                                        <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="Save" press="onSave('IOATTRIB')" visible="false" />
-                                        <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
-                                    </OverflowToolbar> -->
+                                        <!-- <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
+                                            <ToolbarSpacer />
+                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit" press="onEdit('IOATTRIB')" visible="true" />
+                                            <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="Save" press="onSave('IOATTRIB')" visible="false" />
+                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
+                                        </OverflowToolbar> -->
 
-                                    <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
-                                        <t:Table id="IOATTRIBTab" 
+                                        <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
+                                            <t:Table id="IOATTRIBTab" 
+                                                    class="sapUiSizeCompact sidePadding" 
+                                                    visibleRowCountMode="Auto" 
+                                                    showColumnVisibilityMenu="true" 
+                                                    enableColumnFreeze="true" 
+                                                    enableCellFilter="true" 
+                                                    selectionMode="Single" 
+                                                    selectionBehavior="RowOnly" 
+                                                    cellClick="onCellClick"
+                                                    alternateRowColors="true"
+                                                    firstVisibleRowChanged="onFirstVisibleRowChanged"
+                                                    rowSelectionChange="onRowChange"
+                                                    >
+                                                <t:layoutData>
+                                                <FlexItemData growFactor="1" baseSize="0%" />
+                                                </t:layoutData>
+                                            </t:Table>
+                                        <!-- </Panel> -->
+                                    </IconTabFilter>
+                                    <!-- STATUS -->
+                                    <IconTabFilter text="Status" key="itfIOSTATUS">
+                                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
+
+                                        <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
+                                            <ToolbarSpacer />
+                                            <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
+                                        </OverflowToolbar> -->
+                                        <t:Table id="IOSTATUSTab" 
                                                 class="sapUiSizeCompact sidePadding" 
                                                 visibleRowCountMode="Auto" 
                                                 showColumnVisibilityMenu="true" 
                                                 enableColumnFreeze="true" 
                                                 enableCellFilter="true" 
                                                 selectionMode="Single" 
-                                                selectionBehavior="RowOnly" 
                                                 cellClick="onCellClick"
+                                                selectionBehavior="RowSelector" 
                                                 alternateRowColors="true"
-                                                firstVisibleRowChanged="onFirstVisibleRowChanged"
-                                                rowSelectionChange="onRowChange"
-                                                >
+                                                rowSelectionChange="onRowChange">
                                             <t:layoutData>
-                                            <FlexItemData growFactor="1" baseSize="0%" />
-                                        </t:layoutData>
+                                                <FlexItemData growFactor="1" baseSize="0%" />
+                                            </t:layoutData>
                                         </t:Table>
-                                    <!-- </Panel> -->
-                                </IconTabFilter>
-                                <!-- STATUS -->
-                                <IconTabFilter text="Status" key="itfIOSTATUS">
-                                    <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
-
-                                    <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
-                                        <ToolbarSpacer />
-                                        <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
-                                    </OverflowToolbar> -->
-
-                                    <t:Table id="IOSTATUSTab" 
-                                            class="sapUiSizeCompact sidePadding" 
-                                            visibleRowCountMode="Auto" 
-                                            showColumnVisibilityMenu="true" 
-                                            enableColumnFreeze="true" 
-                                            enableCellFilter="true" 
-                                            selectionMode="Single" 
-                                            cellClick="onCellClick"
-                                            selectionBehavior="RowSelector" 
-                                            alternateRowColors="true"
-                                            rowSelectionChange="onRowChange">
-                                        <t:layoutData>
-                                            <FlexItemData growFactor="1" baseSize="0%" />
-                                        </t:layoutData>
-                                    </t:Table>
-                                </IconTabFilter>
-                            </items>
-                        </IconTabBar>
+                                    </IconTabFilter>
+                                </items>
+                                <layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%" />
+                                </layoutData>
+                            </IconTabBar>
+                        </VBox>
                     </IconTabFilter>
 
                     <!-- STYLE -->
@@ -486,7 +490,8 @@
 
                     <!-- DELIVERY SCHEDULE -->                    
                     <IconTabFilter text="Order Details" key="itfDLVSCHED">
-                        <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding">
+                        <VBox height="100%">
+                        <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
                             <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
@@ -495,45 +500,56 @@
                                     <Toolbar>
                                         <Text text="{i18n>DeliverySchedule}" />
                                         <ToolbarSpacer />
-                                        <Button id="btnNewDlvSched" type="Ghost" text="New" icon="sap-icon://add-document" press="onAdd('IODLV')" tooltip="New" visible="true" />
+                                        <Button id="btnNewDlvSched" type="Ghost" icon="sap-icon://add" press="onAdd('IODLV')" tooltip="New" visible="true" />
+                                        <Button id="btnEditDlvSched" type="Ghost" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="Edit" visible="true" />
+                                        <Button id="btnDeleteDlvSched" type="Ghost" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="Delete" visible="true" />
+                                        <Button id="btnCopyDlvSched" type="Ghost" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="Copy" visible="true" />
+                                        <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
+                                        <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                        <Button id="btnCancelDlvSched" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                         <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Edit" visible="true" />
-                                        <Button id="btnEditDlvSched" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="Edit" visible="true" />
-                                        <Button id="btnDeleteDlvSched" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="Delete" visible="true" />
-                                        <Button id="btnCopyDlvSched" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="Copy" visible="true" />
                                         <Button id="btnGenMatList" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                             <customData>
                                                 <core:CustomData key="TableName" value="IODLVTab" />
                                             </customData>
                                         </Button>
-                                        <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
-                                        <Button id="btnSaveDlvSched" type="Ghost" text="Save" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
-                                        <Button id="btnCancelDlvSched" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                        <Button id="btnFullScreenDlvSched" icon="sap-icon://zoom-in" press="onFullScreen('dlvsched')" tooltip="view Full Screen" visible="true" />
-                                        <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onIOSaveTableLayout('IODLVTab')"/>
+                                        <Button id="btnFullScreenDlvSched" icon="sap-icon://full-screen" press="onTableResize('IODLV', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                        <Button id="btnExitFullScreenDlvSched" icon="sap-icon://exit-full-screen" press="onTableResize('IODLV', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                        <!-- <Button id="btnFullScreenDlvSched" icon="sap-icon://zoom-in" press="onFullScreen('dlvsched')" tooltip="view Full Screen" visible="true" /> -->
+                                        <Button icon="sap-icon://grid" tooltip="Save" press="onIOSaveTableLayout('IODLVTab')"/>
                                     </Toolbar>
-                                </t:extension>
+                                </t:extension> 
+                                <t:layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%"/>
+                                </t:layoutData> 
                             </t:Table>
-                        </Panel>
+                        <!-- </Panel> -->
+                        
                         <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                             <t:rowSettingsTemplate>
                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                             </t:rowSettingsTemplate>
-
                             <t:extension>
                                 <Toolbar>
                                     <Text text="{i18n>IODetail}" />
                                     <ToolbarSpacer />
-                                    <Button id="btnNewIODet" type="Ghost" text="New" icon="sap-icon://add-document" press="onAdd('IODET')" tooltip="New" visible="true" />
-                                    <Button id="btnEditIODet" type="Ghost" text="Edit" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
-                                    <Button id="btnDeleteIODet" type="Ghost" text="Delete" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
-                                    <Button id="btnCopyIODet" type="Ghost" text="Copy" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
+                                    <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="New" visible="true" />
+                                    <Button id="btnEditIODet" type="Ghost" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
+                                    <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
+                                    <Button id="btnCopyIODet" type="Ghost" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
                                     <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
-                                    <Button id="btnSaveIODet" type="Ghost" text="Save" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />
-                                    <Button id="btnCancelIODet" type="Ghost" text="Cancel" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                    <Button id="btnFullScreenIODet" icon="sap-icon://zoom-in" press="onFullScreen('IODET')" tooltip="view Full Screen" visible="true" />
+                                    <Button id="btnSaveIODet" type="Ghost" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />
+                                    <Button id="btnCancelIODet" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                    <Button id="btnFullScreenIODet" icon="sap-icon://full-screen" press="onTableResize('IODET', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                    <Button id="btnExitFullScreenIODet" icon="sap-icon://exit-full-screen" press="onTableResize('IODET', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                    <!-- <Button id="btnFullScreenIODet" icon="sap-icon://zoom-in" press="onFullScreen('IODET')" tooltip="view Full Screen" visible="true" /> -->
                                 </Toolbar>
                             </t:extension>
+                            <t:layoutData>
+                                <FlexItemData growFactor="3" baseSize="0%"/>
+                            </t:layoutData>                             
                         </t:Table>
+                        </VBox>
                     </IconTabFilter>
 
                     <!-- MATERIAL LIST -->
@@ -561,14 +577,14 @@
                             <t:extension>
                                 <Toolbar>
                                     <ToolbarSpacer />
-                                    <Button id="btnSubmitMRP" text="{ddtext>/SUBMITMRP}" icon="sap-icon://action" press="onSubmitMRP" tooltip="{ddtext>/SUBMITMRP}" visible="true" />
-                                    <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
-                                    <Button id="btnReorderIOMatList" text="{ddtext>/REORDER}" icon="sap-icon://redo" press="onReorder" tooltip="{ddtext>/REORDER}" visible="true" />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
                                     <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onTagAsDeleted('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
                                     <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onBatchSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIOMatList" icon="sap-icon://sys-cancel" press="onCancel('ioMatList')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
+                                    <Button id="btnSubmitMRP" text="{ddtext>/SUBMITMRP}" icon="sap-icon://action" press="onSubmitMRP" tooltip="{ddtext>/SUBMITMRP}" visible="true" />
+                                    <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
+                                    <Button id="btnReorderIOMatList" text="{ddtext>/REORDER}" icon="sap-icon://redo" press="onReorder" tooltip="{ddtext>/REORDER}" visible="true" />
                                     <Button id="btnExportIOMatList" icon="sap-icon://excel-attachment" press="onExport" tooltip="{ddtext>/EXCELEXPORT}" visible="true">
                                         <customData>
                                             <core:CustomData key="TableName" value="ioMatListTab" />
@@ -579,7 +595,7 @@
                                     <Button id="btnTabLayoutIOMatList" icon="sap-icon://grid" press="onIOSaveTableLayout('ioMatListTab')" tooltip="{ddtext>/SAVELAYOUT}" visible="true" />  
                                 </Toolbar>
                             </t:extension>
-                        </t:Table>
+                        </t:Table>                       
                     </IconTabFilter>
 
                     <!-- COSTING -->
