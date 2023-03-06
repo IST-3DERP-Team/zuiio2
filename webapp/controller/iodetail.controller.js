@@ -3435,6 +3435,22 @@ sap.ui.define([
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "HeaderEditModeModel");
 
+                //get Value Help for fields of IO Header
+                this.getVHSet("/IOTYPSet", "IOTypeModel", false);
+                this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true);
+                this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false);
+                this.getVHSet("/SEASONSet", "SeasonsModel", true);
+                this.getVHSet("/STYLENOvhSet", "StyleNoModel", false);
+                this.getVHSet("/UOMvhSet", "UOMModel", false);
+                this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
+                this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
+                this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
+                this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
+                this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
+                this.getVHSet("/BILLTOvhSet", "BILLTOModel", false);
+                this.getVHSet("/SHIPTOvhSet", "SHIPTOModel", false);
+                this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false);
+
                 // console.log(this.getView().getModel("EditableFieldsData"));
                 // var EditableFields = this.getView().getModel("EditableFieldsData").oData;
 
@@ -3475,21 +3491,6 @@ sap.ui.define([
                 //         })
                 // })
 
-                //get Value Help for fields of IO Header
-                this.getVHSet("/IOTYPSet", "IOTypeModel", false);
-                this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true);
-                this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false);
-                this.getVHSet("/SEASONSet", "SeasonsModel", true);
-                this.getVHSet("/STYLENOvhSet", "StyleNoModel", false);
-                this.getVHSet("/UOMvhSet", "UOMModel", false);
-                this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
-                this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
-                this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
-                this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
-                this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
-                this.getVHSet("/BILLTOvhSet", "BILLTOModel", false);
-                this.getVHSet("/SHIPTOvhSet", "SHIPTOModel", false);
-                this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false);
             },
 
             cancelHeaderEdit: function () {
