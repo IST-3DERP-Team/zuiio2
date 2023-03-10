@@ -172,25 +172,21 @@
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
                                                         <Button id="btnEditColor" 
-                                                            text="{ddtext>/EDIT}"
                                                             icon="sap-icon://edit"
                                                             press="onEdit('color')"
                                                             tooltip="{ddtext>/EDIT}"
                                                             visible="true" />
                                                         <Button id="btnSaveColor" 
-                                                            text="{ddtext>/SAVE}"
                                                             icon="sap-icon://save"
                                                             press="onBatchSave('color')" 
                                                             tooltip="{ddtext>/SAVE}"
                                                             visible="false" />
                                                         <Button id="btnCancelColor" 
-                                                            text="{ddtext>/CANCEL}"
                                                             icon="sap-icon://sys-cancel"
                                                             press="onCancel('color')" 
                                                             tooltip="{ddtext>/CANCEL}"
                                                             visible="false" />
                                                         <Button id="btnRefreshColor" 
-                                                            text="{ddtext>/REFRESH}" 
                                                             icon="sap-icon://refresh" 
                                                             press="onRefresh('color')" 
                                                             tooltip="{ddtext>/REFRESH}" 
@@ -224,10 +220,10 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button id="btnEditProcess" text="{ddtext>/EDIT}" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
-                                                        <Button id="btnSaveProcess" text="{ddtext>/SAVE}" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
-                                                        <Button id="btnCancelProcess" text="{ddtext>/CANCEL}" icon="sap-icon://sys-cancel" press="onCancel('process')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                                        <Button id="btnRefreshProcess" text="{ddtext>/REFRESH}" icon="sap-icon://refresh" press="onRefresh('process')" tooltip="{ddtext>/REFRESH}" visible="true" />
+                                                        <Button id="btnEditProcess" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
+                                                        <Button id="btnSaveProcess" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                                        <Button id="btnCancelProcess" icon="sap-icon://sys-cancel" press="onCancel('process')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                                        <Button id="btnRefreshProcess" icon="sap-icon://refresh" press="onRefresh('process')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>
@@ -254,9 +250,9 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button id="btnDeleteSize" text="{ddtext>/DELETE}" icon="sap-icon://delete" press="onTagAsDeleted('size')" tooltip="{ddtext>/DELETE}" visible="true" />
+                                                        <Button id="btnDeleteSize" icon="sap-icon://delete" press="onTagAsDeleted('size')" tooltip="{ddtext>/DELETE}" visible="true" />
                                                         <Button id="btnUndeleteSize" text="{ddtext>/UNDELETE}" icon="sap-icon://undo" press="onUndelete('size')" tooltip="{ddtext>/UNDELETE}" visible="true" />
-                                                        <Button id="btnRefreshSize" text="{ddtext>/REFRESH}" icon="sap-icon://refresh" press="onRefresh('size')" tooltip="{ddtext>/REFRESH}" visible="true" />
+                                                        <Button id="btnRefreshSize" icon="sap-icon://refresh" press="onRefresh('size')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                                     </Toolbar>
                                                 </t:extension>
                                             </t:Table>                                            
@@ -629,34 +625,30 @@
                                             <Label text="Costing Version" design="Bold" class="hdrLabel" />
                                             <ToolbarSpacer/>
                                             <Button id="btnNewCostHdr" 
-                                                text="{ddtext>/NEW}"
-                                                icon="sap-icon://add-document"
+                                                icon="sap-icon://add"
                                                 press="onCreateCosting"
-                                                tooltip="{ddtext>/NEW}"
+                                                tooltip="{ddtext>/ADD}"
                                                 visible="true" />
                                             <Button id="btnEditCostHdr" 
-                                                text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
                                                 press="onEdit('costHdr')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
-                                            <Button id="btnRefreshCostHdr" 
-                                                icon="sap-icon://refresh"
-                                                press="onRefresh('costHdr')" 
-                                                tooltip="{ddtext>/REFRESH}"
-                                                visible="true" /> 
                                             <Button id="btnSaveCostHdr" 
-                                                text="{ddtext>/SAVE}"
                                                 icon="sap-icon://save"
                                                 press="onBatchSave('costHdr')" 
                                                 tooltip="{ddtext>/SAVE}"
                                                 visible="false" />
                                             <Button id="btnCancelCostHdr" 
-                                                text="{ddtext>/CANCEL}"
                                                 icon="sap-icon://sys-cancel"
                                                 press="onCancel('costHdr')" 
                                                 tooltip="{ddtext>/CANCEL}"
                                                 visible="false" /> 
+                                            <Button id="btnRefreshCostHdr" 
+                                                icon="sap-icon://refresh"
+                                                press="onRefresh('costHdr')" 
+                                                tooltip="{ddtext>/REFRESH}"
+                                                visible="true" /> 
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>
@@ -688,13 +680,26 @@
                                             <Label text="Costing Details" design="Bold" class="hdrLabel" />
                                             <ToolbarSpacer/>
                                             <Button id="btnEditCostDtl" 
-                                                text="{ddtext>/EDIT}"
                                                 icon="sap-icon://edit"
                                                 press="onEdit('costDtls')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
+                                            <Button id="btnSaveCostDtl" 
+                                                icon="sap-icon://save"
+                                                press="onBatchSave('costDtls')" 
+                                                tooltip="{ddtext>/SAVE}"
+                                                visible="false" />
+                                            <Button id="btnCancelCostDtl" 
+                                                icon="sap-icon://sys-cancel"
+                                                press="onCancel('costDtls')" 
+                                                tooltip="{ddtext>/CANCEL}"
+                                                visible="false" /> 
+                                            <Button id="btnRefreshCostDtl" 
+                                                icon="sap-icon://refresh"
+                                                press="onRefresh('costDtls')" 
+                                                tooltip="{ddtext>/REFRESH}"
+                                                visible="true" /> 
                                             <Button id="btnPrintCosting" 
-                                                text="{ddtext>/PRINT}"
                                                 icon="sap-icon://print"
                                                 press="onPrintCosting" 
                                                 tooltip="{ddtext>/PRINT}"
@@ -705,23 +710,6 @@
                                                 press="onReleaseCosting" 
                                                 tooltip="{ddtext>/RELCOSTING}"
                                                 visible="true" />
-                                            <Button id="btnRefreshCostDtl" 
-                                                icon="sap-icon://refresh"
-                                                press="onRefresh('costDtls')" 
-                                                tooltip="{ddtext>/REFRESH}"
-                                                visible="true" /> 
-                                            <Button id="btnSaveCostDtl" 
-                                                text="{ddtext>/SAVE}"
-                                                icon="sap-icon://save"
-                                                press="onBatchSave('costDtls')" 
-                                                tooltip="{ddtext>/SAVE}"
-                                                visible="false" />
-                                            <Button id="btnCancelCostDtl" 
-                                                text="{ddtext>/CANCEL}"
-                                                icon="sap-icon://sys-cancel"
-                                                press="onCancel('costDtls')" 
-                                                tooltip="{ddtext>/CANCEL}"
-                                                visible="false" /> 
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>
