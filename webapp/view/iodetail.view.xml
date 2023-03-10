@@ -535,7 +535,7 @@
                                     <ToolbarSpacer />
                                     <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="New" visible="true" />
                                     <Button id="btnEditIODet" type="Ghost" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
-                                    <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
+                                    <!-- <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" /> -->
                                     <Button id="btnCopyIODet" type="Ghost" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
                                     <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
                                     <Button id="btnSaveIODet" type="Ghost" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />

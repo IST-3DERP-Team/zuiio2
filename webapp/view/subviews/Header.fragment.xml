@@ -371,10 +371,9 @@
                                 placeholder="Enter Date"
                                 value="{headerData>/PLANDLVDT}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANDLVDT} : false }"
-                                change="handleChange"
-                                class="sapUiSmallMarginBottom"
+                                change="handleChange"                                
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="PLANDLVDT" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <!-- <Input id="PLANDLVDT" class="sapUiSmallMarginBottom" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                 value="{headerData>/PLANDLVDT}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input> -->
@@ -481,10 +480,9 @@
                                 placeholder="Enter Date"
                                 change="handleChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
-                                value="{headerData>/CUSTDLVDT}" 
-                                class="sapUiSmallMarginBottom"
+                                value="{headerData>/CUSTDLVDT}"                                 
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="CUSTDLVDT"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
+                            <!-- <Input id="CUSTDLVDT" class="sapUiSmallMarginBottom"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement> 
                     <f:FormElement id="fePLANQTY" label="{i18n>PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
@@ -499,10 +497,9 @@
                                 id="PRODSTART"
                                 placeholder="Enter Date"
                                 change="handleChange"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"
-                                class="sapUiSmallMarginBottom"
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"                                
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="PRODSTART" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
+                            <!-- <Input id="PRODSTART" class="sapUiSmallMarginBottom" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement id="feREMARKS" label="{i18n>REMARKS}"  visible="{= ${VisibleFieldsData>/REMARKS} === true ? true : false }">
