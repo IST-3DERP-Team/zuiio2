@@ -4605,38 +4605,38 @@ sap.ui.define([
                         }
                     })
 
-                    // //Set Button Visibility for Read Mode
-                    // this.byId("onIOEdit").setVisible(true);
-                    // this.byId("onIORelease").setVisible(true);
-                    // // this.byId("onIOAttribEdit").setVisible(true);
-                    // // this.byId("onIOStatEdit").setVisible(true);
-                    // this.byId("onIOSave").setVisible(false);
-                    // this.byId("onIOCancel").setVisible(false);
+                    //Set Button Visibility for Read Mode
+                    this.byId("onIOEdit").setVisible(true);
+                    this.byId("onIORelease").setVisible(true);
+                    // this.byId("onIOAttribEdit").setVisible(true);
+                    // this.byId("onIOStatEdit").setVisible(true);
+                    this.byId("onIOSave").setVisible(false);
+                    this.byId("onIOCancel").setVisible(false);
 
-                    // //Enable Icon Tab Filters
-                    // this.enableOtherTabs();
+                    //Enable Icon Tab Filters
+                    this.enableOtherTabs();
 
 
 
-                    // var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    // // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
-                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
-                    //     .forEach(item => item.setProperty("enabled", true));
+                    var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
+                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
+                    oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                        .forEach(item => item.setProperty("enabled", true));
 
-                    // // alert(this._ioNo);
-                    // // alert(this._newIONo);
-                    // if (this._ioNo === "NEW" && (this._newIONo !== "" || this._newIONo !== undefined)) {
-                    //     // this.onNavBack();
-                    //     var oHistory = History.getInstance();
-                    //     var sPreviousHash = oHistory.getPreviousHash();
+                    // alert(this._ioNo);
+                    // alert(this._newIONo);
+                    if (this._ioNo === "NEW" && (this._newIONo !== "" || this._newIONo !== undefined)) {
+                        // this.onNavBack();
+                        var oHistory = History.getInstance();
+                        var sPreviousHash = oHistory.getPreviousHash();
 
-                    //     if (sPreviousHash !== undefined) {
-                    //         window.history.go(-1);
-                    //     } else {
-                    //         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                    //         oRouter.navTo("Routeioinit", {}, true);
-                    //     }
-                    // }
+                        if (sPreviousHash !== undefined) {
+                            window.history.go(-1);
+                        } else {
+                            var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                            oRouter.navTo("Routeioinit", {}, true);
+                        }
+                    }
 
                 }
             },
@@ -7704,9 +7704,15 @@ sap.ui.define([
 
                 if (arg === "IODLV") {
                     if (bProceed) {
-                        console.log(this.byId("IODLVTab").getModel().oData.rows);
+                        // console.log(this.byId("IODLVTab").getModel().oData.rows);
                         this.byId("IODLVTab").getModel().oData.rows.forEach(item => {
-                            if (item.CPONO === "" || item.CPOREV == "" || item.CPOITEM == "" || item.DLVDT == "" || item.REVDLVDT == "" || item.CUSTSHIPTO == "" || item.CUSTBILLTO == "") {
+                            if (item.CPONO === "" || item.CPONO === undefined
+                            || item.CPOREV === "" || item.CPOREV === undefined
+                            || item.CPOITEM === "" || item.CPOITEM === undefined
+                            || item.DLVDT === "" || item.DLVDT === undefined
+                            || item.REVDLVDT === "" || item.REVDLVDT === undefined
+                            || item.CUSTSHIPTO === "" || item.CUSTSHIPTO === undefined
+                            || item.CUSTBILLTO === "" || item.CUSTBILLTO === undefined) {
                                 bProceed = false;
                             }
                         })
