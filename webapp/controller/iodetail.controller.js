@@ -5129,17 +5129,17 @@ sap.ui.define([
                 // console.log(sIOItem);
 
                 if (sTableName === "IODLVTab") {
-                    sEntitySet = "/IODLVSet(IONO='" + sIONo + "',DLVSEQ=" + sDlvSeq + ")";
+                    sEntitySet = "/IODLVDELETESet(Iono='" + sIONo + "',Dlvseq=" + sDlvSeq + ")";
                     // console.log(sEntitySet)
 
                     oParam = {
-                        "IONO": sIONo,
-                        "DLVSEQ": sDlvSeq,
-                        "DELETED": "X"
+                        "Iono": sIONo,
+                        "Dlvseq": sDlvSeq,
+                        "Deleted": "X"
                     };
+                    
+                    // alert(sEntitySet);
                     // console.log(oParam);
-                    alert(sEntitySet);
-                    console.log(oParam);
                 }
 
                 if (sTableName === "IODETTab") {
@@ -5151,8 +5151,8 @@ sap.ui.define([
                         "DELETED": "X"
                     };
 
-                    alert(sEntitySet);
-                    alert(oParam);
+                    // alert(sEntitySet);
+                    // alert(oParam);
                 }
 
                 // me._ConfirmMarkAsDelete.close();
