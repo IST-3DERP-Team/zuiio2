@@ -44,7 +44,7 @@
             </ObjectHeader>
 
             <!-- ICON TAB BAR : IO HEADER / STYLE ? DLV SCHED / MATLIST / COSTING / FA SUMMARY / ATTACHMENTS -->
-            <IconTabBar id="idIconTabBarInlineMode" headerMode="Inline" selectedKey="itfIOHDR" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false" class="sapUiNoContentPadding" expandable="false">
+            <IconTabBar id="idIconTabBarInlineMode" select="onSelectChanged" headerMode="Inline" selectedKey="itfIOHDR" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false" class="sapUiNoContentPadding" expandable="false">
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="IO Header" key="itfIOHDR">
