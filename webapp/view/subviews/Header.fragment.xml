@@ -113,7 +113,7 @@
                                 value="{headerData>/PRODSCEN}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PROSCEN} : false}" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 

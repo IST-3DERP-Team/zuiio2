@@ -94,7 +94,8 @@ sap.ui.define([
                     IODesc: '',
                     IOPrefix: '',
                     IOOrdQty: 0,
-                    IORevOrdQty: 0
+                    IORevOrdQty: 0,
+                    hasCSData: true
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -2923,7 +2924,7 @@ sap.ui.define([
                 if (sColumnId === "STATUSCD") {
                     oDetColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 8 : ${" + sColumnId + "} === 'REL' ? 9 : 1}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 1}"
                     })
                 }
                 else {
@@ -4718,89 +4719,72 @@ sap.ui.define([
                 }
             },
 
-            onIORelease: function (TableName) {
+            onIORelease: async function (TableName) {
                 sTableName = TableName;
                 var oParam;
                 var sIONo = this.getView().byId("IONO").getValue();
                 var sStatusCd = this.getView().byId("STATUSCD").getValue();
 
                 // alert(sStatusCd);
-                console.log(this.getView().byId("ioMatListTab").getModel());
-                return;
+                await this.reloadModel("/IOCSCHECKSet", true, "hasCSData");
 
-                // alert(sTableName);
-                if (sTableName === "IOHDR") {
-                    oParam = {
-                        "Iono": sIONo
-                    };
-                }
+                // alert(this.getView().getModel("ui2").getProperty("/hasCSData"));
 
-                var sEntitySet = "/Internal_CreateSet";
-                var sMethod = "POST";
-                var sMessage;
-                var resultType;
-                var resultDescription;
+                if (sStatusCd === "MAT" && this.getView().getModel("ui2").getProperty("/hasCSData") === true) {
 
-                var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
-
-                oModelRelease.create(sEntitySet, oParam, {
-                    method: sMethod,
-                    success: function (oData, oResponse) {
-                        // console.log(oData);
-                        //capture oData output if needed
-                        resultType = oData.Type;
-                        resultDescription = oData.Description;
-
-                        //show MessageBox for successful execution
-                        setTimeout(() => {
-                            if (resultType === "E") {
-                                sap.m.MessageBox.error(resultDescription);
-                            }
-                            if (resultType !== "E") {
-                                sap.m.MessageBox.information(sIONo + " Released.");
-                            }
-                        }, 100);
-                    },
-                    error: function (err) {
-                        // console.log(err);
-                        resultDescription = err.responseText;
-                        sap.m.MessageBox.error(resultDescription);
+                    // alert(sTableName);
+                    if (sTableName === "IOHDR") {
+                        oParam = {
+                            "Iono": sIONo
+                        };
                     }
-                });
 
-                //reload data for both IO Delivery and IO Detail
-                setTimeout(() => {
-                    this.reloadHeaderData(sIONo);
-                }, 100);
+                    var sEntitySet = "/Internal_CreateSet";
+                    var sMethod = "POST";
+                    var sMessage;
+                    var resultType;
+                    var resultDescription;
 
-                setTimeout(() => {
-                    this.reloadIOData("StatDynTable", "/IOSTATSet");
-                }, 100);
+                    var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
 
-                // var sText;
-                // var sOutput;
-                // if(sTableName === "IODLVTab"){
-                //     sText = "Copy Delivery Sequence " + sDlvSeq + "?";
-                //     sOutput = "Copy Successful";
-                // } else if(sTableName === "IODETTab"){
-                //     sText = "Copy Delivery Item " + sIOItem + "?";
-                // }
-                // var oDialogData = {
-                //     Action: "onCopy",
-                //     SourceTable:sTableName,
-                //     Text: sText,
-                //     Output: sOutput
-                // };
+                    oModelRelease.create(sEntitySet, oParam, {
+                        method: sMethod,
+                        success: function (oData, oResponse) {
+                            // console.log(oData);
+                            //capture oData output if needed
+                            resultType = oData.Type;
+                            resultDescription = oData.Description;
 
-                // var oJSONModel = new JSONModel();
-                // oJSONModel.setData(oDialogData);
+                            //show MessageBox for successful execution
+                            setTimeout(() => {
+                                if (resultType === "E") {
+                                    sap.m.MessageBox.error(resultDescription);
+                                }
+                                if (resultType !== "E") {
+                                    sap.m.MessageBox.information(sIONo + " Released.");
+                                }
+                            }, 100);
+                        },
+                        error: function (err) {
+                            // console.log(err);
+                            resultDescription = err.responseText;
+                            sap.m.MessageBox.error(resultDescription);
+                        }
+                    });
 
-                // if(!this._ConfirmDialogIOfn){
-                //     this._ConfirmDialogIOfn = sap.ui.xmlfragment("zuiio2.vew.fragments.dialog.ConfirmDialogIOfn", this);
-                //     this._ConfirmDialogIOfn.setModel(oJSONModel);
-                //     this.getView().addDependent(this._ConfirmDialogIOfn);
-                // }
-                // else this._ConfirmDialogIOfn.setModel(oJSONModel);
+                    // //reload data for both IO Delivery and IO Detail
+                    // setTimeout(() => {
+                    //     this.reloadHeaderData(sIONo);
+                    // }, 100);
+
+                    await this.reloadHeaderData();
+
+                    setTimeout(() => {
+                        this.reloadIOData("StatDynTable", "/IOSTATSet");
+                    }, 100);
+                }
+                else
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["ERR_IORELEASE_REQ"]);
             },
 
             //******************************************* */
@@ -5285,6 +5269,42 @@ sap.ui.define([
                 await _promiseResult;
             },
 
+            reloadModel: async function (Entityset, IsUI2, ModelName) {
+                var me = this;
+                var sEntitySet = Entityset;
+                var sIsUI2 = IsUI2;
+                var sModelName = ModelName;
+                var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+
+                if (sModelName === "hasCSData") {
+                    await new Promise((resolve, reject) => {
+                        this._oModel.read(sEntitySet, {
+                            urlParameters: {
+                                "$filter": "Iono eq '" + cIONo + "'"
+                            },
+                            success: function (oData, response) {
+                                // console.log("reload Model true");
+                                // console.log(oData);
+                                if (oData.length > 0) {
+                                    me.getView().getModel("ui2").setProperty("/hasCSData", false);
+                                }
+                                else {
+                                    me.getView().getModel("ui2").setProperty("/hasCSData", false);
+                                }
+                                resolve();
+                            },
+                            error: function (err) {
+                                me.getView().getModel("ui2").setProperty("/hasCSData", false);
+                                // console.log("reload Model false");
+                                // console.log(oData);
+                                resolve();
+                            }
+                        })
+                    });
+                }
+            },
+
             reloadIOData: async function (source, entityset) {
                 var me = this;
                 var sSource = source;
@@ -5737,7 +5757,9 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CUSTDEST" });
                 oDDTextParam.push({ CODE: "DLVSEQ" });
                 oDDTextParam.push({ CODE: "REVDLVDT" });
-                oDDTextParam.push({ CODE: "INFO_CREATEPO_CHECK_REQD" });
+                oDDTextParam.push({ CODE: "INFO_CREATE_CHECK_REQD" });
+                oDDTextParam.push({ CODE: "ERR_IORELEASE_REQ" });
+                
                 // console.log(oDDTextParam);
 
                 setTimeout(() => {
@@ -7972,7 +7994,7 @@ sap.ui.define([
                         }
                     }
                     else {
-                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CREATEPO_CHECK_REQD"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CREATE_CHECK_REQD"]);
                     }
                 }
                 else if (aEditedRows.length > 0) {
@@ -8270,7 +8292,7 @@ sap.ui.define([
                         }
                     }
                     else {
-                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CREATEPO_CHECK_REQD"]);
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CREATE_CHECK_REQD"]);
                     }
                 }
                 else {

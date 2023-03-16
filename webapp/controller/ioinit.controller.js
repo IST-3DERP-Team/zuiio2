@@ -724,7 +724,7 @@ sap.ui.define([
                 } else if (sColumnId === "STATUSCD") { //display infolabel for Status Code
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 8 : ${" + sColumnId + "} === 'REL' ? 9 : 1}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CMP' ? 8: ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 9}"
                     })
                 } else if (sColumnType === "SEL") { //Manage button
                     oColumnTemplate = new sap.m.Button({
