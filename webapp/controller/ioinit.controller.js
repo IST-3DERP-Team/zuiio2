@@ -136,7 +136,7 @@ sap.ui.define([
                 }
 
                 if (sTableName === "IOSDSelectTab") {
-                    // console.log(sTableName);
+                    console.log(sTableName);
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId(sTableName);
                     var oSelectedIndices = oTable.getSelectedIndices();
@@ -162,18 +162,18 @@ sap.ui.define([
 
                         var aSelectedItems = [];
                         oSelectedIndices.forEach(item => {
-                            // alert(aData.at(item).STYLENO);
+                            alert(aData.at(item).STYLENO);
                             // sStyleNo = aData.at(item).STYLENO;
                             aSelectedItems.push(aData.at(item));
 
                         })
 
-                        // console.log("Route Model 1");                        
+                        console.log("Route Model 1");                        
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
-                        // console.log("rowData");
-                        // console.log(rowData);
+                        console.log("rowData");
+                        console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
@@ -195,7 +195,7 @@ sap.ui.define([
                             return;
                         } else {
                             unique.forEach(item => {
-                                // alert(item.STYLENO);
+                                alert(item.STYLENO);
                                 sStyleNo = item.STYLENO;
                             })
                         }
@@ -205,12 +205,15 @@ sap.ui.define([
                     // console.log(that._sbu);
                     // console.log(sStyleNo);
 
+                    console.log("RouteIODetail");
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
+
+                    console.log("RouteIODetail 2");
 
                     me._IOfromSalesDocDialog.close();
                 }

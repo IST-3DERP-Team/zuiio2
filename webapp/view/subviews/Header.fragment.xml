@@ -15,8 +15,8 @@
         <!-- <Button id = "onIORefresh" type="Ghost"  icon="sap-icon://refresh" tooltip="Refresh" press="onIORefresh('IOHDR')" visible="true"/> -->
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onIOEdit('IOHDR')" visible="true"/>
         <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onIORelease('IOHDR')" visible="true"/>
-        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="Release IO" press="onIOSave('IOHDR')" visible="false"/>
-        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="Cancel" tooltip="Release IO" press="onIOCancel('IOHDR')" visible="false"/>
+        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="save" press="onIOSave('IOHDR')" visible="false"/>
+        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="Cancel" tooltip="Cancel" press="onIOCancel('IOHDR')" visible="false"/>
     </OverflowToolbar>
 
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
@@ -61,7 +61,7 @@
                         <f:fields>
                             <Input id="STYLECD" 
                                 value="{headerData>/STYLECD}" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/STYLECD} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange">
@@ -94,7 +94,7 @@
                                 value="{headerData>/PRODTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/PRODTYPE} : false : ${EditableFieldsData>/PRODTYPE} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -113,7 +113,7 @@
                                 value="{headerData>/PRODSCEN}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSCEN} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PROSCEN} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -163,7 +163,8 @@
                     <f:FormElement id="fePLANMONTH" label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANMONTH} : false }" valueStateText="Required"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} !== '' ? false : ${EditableFieldsData>/PLANMONTH} : false}" 
+                            valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
@@ -180,7 +181,7 @@
                                 value="{headerData>/IOTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOTYPE} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} !== '' ? false : ${EditableFieldsData>/IOTYPE} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -199,7 +200,7 @@
                                 value="{headerData>/SALESGRP}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SALESGRP} : false : ${EditableFieldsData>/SALESGRP} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 autocomplete="true" 
@@ -282,7 +283,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
                                 change="onHeaderChange" 
@@ -302,7 +303,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/CUSTGRP} : false : ${EditableFieldsData>/CUSTGRP} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChange" 
@@ -351,7 +352,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/BASEUOM} : false : ${EditableFieldsData>/BASEUOM} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
                                 change="onHeaderChange" 
