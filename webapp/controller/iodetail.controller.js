@@ -4724,7 +4724,7 @@ sap.ui.define([
                 var sIONo = this.getView().byId("IONO").getValue();
                 var sStatusCd = this.getView().byId("STATUSCD").getValue();
 
-                alert(sStatusCd);
+                // alert(sStatusCd);
                 console.log(this.getView().byId("ioMatListTab").getModel());
                 return;
 
@@ -5355,7 +5355,7 @@ sap.ui.define([
                                 // resolve();
                             },
                             error: function (err) {
-                                alert(err);
+                                // alert(err);
                                 // resolve();
                             }
                         })
@@ -5419,7 +5419,7 @@ sap.ui.define([
                             // resolve();
                         },
                         error: function (err) {
-                            alert(err);
+                            // alert(err);
                             // resolve(); 
                         }
                     })

@@ -162,7 +162,7 @@ sap.ui.define([
 
                         var aSelectedItems = [];
                         oSelectedIndices.forEach(item => {
-                            alert(aData.at(item).STYLENO);
+                            // alert(aData.at(item).STYLENO);
                             // sStyleNo = aData.at(item).STYLENO;
                             aSelectedItems.push(aData.at(item));
 
@@ -195,7 +195,7 @@ sap.ui.define([
                             return;
                         } else {
                             unique.forEach(item => {
-                                alert(item.STYLENO);
+                                // alert(item.STYLENO);
                                 sStyleNo = item.STYLENO;
                             })
                         }
