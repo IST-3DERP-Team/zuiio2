@@ -148,7 +148,7 @@
                         <f:fields>
                             <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ORDQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange" >
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -156,7 +156,7 @@
                         <f:fields>
                             <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ACTUALQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange" >
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -242,7 +242,7 @@
                         <f:fields>
                             <Input id="REVORDQTY" type="Number" value="{headerData>/REVORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REVORDQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -250,7 +250,7 @@
                         <f:fields>
                             <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SHIPQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>       
@@ -490,7 +490,8 @@
                     <f:FormElement id="fePLANQTY" label="{i18n>PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANQTY" type="Number" value="{headerData>/PLANQTY}" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANQTY} : false }" valueStateText="Required"/>
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANQTY} : false }" valueStateText="Required"
+                            change="onHeaderChange" liveChange="onNumberInputLiveChange"/>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement id="fePRODSTART" label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
