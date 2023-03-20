@@ -4171,8 +4171,8 @@ sap.ui.define([
                 var strVerNo;
                 var sSource = source;
                 if (sSource === "IOHDR") {
-                    console.log("this._validationErrors");
-                    console.log(this._validationErrors.length);
+                    // console.log("this._validationErrors");
+                    // console.log(this._validationErrors.length);
                     if (this._validationErrors.length === 0) {
                         var sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
@@ -9385,11 +9385,11 @@ sap.ui.define([
             onNumberInputLiveChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
                 var oSource = oEvent.getSource();
-                console.log(oSource);
+                // console.log(oSource);
                 var sModel = oSource.getBindingInfo("value").parts[0].model;
-                console.log(sModel);
+                // console.log(sModel);
                 // var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
-                console.log(oSource.getBindingInfo("value").parts[0].path);
+                // console.log(oSource.getBindingInfo("value").parts[0].path);
                 var vDecPlaces = 0;
                 var bError = false;
 
@@ -9398,7 +9398,7 @@ sap.ui.define([
 
                 this.getView().getModel("UOMINFOModel").getData().results.filter(fItem => fItem.MSEHI === sUOM)
                     .forEach((item) => {
-                        console.log(item.MSEHI);
+                        // console.log(item.MSEHI);
                         iUOMDec = item.ANDEC;
                     })
 
@@ -9416,7 +9416,7 @@ sap.ui.define([
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
                         oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
-                        console.log("Error Value should not have decimal place/s." + oEvent.getSource().getId());
+                        // console.log("Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
                     }
@@ -9431,8 +9431,8 @@ sap.ui.define([
                             oEvent.getSource().setValueState("None");
                             this._validationErrors.forEach((item, index) => {
                                 if (item === oEvent.getSource().getId()) {
-                                    console.log(this._validationErrors);
-                                    console.log("Splice " + oEvent.getSource().getId());
+                                    // console.log(this._validationErrors);
+                                    // console.log("Splice " + oEvent.getSource().getId());
                                     this._validationErrors.splice(index, 1)
                                     console.log(this._validationErrors);
                                 }
@@ -9445,10 +9445,10 @@ sap.ui.define([
                     oEvent.getSource().setValueState("None");
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
-                            console.log(this._validationErrors);
-                            console.log("Splice " + oEvent.getSource().getId());
+                            // console.log(this._validationErrors);
+                            // console.log("Splice " + oEvent.getSource().getId());
                             this._validationErrors.splice(index, 1)
-                            console.log(this._validationErrors);
+                            // console.log(this._validationErrors);
                         }
                     })
                     bError = false;
@@ -9497,19 +9497,20 @@ sap.ui.define([
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
                         oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
-                        console.log("Error Value should not have decimal place/s." + oEvent.getSource().getId());
+                        // console.log("1 Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
                     }
                     else {
                         if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            oEvent.getSource().setValueStateText("2 Enter a number with a maximum decimal places: " + vDecPlaces.toString());
                             this._validationErrors.push(oEvent.getSource().getId());
                             bError = true;
                         }
                         else {
                             oEvent.getSource().setValueState("None");
+                            // console.log("3 None");
                             this._validationErrors.forEach((item, index) => {
                                 if (item === oEvent.getSource().getId()) {
                                     this._validationErrors.splice(index, 1)
@@ -9521,6 +9522,7 @@ sap.ui.define([
                 }
                 else {
                     oEvent.getSource().setValueState("None");
+                    // console.log("4 None");
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
                             this._validationErrors.splice(index, 1)
