@@ -12,7 +12,7 @@ sap.ui.define([
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator) {
+    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger) {
         "use strict";
 
         var that;
