@@ -258,9 +258,12 @@ sap.ui.define([
                 this._styleno = oEvent.getParameter("arguments").styleno; //get style no from route pattern
                 // this._ver = oEvent.getParameter("arguments").ver; //get ver from route pattern
 
+                console.log(oEvent.getParameter("arguments").styleno);
+
                 this.getView().getModel("ui2").setProperty("/sbu", oEvent.getParameter("arguments").sbu);
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
+
                 // this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
@@ -5871,8 +5874,8 @@ sap.ui.define([
                 // var vStyle = this._styleNo; //"1000000272";
                 var vStyle = this.getView().getModel("ui2").getProperty("/currStyleNo"); //"1000000272";
 
-                // console.log("getStyleHeaderData");
-                // console.log(vStyle);
+                console.log("getStyleHeaderData");
+                console.log(vStyle);
                 setTimeout(() => {
                     this._oModelStyle.read('/HeaderSet', {
                         urlParameters: {
