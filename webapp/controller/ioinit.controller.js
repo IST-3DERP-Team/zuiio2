@@ -6,7 +6,8 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/export/Spreadsheet",
     "../control/DynamicTable",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/ui/core/routing/HashChanger"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
@@ -51,6 +52,7 @@ sap.ui.define([
                 this._aSortableColumns = {};
                 this._aFilterableColumns = {};
 
+                this.getAppAction();
                 this.setSmartFilterModel();
 
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
@@ -73,6 +75,42 @@ sap.ui.define([
                 //     }));
 
                 // this.onSearch();
+            },
+
+            getAppAction: async function () {
+                // console.log("getAppAction");
+                // console.log(sap.ushell.Container)
+                var csAction = "display";
+                if (sap.ushell.Container !== undefined) {
+                    const fullHash = new HashChanger().getHash();
+                    const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
+                    const shellHash = urlParsing.parseShellHash(fullHash);
+                    csAction = shellHash.action;  
+                }
+
+                var DisplayStateModel = new JSONModel();
+                var DisplayData = {
+                    sAction : csAction,
+                    visible : csAction === "display" ? false : true
+                }
+
+                DisplayStateModel.setData(DisplayData);
+                this.getView().setModel(DisplayStateModel, "DisplayActionModel");
+                // console.log(this.getView().getModel("DisplayActionModel"));
+                // console.log(this.getView());
+
+                // alert(csAction);
+                if (csAction === "display") {
+                    var btnAdd = this.getView().byId("btnCopy");
+                    if (btnAdd.getVisible()) {
+                        btnAdd.setVisible(false);
+                    }
+
+                    var btnMenu = this.getView().byId("_IDGenMenuButton1");
+                    if (btnMenu.getVisible()) {
+                        btnMenu.setVisible(false);
+                    }                        
+                }
             },
 
             onfragmentIOSelect: function (tableName) {

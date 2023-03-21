@@ -100,8 +100,11 @@ sap.ui.define([
 
                 this.getView().setModel(new JSONModel({
                     dataMode: "INIT",
-                    today: ""
+                    today: "",
+                    DisplayMode:"display"
                 }), "ui");
+
+                this.getAppAction();
 
                 //Add the attachments to screen
                 this.appendUploadCollection();
@@ -162,6 +165,63 @@ sap.ui.define([
                 }
             },
 
+            getAppAction: async function () {
+                // console.log("getAppAction");
+                // console.log(sap.ushell.Container)
+                var csAction = "display";
+                if (sap.ushell.Container !== undefined) {
+                    const fullHash = new HashChanger().getHash();
+                    const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
+                    const shellHash = urlParsing.parseShellHash(fullHash);
+                    csAction = shellHash.action;             
+                }
+
+                var DisplayStateModel = new JSONModel();
+                var DisplayData = {
+                    sAction : csAction,
+                    visible : csAction === "display" ? false : true
+                }
+
+                this.getView().getModel("ui").setProperty("/DisplayMode", csAction);
+
+                DisplayStateModel.setData(DisplayData);
+                this.getView().setModel(DisplayStateModel, "DisplayActionModel");
+                // console.log(this.getView().getModel("DisplayActionModel"));
+                // console.log(this.getView());
+
+                // console.log(this.byId("btnHdrEdit"));
+                // console.log(this.byId("btnHdrDelete"));
+
+                // this.byId("btnHdrEdit").setVisible(csAction === "display" ? false : true);
+                // this.byId("btnHdrDelete").setVisible(csAction === "display" ? false : true);
+                this.byId("onIOEdit").setVisible(csAction === "display" ? false : true);
+                this.byId("onIORelease").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditColor").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditProcess").setVisible(csAction === "display" ? false : true);
+                this.byId("btnDeleteSize").setVisible(csAction === "display" ? false : true);
+                this.byId("btnUndeleteSize").setVisible(csAction === "display" ? false : true);
+                this.byId("btnFabGenMatLst").setVisible(csAction === "display" ? false : true);
+                this.byId("btnAccGenMatLst").setVisible(csAction === "display" ? false : true);
+                this.byId("btnNewDlvSched").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditDlvSched").setVisible(csAction === "display" ? false : true);
+                this.byId("btnDeleteDlvSched").setVisible(csAction === "display" ? false : true);
+                this.byId("btnCopyDlvSched").setVisible(csAction === "display" ? false : true);
+                this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);                
+                this.byId("btnGenMatList").setVisible(csAction === "display" ? false : true);
+                this.byId("btnNewIODet").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditIODet").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditIOMatList").setVisible(csAction === "display" ? false : true);
+                this.byId("btnDeleteIOMatList").setVisible(csAction === "display" ? false : true);
+                this.byId("btnSubmitMRP").setVisible(csAction === "display" ? false : true);
+                this.byId("btnAssignMatNo").setVisible(csAction === "display" ? false : true);
+                this.byId("btnReorderIOMatList").setVisible(csAction === "display" ? false : true);
+                this.byId("btnNewCostHdr").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditCostHdr").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditCostDtl").setVisible(csAction === "display" ? false : true);
+                this.byId("btnReleaseCosting").setVisible(csAction === "display" ? false : true);
+                this.byId("btnEditAttach").setVisible(csAction === "display" ? false : true);
+            },
+
             // onExit: function() {
             //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             // },
@@ -202,6 +262,10 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
                 // this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
+
+                this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
 
                 if (this.getView().getModel("ui2").getProperty("/icontabfilterkey") === '') {
                     this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
@@ -3573,6 +3637,11 @@ sap.ui.define([
                 // this.getView().byId("onIORefresh").setVisible(true);
                 this.getView().byId("onIOEdit").setVisible(true);
                 this.getView().byId("onIORelease").setVisible(true);
+                
+                this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+
                 // this.byId("onIOAttribEdit").setVisible(true);
                 // this.byId("onIOStatEdit").setVisible(true);
                 this.getView().byId("onIOSave").setVisible(false);

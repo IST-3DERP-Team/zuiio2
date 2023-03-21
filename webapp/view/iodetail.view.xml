@@ -329,7 +329,7 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                        <Button id= "btnFabGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
                                                                 <core:CustomData key="TableName" value="styleFabBOMTab" />
                                                             </customData>
@@ -360,7 +360,7 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                        <Button id="btnAccGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
                                                                 <core:CustomData key="TableName" value="styleAccBOMTab" />
                                                             </customData>
@@ -503,7 +503,7 @@
                                         <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
                                         <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Edit" visible="true" />
+                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Import PO" visible="true" />
                                         <Button id="btnGenMatList" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                             <customData>
                                                 <core:CustomData key="TableName" value="IODLVTab" />
