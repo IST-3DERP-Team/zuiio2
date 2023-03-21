@@ -101,7 +101,7 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({
                     dataMode: "INIT",
                     today: "",
-                    DisplayMode:"display"
+                    DisplayMode:"change"
                 }), "ui");
 
                 this.getAppAction();
@@ -168,7 +168,7 @@ sap.ui.define([
             getAppAction: async function () {
                 // console.log("getAppAction");
                 // console.log(sap.ushell.Container)
-                var csAction = "display";
+                var csAction = "change";
                 if (sap.ushell.Container !== undefined) {
                     const fullHash = new HashChanger().getHash();
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
@@ -336,6 +336,7 @@ sap.ui.define([
                 this._aFilterableColumns = {};
                 this._aDataBeforeChange = [];
                 this._aIODataBeforeChange = [];
+                this._validationErrors = [];
 
                 // alert(this._ioNo);
 
@@ -4240,9 +4241,9 @@ sap.ui.define([
                 var strVerNo;
                 var sSource = source;
                 if (sSource === "IOHDR") {
-                    // console.log("this._validationErrors");
-                    // console.log(this._validationErrors.length);
-                    if (this._validationErrors.length === 0) {
+                    console.log("this._validationErrors");
+                    console.log(me._validationErrors.length);
+                    if (me._validationErrors.length === 0) {
                         var sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
                         else if (this.getView().byId("STYLECD").getValue() === "") sErrMsg = "Style Code";
