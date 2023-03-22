@@ -101,7 +101,7 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({
                     dataMode: "INIT",
                     today: "",
-                    DisplayMode:"change"
+                    DisplayMode: "change"
                 }), "ui");
 
                 this.getAppAction();
@@ -173,13 +173,13 @@ sap.ui.define([
                     const fullHash = new HashChanger().getHash();
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
                     const shellHash = urlParsing.parseShellHash(fullHash);
-                    csAction = shellHash.action;             
+                    csAction = shellHash.action;
                 }
 
                 var DisplayStateModel = new JSONModel();
                 var DisplayData = {
-                    sAction : csAction,
-                    visible : csAction === "display" ? false : true
+                    sAction: csAction,
+                    visible: csAction === "display" ? false : true
                 }
 
                 this.getView().getModel("ui").setProperty("/DisplayMode", csAction);
@@ -206,7 +206,7 @@ sap.ui.define([
                 this.byId("btnEditDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnDeleteDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnCopyDlvSched").setVisible(csAction === "display" ? false : true);
-                this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);                
+                this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnGenMatList").setVisible(csAction === "display" ? false : true);
                 this.byId("btnNewIODet").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditIODet").setVisible(csAction === "display" ? false : true);
@@ -226,21 +226,24 @@ sap.ui.define([
             //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             // },
 
-            // onNavBack: function (oEvent) {
-            //     // var oHistory = History.getInstance();
-            //     // var sPreviousHash = oHistory.getPreviousHash();
+            onNavBack: function () {
+                // var oHistory = History.getInstance();
+                // var sPreviousHash = oHistory.getPreviousHash();
+                // console.log("onNavBack")
 
-            //     // if (sPreviousHash !== undefined) {
-            //     //     window.history.go(-1);
-            //     // } else {
-            //     //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //     //     oRouter.navTo("Routeioinit", {}, true);
-            //     // }
-            //     console.log("onNavBack")
-            //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //     oRouter.navTo("Routeioinit", {}, true);
-            //     // console.log(window.history);
-            // },
+                // if (sPreviousHash !== undefined) {
+                //     window.history.go(-1);
+                // } else {
+                //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                //     oRouter.navTo("Routeioinit", {}, true);
+                // }
+
+                console.log("onNavBack")
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                oRouter.navTo("Routeioinit", {}, true);
+
+                // console.log(window.history);
+            },
 
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
@@ -250,7 +253,7 @@ sap.ui.define([
                 // // console.log(cIconTabBar);
 
                 // cIconTabBar.setSelectedKey("itfIOHDR");
-
+                this._oLock = [];
                 me.hasSDData = false;
 
                 this._ioNo = oEvent.getParameter("arguments").iono; //get IONO from route pattern
@@ -3641,7 +3644,7 @@ sap.ui.define([
                 // this.getView().byId("onIORefresh").setVisible(true);
                 this.getView().byId("onIOEdit").setVisible(true);
                 this.getView().byId("onIORelease").setVisible(true);
-                
+
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
@@ -3669,6 +3672,8 @@ sap.ui.define([
                         this.getView().byId(feCName)._oLabel.removeStyleClass("sapMLabelRequired");
                     }
                 })
+
+                this.unLock();
 
                 await this.refreshHeaderData();
 
@@ -4216,6 +4221,11 @@ sap.ui.define([
 
             onIOEdit: async function (source) {
                 var sSource = source;
+
+                var bProceed = await this.lock(this);
+                if (!bProceed) return;
+
+                return;
 
                 if (sSource === "IOHDR") {
                     //create new - only header is editable at first
@@ -10041,13 +10051,16 @@ sap.ui.define([
             onManageStyle: function (oEvent) {
                 var vStyle = this._styleNo;
                 var me = this;
+                let sDisplayAction = this.getView().getModel("ui").getProperty("/DisplayMode");
                 let iono = me._ioNo.length > 0 ? me._ioNo : this.getView().getModel("ui2").getProperty("/currIONo");
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
-                        semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                        semanticObject: "ZSO_3DERP_ORD_STYLE",
+                        action: sDisplayAction + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                        // semanticObject: "ZUI_3DERP",
+                        // action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": vStyle,
@@ -12911,6 +12924,58 @@ sap.ui.define([
             //******************************************* */
             // Common Functions
             //******************************************* */
+
+            lock: async (me) => {
+                var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oParamLock = {};
+                var sError = "";
+                var promise = new Promise((resolve, reject) => {
+                    oParamLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
+                    oParamLock["Lock"] = "X";
+                    oParamLock["Iv_Count"] = 300;
+                    oParamLock["N_ENQ"] = []; oModelLock.create("/ZERP_IOHDR", oParamLock, {
+                        method: "POST",
+                        success: function (oResultLock) {
+                            oResultLock.N_ENQ.results.forEach(item => {
+                                if (item.Type === "E") {
+                                    sError += item.Message + ".\r\n ";
+                                }
+                            })
+                            if (sError.length > 0) {
+                                resolve(false);
+                                sap.m.MessageBox.information(sError);
+                                me.closeLoadingDialog();
+                            }
+                            else resolve(true);
+                        },
+                        error: function (err) {
+                            me.closeLoadingDialog();
+                            resolve(false);
+                        }
+                    });
+                })
+
+                return await promise;
+            },
+
+            unLock() {
+                var oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oParamUnLock = {};
+                var me = this; 
+                oParamUnLock["IONo"] = this.getView().getModel("ui2").getProperty("/currIONo"); 
+                oParamUnLock["Lock"] = "";
+                oParamUnLock["N_ENQ"] = [];
+                oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
+                    method: "POST",
+                    success: function (oResultLock) {
+                        console.log("Unlock", oResultLock)
+                    },
+                    error: function (err) {
+                        me.closeLoadingDialog();
+                    }
+                })
+                this._oLock = [];
+            },
 
             onCloseDialog: function (oEvent) {
                 oEvent.getSource().getParent().close();
