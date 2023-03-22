@@ -12933,7 +12933,14 @@ sap.ui.define([
                     oParamLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
                     oParamLock["Lock"] = "X";
                     oParamLock["Iv_Count"] = 300;
-                    oParamLock["N_ENQ"] = []; oModelLock.create("/ZERP_IOHDR", oParamLock, {
+                    oParamLock["N_ENQ"] = []; 
+
+                    console.log(oModeLock);
+                    console.log(oParamLock);
+
+                    return;
+                    
+                    oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
                             oResultLock.N_ENQ.results.forEach(item => {
