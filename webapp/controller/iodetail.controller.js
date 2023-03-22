@@ -12926,6 +12926,7 @@ sap.ui.define([
             //******************************************* */
 
             lock: async (me) => {
+                console.log(me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV"));
                 var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
                 var oParamLock = {};
                 var sError = "";
