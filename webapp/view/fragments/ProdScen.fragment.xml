@@ -8,6 +8,6 @@
         search="_prodscenGroupValueHelpSearch"
 		confirm="_prodscenGroupValueHelpClose"
 		cancel="_prodscenGroupValueHelpClose">
-		<StandardListItem title="{ProdScenModel>PRODSCEN}" description="{ProdScenModel>DESC1}"/>
+		<StandardListItem title="{ProdScenModel>PRODSCEN}" info="{ProdScenModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

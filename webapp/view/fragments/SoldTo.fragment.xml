@@ -8,6 +8,6 @@
         search="_soldtoGroupValueHelpSearch"
 		confirm="_soldtoGroupValueHelpClose"
 		cancel="_soldtoGroupValueHelpClose">
-		<StandardListItem title="{SOLDTOModel>KUNNR}" description="{SOLDTOModel>KUNNR}"/>
+		<StandardListItem title="{SOLDTOModel>Custno}" info="{SOLDTOModel>Desc1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

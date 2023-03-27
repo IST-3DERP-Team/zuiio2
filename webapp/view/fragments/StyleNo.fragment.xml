@@ -8,6 +8,6 @@
         search="_stylenoGroupValueHelpSearch"
 		confirm="_stylenoGroupValueHelpClose"
 		cancel="_stylenoGroupValueHelpClose">
-		<StandardListItem title="{StyleNoModel>STYLENO}" description="{StyleNoModel>DESC1}"/>
+		<StandardListItem title="{StyleNoModel>STYLENO}" info="{StyleNoModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

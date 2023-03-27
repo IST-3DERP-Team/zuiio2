@@ -8,6 +8,6 @@
         search="_iotypeGroupValueHelpSearch"
 		confirm="_iotypeGroupValueHelpClose"
 		cancel="_iotypeGroupValueHelpClose">
-		<StandardListItem title="{IOTypeModel>IOTYPE}" description="{IOTypeModel>DESC1}"/>
+		<StandardListItem title="{IOTypeModel>IOTYPE}" info="{IOTypeModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

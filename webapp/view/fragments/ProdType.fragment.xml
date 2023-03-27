@@ -8,6 +8,6 @@
         search="_prodtypeGroupValueHelpSearch"
 		confirm="_prodtypeGroupValueHelpClose"
 		cancel="_prodtypeGroupValueHelpClose">
-		<StandardListItem title="{ProdTypeModel>PRODTYP}" description="{ProdTypeModel>DESC1}"/>
+		<StandardListItem title="{ProdTypeModel>PRODTYP}" info="{ProdTypeModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

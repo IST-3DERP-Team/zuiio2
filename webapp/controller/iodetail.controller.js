@@ -76,6 +76,7 @@ sap.ui.define([
                 this._Model2 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._Model3 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._Model4 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                this._oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
 
                 //Initialize router
                 var oComponent = this.getOwnerComponent();
@@ -101,7 +102,7 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({
                     dataMode: "INIT",
                     today: "",
-                    DisplayMode:"change"
+                    DisplayMode: "change"
                 }), "ui");
 
                 this.getAppAction();
@@ -173,13 +174,13 @@ sap.ui.define([
                     const fullHash = new HashChanger().getHash();
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
                     const shellHash = urlParsing.parseShellHash(fullHash);
-                    csAction = shellHash.action;             
+                    csAction = shellHash.action;
                 }
 
                 var DisplayStateModel = new JSONModel();
                 var DisplayData = {
-                    sAction : csAction,
-                    visible : csAction === "display" ? false : true
+                    sAction: csAction,
+                    visible: csAction === "display" ? false : true
                 }
 
                 this.getView().getModel("ui").setProperty("/DisplayMode", csAction);
@@ -206,7 +207,7 @@ sap.ui.define([
                 this.byId("btnEditDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnDeleteDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnCopyDlvSched").setVisible(csAction === "display" ? false : true);
-                this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);                
+                this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnGenMatList").setVisible(csAction === "display" ? false : true);
                 this.byId("btnNewIODet").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditIODet").setVisible(csAction === "display" ? false : true);
@@ -278,21 +279,22 @@ sap.ui.define([
                 cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
 
                 //get Value Help for fields of IO Header
-                this.getVHSet("/IOTYPSet", "IOTypeModel", false);
-                this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true);
-                this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false);
-                this.getVHSet("/SEASONSet", "SeasonsModel", true);
-                this.getVHSet("/STYLENOvhSet", "StyleNoModel", false);
-                this.getVHSet("/UOMvhSet", "UOMModel", false);
-                this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false);
-                this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false);
-                this.getVHSet("/PRODPLANTvhSet", "PlantModel", false);
-                this.getVHSet("/STYLECDvhSet", "StyleCdModel", false);
-                this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false);
-                this.getVHSet("/BILLTOvhSet", "BILLTOModel", false);
-                this.getVHSet("/SHIPTOvhSet", "SHIPTOModel", false);
-                this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false);
-                this.getVHSet("/UOMINFOSet", "UOMINFOModel", false);
+                this.getVHSet("/IOTYPSet", "IOTypeModel", false, false);
+                this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true, false);
+                this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false, false);
+                this.getVHSet("/SEASONSet", "SeasonsModel", true, false);
+                this.getVHSet("/STYLENOvhSet", "StyleNoModel", false, false);
+                this.getVHSet("/UOMvhSet", "UOMModel", false, false);
+                this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false, false);
+                this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false, false);
+                this.getVHSet("/PRODPLANTvhSet", "PlantModel", false, false);
+                this.getVHSet("/STYLECDvhSet", "StyleCdModel", false, false);
+                this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false, false);
+                this.getVHSet("/BILLTOvhSet", "BILLTOModel", false, false);
+                this.getVHSet("/SHIPTOvhSet", "SHIPTOModel", false, false);
+                // this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false);
+                this.getVHSet("/SoldToCustSet", "SOLDTOModel", true, true);
+                this.getVHSet("/UOMINFOSet", "UOMINFOModel", false, false);
 
                 // console.log("Sales Document Data");
                 // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
@@ -3171,8 +3173,9 @@ sap.ui.define([
                 } catch (err) { }
             },
 
-            getVHSet: function (EntitySet, ModelName, SBUFilter) {
+            getVHSet: function (EntitySet, ModelName, SBUFilter, bHdrFilter) {
                 var oSHModel = this.getOwnerComponent().getModel();
+                var oSHModel2 = this.getOwnerComponent().getModel("ZGW_3DERP_SH_SRV");
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
@@ -3181,7 +3184,32 @@ sap.ui.define([
                 var bSBUFilter = SBUFilter;
 
                 //  /SEASONSet , SeasonsModel
-                if (bSBUFilter) {
+                if (bSBUFilter === true && bHdrFilter === true) {
+                    oSHModel2.setHeaders({
+                        sbu : this._sbu 
+                    })
+
+                    oSHModel2.read(sEntitySet, {                        
+                        success: function (oData, oResponse) {
+
+                            console.log("SOLD TO CUST");
+                            console.log(oData);
+                            oJSONModel.setData(oData);
+                            oView.setModel(oJSONModel, sModelName);
+
+                            if (sModelName === "SOLDTOModel") {
+                                oData.results.forEach(item => {
+                                    item.Custno = item.Custno === undefined ? "" : item.Custno;
+                                    item.Desc1 = item.Desc1 === undefined ? "" : item.Desc1;
+                                })
+                            }
+                        },
+                        error: function (err) {
+                        }
+                    });
+                }
+
+                if (bSBUFilter === true && bHdrFilter === false) {
                     // await new Promise((resolve, reject) => {
                     oSHModel.read(sEntitySet, {
                         urlParameters: {
@@ -3205,6 +3233,7 @@ sap.ui.define([
 
                         },
                         success: function (oData, oResponse) {
+                            console.log(oData);
                             if (sModelName === "BILLTOModel") {
                                 oData.results.forEach(item => {
                                     item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : item.CUSTBILLTO;
@@ -3641,7 +3670,7 @@ sap.ui.define([
                 // this.getView().byId("onIORefresh").setVisible(true);
                 this.getView().byId("onIOEdit").setVisible(true);
                 this.getView().byId("onIORelease").setVisible(true);
-                
+
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
@@ -3782,12 +3811,26 @@ sap.ui.define([
             onSoldToValueHelp: function (oEvent) {
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
+                var custGrp = this.getView().byId("CUSTGRP").getValue(); //get customer group value
+                var salesGrp = this.getView().byId("SALESGRP").getValue(); //get customer group value
                 that.inputId = oEvent.getSource().getId();
                 if (!that._soldtoHelpDialog) {
                     that._soldtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.SoldTo", that);
                     that._soldtoHelpDialog.attachSearch(that._soldtoGroupValueHelpSearch);
                     that.getView().addDependent(that._soldtoHelpDialog);
                 }
+
+                //filter Sold-To by Customer Group
+                this._soldtoHelpDialog.getBinding("items").filter([new Filter(
+                    "Custgrp",
+                    sap.ui.model.FilterOperator.EQ, custGrp
+                )]);
+
+                this._soldtoHelpDialog.getBinding("items").filter([new Filter(
+                    "Salesgrp",
+                    sap.ui.model.FilterOperator.EQ, salesGrp
+                )]);
+
                 that._soldtoHelpDialog.open(sInputValue);
             },
 
@@ -3795,7 +3838,7 @@ sap.ui.define([
                 //search seasons
                 var sValue = evt.getParameter("value");
                 var andFilter = [], orFilter = [];
-                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("Custno", sap.ui.model.FilterOperator.Contains, sValue));
                 // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
                 andFilter.push(new sap.ui.model.Filter(orFilter, false));
                 evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
@@ -4216,6 +4259,11 @@ sap.ui.define([
 
             onIOEdit: async function (source) {
                 var sSource = source;
+
+                // var bProceed = await this.lock(this);
+                // if (!bProceed) return;
+
+                // return;
 
                 if (sSource === "IOHDR") {
                     //create new - only header is editable at first
@@ -12911,6 +12959,67 @@ sap.ui.define([
             //******************************************* */
             // Common Functions
             //******************************************* */
+
+
+            lock: async (me) => {
+                // var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oModelLock = me._oModelLock;
+                var oParamLock = {};
+                var sError = "";
+                var promise = new Promise((resolve, reject) => {
+                    oParamLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
+                    oParamLock["Lock"] = "X";
+                    oParamLock["Iv_Count"] = 300;
+                    oParamLock["N_ENQ"] = [];
+
+                    console.log(oParamLock);
+
+                    oModelLock.create("/ZERP_IOHDR", oParamLock, {
+                        method: "POST",
+                        success: function (oResultLock) {
+                            console.log(oResultLock);
+                            oResultLock.N_ENQ.results.forEach(item => {
+                                if (item.Type === "E") {
+                                    sError += item.Message + ".\r\n ";
+                                }
+                            })
+                            if (sError.length > 0) {
+                                resolve(false);
+                                sap.m.MessageBox.information(sError);
+                                me.closeLoadingDialog();
+                            }
+                            else resolve(true);
+                        },
+                        error: function (err) {
+                            console.log(err.responseText.error);
+                            console.log(err.responseText.message);
+                            console.log(err.responseText.innererror.errordetail.message);
+                            me.closeLoadingDialog();
+                            resolve(false);
+                        }
+                    });
+                })
+                return await promise;
+            },
+
+            unLock() {
+                var oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oParamUnLock = {};
+                var me = this;
+                oParamUnLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
+                oParamUnLock["Lock"] = "";
+                oParamUnLock["N_ENQ"] = [];
+                oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
+                    method: "POST",
+                    success: function (oResultLock) {
+                        console.log("Unlock", oResultLock)
+                    },
+                    error: function (err) {
+                        me.closeLoadingDialog();
+                    }
+                })
+                this._oLock = [];
+            },
 
             onCloseDialog: function (oEvent) {
                 oEvent.getSource().getParent().close();

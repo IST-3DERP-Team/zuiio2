@@ -8,6 +8,6 @@
         search="_seasonsGroupValueHelpSearch"
 		confirm="_seasonsGroupValueHelpClose"
 		cancel="_seasonsGroupValueHelpClose">
-		<StandardListItem title="{SeasonsModel>SEASONCD}" description="{SeasonsModel>DESC1}"/>
+		<StandardListItem title="{SeasonsModel>SEASONCD}" info="{SeasonsModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

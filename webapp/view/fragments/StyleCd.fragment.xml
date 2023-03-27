@@ -8,6 +8,6 @@
         search="_stylecdGroupValueHelpSearch"
 		confirm="_stylecdGroupValueHelpClose"
 		cancel="_stylecdGroupValueHelpClose">
-		<StandardListItem title="{StyleCdModel>STYLECD}" description=""/>
+		<StandardListItem title="{StyleCdModel>STYLECD}" info=""/>
 	</SelectDialog>
 </core:FragmentDefinition>

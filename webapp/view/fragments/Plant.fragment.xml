@@ -8,6 +8,6 @@
         search="_plantGroupValueHelpSearch"
 		confirm="_plantGroupValueHelpClose"
 		cancel="_plantGroupValueHelpClose">
-		<StandardListItem title="{PlantModel>PRODPLANT}" description=""/>
+		<StandardListItem title="{PlantModel>PRODPLANT}" info=""/>
 	</SelectDialog>
 </core:FragmentDefinition>

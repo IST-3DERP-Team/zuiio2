@@ -16,6 +16,10 @@ server:
             - /test-resources
           url: https://ui5.sap.com
         backend:
+          - path: /sap/opu/odata/sap/ZGW_3DERP_IO_SRV/
+            url: http://159.138.39.203:8000
+            client: '888'
+            destination: LTD888
           - path: /sap
             url: http://159.138.39.203:8000
             client: '888'

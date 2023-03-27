@@ -1,57 +1,243 @@
 {
     "color": [
-        {"ColumnName": "CPOATRIB",
-            "ValueHelp": {"show": true, "items": {"path": "CUSTCOLOR_MODEL", "value": "CUSTCOLOR", "text": "CUSTCOLOR"},
-            "SuggestionItems": {"path": "CUSTCOLOR_MODEL>/", "text": "{CUSTCOLOR_MODEL>CUSTCOLOR}"}}}
+        {
+            "ColumnName": "CPOATRIB",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "CUSTCOLOR_MODEL",
+                    "value": "CUSTCOLOR",
+                    "text": "CUSTCOLOR"
+                },
+                "SuggestionItems": {
+                    "path": "CUSTCOLOR_MODEL>/",
+                    "text": "{CUSTCOLOR_MODEL>CUSTCOLOR}"
+                }
+            }
+        }
     ],
     "process": [
-        {"ColumnName": "VASTYP", 
-            "ValueHelp": {"show": true, "items": {"path": "VASTYPE_MODEL", "value": "PROCESSCD", "text": "PROCESSCD"},
-            "SuggestionItems": {"path": "VASTYPE_MODEL>/", "text": "{VASTYPE_MODEL>PROCESSCD}", "additionalText": "{VASTYPE_MODEL>DESC1}"}}},
-        {"ColumnName": "ATTRIBTYP", 
-            "ValueHelp": {"show": true, "items": {"path": "ATTRIBTYPE_MODEL", "value": "ATTRIBTYP", "text": "ATTRIBTYP"},
-            "SuggestionItems": {"path": "ATTRIBTYPE_MODEL>/", "text": "{ATTRIBTYPE_MODEL>ATTRIBTYP}"}}},
-        {"ColumnName": "ATTRIBCD", 
-            "ValueHelp": {"show": true, "items": {"path": "ATTRIBCODE_MODEL", "value": "ATTRIBCD", "text": "ATTRIBCD"},
-            "SuggestionItems": {"path": "ATTRIBCODE_MODEL>/", "text": "{ATTRIBCODE_MODEL>ATTRIBCD}", "additionalText": "{ATTRIBCODE_MODEL>DESC1}"}}}
+        {
+            "ColumnName": "VASTYP",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VASTYPE_MODEL",
+                    "value": "PROCESSCD",
+                    "text": "PROCESSCD"
+                },
+                "SuggestionItems": {
+                    "path": "VASTYPE_MODEL>/",
+                    "text": "{VASTYPE_MODEL>PROCESSCD}",
+                    "additionalText": "{VASTYPE_MODEL>DESC1}"
+                }
+            }
+        },
+        {
+            "ColumnName": "ATTRIBTYP",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "ATTRIBTYPE_MODEL",
+                    "value": "ATTRIBTYP",
+                    "text": "ATTRIBTYP"
+                },
+                "SuggestionItems": {
+                    "path": "ATTRIBTYPE_MODEL>/",
+                    "text": "{ATTRIBTYPE_MODEL>ATTRIBTYP}"
+                }
+            }
+        },
+        {
+            "ColumnName": "ATTRIBCD",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "ATTRIBCODE_MODEL",
+                    "value": "ATTRIBCD",
+                    "text": "ATTRIBCD"
+                },
+                "SuggestionItems": {
+                    "path": "ATTRIBCODE_MODEL>/",
+                    "text": "{ATTRIBCODE_MODEL>ATTRIBCD}",
+                    "additionalText": "{ATTRIBCODE_MODEL>DESC1}"
+                }
+            }
+        }
     ],
     "IODET": [
-        {"ColumnName": "CUSTCOLOR",
-            "ValueHelp": {"show": true, "items": {"path": "IOCUSTCOLOR_MODEL", "value": "ATTRIBCD", "text": "DESC1"},
-            "SuggestionItems": {"path": "IOCUSTCOLOR_MODEL>/", "text": "{IOCUSTCOLOR_MODEL>ATTRIBCD}"}}}
-        ],    
+        {
+            "ColumnName": "CUSTCOLOR",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "IOCUSTCOLOR_MODEL",
+                    "value": "ATTRIBCD",
+                    "text": "DESC1"
+                },
+                "SuggestionItems": {
+                    "path": "IOCUSTCOLOR_MODEL>/",
+                    "text": "{IOCUSTCOLOR_MODEL>ATTRIBCD}"
+                }
+            }
+        }
+    ],
     "IODLV": [
-            {"ColumnName": "CUSTSHIPTO",
-                "ValueHelp": {"show": true, "items": {"path": "SHIPTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
-                "SuggestionItems": {"path": "SHIPTO_MODEL>/", "text": "{SHIPTO_MODEL>KUNNR}"}}},
-            {"ColumnName": "CUSTBILLTO",
-                "ValueHelp": {"show": true, "items": {"path": "BILLTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
-                "SuggestionItems": {"path": "BILLTO_MODEL>/", "text": "{BILLTO_MODEL>KUNNR}"}}},
-                {"ColumnName": "CUSTSOLDTO",
-                    "ValueHelp": {"show": true, "items": {"path": "SOLDTO_MODEL", "value": "KUNNR", "text": "KUNNR"},
-                    "SuggestionItems": {"path": "SOLDTO_MODEL>/", "text": "{SOLDTO_MODEL>KUNNR}"}}}
-            ], 
+        {
+            "ColumnName": "CUSTSHIPTO",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "SHIPTO_MODEL",
+                    "value": "KUNNR",
+                    "text": "DESC1"
+                },
+                "SuggestionItems": {
+                    "path": "SHIPTO_MODEL>/",
+                    "text": "{SHIPTO_MODEL>KUNNR}",
+                    "info": "{SHIPTO_MODEL>DESC1}"
+                }
+            }
+        },
+        {
+            "ColumnName": "CUSTBILLTO",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "BILLTO_MODEL",
+                    "value": "KUNNR",
+                    "text": "DESC1"
+                },
+                "SuggestionItems": {
+                    "path": "BILLTO_MODEL>/",
+                    "text": "{BILLTO_MODEL>KUNNR}",
+                    "info": "{BILLTO_MODEL>DESC1}"
+                }
+            }
+        },
+        {
+            "ColumnName": "CUSTSOLDTO",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "SOLDTO_MODEL",
+                    "value": "Custno",
+                    "text": "Custno"
+                },
+                "SuggestionItems": {
+                    "path": "SOLDTO_MODEL>/",
+                    "text": "{SOLDTO_MODEL>Custno}",
+                    "additionalText": "{SOLDTO_MODEL>DESC1}"
+                }
+            }
+        }
+    ],
     "costHdr": [
-        {"ColumnName": "CSTYPE", 
-            "ValueHelp": {"show": true, "items": {"path": "COSTTYPE_MODEL", "value": "CSTYPECD", "text": "CSTYPEDESC"},
-            "SuggestionItems": {"path": "COSTTYPE_MODEL>/", "text": "{COSTTYPE_MODEL>CSTYPECD}", "additionalText": "{COSTTYPE_MODEL>CSTYPEDESC}", "maxSuggestionWidth": "250px"}}},
-        {"ColumnName": "CSVCD", 
-            "ValueHelp": {"show": true, "items": {"path": "COSTVARIANT_MODEL", "value": "CSVCD", "text": "DESC1"},
-            "SuggestionItems": {"path": "COSTVARIANT_MODEL>/", "text": "{COSTVARIANT_MODEL>CSVCD}", "additionalText": "{COSTVARIANT_MODEL>DESC1}", "maxSuggestionWidth": "300px"}}},
-        {"ColumnName": "SALESTERM", 
-            "ValueHelp": {"show": true, "items": {"path": "COSTTERMS_MODEL", "value": "INCO1", "text": "INCO1"},
-            "SuggestionItems": {"path": "COSTTERMS_MODEL>/", "text": "{COSTTERMS_MODEL>INCO1}"}}}
-    ],    
+        {
+            "ColumnName": "CSTYPE",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "COSTTYPE_MODEL",
+                    "value": "CSTYPECD",
+                    "text": "CSTYPEDESC"
+                },
+                "SuggestionItems": {
+                    "path": "COSTTYPE_MODEL>/",
+                    "text": "{COSTTYPE_MODEL>CSTYPECD}",
+                    "additionalText": "{COSTTYPE_MODEL>CSTYPEDESC}",
+                    "maxSuggestionWidth": "250px"
+                }
+            }
+        },
+        {
+            "ColumnName": "CSVCD",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "COSTVARIANT_MODEL",
+                    "value": "CSVCD",
+                    "text": "DESC1"
+                },
+                "SuggestionItems": {
+                    "path": "COSTVARIANT_MODEL>/",
+                    "text": "{COSTVARIANT_MODEL>CSVCD}",
+                    "additionalText": "{COSTVARIANT_MODEL>DESC1}",
+                    "maxSuggestionWidth": "300px"
+                }
+            }
+        },
+        {
+            "ColumnName": "SALESTERM",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "COSTTERMS_MODEL",
+                    "value": "INCO1",
+                    "text": "INCO1"
+                },
+                "SuggestionItems": {
+                    "path": "COSTTERMS_MODEL>/",
+                    "text": "{COSTTERMS_MODEL>INCO1}"
+                }
+            }
+        }
+    ],
     "iostylist": [
-    {"name": "STYLENO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
-            "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
+        {
+            "name": "STYLENO",
+            "position": 0,
+            "type": "Edm.String",
+            "visible": true,
+            "required": false,
+            "width": "100px",
+            "hideOnChange": false,
+            "showable": true,
+            "sort": "Ascending",
+            "valueHelp": {
+                "show": false,
+                "source": "",
+                "value": "",
+                "desc": ""
+            }
+        }
     ],
     "iosdlist": [
-        {"name": "SALESDOCNO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
-                "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
+        {
+            "name": "SALESDOCNO",
+            "position": 0,
+            "type": "Edm.String",
+            "visible": true,
+            "required": false,
+            "width": "100px",
+            "hideOnChange": false,
+            "showable": true,
+            "sort": "Ascending",
+            "valueHelp": {
+                "show": false,
+                "source": "",
+                "value": "",
+                "desc": ""
+            }
+        }
     ],
     "importpolist": [
-        {"name": "SALESDOCNO", "position": 0, "type": "Edm.String", "visible": true, "required": false, "width": "100px", "hideOnChange": false, "showable": true, "sort": "Ascending",
-                "valueHelp": {"show": false, "source": "", "value": "", "desc": ""}}
+        {
+            "name": "SALESDOCNO",
+            "position": 0,
+            "type": "Edm.String",
+            "visible": true,
+            "required": false,
+            "width": "100px",
+            "hideOnChange": false,
+            "showable": true,
+            "sort": "Ascending",
+            "valueHelp": {
+                "show": false,
+                "source": "",
+                "value": "",
+                "desc": ""
+            }
+        }
     ]
 }

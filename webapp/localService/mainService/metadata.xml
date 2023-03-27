@@ -792,12 +792,14 @@
                     <PropertyRef Name="KUNNR"/>
                 </Key>
                 <Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="BILLTOvh" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="KUNNR"/>
                 </Key>
                 <Property Name="KUNNR" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESC1" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="SOLDTOvh" sap:content-version="1">
                 <Key>
