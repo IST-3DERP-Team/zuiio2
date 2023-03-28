@@ -30,8 +30,9 @@ sap.ui.define([
                 that = this;
 
                 this.getView().setModel(new JSONModel({
-                    activeSTYLENO: '',
-                    activeSALDOCNO: ''
+                    activeSTYLENO: "",
+                    activeSALDOCNO: "",
+                    DisplayMode: "change"
                 }), "ui");
 
                 //get current userid

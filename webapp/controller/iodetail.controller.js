@@ -102,7 +102,9 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({
                     dataMode: "INIT",
                     today: "",
-                    DisplayMode: "change"
+                    DisplayMode: "change",
+                    LockType: "",
+                    LockMessage: ""
                 }), "ui");
 
                 this.getAppAction();
@@ -3187,10 +3189,10 @@ sap.ui.define([
                 //  /SEASONSet , SeasonsModel
                 if (bSBUFilter === true && bHdrFilter === true) {
                     oSHModel2.setHeaders({
-                        sbu : this._sbu 
+                        sbu: this._sbu
                     })
 
-                    oSHModel2.read(sEntitySet, {                        
+                    oSHModel2.read(sEntitySet, {
                         success: function (oData, oResponse) {
 
                             console.log("SOLD TO CUST");
@@ -3681,10 +3683,10 @@ sap.ui.define([
                 this.getView().byId("onIOSave").setVisible(false);
                 this.getView().byId("onIOCancel").setVisible(false);
 
+                this.unLock();
+
                 //Enable Icon Tab Filters
                 this.enableOtherTabs();
-
-
 
                 var oIconTabBarIO = me.byId("idIconTabBarInlineIOHdr");
                 // oIconTabBarIO.getItems().filter(item => item.getProperty("key") !== oIconTabBarIO.getSelectedKey())
@@ -4267,23 +4269,33 @@ sap.ui.define([
                 // return;
 
                 if (sSource === "IOHDR") {
-                    //create new - only header is editable at first
-                    await this.setHeaderEditMode();
-                    this.getView().byId("onIOEdit").setVisible(false);
-                    this.getView().byId("onIORelease").setVisible(false);
-                    // this.getView().byId("onIOAttribEdit").setVisible(false);
-                    // this.getView().byId("onIOStatEdit").setVisible(false);
-                    this.getView().byId("onIOSave").setVisible(true);
-                    this.getView().byId("onIOCancel").setVisible(true);
-                    // console.log("onIOEdit3");
+                    if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
+                        await this.lock(this);
+                    }
 
-                    this.disableOtherTabs();
+                    if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
 
-                    var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
-                        .forEach(item => item.setProperty("enabled", false));
 
-                    this._ioNo = this.getView().byId("IONO").getValue();
+                        //create new - only header is editable at first
+                        await this.setHeaderEditMode();
+                        this.getView().byId("onIOEdit").setVisible(false);
+                        this.getView().byId("onIORelease").setVisible(false);
+                        // this.getView().byId("onIOAttribEdit").setVisible(false);
+                        // this.getView().byId("onIOStatEdit").setVisible(false);
+                        this.getView().byId("onIOSave").setVisible(true);
+                        this.getView().byId("onIOCancel").setVisible(true);
+                        // console.log("onIOEdit3");
+
+                        this.disableOtherTabs();
+
+                        var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
+                        oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                            .forEach(item => item.setProperty("enabled", false));
+
+                        this._ioNo = this.getView().byId("IONO").getValue();
+
+                    } else
+                        MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
                 }
             },
 
@@ -12964,39 +12976,45 @@ sap.ui.define([
 
 
             lock: async (me) => {
-                // var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
-                var oModelLock = me._oModelLock;
+                var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                // var oModelLock = me._oModelLock;
                 var oParamLock = {};
+                var oIO_TAB = [];
                 var sError = "";
+
+                oIO_TAB.push({
+                    "IONo": me.getView().getModel("ui2").getProperty("/currIONo"),
+                    "Lock": "X"
+                })
+
+                oParamLock["IO_TAB"] = oIO_TAB;
+                oParamLock["Iv_Count"] = 300;
+                oParamLock["IO_MSG"] = [];
+
+                console.log(oParamLock);
+
                 var promise = new Promise((resolve, reject) => {
-                    oParamLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
-                    oParamLock["Lock"] = "X";
-                    oParamLock["Iv_Count"] = 300;
-                    oParamLock["N_ENQ"] = [];
-
-                    console.log(oParamLock);
-
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
                             console.log(oResultLock);
-                            oResultLock.N_ENQ.results.forEach(item => {
-                                if (item.Type === "E") {
-                                    sError += item.Message + ".\r\n ";
-                                }
+                            oResultLock.IO_MSG.results.forEach(item => {
+                                // if (item.Type === "S") {
+                                me.getView().getModel("ui").setProperty("/LockType", item.Type);
+                                me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
+                                // alert(me.getView().getModel("ui").getProperty("/isLocked"));
+                                // }
+                                sError += item.Message + ".\r\n ";
                             })
+
                             if (sError.length > 0) {
                                 resolve(false);
-                                sap.m.MessageBox.information(sError);
-                                me.closeLoadingDialog();
+                                // sap.m.MessageBox.information(sError);
+                                // me.closeLoadingDialog();
                             }
                             else resolve(true);
                         },
                         error: function (err) {
-                            console.log(err.responseText.error);
-                            console.log(err.responseText.message);
-                            console.log(err.responseText.innererror.errordetail.message);
-                            me.closeLoadingDialog();
                             resolve(false);
                         }
                     });
@@ -13007,17 +13025,38 @@ sap.ui.define([
             unLock() {
                 var oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
                 var oParamUnLock = {};
+                var oIO_TAB = [];
                 var me = this;
-                oParamUnLock["IONo"] = me.getView().getModel("ui2").getProperty("/currIONo");
-                oParamUnLock["Lock"] = "";
-                oParamUnLock["N_ENQ"] = [];
+                var sError = "";
+
+                oIO_TAB.push({
+                    "IONo": me.getView().getModel("ui2").getProperty("/currIONo"),
+                    "Lock": ""
+                })
+
+                oParamUnLock["IO_TAB"] = oIO_TAB;
+                oParamUnLock["Iv_Count"] = 300;
+                oParamUnLock["IO_MSG"] = [];
+
+                console.log(oParamUnLock);
+
                 oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
                     method: "POST",
                     success: function (oResultLock) {
+                        console.log(oResultLock);
+                        oResultLock.IO_MSG.results.forEach(item => {
+                            if (item.Type === "S") {
+                                me.getView().getModel("ui").setProperty("/LockType", "");
+                                me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
+                                // alert(me.getView().getModel("ui").getProperty("/isLocked"));
+                            }
+                            sError += item.Message + ".\r\n ";
+                        })
+
                         console.log("Unlock", oResultLock)
                     },
                     error: function (err) {
-                        me.closeLoadingDialog();
+                        // me.closeLoadingDialog();
                     }
                 })
                 this._oLock = [];
