@@ -197,6 +197,7 @@ sap.ui.define([
                 // this.byId("btnHdrDelete").setVisible(csAction === "display" ? false : true);
                 this.byId("onIOEdit").setVisible(csAction === "display" ? false : true);
                 this.byId("onIORelease").setVisible(csAction === "display" ? false : true);
+                this.byId("btnCreateStyle").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditColor").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditProcess").setVisible(csAction === "display" ? false : true);
                 this.byId("btnDeleteSize").setVisible(csAction === "display" ? false : true);
@@ -5605,11 +5606,12 @@ sap.ui.define([
                 var me = this;
 
                 let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
-
+                let csAction = this.getView().getModel("ui").getProperty("/DisplayMode");
                 // this._styleNo
                 if (strStyle.trim() === "") {
-                    this.byId("btnCreateStyle").setVisible(true);
+                    // this.byId("btnCreateStyle").setVisible(true);
                     this.byId("btnManageStyle").setVisible(false);
+                    this.byId("btnCreateStyle").setVisible(csAction === "display" ? false : true);
                 }
                 else {
                     this.byId("btnCreateStyle").setVisible(false);
@@ -10094,8 +10096,8 @@ sap.ui.define([
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
-                        semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                        semanticObject: "ZSO_3DERP_ORD_STYLE",
+                        action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {
                     //     "styleno": vStyle,
@@ -10140,8 +10142,8 @@ sap.ui.define([
 
                 var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
                     target: {
-                        semanticObject: "ZUI_3DERP",
-                        action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
+                        semanticObject: "ZSO_3DERP_ORD_STYLE",
+                        action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
                         // action: "manage&/RouteStyleDetail/NEW/" + me._sbu + "/" + me._ioNo
                     }
                     // params: {

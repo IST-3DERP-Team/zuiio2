@@ -163,7 +163,7 @@
                     <f:FormElement id="fePLANMONTH" label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} !== '' ? false : ${EditableFieldsData>/PLANMONTH} : false}" 
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PLANMONTH} : false}" 
                             valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
@@ -181,7 +181,7 @@
                                 value="{headerData>/IOTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} !== '' ? false : ${EditableFieldsData>/IOTYPE} : false}" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/IOTYPE} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
