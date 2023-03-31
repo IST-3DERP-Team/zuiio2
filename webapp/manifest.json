@@ -200,6 +200,9 @@
             "routeModel": {
                 "type": "sap.ui.model.json.JSONModel"
             },
+            "LockModel": {
+                "type": "sap.ui.model.json.JSONModel"
+            },
             "": {
                 "dataSource": "mainService",
                 "preload": true,

@@ -65,23 +65,6 @@
             }
         }
     ],
-    "IODET": [
-        {
-            "ColumnName": "CUSTCOLOR",
-            "ValueHelp": {
-                "show": true,
-                "items": {
-                    "path": "IOCUSTCOLOR_MODEL",
-                    "value": "ATTRIBCD",
-                    "text": "DESC1"
-                },
-                "SuggestionItems": {
-                    "path": "IOCUSTCOLOR_MODEL>/",
-                    "text": "{IOCUSTCOLOR_MODEL>ATTRIBCD}"
-                }
-            }
-        }
-    ],
     "IODLV": [
         {
             "ColumnName": "CUSTSHIPTO",
