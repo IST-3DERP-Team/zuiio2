@@ -9680,7 +9680,7 @@ sap.ui.define([
                     else {
                         if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("2 Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
                             this._validationErrors.push(oEvent.getSource().getId());
                             bError = true;
                         }
@@ -9749,6 +9749,30 @@ sap.ui.define([
                             })
                     }
                 }
+
+                var oSource = oEvent.getSource();
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+
+                if (this._sTableModel === "IODET") {
+                    this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                }
+                else if (this._sTableModel === "reorder") {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+                else {
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+
+                if (this._sTableModel === "color") this._bColorChanged = true;
+                else if (this._sTableModel === "process") this._bProcessChanged = true;
+                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                else if (this._sTableModel === "IODLV") this._bIODETChanged = true;
+                else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
+
+                console.log("Table Model : " + this._sTableModel );
             },
 
             onNumberChange: function (oEvent) {
