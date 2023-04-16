@@ -8,6 +8,6 @@
         search="_salesorgGroupValueHelpSearch"
 		confirm="_salesorgGroupValueHelpClose"
 		cancel="_salesorgGroupValueHelpClose">
-		<StandardListItem title="{SalesOrgModel>SALESORG}" description="{SalesOrgModel>DESCRIPTION}"/>
+		<StandardListItem title="{SalesOrgModel>SALESORG}" info="{SalesOrgModel>DESCRIPTION}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

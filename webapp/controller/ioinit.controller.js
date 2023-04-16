@@ -6,12 +6,13 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/export/Spreadsheet",
     "../control/DynamicTable",
-    "sap/ui/model/FilterOperator"
+    "sap/ui/model/FilterOperator",
+    "sap/ui/core/routing/HashChanger"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator) {
+    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger) {
         "use strict";
 
         var that;
@@ -29,8 +30,9 @@ sap.ui.define([
                 that = this;
 
                 this.getView().setModel(new JSONModel({
-                    activeSTYLENO: '',
-                    activeSALDOCNO: ''
+                    activeSTYLENO: "",
+                    activeSALDOCNO: "",
+                    DisplayMode: "change"
                 }), "ui");
 
                 //get current userid
@@ -51,6 +53,7 @@ sap.ui.define([
                 this._aSortableColumns = {};
                 this._aFilterableColumns = {};
 
+                this.getAppAction();
                 this.setSmartFilterModel();
 
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
@@ -73,6 +76,42 @@ sap.ui.define([
                 //     }));
 
                 // this.onSearch();
+            },
+
+            getAppAction: async function () {
+                // console.log("getAppAction");
+                // console.log(sap.ushell.Container)
+                var csAction = "change";
+                if (sap.ushell.Container !== undefined) {
+                    const fullHash = new HashChanger().getHash();
+                    const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
+                    const shellHash = urlParsing.parseShellHash(fullHash);
+                    csAction = shellHash.action;  
+                }
+
+                var DisplayStateModel = new JSONModel();
+                var DisplayData = {
+                    sAction : csAction,
+                    visible : csAction === "display" ? false : true
+                }
+
+                DisplayStateModel.setData(DisplayData);
+                this.getView().setModel(DisplayStateModel, "DisplayActionModel");
+                // console.log(this.getView().getModel("DisplayActionModel"));
+                // console.log(this.getView());
+
+                // alert(csAction);
+                if (csAction === "display") {
+                    var btnAdd = this.getView().byId("btnCopy");
+                    if (btnAdd.getVisible()) {
+                        btnAdd.setVisible(false);
+                    }
+
+                    var btnMenu = this.getView().byId("_IDGenMenuButton1");
+                    if (btnMenu.getVisible()) {
+                        btnMenu.setVisible(false);
+                    }                        
+                }
             },
 
             onfragmentIOSelect: function (tableName) {
@@ -136,7 +175,7 @@ sap.ui.define([
                 }
 
                 if (sTableName === "IOSDSelectTab") {
-                    // console.log(sTableName);
+                    console.log(sTableName);
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId(sTableName);
                     var oSelectedIndices = oTable.getSelectedIndices();
@@ -168,12 +207,12 @@ sap.ui.define([
 
                         })
 
-                        // console.log("Route Model 1");                        
+                        console.log("Route Model 1");                        
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
-                        // console.log("rowData");
-                        // console.log(rowData);
+                        console.log("rowData");
+                        console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
@@ -205,12 +244,15 @@ sap.ui.define([
                     // console.log(that._sbu);
                     // console.log(sStyleNo);
 
+                    console.log("RouteIODetail");
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
+
+                    console.log("RouteIODetail 2");
 
                     me._IOfromSalesDocDialog.close();
                 }
@@ -721,7 +763,7 @@ sap.ui.define([
                 } else if (sColumnId === "STATUSCD") { //display infolabel for Status Code
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 8 : ${" + sColumnId + "} === 'REL' ? 9 : 1}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CMP' ? 8: ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 9}"
                     })
                 } else if (sColumnType === "SEL") { //Manage button
                     oColumnTemplate = new sap.m.Button({

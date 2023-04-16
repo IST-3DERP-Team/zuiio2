@@ -44,7 +44,7 @@
             </ObjectHeader>
 
             <!-- ICON TAB BAR : IO HEADER / STYLE ? DLV SCHED / MATLIST / COSTING / FA SUMMARY / ATTACHMENTS -->
-            <IconTabBar id="idIconTabBarInlineMode" headerMode="Inline" selectedKey="itfIOHDR" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false" class="sapUiNoContentPadding" expandable="false">
+            <IconTabBar id="idIconTabBarInlineMode" select="onSelectChanged" headerMode="Inline" selectedKey="itfIOHDR" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false" class="sapUiNoContentPadding" expandable="false">
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="IO Header" key="itfIOHDR">
@@ -329,7 +329,7 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                        <Button id= "btnFabGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
                                                                 <core:CustomData key="TableName" value="styleFabBOMTab" />
                                                             </customData>
@@ -360,7 +360,7 @@
                                                 <t:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer />
-                                                        <Button text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
+                                                        <Button id="btnAccGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
                                                                 <core:CustomData key="TableName" value="styleAccBOMTab" />
                                                             </customData>
@@ -503,7 +503,7 @@
                                         <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="Refresh" visible="true" />
                                         <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Edit" visible="true" />
+                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="Import PO" visible="true" />
                                         <Button id="btnGenMatList" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                             <customData>
                                                 <core:CustomData key="TableName" value="IODLVTab" />
@@ -531,7 +531,7 @@
                                     <ToolbarSpacer />
                                     <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="New" visible="true" />
                                     <Button id="btnEditIODet" type="Ghost" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
-                                    <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" />
+                                    <!-- <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" /> -->
                                     <Button id="btnCopyIODet" type="Ghost" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
                                     <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
                                     <Button id="btnSaveIODet" type="Ghost" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />

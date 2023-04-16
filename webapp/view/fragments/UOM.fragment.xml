@@ -8,6 +8,6 @@
         search="_uomGroupValueHelpSearch"
 		confirm="_uomGroupValueHelpClose"
 		cancel="_uomGroupValueHelpClose">
-		<StandardListItem title="{UOMModel>MSEHI}" description="{UOMModel>MSEHL}"/>
+		<StandardListItem title="{UOMModel>MSEHI}" info="{UOMModel>MSEHL}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

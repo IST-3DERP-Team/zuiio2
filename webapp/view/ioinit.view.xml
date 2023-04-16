@@ -173,19 +173,19 @@
             <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document">
 			    <menu>
 			        <Menu id="_IDGenMenu1">
-                        <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateIO('Manual')"/>
-                        <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIO('SalesDoc')"/>
-			            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIO('Style')" />
+                        <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateIO('Manual')" visible="true"/>
+                        <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIO('SalesDoc')" visible="true"/>
+			            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIO('Style')" visible="true"/>
                     </Menu>
 			    </menu>                    
 		        </MenuButton>
-                    <Button text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO"/>
-                    <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport">
+                    <Button id="btnCopy" text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO" visible="true"/>
+                    <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport" visible="true">
                         <customData>
                             <core:CustomData key="TableName" value="IODynTable" />
                         </customData>
                     </Button>
-                <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveTableLayout"/>
+                <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveTableLayout" visible="true"/>
 
             <layoutData>
                 <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>

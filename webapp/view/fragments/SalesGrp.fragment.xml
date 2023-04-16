@@ -8,6 +8,6 @@
         search="_salesgrpGroupValueHelpSearch"
 		confirm="_salesgrpGroupValueHelpClose"
 		cancel="_salesgrpGroupValueHelpClose">
-		<StandardListItem title="{SalesGrpModel>SALESGRP}" description="{SalesGrpModel>DESC1}"/>
+		<StandardListItem title="{SalesGrpModel>SALESGRP}" info="{SalesGrpModel>DESC1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

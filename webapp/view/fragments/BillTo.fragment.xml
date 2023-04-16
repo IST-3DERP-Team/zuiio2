@@ -8,6 +8,6 @@
         search="_billtoGroupValueHelpSearch"
 		confirm="_billtoGroupValueHelpClose"
 		cancel="_billtoGroupValueHelpClose">
-		<StandardListItem title="{BillToModel>KUNNR}" description="{BillToModel>KUNNR}"/>
+		<StandardListItem title="{BillToModel>KUNNR}" info="{BillToModel>Desc1}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

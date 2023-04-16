@@ -200,6 +200,9 @@
             "routeModel": {
                 "type": "sap.ui.model.json.JSONModel"
             },
+            "LockModel": {
+                "type": "sap.ui.model.json.JSONModel"
+            },
             "": {
                 "dataSource": "mainService",
                 "preload": true,
@@ -290,6 +293,15 @@
             },
             "ZGW_3DERP_RFC_SRV": {
                 "dataSource": "ZGW_3DERP_RFC_SRV",
+                "preload": true,
+                "settings": {
+                    "defaultBindingMode": "TwoWay",
+                    "defaultCountMode": "Inline",
+                    "refreshAfterChange": false
+                }
+            },
+            "ZGW_3DERP_LOCK_SRV": {
+                "dataSource": "ZGW_3DERP_LOCK_SRV",
                 "preload": true,
                 "settings": {
                     "defaultBindingMode": "TwoWay",

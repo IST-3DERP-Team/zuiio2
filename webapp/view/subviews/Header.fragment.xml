@@ -12,10 +12,11 @@
     <!-- IO HEADER BUTTONS -->
     <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
     <ToolbarSpacer />
+        <!-- <Button id = "onIORefresh" type="Ghost"  icon="sap-icon://refresh" tooltip="Refresh" press="onIORefresh('IOHDR')" visible="true"/> -->
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onIOEdit('IOHDR')" visible="true"/>
         <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onIORelease('IOHDR')" visible="true"/>
-        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="Release IO" press="onIOSave('IOHDR')" visible="false"/>
-        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="Cancel" tooltip="Release IO" press="onIOCancel('IOHDR')" visible="false"/>
+        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="save" press="onIOSave('IOHDR')" visible="false"/>
+        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="Cancel" tooltip="Cancel" press="onIOCancel('IOHDR')" visible="false"/>
     </OverflowToolbar>
 
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
@@ -60,7 +61,7 @@
                         <f:fields>
                             <Input id="STYLECD" 
                                 value="{headerData>/STYLECD}" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/STYLECD} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange">
@@ -93,7 +94,7 @@
                                 value="{headerData>/PRODTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/PRODTYPE} : false : ${EditableFieldsData>/PRODTYPE} : false  }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -112,7 +113,7 @@
                                 value="{headerData>/PRODSCEN}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSCEN} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -147,7 +148,7 @@
                         <f:fields>
                             <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ORDQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange" >
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -155,14 +156,15 @@
                         <f:fields>
                             <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ACTUALQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange" >
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement id="fePLANMONTH" label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANMONTH} : false }" valueStateText="Required"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PLANMONTH} : false}" 
+                            valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
                             </Input>
                         </f:fields>
@@ -179,7 +181,7 @@
                                 value="{headerData>/IOTYPE}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOTYPE} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/IOTYPE} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
@@ -198,7 +200,7 @@
                                 value="{headerData>/SALESGRP}" 
                                 showSuggestion="true" 
                                 showValueHelp="true"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SALESGRP} : false : ${EditableFieldsData>/SALESGRP} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 autocomplete="true" 
@@ -240,7 +242,7 @@
                         <f:fields>
                             <Input id="REVORDQTY" type="Number" value="{headerData>/REVORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REVORDQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>  
@@ -248,7 +250,7 @@
                         <f:fields>
                             <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SHIPQTY} : false }"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" liveChange="onNumberInputLiveChange">
                             </Input>
                         </f:fields>
                     </f:FormElement>       
@@ -281,7 +283,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/SEASONCD} : false : ${EditableFieldsData>/SEASONCD} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
                                 change="onHeaderChange" 
@@ -301,7 +303,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/CUSTGRP} : false : ${EditableFieldsData>/CUSTGRP} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChange" 
@@ -350,7 +352,7 @@
                                 type="Text" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? ${headerData>/IONO} === '' ? ${EditableFieldsData>/BASEUOM} : false : ${EditableFieldsData>/BASEUOM} : false  }"  
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
                                 change="onHeaderChange" 
@@ -371,10 +373,9 @@
                                 placeholder="Enter Date"
                                 value="{headerData>/PLANDLVDT}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANDLVDT} : false }"
-                                change="handleChange"
-                                class="sapUiSmallMarginBottom"
+                                change="handleChange"                                
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="PLANDLVDT" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
+                            <!-- <Input id="PLANDLVDT" class="sapUiSmallMarginBottom" type="Text" showSuggestion="true" showValueHelp="true" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"
                                 value="{headerData>/PLANDLVDT}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input> -->
@@ -481,16 +482,16 @@
                                 placeholder="Enter Date"
                                 change="handleChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
-                                value="{headerData>/CUSTDLVDT}" 
-                                class="sapUiSmallMarginBottom"
+                                value="{headerData>/CUSTDLVDT}"                                 
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="CUSTDLVDT"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
+                            <!-- <Input id="CUSTDLVDT" class="sapUiSmallMarginBottom"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement> 
                     <f:FormElement id="fePLANQTY" label="{i18n>PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANQTY" type="Number" value="{headerData>/PLANQTY}" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANQTY} : false }" valueStateText="Required"/>
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANQTY} : false }" valueStateText="Required"
+                            change="onHeaderChange" liveChange="onNumberInputLiveChange"/>
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement id="fePRODSTART" label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
@@ -499,10 +500,9 @@
                                 id="PRODSTART"
                                 placeholder="Enter Date"
                                 change="handleChange"
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"
-                                class="sapUiSmallMarginBottom"
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"                                
                                 valueFormat="yyyy-MM-dd" displayFormat="short"/>
-                            <!-- <Input id="PRODSTART" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
+                            <!-- <Input id="PRODSTART" class="sapUiSmallMarginBottom" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement>
                     <f:FormElement id="feREMARKS" label="{i18n>REMARKS}"  visible="{= ${VisibleFieldsData>/REMARKS} === true ? true : false }">
