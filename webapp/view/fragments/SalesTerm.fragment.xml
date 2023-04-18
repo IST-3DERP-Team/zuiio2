@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectSalesTerm}"
+		class="sapUiPopupWithPadding"
+		items="{SalesTermModel>/results}"
+        search="_salestermGroupValueHelpSearch"
+		confirm="_salestermGroupValueHelpClose"
+		cancel="_salestermGroupValueHelpClose">
+		<StandardListItem title="{SalesTermModel>INCO1}" info="{SalesTermModel>DESCRIPTION}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

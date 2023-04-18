@@ -457,12 +457,12 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
+                                , 
+                                tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
@@ -490,12 +490,12 @@ sap.ui.define([
                     } else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: "TEXT",//new sap.m.Text({text: sColumnLabel, wrapping: false}),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
+                                , 
+                                tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
@@ -734,7 +734,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                         template: me.columnTemplate(sColumnId, sColumnType),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -758,12 +758,12 @@ sap.ui.define([
                 if (sColumnId === "STATUS") { //display infolabel for Status Code
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CMP' ? 8 : ${" + sColumnId + "} === 'CRT' ? 3 : ${" + sColumnId + "} === 'REL' ? 8 : ${" + sColumnId + "} === 'EXT' ? 5 : 1}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CMP' ? 8 : ${" + sColumnId + "} === 'CRT' ? 2 : ${" + sColumnId + "} === 'REL' ? 8 : ${" + sColumnId + "} === 'EXT' ? 5 : 1}"
                     })
                 } else if (sColumnId === "STATUSCD") { //display infolabel for Status Code
                     oColumnTemplate = new sap.tnt.InfoLabel({
                         text: "{" + sColumnId + "}",
-                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CMP' ? 8: ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 9}"
+                        colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CMP' ? 8: ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 3: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 9}"
                     })
                 } else if (sColumnType === "SEL") { //Manage button
                     oColumnTemplate = new sap.m.Button({
@@ -1197,7 +1197,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                         template: me.columnTemplate(sColumnId, sColumnType),
                         // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         width: sColumnWidth + 'px',
@@ -1242,12 +1242,12 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
+                                , 
+                                tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
@@ -1261,7 +1261,7 @@ sap.ui.define([
                     } else if (sColumnDataType === "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1278,12 +1278,12 @@ sap.ui.define([
                     } else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
+                                , 
+                                tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,

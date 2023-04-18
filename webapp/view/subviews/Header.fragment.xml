@@ -147,7 +147,7 @@
                     <f:FormElement id="feORDQTY" label="{i18n>ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ORDQTY} : false }"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/REVORDQTY} > 0 ? false : ${EditableFieldsData>/ORDQTY} : false }"
                                 change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
@@ -155,14 +155,14 @@
                     <f:FormElement id="feACTUALQTY" label="{i18n>ACTUALQTY}" visible="{= ${VisibleFieldsData>/ACTUALQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/ACTUALQTY} : false }"
+                            editable="false"
                                 change="onHeaderChange" liveChange="onNumberInputLiveChange" >
                             </Input>
                         </f:fields>
                     </f:FormElement>  
                     <f:FormElement id="fePLANMONTH" label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
-                            <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="true" 
+                            <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="false" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PLANMONTH} : false}" 
                             valueStateText="Required"
                                 change="onHeaderChange" liveChange="onHeaderChange" >
@@ -232,9 +232,15 @@
                     </f:FormElement>
                     <f:FormElement id="feFTYSALTERM" label="{i18n>FTYSALESTERM}" visible="{= ${VisibleFieldsData>/FTYSALTERM} === true ? true : false }">
                         <f:fields>
-                            <Input id="FTYSALTERM" value="{headerData>/FTYSALTERM}" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/FTYSALTERM} : false }" valueStateText="Required"
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                            <Input id="FTYSALTERM" 
+                                value="{headerData>/FTYSALTERM}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/FTYSALTERM} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                autocomplete="true" 
+                                >
                             </Input>
                         </f:fields>
                     </f:FormElement> 
@@ -249,7 +255,7 @@
                     <f:FormElement id="feSHIPQTY" label="{i18n>SHIPQTY}" visible="{= ${VisibleFieldsData>/SHIPQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SHIPQTY} : false }"
+                            editable="false"
                                 change="onHeaderChange" liveChange="onNumberInputLiveChange">
                             </Input>
                         </f:fields>
@@ -270,7 +276,7 @@
                 <f:formElements>                            
                     <f:FormElement id="feIOSUFFIX" label="{i18n>IOSUFFIX}" visible="{= ${VisibleFieldsData>/IOSUFFIX} === true ? true : false }">
                         <f:fields>
-                            <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="true" 
+                            <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="false" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOSUFFIX} : false }" valueStateText="Required"
                                 value="{headerData>/IOSUFFIX}" 
                                 change="onHeaderChange" liveChange="onHeaderChange">
@@ -339,10 +345,16 @@
                     </f:FormElement>    
                     <f:FormElement id="feCUSSALTERM" label="{i18n>CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
                         <f:fields>
-                            <Input id="CUSSALTERM" type="Text" showSuggestion="true" showValueHelp="true" 
-                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSSALTERM} : false }" valueStateText="Required"
+                            <Input id="CUSSALTERM" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSSALTERM} : false }" 
+                                valueStateText="Required"
                                 value="{headerData>/CUSSALTERM}" 
-                                change="onHeaderChange" liveChange="onHeaderChange">
+                                change="onHeaderChange" 
+                                autocomplete="true" 
+                                >
                             </Input>
                         </f:fields>
                     </f:FormElement>
@@ -443,6 +455,25 @@
                                 value="{headerData>/SOLDTOCUST}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onSoldToValueHelp"
+                                suggestionItems="{SOLDTOModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SOLDTOModel>KUNNR}" additionalText=""/>
+                                </suggestionItems>
+                                </Input>
+                        </f:fields>
+                    </f:FormElement> 
+                    <!-- <f:FormElement id="feSOLDTOCUST" label="{i18n>SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
+                        <f:fields>
+                            <Input id="SOLDTOCUST" 
+                                value="{headerData>/SOLDTOCUST}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SOLDTOCUST} : false }" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
@@ -455,7 +486,7 @@
                                 </suggestionItems>
                                 </Input>
                         </f:fields>
-                    </f:FormElement>                                                                                 
+                    </f:FormElement>                                                                                  -->
                     <f:FormElement id="fePLANPLANT" label="{i18n>PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANPLANT" 

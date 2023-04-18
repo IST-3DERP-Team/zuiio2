@@ -494,7 +494,7 @@
                                 </t:rowSettingsTemplate>
                                 <t:extension>
                                     <Toolbar>
-                                        <Text text="{i18n>DeliverySchedule}" />
+                                        <!-- <Text text="{i18n>DeliverySchedule}" /> -->
                                         <ToolbarSpacer />
                                         <Button id="btnNewDlvSched" type="Ghost" icon="sap-icon://add" press="onAdd('IODLV')" tooltip="New" visible="true" />
                                         <Button id="btnEditDlvSched" type="Ghost" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="Edit" visible="true" />
@@ -520,31 +520,66 @@
                                 </t:layoutData> 
                             </t:Table>
                         <!-- </Panel> -->
-                        
-                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
-                            <t:rowSettingsTemplate>
-                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
-                            </t:rowSettingsTemplate>
-                            <t:extension>
-                                <Toolbar>
-                                    <Text text="{i18n>IODetail}" />
-                                    <ToolbarSpacer />
-                                    <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="New" visible="true" />
-                                    <Button id="btnEditIODet" type="Ghost" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
-                                    <!-- <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" /> -->
-                                    <Button id="btnCopyIODet" type="Ghost" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
-                                    <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
-                                    <Button id="btnSaveIODet" type="Ghost" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />
-                                    <Button id="btnCancelIODet" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                    <Button id="btnFullScreenIODet" icon="sap-icon://full-screen" press="onTableResize('IODET', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
-                                    <Button id="btnExitFullScreenIODet" icon="sap-icon://exit-full-screen" press="onTableResize('IODET', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
-                                    <!-- <Button id="btnFullScreenIODet" icon="sap-icon://zoom-in" press="onFullScreen('IODET')" tooltip="view Full Screen" visible="true" /> -->
-                                </Toolbar>
-                            </t:extension>
-                            <t:layoutData>
-                                <FlexItemData growFactor="3" baseSize="0%"/>
-                            </t:layoutData>                             
-                        </t:Table>
+
+                        <IconTabBar id="idIconTabBarInlineIODet" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
+                                <items>                                
+                                    <!-- ATTRIBUTES -->
+                                    <IconTabFilter text="Delivery Details" key="itfDLVDET">
+                                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                            <t:rowSettingsTemplate>
+                                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                            </t:rowSettingsTemplate>
+                                            <t:extension>
+                                                <Toolbar>
+                                                    <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
+                                                    <ToolbarSpacer />
+                                                    <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="New" visible="true" />
+                                                    <Button id="btnEditIODet" type="Ghost" icon="sap-icon://edit" press="onEdit('IODET')" tooltip="Edit" visible="true" />
+                                                    <!-- <Button id="btnDeleteIODet" type="Ghost" icon="sap-icon://delete" press="onDelete('IODETTab')" tooltip="Delete" visible="true" /> -->
+                                                    <Button id="btnCopyIODet" type="Ghost" icon="sap-icon://copy" press="onCopy('IODETTab_deactivated')" tooltip="Copy" visible="false" />
+                                                    <Button id="btnRefreshIODet" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODETTab','/IODETSet')" tooltip="Refresh" visible="true" />
+                                                    <Button id="btnSaveIODet" type="Ghost" icon="sap-icon://save" press="onSaveIODET" tooltip="{ddtext>/SAVE}" visible="false" />
+                                                    <Button id="btnCancelIODet" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODET')" tooltip="{ddtext>/CANCEL}" visible="false" />
+                                                    <Button id="btnFullScreenIODet" icon="sap-icon://full-screen" press="onTableResize('IODET', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                                    <Button id="btnExitFullScreenIODet" icon="sap-icon://exit-full-screen" press="onTableResize('IODET', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                                    <!-- <Button id="btnFullScreenIODet" icon="sap-icon://zoom-in" press="onFullScreen('IODET')" tooltip="view Full Screen" visible="true" /> -->
+                                                </Toolbar>
+                                            </t:extension>
+                                            <t:layoutData>
+                                                <FlexItemData growFactor="3" baseSize="0%"/>
+                                            </t:layoutData>                             
+                                        </t:Table>
+                                    </IconTabFilter>
+                                    <!-- STATUS -->
+                                    <IconTabFilter text="Material List" key="itfIODETMATLST">
+                                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
+
+                                        <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
+                                            <ToolbarSpacer />
+                                            <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
+                                        </OverflowToolbar> -->
+                                        <!-- <t:Table id="IODETMATLSTTab" 
+                                                class="sapUiSizeCompact sidePadding" 
+                                                visibleRowCountMode="Auto" 
+                                                showColumnVisibilityMenu="true" 
+                                                enableColumnFreeze="true" 
+                                                enableCellFilter="true" 
+                                                selectionMode="Single" 
+                                                cellClick="onCellClick"
+                                                selectionBehavior="RowSelector" 
+                                                alternateRowColors="true"
+                                                rowSelectionChange="onRowChange"> -->
+                                        <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                            <t:layoutData>
+                                                <FlexItemData growFactor="1" baseSize="0%" />
+                                            </t:layoutData>
+                                        </t:Table>
+                                    </IconTabFilter>
+                                </items>
+                                <layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%" />
+                                </layoutData>
+                            </IconTabBar>
                         </VBox>
                     </IconTabFilter>
 
