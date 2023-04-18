@@ -10241,6 +10241,15 @@ sap.ui.define([
                                 if (this._sTableModel === "reorder") {
                                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                                     this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getDescription());
+
+                                    var vUOM = "";
+                                    var vANDEC = 0;
+                                    
+                                    this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
+                                    this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
+                                    console.log(vUOM, vANDEC)
+                                    this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
+                                    this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
                                 }
                                 else {
                                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
@@ -10889,6 +10898,13 @@ sap.ui.define([
                 //get column value help prop
                 this.getIOMatListColumnProp();
                 this.getIOMatListFunctionConfig("IOMATLIST");
+
+                this._oModelIOMatList.read('/UOMSet', {
+                    success: function (oData, response) {
+                        me.getView().setModel(new JSONModel(oData.results), "UOMConfig");
+                    },
+                    error: function (err) { }
+                })
             },
 
             getIOMatListColumnProp: async function () {
@@ -11202,6 +11218,7 @@ sap.ui.define([
 
             onReorder: async function (oEvent) {
                 var oTable = this.byId("ioMatListTab");
+                console.log(this.getView().getModel("UOMConfig").getData())
 
                 if (oTable.getModel().getData().rows.length > 0) {
                     await this.lock(this);
@@ -11223,20 +11240,26 @@ sap.ui.define([
 
                             oSelectedIndices = oTmpSelectedIndices;
 
-                            oSelectedIndices.forEach((item, index) => {
-                                this._aForReorder.push({
-                                    IONO: vIONo,
-                                    MATNO: aData.at(item).MATNO,
-                                    SEQNO: aData.at(item).SEQNO,
-                                    REORDERQTY: "0",
-                                    REMARKS: "",
-                                    DELETED: false,
-                                    CREATEDBY: "",
-                                    CREATEDDT: "",
-                                    UPDATEDBY: "",
-                                    UPDATEDDT: ""
-                                })
+                        oSelectedIndices.forEach((item, index) => {
+                            var vANDEC = 0;
+
+                            this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === aData.at(item).UOM).forEach(item => vANDEC = item.ANDEC);
+
+                            this._aForReorder.push({
+                                IONO: vIONo,
+                                MATNO: aData.at(item).MATNO,
+                                SEQNO: aData.at(item).SEQNO,
+                                REORDERQTY: "0",
+                                REMARKS: "",
+                                DELETED: false,
+                                CREATEDBY: "",
+                                CREATEDDT: "",
+                                UPDATEDBY: "",
+                                UPDATEDDT: "",
+                                UOM: aData.at(item).UOM,
+                                ANDEC: vANDEC
                             })
+                        })
 
                             this._aForReorder.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                         }
@@ -11269,6 +11292,8 @@ sap.ui.define([
                             item.NEW = false;
                             item.EDITED = false;
                             item.ACTIVE = index === 0 ? "X" : "";
+                            item.UOM = "";
+                            item.ANDEC = 0;
 
                             if (item.CREATEDDT !== null)
                                 item.CREATEDDT = dateFormat.format(new Date(item.CREATEDDT));
@@ -11371,6 +11396,8 @@ sap.ui.define([
                             if (item.NEW === true) {
                                 item.MATNO = this._aForReorder[iCounter].MATNO;
                                 item.SEQNO = this._aForReorder[iCounter].SEQNO;
+                                item.UOM = this._aForReorder[iCounter].UOM;
+                                item.ANDEC = this._aForReorder[iCounter].ANDEC;
                                 iCounter++;
                             }
                         })
@@ -11436,7 +11463,7 @@ sap.ui.define([
                             type: sap.m.InputType.Number,
                             textAlign: sap.ui.core.TextAlign.Right,
                             value: "{path:'" + sColName + "', formatOptions:{ minFractionDigits:5, maxFractionDigits:5 }, constraints:{ precision:18, scale:5 }}",
-                            change: this.onNumberChange.bind(this),
+                            liveChange: this.onReorderQtyLiveChange.bind(this),
                             enabled: {
                                 path: "NEW",
                                 formatter: function (NEW) {
@@ -11471,7 +11498,9 @@ sap.ui.define([
                     }
                 })
 
-                oNewRow["NEW"] = true;
+                oNewRow["UOM"] = "";
+                oNewRow["ANDEC"] = 0;
+                oNewRow["NEW"] = true;                
                 aNewRow.push(oNewRow);
                 var aDataAfterChange = aNewRow.concat(oTable.getModel().getData().rows);
 
@@ -11491,6 +11520,56 @@ sap.ui.define([
                 sap.ui.getCore().byId("btnRefreshReorder").setVisible(false);
                 oTable.focus();
             },
+
+            onReorderQtyLiveChange: function(oEvent) {
+                if (this._validationErrors === undefined) this._validationErrors = [];
+                // console.log("ok")
+                var oSource = oEvent.getSource();
+                console.log(oSource)
+                // var sModel = oSource.getBindingInfo("value").parts[0].model;
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+                var vDecPlaces = this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC');
+                var bError = false;
+
+                console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/SEQNO'));
+                console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC'));
+                
+                if (oEvent.getParameters().value.split(".").length > 1) {
+                    if (vDecPlaces === 0) {
+                        // MessageBox.information("Value should not have decimal place/s.");
+                        oEvent.getSource().setValueState("Error");
+                        oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
+                        this._validationErrors.push(oEvent.getSource().getId());
+                        bError = true;
+                    }
+                    else {
+                        if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
+                            oEvent.getSource().setValueState("Error");
+                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            this._validationErrors.push(oEvent.getSource().getId());
+                            bError = true;
+                        }
+                        else {
+                            oEvent.getSource().setValueState("None");
+                            this._validationErrors.forEach((item, index) => {
+                                if (item === oEvent.getSource().getId()) {
+                                    this._validationErrors.splice(index, 1)
+                                }
+                            })
+                            bError = false;
+                        }
+                    }
+                }
+                else {
+                    oEvent.getSource().setValueState("None");
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                    bError = false;
+                }
+            },            
 
             onAddReorder: function (oEvent) {
                 this.addReorder();
@@ -11882,7 +11961,7 @@ sap.ui.define([
             handleReorderValueHelp: function (oEvent) {
                 var oSource = oEvent.getSource();
                 var vh = this.getView().getModel("IOMATLIST_MODEL").getData();
-
+                console.log(vh)
                 this._inputSource = oSource;
                 this._inputId = oSource.getId();
                 this._inputValue = oSource.getValue();
@@ -11925,14 +12004,25 @@ sap.ui.define([
 
                     if (oSelectedItem) {
                         this._inputSource.setValue(oSelectedItem.getTitle());
-
+                        console.log("dumaan dito")
                         if (this._inputValue !== oSelectedItem.getTitle()) {
+                            console.log("dumaan dito")
                             var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
                             // var sVendor = this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.MATNO === oSelectedItem.getTitle() && fItem.SEQNO === oSelectedItem.getDescription())[0].VENDORCD;
 
                             this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                             this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getDescription());
                             // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', sVendor);
+
+                            var vUOM = "";
+                            var vANDEC = 0;
+                            
+                            this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
+                            this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
+                            console.log(vUOM, vANDEC)
+                            this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
+                            this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
+
                             this._bReorderChanged = true;
                         }
                     }
@@ -11977,10 +12067,21 @@ sap.ui.define([
 
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', oSelectedItem.getAdditionalText());
                     // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', sVendor);
+
+                    var vUOM = "";
+                    var vANDEC = 0;
+                    
+                    this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getAdditionalText()).forEach(item => vUOM = item.UOM);
+                    this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
+                    console.log(vUOM, vANDEC)
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
                 }
                 else {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/SEQNO', "");
                     // this._ReorderDialog.getModel().setProperty(sRowPath + '/VENDOR', "");
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', "");
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', 0);
                 }
 
                 this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
@@ -12643,7 +12744,9 @@ sap.ui.define([
 
                 if (arg === "ioMatList") {
                     Common.openProcessingDialog(this, "Processing...");
-
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     this._oModelIOMatList.setHeaders({
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
@@ -12685,7 +12788,9 @@ sap.ui.define([
                 }
                 else if (arg === "costHdr") {
                     Common.openProcessingDialog(this, "Processing...");
-
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     this._oModelIOCosting.read('/VersionsSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"
@@ -12711,6 +12816,9 @@ sap.ui.define([
                     })
                 }
                 else if (arg === "costDtls") {
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     if (this.byId("costHdrTab").getModel().getData().rows.length === 0) {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
                     }
@@ -12723,7 +12831,9 @@ sap.ui.define([
                 }
                 else if (arg === "size") {
                     Common.openProcessingDialog(this, "Processing...");
-
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     this._oModelStyle.read('/AttribSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
@@ -12747,7 +12857,9 @@ sap.ui.define([
                 }
                 else if (arg === "color") {
                     Common.openProcessingDialog(this, "Processing...");
-
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     this._oModelStyle.read('/AttribSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
@@ -12764,7 +12876,9 @@ sap.ui.define([
                 }
                 else if (arg === "process") {
                     Common.openProcessingDialog(this, "Processing...");
-
+                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
+    
                     this._oModelStyle.read('/ProcessSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"
