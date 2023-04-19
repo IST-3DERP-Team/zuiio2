@@ -1291,7 +1291,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType),
                         // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         width: sColumnWidth + 'px',
@@ -1504,7 +1504,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -1524,7 +1524,7 @@ sap.ui.define([
                         // console.log("BOOLEAN : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1542,7 +1542,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -2462,7 +2462,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             // template: new sap.m.Text({
                             //     text: "{" + sColumnId + "}",
                             //     wrapping: false
@@ -2484,7 +2484,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -2502,10 +2502,10 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: sColumnLabel,
+                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
-                                wrapping: false
+                                wrapping: true
                                 // , 
                                 // tooltip: "{" + sColumnId + "}"
                             }),
@@ -2698,7 +2698,7 @@ sap.ui.define([
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + sColumnId,
                         // id: sColumnId, "Col" 
-                        label: sColumnLabel,
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
                         template: me.styleColumnTemplate('', column),
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -2788,7 +2788,7 @@ sap.ui.define([
                 // return oColumnTemplate;
 
                 if (column.DataType === "STRING") {
-                    oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });
+                    oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: true, tooltip: "{DataModel>" + columnName + "}" });
                 } else if (sColumnDataType === "BOOLEAN") {
                     // console.log(sColumnDataType + " : " + sColumnId);
                     oColumnTemplate = new new sap.m.CheckBox({ selected: true, editable: false });
@@ -2995,7 +2995,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "DlvSched"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3122,7 +3122,7 @@ sap.ui.define([
                     // console.log(sColumnId);
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Stat"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3249,7 +3249,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Attrib"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -4497,7 +4497,7 @@ sap.ui.define([
                 //search seasons
                 var sValue = evt.getParameter("value");
                 var andFilter = [], orFilter = [];
-                orFilter.push(new sap.ui.model.Filter("INCO1", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("FTYSALTERM", sap.ui.model.FilterOperator.Contains, sValue));
                 orFilter.push(new sap.ui.model.Filter("DESCRIPTION", sap.ui.model.FilterOperator.Contains, sValue));
                 andFilter.push(new sap.ui.model.Filter(orFilter, false));
                 evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
@@ -4621,6 +4621,7 @@ sap.ui.define([
 
                     console.log("Lock Type: " + this.getView().getModel("ui").getProperty("/LockType"));
                     console.log("Lock Message: " + this.getView().getModel("ui").getProperty("/LockMessage"));
+                    // if (this.getView().getModel("ui").getProperty("/LockType") !== "E" && this.getView().getModel("ui").getProperty("/LockType") !== "") {
                     if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
 
 
@@ -6474,10 +6475,10 @@ sap.ui.define([
                     if (sColumnDataType !== "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel }),
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
                             template: new sap.m.Text({
                                 text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
-                                wrapping: false,
+                                wrapping: true,
                                 tooltip: sColumnDataType === "BOOLEAN" ? "" : sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -6493,7 +6494,7 @@ sap.ui.define([
                     else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel }),
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
                             template: new sap.m.CheckBox({
                                 selected: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
                                 editable: false
@@ -6912,7 +6913,7 @@ sap.ui.define([
 
                             return new sap.ui.table.Column({
                                 id: "styleBOMUVCol" + column.ColumnName,
-                                label: new sap.m.Text({ text: me.getStyleColumnDesc("styleBOMUVTab", column) }),
+                                label: new sap.m.Text({ text: me.getStyleColumnDesc("styleBOMUVTab", column), wrapping: true }),
                                 template: me.styleColumnTemplate('UV', column),
                                 sortProperty: column.ColumnName,
                                 filterProperty: column.ColumnName,
@@ -7012,7 +7013,7 @@ sap.ui.define([
                 var columnName = column.ColumnName;
                 var oColumnTemplate;
 
-                oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });
+                oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: true, tooltip: "{DataModel>" + columnName + "}" });
                 return oColumnTemplate;
             },
 
@@ -11016,7 +11017,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
                         template: oTemplate,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -12282,7 +12283,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
                         template: oText,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,

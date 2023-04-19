@@ -8,6 +8,6 @@
         search="_salestermGroupValueHelpSearch"
 		confirm="_salestermGroupValueHelpClose"
 		cancel="_salestermGroupValueHelpClose">
-		<StandardListItem title="{SalesTermModel>INCO1}" info="{SalesTermModel>DESCRIPTION}"/>
+		<StandardListItem title="{SalesTermModel>FTYSALTERM}" info="{SalesTermModel>DESCRIPTION}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

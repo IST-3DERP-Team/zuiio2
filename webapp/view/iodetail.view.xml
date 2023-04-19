@@ -56,12 +56,12 @@
                                     <IconTabFilter text="Attributes" key="itfIOATTRIB">
                                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
-                                        <!-- <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
+                                        <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
                                             <ToolbarSpacer />
                                             <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit" press="onEdit('IOATTRIB')" visible="true" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="Save" press="onSave('IOATTRIB')" visible="false" />
                                             <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="Cancel" press="onCancel('IOATTRIB')" visible="false" />
-                                        </OverflowToolbar> -->
+                                        </OverflowToolbar>
 
                                         <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
                                             <t:Table id="IOATTRIBTab" 

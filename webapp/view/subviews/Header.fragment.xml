@@ -239,8 +239,12 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/FTYSALTERM} : false }" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
-                                autocomplete="true" 
-                                >
+                                valueHelpRequest="onSalesTermValueHelp"
+                                suggestionItems="{SalesTermModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SalesTermModel>FTYSALTERM}" additionalText="{SalesTermModel>DESCRIPTION}"/>
+                                </suggestionItems>
+                                
                             </Input>
                         </f:fields>
                     </f:FormElement> 
@@ -354,7 +358,11 @@
                                 value="{headerData>/CUSSALTERM}" 
                                 change="onHeaderChange" 
                                 autocomplete="true" 
-                                >
+                                valueHelpRequest="onSalesTermValueHelp"
+                                suggestionItems="{SalesTermModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SalesTermModel>FTYSALTERM}" additionalText="{SalesTermModel>DESCRIPTION}"/>
+                                </suggestionItems>
                             </Input>
                         </f:fields>
                     </f:FormElement>

@@ -674,6 +674,24 @@
                 <Property Name="UNITPRICE1" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:label="UNITPRICE1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REQQTY" Type="Edm.Decimal" Nullable="false" Precision="31" Scale="10" sap:unicode="false" sap:label="REQQTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="SALTERMvh" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="FTYSALTERM"/>
+                    <PropertyRef Name="CUSSALTERM"/>
+                </Key>
+                <Property Name="FTYSALTERM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="FTYSALTERM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DESCRIPTION" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="DESCRIPTION" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CUSSALTERM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="CUSSALTERM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="SoldToCust" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Soldtocust"/>
+                </Key>
+                <Property Name="Soldtocust" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Custgrp" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Customer Group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Salesgrp" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Sales group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="35" sap:unicode="false" sap:label="Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityType Name="OutputBreakdwonIO" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="IONO"/>
@@ -962,22 +980,6 @@
                 <Property Name="Dlvseq" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="DLVSEQ" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Ioitem" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
-            <EntityType Name="SALTERMvh" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="INCO1"/>
-                </Key>
-                <Property Name="INCO1" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Incoterms" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="DESCRIPTION" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-            </EntityType>
-            <EntityType Name="SoldToCust" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="Soldtocust"/>
-                </Key>
-                <Property Name="Soldtocust" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Customer" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Custgrp" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Customer Group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Salesgrp" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Sales group" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Name" Type="Edm.String" Nullable="false" MaxLength="35" sap:unicode="false" sap:label="Name" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-            </EntityType>
             <Association Name="A_IMPORTSALDOC" sap:content-version="1">
                 <End Type="ZGW_3DERP_IO_SRV.IMPORTSALDOC" Multiplicity="1" Role="FromRole_A_IMPORTSALDOC"/>
                 <End Type="ZGW_3DERP_IO_SRV.IMPORTSALDOCITEM" Multiplicity="*" Role="ToRole_A_IMPORTSALDOC"/>
@@ -1027,6 +1029,8 @@
                 <EntitySet Name="IOCSCHECKSet" EntityType="ZGW_3DERP_IO_SRV.IOCSCHECK" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="UOMINFOSet" EntityType="ZGW_3DERP_IO_SRV.UOMINFO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IODETMATLSTSet" EntityType="ZGW_3DERP_IO_SRV.IODETMATLST" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="SALTERMvhSet" EntityType="ZGW_3DERP_IO_SRV.SALTERMvh" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="SoldToCustSet" EntityType="ZGW_3DERP_IO_SRV.SoldToCust" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="OutputBreakdwonIOSet" EntityType="ZGW_3DERP_IO_SRV.OutputBreakdwonIO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="OutputBreakdownProcessSet" EntityType="ZGW_3DERP_IO_SRV.OutputBreakdownProcess" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IOSDLISTSet" EntityType="ZGW_3DERP_IO_SRV.IOSDLIST" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -1043,8 +1047,6 @@
                 <EntitySet Name="IMPORTPOSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTPO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IMPORTSALDOCSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTSALDOC" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="IMPORTSALDOCITEMSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTSALDOCITEM" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
-                <EntitySet Name="SALTERMvhSet" EntityType="ZGW_3DERP_IO_SRV.SALTERMvh" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
-                <EntitySet Name="SoldToCustSet" EntityType="ZGW_3DERP_IO_SRV.SoldToCust" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <AssociationSet Name="A_IMPORTSALDOCSet" Association="ZGW_3DERP_IO_SRV.A_IMPORTSALDOC" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="IMPORTSALDOCSet" Role="FromRole_A_IMPORTSALDOC"/>
                     <End EntitySet="IMPORTSALDOCITEMSet" Role="ToRole_A_IMPORTSALDOC"/>
