@@ -8,6 +8,6 @@
         search="_shiptoGroupValueHelpSearch"
 		confirm="_shiptoGroupValueHelpClose"
 		cancel="_shiptoGroupValueHelpClose">
-		<StandardListItem title="{ShipToModel>KUNNR}" info="{ShipToModel>Desc1}"/>
+		<StandardListItem title="{ShipToModel>SHIPTOCUST}" info="{ShipToModel>NAME}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

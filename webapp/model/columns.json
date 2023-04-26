@@ -67,50 +67,36 @@
     ],
     "IODLV": [
         {
-            "ColumnName": "CUSTSHIPTO",
-            "ValueHelp": {
-                "show": true,
-                "items": {
-                    "path": "SHIPTO_MODEL",
-                    "value": "KUNNR",
-                    "text": "DESC1"
-                },
-                "SuggestionItems": {
-                    "path": "SHIPTO_MODEL>/",
-                    "text": "{SHIPTO_MODEL>KUNNR}",
-                    "info": "{SHIPTO_MODEL>DESC1}"
-                }
-            }
-        },
-        {
             "ColumnName": "CUSTBILLTO",
             "ValueHelp": {
                 "show": true,
+                "valueHelpRequest": "onBillToValueHelp",
                 "items": {
                     "path": "BILLTO_MODEL",
-                    "value": "KUNNR",
-                    "text": "DESC1"
+                    "value": "Billtocust",
+                    "text": "Name"
                 },
                 "SuggestionItems": {
                     "path": "BILLTO_MODEL>/",
-                    "text": "{BILLTO_MODEL>KUNNR}",
-                    "info": "{BILLTO_MODEL>DESC1}"
+                    "info": "{BILLTO_MODEL>Billtocust}"
                 }
             }
         },
+
         {
-            "ColumnName": "CUSTSOLDTO",
+            "ColumnName": "CUSTSHIPTO",
             "ValueHelp": {
                 "show": true,
+                "valueHelpRequest": "onShipToValueHelp",
                 "items": {
-                    "path": "SOLDTO_MODEL",
-                    "value": "Custno",
-                    "text": "Custno"
+                    "path": "SHIPTO_MODEL",
+                    "value": "Shiptocust",
+                    "text": "Name"
                 },
                 "SuggestionItems": {
-                    "path": "SOLDTO_MODEL>/",
-                    "text": "{SOLDTO_MODEL>Custno}",
-                    "additionalText": "{SOLDTO_MODEL>DESC1}"
+                    "path": "SHIPTO_MODEL>/",
+                    "text": "{SHIPTO_MODEL>Shiptocust}",
+                    "info": "{SHIPTO_MODEL>Name}"
                 }
             }
         }

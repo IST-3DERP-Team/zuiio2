@@ -151,7 +151,8 @@
                             value="" 
                             search="filterGlobally" 
                             width="15rem" />
-                    </Toolbar>
+                            <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveSubTableLayout('IOStyleSelectTab')" visible="true"/>
+                    </Toolbar>                    
                 </t:extension>
             </t:Table>
         </Panel>

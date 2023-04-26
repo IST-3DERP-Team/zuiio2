@@ -861,7 +861,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_CREATE_CHECK_REQD" });
                 oDDTextParam.push({ CODE: "ERR_IORELEASE_REQ" });
                 oDDTextParam.push({ CODE: "ERR_IOALREADYRELEASE" });
-                oDDTextParam.push({ CODE: "PLACEHOLDER_REQ" });                
+                oDDTextParam.push({ CODE: "PLACEHOLDER_REQ" });
 
                 // console.log(oDDTextParam);
 
@@ -1291,7 +1291,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType),
                         // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         width: sColumnWidth + 'px',
@@ -1504,7 +1504,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -1524,7 +1524,7 @@ sap.ui.define([
                         // console.log("BOOLEAN : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1542,7 +1542,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -2053,7 +2053,7 @@ sap.ui.define([
                 await this.getIODynamicColumns("IOSTAT", "ZERP_IOSTATUS", "IOSTATUSTab", oColumns);
                 await this.getIODynamicColumns("IOATTRIB", "ZERP_IOATTRIB", "IOATTRIBTab", oColumns);
                 await this.getIODynamicColumns("IODLV", "ZDV_3DERP_IODLV", "IODLVTab", oColumns);
-                
+
 
                 if (this.getView().getModel("ui2").getProperty("/currIONo") !== "NEW") {
                     await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
@@ -2462,7 +2462,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             // template: new sap.m.Text({
                             //     text: "{" + sColumnId + "}",
                             //     wrapping: false
@@ -2484,7 +2484,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -2502,7 +2502,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: true
@@ -2698,7 +2698,7 @@ sap.ui.define([
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + sColumnId,
                         // id: sColumnId, "Col" 
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel,
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                         template: me.styleColumnTemplate('', column),
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -2995,7 +2995,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "DlvSched"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3122,7 +3122,7 @@ sap.ui.define([
                     // console.log(sColumnId);
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Stat"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3249,7 +3249,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Attrib"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3536,41 +3536,65 @@ sap.ui.define([
                     });
                     // });
                 } else {
-                    // await new Promise((resolve, reject) => {
-                    oSHModel.read(sEntitySet, {
-                        urlParameters: {
 
-                        },
-                        success: function (oData, oResponse) {
-                            console.log(sModelName);
-                            console.log(oData);
-                            if (sModelName === "BILLTOModel") {
-                                oData.results.forEach(item => {
-                                    item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : item.CUSTBILLTO;
-                                })
+                    if (sModelName === "BILLTOModel" || sModelName === "SHIPTOModel") {
+                        var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get customer group value
+                        oSHModel.read(sEntitySet, {
+                            urlParameters: {
+                                "$filter": "Soldtocust eq '" + soldtoCust + "'"
+                            },
+                            success: function (oData, oResponse) {
+                                console.log(sModelName);
+                                console.log(oData);
+                                
+                                if (sModelName === "BILLTOModel") {
+                                    oData.results.forEach(item => {
+                                        item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : item.CUSTBILLTO;
+                                    })
+                                }
+
+                                if (sModelName === "SHIPTOModel") {
+                                    oData.results.forEach(item => {
+                                        item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : item.CUSTSHIPTO;
+                                    })
+                                }
+
+                                oJSONModel.setData(oData);
+                                oView.setModel(oJSONModel, sModelName);
+
+                                // resolve();
+                            },
+                            error: function (err) {
+                                // resolve();
                             }
+                        });
+                    } else {
 
-                            if (sModelName === "SHIPTOModel") {
-                                oData.results.forEach(item => {
-                                    item.CUSTSHIPTO = item.CUSTSHIPTO === undefined ? "" : item.CUSTSHIPTO;
-                                })
+                        // await new Promise((resolve, reject) => {
+                        oSHModel.read(sEntitySet, {
+                            urlParameters: {
+
+                            },
+                            success: function (oData, oResponse) {
+                                console.log(sModelName);
+                                console.log(oData);
+
+                                if (sModelName === "SOLDTOModel") {
+                                    oData.results.forEach(item => {
+                                        item.KUNNR = item.KUNNR === undefined ? "" : item.KUNNR;
+                                    })
+                                }
+
+                                oJSONModel.setData(oData);
+                                oView.setModel(oJSONModel, sModelName);
+
+                                // resolve();
+                            },
+                            error: function (err) {
+                                // resolve();
                             }
-
-                            if (sModelName === "SOLDTOModel") {
-                                oData.results.forEach(item => {
-                                    item.KUNNR = item.KUNNR === undefined ? "" : item.KUNNR;
-                                })
-                            }
-
-                            oJSONModel.setData(oData);
-                            oView.setModel(oJSONModel, sModelName);
-
-                            // resolve();
-                        },
-                        error: function (err) {
-                            // resolve();
-                        }
-                    });
+                        });
+                    }
                     // });
                 }
             },
@@ -4171,12 +4195,20 @@ sap.ui.define([
             onBillToValueHelp: function (oEvent) {
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
+                var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
+                console.log("onBillToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._billtoHelpDialog) {
                     that._billtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.BillTo", that);
                     that._billtoHelpDialog.attachSearch(that._billtoGroupValueHelpSearch);
                     that.getView().addDependent(that._billtoHelpDialog);
                 }
+
+                //filter Sold-To by Customer Group
+                this._billtoHelpDialog.getBinding("items").filter([new Filter(
+                    "Soldtocust",
+                    sap.ui.model.FilterOperator.EQ, soldtoCust
+                )]);
                 that._billtoHelpDialog.open(sInputValue);
             },
 
@@ -4184,8 +4216,8 @@ sap.ui.define([
                 //search seasons
                 var sValue = evt.getParameter("value");
                 var andFilter = [], orFilter = [];
-                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
-                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("Billtocust", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sValue));
                 andFilter.push(new sap.ui.model.Filter(orFilter, false));
                 evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
             },
@@ -4204,12 +4236,21 @@ sap.ui.define([
             onShipToValueHelp: function (oEvent) {
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
+                var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
+                console.log("onShipToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._shiptoHelpDialog) {
                     that._shiptoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ShipTo", that);
                     that._shiptoHelpDialog.attachSearch(that._shiptoGroupValueHelpSearch);
                     that.getView().addDependent(that._shiptoHelpDialog);
                 }
+
+                //filter Sold-To by Customer Group
+                this._shiptoHelpDialog.getBinding("items").filter([new Filter(
+                    "Soldtocust",
+                    sap.ui.model.FilterOperator.EQ, soldtoCust
+                )]);
+
                 that._shiptoHelpDialog.open(sInputValue);
             },
 
@@ -4217,8 +4258,8 @@ sap.ui.define([
                 //search seasons
                 var sValue = evt.getParameter("value");
                 var andFilter = [], orFilter = [];
-                orFilter.push(new sap.ui.model.Filter("KUNNR", sap.ui.model.FilterOperator.Contains, sValue));
-                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("Shiptocust", sap.ui.model.FilterOperator.Contains, sValue));
+                orFilter.push(new sap.ui.model.Filter("Name", sap.ui.model.FilterOperator.Contains, sValue));
                 andFilter.push(new sap.ui.model.Filter(orFilter, false));
                 evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
             },
@@ -4681,7 +4722,7 @@ sap.ui.define([
                         let iOrdQty = 0;
                         iOrdQty = +this.getView().byId("ORDQTY").getValue();
                         console.log(iOrdQty);
-                        if(iOrdQty <= 0) {
+                        if (iOrdQty <= 0) {
                             sErrMsg = "Order Quantity must be greater than zero."
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
@@ -5966,7 +6007,7 @@ sap.ui.define([
                             },
                             error: function (err) {
                                 // alert(err);
-                                resolve(); 
+                                resolve();
                             }
                         })
                         // resolve();
@@ -7893,8 +7934,8 @@ sap.ui.define([
                 if (this._validationErrors.length === 0) {
 
                     Common.openProcessingDialog(me, "Processing...");
-                    await me.lock(me);
-                    if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                    // await me.lock(me);
+                    // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
                         //PROCESS NEW ROW DATA
                         if (aNewRows.length > 0) {
                             if (this._validationErrors.length === 0) {
@@ -8343,8 +8384,8 @@ sap.ui.define([
                         // console.log(this.getView().getModel("ui2").getProperty("/IOOrdQty"));
                         // console.log(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
                         // this.getView().byId("REVORDQTY").setValue(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
-                    } else
-                        MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
+                    // } else
+                    //     MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
                 } else {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
                     return;
@@ -9958,6 +9999,7 @@ sap.ui.define([
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
                 var vDecPlaces = 0;
                 var bError = false;
+                var bNegative = false;
 
                 var sUOM = this.getView().getModel("headerData").getData()["BASEUOM"];
                 var iUOMDec = 0;
@@ -9966,7 +10008,7 @@ sap.ui.define([
                 // console.log(this.getView().getModel("UOMINFOModel").getData());
                 this.getView().getModel("UOMINFOModel").getData().results.filter(fItem => fItem.MSEHI === sUOM)
                     .forEach((item) => {
-                        // console.log(item.MSEHI);
+                        console.log(item.MSEHI);
                         iUOMDec = item.ANDEC;
                     })
 
@@ -10025,6 +10067,13 @@ sap.ui.define([
                         }
                     })
                     bError = false;
+                }
+
+                if (oEvent.getParameters().value < 0) {
+                    oEvent.getSource().setValueState("Error");
+                    oEvent.getSource().setValueStateText("Negative values are not allowed.");
+                    this._validationErrors.push(oEvent.getSource().getId());
+                    bNegative = true;
                 }
 
                 // this._bDetailsChanged = false;
@@ -10245,7 +10294,7 @@ sap.ui.define([
 
                                     var vUOM = "";
                                     var vANDEC = 0;
-                                    
+
                                     this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
                                     this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
                                     console.log(vUOM, vANDEC)
@@ -11241,26 +11290,26 @@ sap.ui.define([
 
                             oSelectedIndices = oTmpSelectedIndices;
 
-                        oSelectedIndices.forEach((item, index) => {
-                            var vANDEC = 0;
+                            oSelectedIndices.forEach((item, index) => {
+                                var vANDEC = 0;
 
-                            this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === aData.at(item).UOM).forEach(item => vANDEC = item.ANDEC);
+                                this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === aData.at(item).UOM).forEach(item => vANDEC = item.ANDEC);
 
-                            this._aForReorder.push({
-                                IONO: vIONo,
-                                MATNO: aData.at(item).MATNO,
-                                SEQNO: aData.at(item).SEQNO,
-                                REORDERQTY: "0",
-                                REMARKS: "",
-                                DELETED: false,
-                                CREATEDBY: "",
-                                CREATEDDT: "",
-                                UPDATEDBY: "",
-                                UPDATEDDT: "",
-                                UOM: aData.at(item).UOM,
-                                ANDEC: vANDEC
+                                this._aForReorder.push({
+                                    IONO: vIONo,
+                                    MATNO: aData.at(item).MATNO,
+                                    SEQNO: aData.at(item).SEQNO,
+                                    REORDERQTY: "0",
+                                    REMARKS: "",
+                                    DELETED: false,
+                                    CREATEDBY: "",
+                                    CREATEDDT: "",
+                                    UPDATEDBY: "",
+                                    UPDATEDDT: "",
+                                    UOM: aData.at(item).UOM,
+                                    ANDEC: vANDEC
+                                })
                             })
-                        })
 
                             this._aForReorder.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                         }
@@ -11501,7 +11550,7 @@ sap.ui.define([
 
                 oNewRow["UOM"] = "";
                 oNewRow["ANDEC"] = 0;
-                oNewRow["NEW"] = true;                
+                oNewRow["NEW"] = true;
                 aNewRow.push(oNewRow);
                 var aDataAfterChange = aNewRow.concat(oTable.getModel().getData().rows);
 
@@ -11522,7 +11571,7 @@ sap.ui.define([
                 oTable.focus();
             },
 
-            onReorderQtyLiveChange: function(oEvent) {
+            onReorderQtyLiveChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
                 // console.log("ok")
                 var oSource = oEvent.getSource();
@@ -11534,7 +11583,7 @@ sap.ui.define([
 
                 console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/SEQNO'));
                 console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC'));
-                
+
                 if (oEvent.getParameters().value.split(".").length > 1) {
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
@@ -11570,7 +11619,7 @@ sap.ui.define([
                     })
                     bError = false;
                 }
-            },            
+            },
 
             onAddReorder: function (oEvent) {
                 this.addReorder();
@@ -12017,7 +12066,7 @@ sap.ui.define([
 
                             var vUOM = "";
                             var vANDEC = 0;
-                            
+
                             this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
                             this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
                             console.log(vUOM, vANDEC)
@@ -12071,7 +12120,7 @@ sap.ui.define([
 
                     var vUOM = "";
                     var vANDEC = 0;
-                    
+
                     this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getAdditionalText()).forEach(item => vUOM = item.UOM);
                     this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
                     console.log(vUOM, vANDEC)
@@ -12746,8 +12795,8 @@ sap.ui.define([
                 if (arg === "ioMatList") {
                     Common.openProcessingDialog(this, "Processing...");
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     this._oModelIOMatList.setHeaders({
                         SBU: this._sbu,
                         PRODPLANT: this._prodplant
@@ -12790,8 +12839,8 @@ sap.ui.define([
                 else if (arg === "costHdr") {
                     Common.openProcessingDialog(this, "Processing...");
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     this._oModelIOCosting.read('/VersionsSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"
@@ -12818,8 +12867,8 @@ sap.ui.define([
                 }
                 else if (arg === "costDtls") {
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     if (this.byId("costHdrTab").getModel().getData().rows.length === 0) {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
                     }
@@ -12833,8 +12882,8 @@ sap.ui.define([
                 else if (arg === "size") {
                     Common.openProcessingDialog(this, "Processing...");
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     this._oModelStyle.read('/AttribSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'SIZE'"
@@ -12859,8 +12908,8 @@ sap.ui.define([
                 else if (arg === "color") {
                     Common.openProcessingDialog(this, "Processing...");
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     this._oModelStyle.read('/AttribSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
@@ -12878,8 +12927,8 @@ sap.ui.define([
                 else if (arg === "process") {
                     Common.openProcessingDialog(this, "Processing...");
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters; 
-    
+                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
                     this._oModelStyle.read('/ProcessSet', {
                         urlParameters: {
                             "$filter": "IONO eq '" + vIONo + "'"

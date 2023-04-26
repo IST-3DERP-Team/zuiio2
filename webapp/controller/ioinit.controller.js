@@ -32,7 +32,8 @@ sap.ui.define([
                 this.getView().setModel(new JSONModel({
                     activeSTYLENO: "",
                     activeSALDOCNO: "",
-                    DisplayMode: "change"
+                    DisplayMode: "change",
+                    sbu: ""
                 }), "ui");
 
                 //get current userid
@@ -86,13 +87,13 @@ sap.ui.define([
                     const fullHash = new HashChanger().getHash();
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
                     const shellHash = urlParsing.parseShellHash(fullHash);
-                    csAction = shellHash.action;  
+                    csAction = shellHash.action;
                 }
 
                 var DisplayStateModel = new JSONModel();
                 var DisplayData = {
-                    sAction : csAction,
-                    visible : csAction === "display" ? false : true
+                    sAction: csAction,
+                    visible: csAction === "display" ? false : true
                 }
 
                 DisplayStateModel.setData(DisplayData);
@@ -110,7 +111,7 @@ sap.ui.define([
                     var btnMenu = this.getView().byId("_IDGenMenuButton1");
                     if (btnMenu.getVisible()) {
                         btnMenu.setVisible(false);
-                    }                        
+                    }
                 }
             },
 
@@ -207,7 +208,7 @@ sap.ui.define([
 
                         })
 
-                        console.log("Route Model 1");                        
+                        console.log("Route Model 1");
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
@@ -457,11 +458,11 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                , 
+                                ,
                                 tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -494,7 +495,7 @@ sap.ui.define([
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                , 
+                                ,
                                 tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -545,28 +546,28 @@ sap.ui.define([
                 if (aFilters) {
                     var oTable = this.byId(sTable);
                     var oColumns = oTable.getColumns();
-            
+
                     aFilters.forEach(item => {
                         oColumns.filter(fItem => fItem.getFilterProperty() === item.sPath)
                             .forEach(col => {
                                 col.filter(item.oValue1);
                             })
                     })
-                } 
+                }
             },
 
             setColumnSorters(sTable, aSorters) {
                 if (aSorters) {
                     var oTable = this.byId(sTable);
                     var oColumns = oTable.getColumns();
-            
+
                     aSorters.forEach(item => {
                         oColumns.filter(fItem => fItem.getSortProperty() === item.sPath)
                             .forEach(col => {
                                 col.sort(item.bDescending);
                             })
                     })
-                } 
+                }
             },
 
             onRowChange: function (oEvent) {
@@ -601,10 +602,13 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
-                // console.log(this._sbu);
+                console.log(this.getView().byId("smartFilterBar").getFilterData().SBU);
+                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                console.log(this._sbu);
+                this.getView().getModel("ui").setProperty("/sbu", this._sbu);
+                console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
-                this._sbu = 'VER';
+                // this._sbu = 'VER';
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: 'IOINIT',
@@ -653,7 +657,7 @@ sap.ui.define([
                             item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                         })
 
-                        oData.results.sort((a,b,) => (a.IONO > b.IONO ? -1 : 1)); 
+                        oData.results.sort((a, b,) => (a.IONO > b.IONO ? -1 : 1));
 
                         var aFilters = [], aSorters = [];
                         if (me.byId("IODynTable").getBinding("rows")) {
@@ -670,8 +674,8 @@ sap.ui.define([
                         me.getView().setModel(oJSONDataModel, "DataModel");
                         me.setTableData();
 
-                        if(aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
-                        if(aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
+                        if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
+                        if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
 
                         me.setChangeStatus(false);
                     },
@@ -734,7 +738,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                         template: me.columnTemplate(sColumnId, sColumnType),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -785,7 +789,7 @@ sap.ui.define([
                         tooltip: "Copy this style"
                     });
                     oColumnTemplate.data("IONO", "{}"); //custom data to hold style number
-                } 
+                }
                 else {
                     oColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}" }); //default text
                 }
@@ -1165,7 +1169,7 @@ sap.ui.define([
                 var oTable;
                 var oColumnsModel;
                 var oDataModel;
-                
+
                 if (sTabId === "IOStyleSelectTab") {
                     sap.ui.getCore().byId("IOStyleSelectTab").addEventDelegate(oDelegateKeyUp);
                     oTable = sap.ui.getCore().byId("IOStyleSelectTab");
@@ -1179,7 +1183,7 @@ sap.ui.define([
                     oColumnsModel = this.getView().getModel("IOSDLISTColumns");
                     oDataModel = this.getView().getModel("IOSDSELDataModel");
                 }
-                
+
                 oTable.setModel(oModel);
 
                 //bind the dynamic column to the table
@@ -1197,7 +1201,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                         template: me.columnTemplate(sColumnId, sColumnType),
                         // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         width: sColumnWidth + 'px',
@@ -1242,11 +1246,11 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                , 
+                                ,
                                 tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -1261,7 +1265,7 @@ sap.ui.define([
                     } else if (sColumnDataType === "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1278,11 +1282,11 @@ sap.ui.define([
                     } else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({text: sColumnLabel, wrapping: true}),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
-                                , 
+                                ,
                                 tooltip: "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -1619,20 +1623,20 @@ sap.ui.define([
                 oEvent.getSource().getParent().close();
             },
 
-            
-            onCloseCopyIO: function() {
+
+            onCloseCopyIO: function () {
                 this._CopyIODialog.close();
                 this._CopyIODialog.destroy();
-                this._CopyIODialog = null;                
+                this._CopyIODialog = null;
             },
 
-            onCloseIOSD: function() {
+            onCloseIOSD: function () {
                 this._IOfromSalesDocDialog.close();
                 this._IOfromSalesDocDialog.destroy();
                 this._IOfromSalesDocDialog = null;
             },
 
-            onCloseIOStyle: function() {
+            onCloseIOStyle: function () {
                 this._IOfromStyleDialog.close();
                 this._IOfromStyleDialog.destroy();
                 this._IOfromStyleDialog = null;
@@ -1669,6 +1673,55 @@ sap.ui.define([
             //export to spreadsheet utility
             onExport: Utils.onExport
             ,
+
+            onSaveSubTableLayout: function (arg) {
+                var me = this;
+                var ctr = 1;
+
+                if (arg === "IOStyleSelectTab") {
+                    console.log(sap.ui.getCore().byId(arg));
+                    var oTable = sap.ui.getCore().byId(arg);
+                    var oColumns = oTable.getColumns();
+                    var vSBU = this.getView().getModel("ui").getProperty("/sbu");
+
+                    var oParam = {
+                        "SBU": vSBU,
+                        "TYPE": "IOSTYLIST",
+                        "TABNAME": "ZDV__IOSTYLST",
+                        "TableLayoutToItems": []
+                    };
+
+                    console.log(oParam);
+
+                    //get information of columns, add to payload
+                    oColumns.forEach((column) => {
+                        oParam.TableLayoutToItems.push({
+                            COLUMNNAME: column.mProperties.sortProperty,
+                            ORDER: ctr.toString(),
+                            SORTED: column.mProperties.sorted,
+                            SORTORDER: column.mProperties.sortOrder,
+                            SORTSEQ: "1",
+                            VISIBLE: column.mProperties.visible,
+                            WIDTH: column.mProperties.width
+                        });
+
+                        ctr++;
+                    });
+                    console.log(oParam)
+                    //call the layout save
+                    var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+
+                    oModel.create("/TableLayoutSet", oParam, {
+                        method: "POST",
+                        success: function (data, oResponse) {
+                            sap.m.MessageBox.information("Layout saved.");
+                        },
+                        error: function (err) {
+                            sap.m.MessageBox.error(err);
+                        }
+                    });                    
+                }
+            },
 
             onSaveTableLayout: function (oEvent) {
                 //saving of the layout of table
