@@ -22,7 +22,7 @@
         <VBox fitContainer="true">
 
         <!-- SMART FILTER BAR-->                
-        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" useToolbar="true" useDateRangeType="true">
+        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true">
             <smartfilterbar:controlConfiguration>
                 <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>

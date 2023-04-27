@@ -3546,7 +3546,7 @@ sap.ui.define([
                             success: function (oData, oResponse) {
                                 console.log(sModelName);
                                 console.log(oData);
-                                
+
                                 if (sModelName === "BILLTOModel") {
                                     oData.results.forEach(item => {
                                         item.CUSTBILLTO = item.CUSTBILLTO === undefined ? "" : item.CUSTBILLTO;
@@ -5416,7 +5416,7 @@ sap.ui.define([
                     // console.log("2");
                     //GET TABLE
                     var aNewRow = [];
-                    var oNewRow = {};
+                    var oNewRow = { "ACTIVE": "X" };
                     var tabName = arg + "Tab";
                     var oTable = this.getView().byId(tabName);
                     // console.log("3");
@@ -5455,15 +5455,40 @@ sap.ui.define([
 
                             oModel.getData().results.forEach(item => {
                                 item.New = false;
+                                item.ACTIVE = "";
                                 oData.push(item);
                             })
                         }
                         // else oData = aNewRow;
 
                         oModel.setProperty("/results", oData);
+
                     }
 
-                    if (arg !== "IODET") {
+                    if (arg === "IODLV") {
+                        var oTable = this.getView().byId(tabName);
+                        var oModel = this.getView().byId(tabName).getModel();
+                        var oData = aNewRow;
+
+                        console.log(oModel.getData());
+
+                        if (oModel.getData().rows.length > 0) {
+
+                            oModel.getData().rows.forEach(item => {
+                                // alert(item.DLVSEQ);
+                                item.New = false;
+
+                                item.ACTIVE = "";
+                                oData.push(item);
+                            })
+                        }
+                        console.log(oData);
+
+                        oModel.setProperty("/rows", oData);
+
+                    }
+
+                    if (arg !== "IODET" && arg !== "IODLV") {
                         var oModel = this.getView().byId(tabName).getModel();
                         oModel.setProperty("/rows", aNewRow);
                     }
@@ -5934,9 +5959,22 @@ sap.ui.define([
                                     } else
                                         item.ACTIVE = ""
                                 });
+
+                                oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
+
+                                var aFilters = [], aSorters = [];
+                                if (me.byId("IODETTab").getBinding("rows")) {
+                                    aFilters = me.byId("IODETTab").getBinding("rows").aFilters;
+                                    aSorters = me.byId("IODETTab").getBinding("rows").aSorters;
+                                }
+
                                 me.byId(sSource).getModel().setProperty("/rows", oData.results);
                                 me.byId(sSource).bindRows("/rows");
                                 me._tableRendered = sSource;
+
+                                if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
+                                if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
+
                                 resolve();
                             },
                             error: function (err) {
@@ -7936,454 +7974,454 @@ sap.ui.define([
                     Common.openProcessingDialog(me, "Processing...");
                     // await me.lock(me);
                     // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
-                        //PROCESS NEW ROW DATA
-                        if (aNewRows.length > 0) {
-                            if (this._validationErrors.length === 0) {
-                                var entitySet = "/";
-                                var oModel;
-
-                                switch (arg) {
-                                    case "IODET":
-                                        entitySet = entitySet + "IODETSet"
-                                        oModel = me.getOwnerComponent().getModel();
-                                        break;
-                                    default: break;
-                                }
-
-                                oModel.setUseBatch(true);
-                                oModel.setDeferredGroups(["insert"]);
-
-                                var mParameters = {
-                                    "groupId": "insert"
-                                };
-
-                                //APPLY SIZE DATAMODEL UNPIVOT
-
-                                var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-
-                                // console.log("aNewRows");
-                                // console.log(aNewRows);
-                                if (aNewRows[0]["CUSTCOLOR"] === undefined) {
-                                    MessageBox.information("Customer Color is required.");
-                                    Common.closeProcessingDialog(me);
-                                    return;
-                                }
-
-                                //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
-                                aNewRows.forEach(async item => {
-                                    //LOOP THRU COLLECTION OF SIZES FOR THE IO
-                                    this._iosizes.forEach(async colSizes => {
-                                        hasMatchingSize = false;
-                                        var param = {};
-                                        // param["IONO"] = me._ioNo;
-                                        param["IONO"] = cIONo;
-                                        param["DLVSEQ"] = JSON.stringify(cDlvSeq);
-
-                                        //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
-                                        this._aColumns[arg].forEach(col => {
-                                            //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
-                                            if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
-                                                //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
-                                                if (col.DataType === "DATETIME") {
-                                                    param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
-                                                    //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                                } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
-                                                    //SET CUSTSIZE : USE ATTRIBUTE CODE
-                                                    param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
-                                                    //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                                    param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                                                    //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
-                                                    hasMatchingSize = true;
-                                                } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
-                                                    //SET CUSTSIZE : USE ATTRIBUTE CODE
-                                                    param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
-                                                    //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                                    param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                                                    //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
-                                                    hasMatchingSize = true;
-                                                } else {
-                                                    //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
-                                                    param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
-                                                }
-                                            }
-                                        })
-
-                                        //IF SIZE COLUMNS AT MODEL HAS NO MATCHING COLUMNS AT SIZE MODEL
-                                        //INSERT CUSTSIZE WITH REVORDERQTY = 0
-                                        if (!hasMatchingSize) {
-                                            param["CUSTSIZE"] = colSizes.ATTRIBCD;
-                                            param["REVORDERQTY"] = "0";
-                                            param["SHIPQTY"] = "0";
-                                        }
-
-                                        //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
-                                        this._iosizes.forEach(colSizesRemove => {
-                                            delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
-                                            delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
-                                            // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
-                                            //     delete param[colSizesRemove.ATTRIBCD];
-                                        })
-
-                                        // if(param["CUSTCOLOR"] === undefined){
-                                        //     MessageBox.information("Customer Color entry is required");
-                                        //     return;
-                                        // }
-
-                                        // console.log(this._iosizes);
-                                        // console.log(entitySet);
-                                        // console.log(param);
-                                        // console.log(arg);
-
-                                        // return;
-
-                                        //CREATE ENTRIES USING BATCH PROCESSING
-
-                                        // await new Promise((resolve, reject) => {
-                                        oModel.create(entitySet, param, mParameters);
-
-
-                                        // _promiseResult = new Promise((resolve, reject) => {
-                                        //     setTimeout(() => {
-                                        //         oModel.create(entitySet, param, {
-                                        //             method: "POST",
-                                        //             success: function (data, oResponse) {
-                                        //                 // console.log("Success : " + entitySet);
-                                        //                 resolve();
-                                        //             },
-                                        //             error: function () {
-                                        //                 // console.log("Error : " + entitySet);
-                                        //                 iNew++;
-                                        //                 // alert("Error");
-                                        //                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
-                                        //                 resolve();
-                                        //             }
-                                        //         })
-                                        //     }, 1000);
-                                        // });
-                                        // await _promiseResult;
-
-                                    });
-
-                                    // return;
-                                    // console.log(oModel);
-                                    // return;
-                                    await new Promise((resolve, reject) => {
-                                        oModel.submitChanges({
-                                            // mParameters,
-                                            groupId: "insert",
-                                            success: function (oData, oResponse) {
-
-
-                                                // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                                            },
-                                            error: function (oData, oResponse) {
-                                            }
-                                        });
-                                        resolve();
-                                    });
-
-
-                                    iNew++;
-                                    if (iNew === aNewRows.length) {
-
-                                        // await me.UpdateIOHdrQuantity();
-                                        // await me.getHeaderData();
-
-                                        // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-
-                                        if (arg === "IODET") {
-                                            me.byId("btnNewDlvSched").setVisible(true);
-                                            me.byId("btnImportPODlvSched").setVisible(true);
-                                            me.byId("btnEditDlvSched").setVisible(true);
-                                            me.byId("btnDeleteDlvSched").setVisible(true);
-                                            me.byId("btnCopyDlvSched").setVisible(true);
-                                            me.byId("btnRefreshDlvSched").setVisible(true);
-                                            me.byId("btnGenMatList").setVisible(true);
-                                            me.byId("btnSaveDlvSched").setVisible(false);
-                                            me.byId("btnCancelDlvSched").setVisible(false);
-                                            me.byId("btnFullScreenDlvSched").setVisible(true);
-
-                                            me.byId("btnNewIODet").setVisible(true);
-                                            me.byId("btnEditIODet").setVisible(true);
-                                            // me.byId("btnDeleteIODet").setVisible(true);
-                                            // me.byId("btnCopyIODet").setVisible(true);
-                                            me.byId("btnRefreshIODet").setVisible(true);
-                                            me.byId("btnSaveIODet").setVisible(false);
-                                            me.byId("btnCancelIODet").setVisible(false);
-                                            me.byId("btnFullScreenIODet").setVisible(true);
-                                        }
-
-                                        // if (arg !== "IODET")
-                                        //     me.setActiveRowHighlightByTableId(arg + "Tab");
-
-                                        var oIconTabBar = me.byId("idIconTabBarInlineMode");
-                                        oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
-
-                                        me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
-                                            me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
-                                        })
-
-                                        me._dataMode = "READ";
-
-                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-
-                                    }
-                                })
-
-                                this.setRowReadMode(arg);
-                            } else {
-                                Common.closeProcessingDialog(me);
-                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
-                                return;
-                            }
-
-                        }
-                        //PROCESS EDITED ROW DATA
-                        else if (aEditedRows.length > 0) {
-                            if (this._validationErrors.length === 0) {
-                                var entitySet = "/";
-                                var updEntitySet;
-                                var oUpdModel;
-
-                                switch (arg) {
-                                    case "IODET":
-                                        entitySet = entitySet + "IODETSet"
-                                        oUpdModel = me.getOwnerComponent().getModel();
-                                        break;
-                                    default: break;
-                                }
-
-                                // oUpdModel.setUseBatch(true);
-                                // oUpdModel.setDeferredGroups(["update"]);
-
-                                // var mParameters = {
-                                //     "groupId": "update"
-                                // };
-
-                                //APPLY SIZE DATAMODEL UNPIVOT
-                                var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-
-                                //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
-                                aEditedRows.forEach(async item => {
-                                    //LOOP THRU COLLECTION OF SIZES FOR THE IO
-                                    this._iosizes.forEach(async colSizes => {
-                                        updEntitySet = entitySet;
-                                        updEntitySet += "(IONO='" + item["IONO"] + "',";
-                                        hasMatchingSize = false;
-                                        var param = {};
-                                        var pIOITEM;
-                                        // param["IONO"] = me._ioNo;
-                                        param["IONO"] = cIONo;
-
-                                        //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
-                                        this._aColumns[arg].forEach(col => {
-                                            //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
-                                            if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
-                                                //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
-                                                if (col.DataType === "DATETIME") {
-                                                    // alert(item[col.ColumnName]);
-                                                    // if(item[col.ColumnName] !== "" || item[col.ColumnName] !== "0000-00-00" || item[col.ColumnName] !== null || item[col.ColumnName] !== undefined) {
-                                                    //     param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
-                                                    // }
-                                                    //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
-                                                } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
-                                                    //SET CUSTSIZE : USE ATTRIBUTE CODE
-                                                    param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
-                                                    //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                                    param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                                                    //SET IOITEM 
-                                                    param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"]
-                                                    updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"] + "'"
-
-                                                    // param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
-                                                    // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
-
-                                                    //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
-                                                    hasMatchingSize = true;
-                                                } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
-                                                    //SET CUSTSIZE : USE ATTRIBUTE CODE
-                                                    param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
-                                                    //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
-                                                    param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                                                    //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
-                                                    hasMatchingSize = true;
-                                                } else {
-                                                    //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
-                                                    param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
-                                                }
-                                            }
-                                        })
-
-                                        //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
-                                        // console.log("REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT");
-                                        this._iosizes.forEach(colSizesRemove => {
-                                            // console.log(colSizesRemove.ATTRIBCD);
-                                            delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
-                                            delete param["IOITEM" + colSizesRemove.ATTRIBCD + "REVORDERQTY"];
-                                            delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
-                                            delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
-                                            // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
-                                            //     delete param[colSizesRemove.ATTRIBCD];
-                                            //     delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
-                                            // }
-                                        })
-
-                                        // //REMOVE IOITEM WITH SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
-                                        // this._iosizes.forEach(colSizesRemove => {
-                                        //     if (colSizes.ATTRIBCD === colSizesRemove.ATTRIBCD) {
-                                        //         delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
-                                        //     }
-                                        // })
-
-                                        updEntitySet += ")";
-
-                                        // console.log(updEntitySet);
-                                        // console.log(param);
-                                        // console.log(arg);
-
-                                        // return;
-
-                                        // //CREATE ENTRIES USING BATCH PROCESSING
-                                        // oUpdModel.update(entitySet, param, mParameters);
-
-                                        await new Promise((resolve, reject) => {
-                                            setTimeout(() => {
-                                                oUpdModel.update(updEntitySet, param, {
-                                                    method: "PUT",
-                                                    success: function (data, oResponse) {
-                                                        resolve();
-                                                    },
-                                                    error: function () {
-                                                        iEdited++;
-                                                        // alert("Error");
-                                                        resolve();
-                                                        if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
-                                                    }
-                                                })
-
-                                            }, 100);
-                                            resolve();
-                                        });
-                                        // await _promiseResult;
-                                    });
-
-                                    // oUpdModel.submitChanges({
-                                    //     groupId: "update",
-                                    //     success: function (oData, oResponse) {
-
-                                    //         setTimeout(() => {
-                                    //             me.UpdateIOHdrQuantity();
-                                    //         }, 100);
-
-                                    //         setTimeout(() => {
-                                    //             me.getHeaderData();
-                                    //         }, 100);
-
-                                    //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                                    //     },
-                                    //     error: function (oData, oResponse) {
-                                    //     }
-                                    // });
-
-
-                                    // return;
-
-                                    iEdited++;
-                                    if (iEdited === aEditedRows.length) {
-
-                                        // await me.UpdateIOHdrQuantity();
-                                        // await me.getHeaderData();
-
-                                        // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-
-                                        if (arg === "IODET") {
-                                            me.byId("btnNewDlvSched").setVisible(true);
-                                            me.byId("btnImportPODlvSched").setVisible(true);
-                                            me.byId("btnEditDlvSched").setVisible(true);
-                                            me.byId("btnDeleteDlvSched").setVisible(true);
-                                            me.byId("btnCopyDlvSched").setVisible(true);
-                                            me.byId("btnRefreshDlvSched").setVisible(true);
-                                            me.byId("btnSaveDlvSched").setVisible(false);
-                                            me.byId("btnCancelDlvSched").setVisible(false);
-                                            me.byId("btnFullScreenDlvSched").setVisible(true);
-                                            me.byId("btnGenMatList").setVisible(true);
-
-                                            me.byId("btnNewIODet").setVisible(true);
-                                            me.byId("btnEditIODet").setVisible(true);
-                                            // me.byId("btnDeleteIODet").setVisible(true);
-                                            // me.byId("btnCopyIODet").setVisible(true);
-                                            me.byId("btnRefreshIODet").setVisible(true);
-                                            me.byId("btnSaveIODet").setVisible(false);
-                                            me.byId("btnCancelIODet").setVisible(false);
-                                            me.byId("btnFullScreenIODet").setVisible(true);
-                                        }
-
-                                        // if (arg !== "IODET")
-                                        //     me.setActiveRowHighlightByTableId(arg + "Tab");
-
-                                        var oIconTabBar = me.byId("idIconTabBarInlineMode");
-                                        oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
-
-                                        me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
-                                            me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
-                                        })
-
-                                        me._dataMode = "READ";
-
-                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
-                                    }
-                                })
-
-                                this.setRowReadMode(arg);
-                            } else {
-                                Common.closeProcessingDialog(me);
-                                MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
-                                return;
-                            }
-                        }
-
-                        // return;
-
-                        if (aNewRows.length <= 0 && aEditedRows.length <= 0) {
-                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
-                        }
-                        else {
-                            //reload data based on arguments
-                            var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-                            var oModelColumns = new JSONModel();
-                            await oModelColumns.loadData(sPath);
-
-                            var oColumns = oModelColumns.getData();
+                    //PROCESS NEW ROW DATA
+                    if (aNewRows.length > 0) {
+                        if (this._validationErrors.length === 0) {
+                            var entitySet = "/";
+                            var oModel;
 
                             switch (arg) {
                                 case "IODET":
-                                    await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-
-                                    //RELOAD IO DELIVERY DATA PER IO
-                                    await this.reloadIOData("IODLVTab", "/IODLVSet");
-
+                                    entitySet = entitySet + "IODETSet"
+                                    oModel = me.getOwnerComponent().getModel();
                                     break;
-                                default:
-                                    break;
+                                default: break;
                             }
 
-                            this._bIODETChanged = false;
+                            oModel.setUseBatch(true);
+                            oModel.setDeferredGroups(["insert"]);
+
+                            var mParameters = {
+                                "groupId": "insert"
+                            };
+
+                            //APPLY SIZE DATAMODEL UNPIVOT
+
+                            var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                            // console.log("aNewRows");
+                            // console.log(aNewRows);
+                            if (aNewRows[0]["CUSTCOLOR"] === undefined) {
+                                MessageBox.information("Customer Color is required.");
+                                Common.closeProcessingDialog(me);
+                                return;
+                            }
+
+                            //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
+                            aNewRows.forEach(async item => {
+                                //LOOP THRU COLLECTION OF SIZES FOR THE IO
+                                this._iosizes.forEach(async colSizes => {
+                                    hasMatchingSize = false;
+                                    var param = {};
+                                    // param["IONO"] = me._ioNo;
+                                    param["IONO"] = cIONo;
+                                    param["DLVSEQ"] = JSON.stringify(cDlvSeq);
+
+                                    //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
+                                    this._aColumns[arg].forEach(col => {
+                                        //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
+                                        if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                            //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
+                                            if (col.DataType === "DATETIME") {
+                                                param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                                //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
+                                            } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                                //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                                param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                                //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                                param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                                //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                                hasMatchingSize = true;
+                                            } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                                //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                                param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                                //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                                param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                                //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                                hasMatchingSize = true;
+                                            } else {
+                                                //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
+                                                param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                            }
+                                        }
+                                    })
+
+                                    //IF SIZE COLUMNS AT MODEL HAS NO MATCHING COLUMNS AT SIZE MODEL
+                                    //INSERT CUSTSIZE WITH REVORDERQTY = 0
+                                    if (!hasMatchingSize) {
+                                        param["CUSTSIZE"] = colSizes.ATTRIBCD;
+                                        param["REVORDERQTY"] = "0";
+                                        param["SHIPQTY"] = "0";
+                                    }
+
+                                    //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                    this._iosizes.forEach(colSizesRemove => {
+                                        delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                        delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                        // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD)
+                                        //     delete param[colSizesRemove.ATTRIBCD];
+                                    })
+
+                                    // if(param["CUSTCOLOR"] === undefined){
+                                    //     MessageBox.information("Customer Color entry is required");
+                                    //     return;
+                                    // }
+
+                                    // console.log(this._iosizes);
+                                    // console.log(entitySet);
+                                    // console.log(param);
+                                    // console.log(arg);
+
+                                    // return;
+
+                                    //CREATE ENTRIES USING BATCH PROCESSING
+
+                                    // await new Promise((resolve, reject) => {
+                                    oModel.create(entitySet, param, mParameters);
+
+
+                                    // _promiseResult = new Promise((resolve, reject) => {
+                                    //     setTimeout(() => {
+                                    //         oModel.create(entitySet, param, {
+                                    //             method: "POST",
+                                    //             success: function (data, oResponse) {
+                                    //                 // console.log("Success : " + entitySet);
+                                    //                 resolve();
+                                    //             },
+                                    //             error: function () {
+                                    //                 // console.log("Error : " + entitySet);
+                                    //                 iNew++;
+                                    //                 // alert("Error");
+                                    //                 if (iNew === aNewRows.length) Common.closeProcessingDialog(me);
+                                    //                 resolve();
+                                    //             }
+                                    //         })
+                                    //     }, 1000);
+                                    // });
+                                    // await _promiseResult;
+
+                                });
+
+                                // return;
+                                // console.log(oModel);
+                                // return;
+                                await new Promise((resolve, reject) => {
+                                    oModel.submitChanges({
+                                        // mParameters,
+                                        groupId: "insert",
+                                        success: function (oData, oResponse) {
+
+
+                                            // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                        },
+                                        error: function (oData, oResponse) {
+                                        }
+                                    });
+                                    resolve();
+                                });
+
+
+                                iNew++;
+                                if (iNew === aNewRows.length) {
+
+                                    // await me.UpdateIOHdrQuantity();
+                                    // await me.getHeaderData();
+
+                                    // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                    if (arg === "IODET") {
+                                        me.byId("btnNewDlvSched").setVisible(true);
+                                        me.byId("btnImportPODlvSched").setVisible(true);
+                                        me.byId("btnEditDlvSched").setVisible(true);
+                                        me.byId("btnDeleteDlvSched").setVisible(true);
+                                        me.byId("btnCopyDlvSched").setVisible(true);
+                                        me.byId("btnRefreshDlvSched").setVisible(true);
+                                        me.byId("btnGenMatList").setVisible(true);
+                                        me.byId("btnSaveDlvSched").setVisible(false);
+                                        me.byId("btnCancelDlvSched").setVisible(false);
+                                        me.byId("btnFullScreenDlvSched").setVisible(true);
+
+                                        me.byId("btnNewIODet").setVisible(true);
+                                        me.byId("btnEditIODet").setVisible(true);
+                                        // me.byId("btnDeleteIODet").setVisible(true);
+                                        // me.byId("btnCopyIODet").setVisible(true);
+                                        me.byId("btnRefreshIODet").setVisible(true);
+                                        me.byId("btnSaveIODet").setVisible(false);
+                                        me.byId("btnCancelIODet").setVisible(false);
+                                        me.byId("btnFullScreenIODet").setVisible(true);
+                                    }
+
+                                    // if (arg !== "IODET")
+                                    //     me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                    var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                    oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                    me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                        me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                    })
+
+                                    me._dataMode = "READ";
+
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                }
+                            })
+
+                            this.setRowReadMode(arg);
+                        } else {
+                            Common.closeProcessingDialog(me);
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                            return;
                         }
 
-                        // setTimeout(async () => {
-                        //     await me.UpdateIOHdrQuantity();
-                        // }, 100);
+                    }
+                    //PROCESS EDITED ROW DATA
+                    else if (aEditedRows.length > 0) {
+                        if (this._validationErrors.length === 0) {
+                            var entitySet = "/";
+                            var updEntitySet;
+                            var oUpdModel;
 
-                        // setTimeout(async () => {
-                        //     await me.refreshHeaderData();
-                        // }, 100);
+                            switch (arg) {
+                                case "IODET":
+                                    entitySet = entitySet + "IODETSet"
+                                    oUpdModel = me.getOwnerComponent().getModel();
+                                    break;
+                                default: break;
+                            }
 
-                        me.unLock();
-                        Common.closeProcessingDialog(me);
+                            // oUpdModel.setUseBatch(true);
+                            // oUpdModel.setDeferredGroups(["update"]);
 
-                        // console.log(this.getView().getModel("ui2").getProperty("/IOOrdQty"));
-                        // console.log(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
-                        // this.getView().byId("REVORDQTY").setValue(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
+                            // var mParameters = {
+                            //     "groupId": "update"
+                            // };
+
+                            //APPLY SIZE DATAMODEL UNPIVOT
+                            var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                            //LOOP THRU NEW ROWS (CURRENTLY ONE ROW IMPLEM)
+                            aEditedRows.forEach(async item => {
+                                //LOOP THRU COLLECTION OF SIZES FOR THE IO
+                                this._iosizes.forEach(async colSizes => {
+                                    updEntitySet = entitySet;
+                                    updEntitySet += "(IONO='" + item["IONO"] + "',";
+                                    hasMatchingSize = false;
+                                    var param = {};
+                                    var pIOITEM;
+                                    // param["IONO"] = me._ioNo;
+                                    param["IONO"] = cIONo;
+
+                                    //LOOP THRU COLLECTION OF COLUMNS OF THE DATAMODEL
+                                    this._aColumns[arg].forEach(col => {
+                                        //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
+                                        if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+                                            //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
+                                            if (col.DataType === "DATETIME") {
+                                                // alert(item[col.ColumnName]);
+                                                // if(item[col.ColumnName] !== "" || item[col.ColumnName] !== "0000-00-00" || item[col.ColumnName] !== null || item[col.ColumnName] !== undefined) {
+                                                //     param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                                // }
+                                                //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
+                                            } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                                //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                                param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                                //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                                param["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                                //SET IOITEM 
+                                                param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"]
+                                                updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"] + "'"
+
+                                                // param["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD]
+                                                // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD] + "'"
+
+                                                //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                                hasMatchingSize = true;
+                                            } else if (col.ColumnName === colSizes.ATTRIBCD + "SHIPQTY") {
+                                                //SET CUSTSIZE : USE ATTRIBUTE CODE
+                                                param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                                                //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
+                                                param["SHIPQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                                //SET hasMatchingSize VARIABLE AS TRUE; THIS IS NEED IF THE SIZE MUST BE REMOVED FROM THE JSON ARRAY
+                                                hasMatchingSize = true;
+                                            } else {
+                                                //SET OTHER COLUMNS NOT RELATED TO SIZE AND DATETIME
+                                                param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                            }
+                                        }
+                                    })
+
+                                    //REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                    // console.log("REMOVE SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT");
+                                    this._iosizes.forEach(colSizesRemove => {
+                                        // console.log(colSizesRemove.ATTRIBCD);
+                                        delete param[colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                        delete param["IOITEM" + colSizesRemove.ATTRIBCD + "REVORDERQTY"];
+                                        delete param[colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                        delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                        // if (colSizes.ATTRIBCD !== colSizesRemove.ATTRIBCD) {
+                                        //     delete param[colSizesRemove.ATTRIBCD];
+                                        //     delete param["IOITEM" + colSizesRemove.ATTRIBCD + "ORDERQTY"];
+                                        // }
+                                    })
+
+                                    // //REMOVE IOITEM WITH SIZE COLUMNS NOT APPLICABLE FOR UNPIVOT
+                                    // this._iosizes.forEach(colSizesRemove => {
+                                    //     if (colSizes.ATTRIBCD === colSizesRemove.ATTRIBCD) {
+                                    //         delete param["IOITEM" + colSizesRemove.ATTRIBCD + "SHIPQTY"];
+                                    //     }
+                                    // })
+
+                                    updEntitySet += ")";
+
+                                    // console.log(updEntitySet);
+                                    // console.log(param);
+                                    // console.log(arg);
+
+                                    // return;
+
+                                    // //CREATE ENTRIES USING BATCH PROCESSING
+                                    // oUpdModel.update(entitySet, param, mParameters);
+
+                                    await new Promise((resolve, reject) => {
+                                        setTimeout(() => {
+                                            oUpdModel.update(updEntitySet, param, {
+                                                method: "PUT",
+                                                success: function (data, oResponse) {
+                                                    resolve();
+                                                },
+                                                error: function () {
+                                                    iEdited++;
+                                                    // alert("Error");
+                                                    resolve();
+                                                    if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                                }
+                                            })
+
+                                        }, 100);
+                                        resolve();
+                                    });
+                                    // await _promiseResult;
+                                });
+
+                                // oUpdModel.submitChanges({
+                                //     groupId: "update",
+                                //     success: function (oData, oResponse) {
+
+                                //         setTimeout(() => {
+                                //             me.UpdateIOHdrQuantity();
+                                //         }, 100);
+
+                                //         setTimeout(() => {
+                                //             me.getHeaderData();
+                                //         }, 100);
+
+                                //         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                //     },
+                                //     error: function (oData, oResponse) {
+                                //     }
+                                // });
+
+
+                                // return;
+
+                                iEdited++;
+                                if (iEdited === aEditedRows.length) {
+
+                                    // await me.UpdateIOHdrQuantity();
+                                    // await me.getHeaderData();
+
+                                    // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                    if (arg === "IODET") {
+                                        me.byId("btnNewDlvSched").setVisible(true);
+                                        me.byId("btnImportPODlvSched").setVisible(true);
+                                        me.byId("btnEditDlvSched").setVisible(true);
+                                        me.byId("btnDeleteDlvSched").setVisible(true);
+                                        me.byId("btnCopyDlvSched").setVisible(true);
+                                        me.byId("btnRefreshDlvSched").setVisible(true);
+                                        me.byId("btnSaveDlvSched").setVisible(false);
+                                        me.byId("btnCancelDlvSched").setVisible(false);
+                                        me.byId("btnFullScreenDlvSched").setVisible(true);
+                                        me.byId("btnGenMatList").setVisible(true);
+
+                                        me.byId("btnNewIODet").setVisible(true);
+                                        me.byId("btnEditIODet").setVisible(true);
+                                        // me.byId("btnDeleteIODet").setVisible(true);
+                                        // me.byId("btnCopyIODet").setVisible(true);
+                                        me.byId("btnRefreshIODet").setVisible(true);
+                                        me.byId("btnSaveIODet").setVisible(false);
+                                        me.byId("btnCancelIODet").setVisible(false);
+                                        me.byId("btnFullScreenIODet").setVisible(true);
+                                    }
+
+                                    // if (arg !== "IODET")
+                                    //     me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                    var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                    oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                    me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                        me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                    })
+
+                                    me._dataMode = "READ";
+
+                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                }
+                            })
+
+                            this.setRowReadMode(arg);
+                        } else {
+                            Common.closeProcessingDialog(me);
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                            return;
+                        }
+                    }
+
+                    // return;
+
+                    if (aNewRows.length <= 0 && aEditedRows.length <= 0) {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_MODIFIED"]);
+                    }
+                    else {
+                        //reload data based on arguments
+                        var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                        var oModelColumns = new JSONModel();
+                        await oModelColumns.loadData(sPath);
+
+                        var oColumns = oModelColumns.getData();
+
+                        switch (arg) {
+                            case "IODET":
+                                await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+
+                                //RELOAD IO DELIVERY DATA PER IO
+                                await this.reloadIOData("IODLVTab", "/IODLVSet");
+
+                                break;
+                            default:
+                                break;
+                        }
+
+                        this._bIODETChanged = false;
+                    }
+
+                    // setTimeout(async () => {
+                    //     await me.UpdateIOHdrQuantity();
+                    // }, 100);
+
+                    // setTimeout(async () => {
+                    //     await me.refreshHeaderData();
+                    // }, 100);
+
+                    me.unLock();
+                    Common.closeProcessingDialog(me);
+
+                    // console.log(this.getView().getModel("ui2").getProperty("/IOOrdQty"));
+                    // console.log(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
+                    // this.getView().byId("REVORDQTY").setValue(this.getView().getModel("ui2").getProperty("/IORevOrdQty"));
                     // } else
                     //     MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
                 } else {

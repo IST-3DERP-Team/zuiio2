@@ -10,6 +10,7 @@
     xmlns:smartTable="sap.ui.comp.smarttable"
     xmlns:sv="sap.ui.comp.smartvariants"
     xmlns:layout="sap.ui.layout"
+    xmlns:m="sap.m.Table"
     xmlns:t="sap.ui.table"
     xmlns:plugins="sap.ui.table.plugins"
     xmlns:fb="sap.ui.comp.filterbar"

@@ -78,7 +78,8 @@
                 },
                 "SuggestionItems": {
                     "path": "BILLTO_MODEL>/",
-                    "info": "{BILLTO_MODEL>Billtocust}"
+                    "title": "{SHIPTO_MODEL>Billtocust}",
+                    "info": "{BILLTO_MODEL>Name}"
                 }
             }
         },
@@ -95,7 +96,7 @@
                 },
                 "SuggestionItems": {
                     "path": "SHIPTO_MODEL>/",
-                    "text": "{SHIPTO_MODEL>Shiptocust}",
+                    "title": "{SHIPTO_MODEL>Shiptocust}",
                     "info": "{SHIPTO_MODEL>Name}"
                 }
             }
