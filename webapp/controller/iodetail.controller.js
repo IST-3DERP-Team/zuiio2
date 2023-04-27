@@ -52,24 +52,30 @@ sap.ui.define([
 
                 this._ccolumns;
 
+                //Initialize router
+                var oComponent = this.getOwnerComponent();
+                this._router = oComponent.getRouter();
+
                 //get current userid
                 var oModel = new sap.ui.model.json.JSONModel();
                 oModel.loadData("/sap/bc/ui2/start_up").then(() => {
                     this._userid = oModel.oData.id;
                 })
 
-                if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
 
-                    var oView = this.getView();
-                    oView.addEventDelegate({
-                        onAfterShow: function (oEvent) {
-                            // console.log("back")
-                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                            that.onRefresh();
-                        }
-                    }, oView);
-                }
+                //     // var oView = this.getView();
+                //     // oView.addEventDelegate({
+                //     //     onAfterShow: function (oEvent) {
+                //     //         // console.log("back")
+                //     //         sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                //     //         that.onRefresh();
+                //     //     }
+                //     // }, oView);
+
+                //     this._router.attachRouteMatched(this.onRouteMatched, this);
+                // }
 
                 this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
@@ -77,10 +83,7 @@ sap.ui.define([
                 this._Model3 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._Model4 = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
-
-                //Initialize router
-                var oComponent = this.getOwnerComponent();
-                this._router = oComponent.getRouter();
+                
                 this._router.getRoute("RouteIODetail").attachPatternMatched(this._routePatternMatched, this);
 
                 this.getView().setModel(new JSONModel({
@@ -163,9 +166,24 @@ sap.ui.define([
                 window.onhashchange = function () {
                     if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
                         window.history.state.sap.history.forEach((item, index) => {
-                            if (item === "ZSO_IO2-display") window.history.go((index + 1) - window.history.state.sap.history.length);
+                            // console.log(item);
+                            // ZSO_IO2-display
+                            // ZSO_3DERP_ORD_IO-change
+                            if (item === "ZSO_3DERP_ORD_IO-change" || item === "ZSO_3DERP_ORD_IO-display") {
+                                window.history.go((index + 1) - window.history.state.sap.history.length);   
+                                // this._router.attachRouteMatched(this.onRouteMatched, this);  
+                            }                       
                         })
                     }
+                }
+            },
+
+            onRouteMatched: function (oEvent) {
+                var sRouteName = oEvent.getParameter("name");
+                // console.log(sRouteName);
+                if (sRouteName !== "RouteIODetail") {
+                    window.history.pushState(null, null, window.location.pathname);
+                    this._router.navTo("Routeioinit", {}, true);
                 }
             },
 
@@ -1161,9 +1179,9 @@ sap.ui.define([
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
                         this._oModel.read('/IMPORTPOSet', {
-                            urlParameters: {
-                                "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
-                            },
+                            // urlParameters: {
+                            //     "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
+                            // },
                             success: function (oData, response) {
                                 // console.log("Import PO Data");
                                 // console.log(oData);
@@ -1316,44 +1334,44 @@ sap.ui.define([
 
                     var currStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
                     var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
-                    _promiseResult = new Promise((resolve, reject) => {
-                        setTimeout(() => {
-                            this._oModel.read('/IMPORTPOSet', {
-                                urlParameters: {
-                                    "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
-                                },
-                                success: function (oData, response) {
-                                    if (oData.results.length > 0) {
-                                        hasData = true;
-                                    }
-                                    resolve();
-                                    return;
-                                },
-                                error: function (err) {
-                                    MessageBox.error("Error encountered: " + err.responseText);
-                                    resolve();
-                                }
-                            })
-                        }, 100);
-                    });
-                    await _promiseResult;
+                    // _promiseResult = new Promise((resolve, reject) => {
+                    //     setTimeout(() => {
+                    //         this._oModel.read('/IMPORTPOSet', {
+                    //             urlParameters: {
+                    //                 "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
+                    //             },
+                    //             success: function (oData, response) {
+                    //                 if (oData.results.length > 0) {
+                    //                     hasData = true;
+                    //                 }
+                    //                 resolve();
+                    //                 return;
+                    //             },
+                    //             error: function (err) {
+                    //                 MessageBox.error("Error encountered: " + err.responseText);
+                    //                 resolve();
+                    //             }
+                    //         })
+                    //     }, 100);
+                    // });
+                    // await _promiseResult;
 
-                    if (!hasData) {
-                        MessageBox.information("No Sales Document Data found for Style# " + currStyle + " and Sold-To Customer# " + currCustSoldTo + "");
-                        return;
-                    }
-                    else {
-                        await this.reloadIOData("IODLVTab", "/IODLVSet");
-                        this._bIODLVChanged = false;
+                    // if (!hasData) {
+                    //     MessageBox.information("No Sales Document Data found for Style# " + currStyle + " and Sold-To Customer# " + currCustSoldTo + "");
+                    //     return;
+                    // }
+                    // else {
+                    //     await this.reloadIOData("IODLVTab", "/IODLVSet");
+                    //     this._bIODLVChanged = false;
 
-                        me._tblChange = true;
-                        // setTimeout(() => {
-                        await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                        me._tblChange = false;
+                    //     me._tblChange = true;
+                    //     // setTimeout(() => {
+                    //     await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                    //     me._tblChange = false;
 
-                        // do not continue with fragment initialization / no data to select
-                        // return;
-                    }
+                    //     // do not continue with fragment initialization / no data to select
+                    //     // return;
+                    // }
 
                     await this.lock(this);
                     if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
@@ -2264,7 +2282,8 @@ sap.ui.define([
 
                     //build the table dyanmic columns
                     for (var i = 0; i < columns.length; i++) {
-                        if (columns[i].Pivot === pivotRow) {
+                        // console.log(columns[i]);
+                        if (columns[i].Pivot === pivotRow && columns[i].ColumnName === "REVORDERQTY") {
                             //pivot the columns
                             for (var j = 0; j < pivotArray.length; j++) {
                                 if (pivotArray[j].ATTRIBTYP === "SIZE") {
@@ -2290,6 +2309,26 @@ sap.ui.define([
                                     })
 
                                     columnData.push({
+                                        "ColumnName": pivotArray[j].ATTRIBCD + ccolumns[i + 1].ColumnName,
+                                        "ColumnLabel": pivotArray[j].DESC1 + " " + ccolumns[i + 1].ColumnLabel,
+                                        "ColumnWidth": 120,
+                                        "ColumnType": pivotRow,
+                                        "DataType": ccolumns[i + 1].DataType,
+                                        "Editable": ccolumns[i + 1].Editable,
+                                        "Mandatory": columns[i + 1].Mandatory,
+                                        "Visible": true,
+                                        "Creatable": ccolumns[i + 1].Creatable,
+                                        "Decimal": ccolumns[i + 1].Decimal,
+                                        "DictType": ccolumns[i + 1].DictType,
+                                        "Key": ccolumns[i + 1].Key,
+                                        "Length": ccolumns[i + 1].Length,
+                                        "Order": ccolumns[i + 1].Length,
+                                        "SortOrder": ccolumns[i + 1].SortOrder,
+                                        "SortSeq": ccolumns[i + 1].SortSeq,
+                                        "Sorted": ccolumns[i + 1].Sorted
+                                    })
+
+                                    columnData.push({
                                         "ColumnName": "IOITEM" + pivotArray[j].ATTRIBCD + ccolumns[i].ColumnName,
                                         "ColumnLabel": "IOITEM" + pivotArray[j].ATTRIBCD,
                                         "ColumnWidth": 70,
@@ -2311,7 +2350,7 @@ sap.ui.define([
                                 }
                             }
                         } else {
-                            if (columns[i].ColumnName !== pivotRow && columns[i].ColumnName !== "IOITEM" && columns[i].ColumnName !== "IONO"
+                            if (columns[i].ColumnName !== pivotRow && columns[i].ColumnName !== "IOITEM" && columns[i].ColumnName !== "IONO" && columns[i].ColumnName !== "SHIPQTY"
                                 && columns[i].ColumnName !== "SALDOCNO" && columns[i].ColumnName !== "SALDOCITEM"
                                 && columns[i].ColumnName !== "CREATEDBY" && columns[i].ColumnName !== "CREATEDDT" && columns[i].ColumnName !== "CREATEDTM"
                                 && columns[i].ColumnName !== "UPDATEDBY" && columns[i].ColumnName !== "UPDATEDDT" && columns[i].ColumnName !== "UPDATEDTM") {
@@ -2436,8 +2475,9 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable = this.getView().byId(sTabId);
 
-                // console.log("setIOTableColumns");
-                // console.log(oTable);
+                console.log(sTabId);
+                console.log("setIOTableColumns");
+                console.log(oTable);
 
                 oTable.getModel().setProperty("/columns", oColumns);
 
@@ -3544,8 +3584,8 @@ sap.ui.define([
                                 "$filter": "Soldtocust eq '" + soldtoCust + "'"
                             },
                             success: function (oData, oResponse) {
-                                console.log(sModelName);
-                                console.log(oData);
+                                // console.log(sModelName);
+                                // console.log(oData);
 
                                 if (sModelName === "BILLTOModel") {
                                     oData.results.forEach(item => {
@@ -3576,8 +3616,8 @@ sap.ui.define([
 
                             },
                             success: function (oData, oResponse) {
-                                console.log(sModelName);
-                                console.log(oData);
+                                // console.log(sModelName);
+                                // console.log(oData);
 
                                 if (sModelName === "SOLDTOModel") {
                                     oData.results.forEach(item => {
@@ -4196,7 +4236,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                console.log("onBillToValueHelp : " + soldtoCust);
+                // console.log("onBillToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._billtoHelpDialog) {
                     that._billtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.BillTo", that);
@@ -4237,7 +4277,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                console.log("onShipToValueHelp : " + soldtoCust);
+                // console.log("onShipToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._shiptoHelpDialog) {
                     that._shiptoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ShipTo", that);
@@ -4660,8 +4700,8 @@ sap.ui.define([
                     // console.log(this.getOwnerComponent().getModel("LockModel").getData().results[0].Type);
                     // console.log(this.getOwnerComponent().getModel("LockModel").getData().results[0].Message);
 
-                    console.log("Lock Type: " + this.getView().getModel("ui").getProperty("/LockType"));
-                    console.log("Lock Message: " + this.getView().getModel("ui").getProperty("/LockMessage"));
+                    // console.log("Lock Type: " + this.getView().getModel("ui").getProperty("/LockType"));
+                    // console.log("Lock Message: " + this.getView().getModel("ui").getProperty("/LockMessage"));
                     // if (this.getView().getModel("ui").getProperty("/LockType") !== "E" && this.getView().getModel("ui").getProperty("/LockType") !== "") {
                     if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
 
@@ -4721,7 +4761,7 @@ sap.ui.define([
                         // console.log(this.getView().byId("ORDQTY").getValue());
                         let iOrdQty = 0;
                         iOrdQty = +this.getView().byId("ORDQTY").getValue();
-                        console.log(iOrdQty);
+                        // console.log(iOrdQty);
                         if (iOrdQty <= 0) {
                             sErrMsg = "Order Quantity must be greater than zero."
                             sap.m.MessageBox.warning(sErrMsg);
@@ -5470,7 +5510,7 @@ sap.ui.define([
                         var oModel = this.getView().byId(tabName).getModel();
                         var oData = aNewRow;
 
-                        console.log(oModel.getData());
+                        // console.log(oModel.getData());
 
                         if (oModel.getData().rows.length > 0) {
 
@@ -5482,7 +5522,7 @@ sap.ui.define([
                                 oData.push(item);
                             })
                         }
-                        console.log(oData);
+                        // console.log(oData);
 
                         oModel.setProperty("/rows", oData);
 
@@ -6058,7 +6098,7 @@ sap.ui.define([
                     // _promiseResult = new Promise((resolve, reject) => {
                     me._tblChange = true;
                     await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                    await this.getIODynamicColumns("IODETMATLST", "ZDV_IODETMATLIST", "IODETMATLSTab", oColumns);
+                    await this.getIODynamicColumns("IODETMATLST", "ZDV_IODETMATLIST", "iodetMatTab", oColumns);
                     //     resolve();
                     // })
                     // await _promiseResult;
@@ -10046,7 +10086,7 @@ sap.ui.define([
                 // console.log(this.getView().getModel("UOMINFOModel").getData());
                 this.getView().getModel("UOMINFOModel").getData().results.filter(fItem => fItem.MSEHI === sUOM)
                     .forEach((item) => {
-                        console.log(item.MSEHI);
+                        // console.log(item.MSEHI);
                         iUOMDec = item.ANDEC;
                     })
 
@@ -10335,7 +10375,7 @@ sap.ui.define([
 
                                     this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
                                     this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
-                                    console.log(vUOM, vANDEC)
+                                    // console.log(vUOM, vANDEC)
                                     this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
                                     this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
                                 }
@@ -11306,7 +11346,7 @@ sap.ui.define([
 
             onReorder: async function (oEvent) {
                 var oTable = this.byId("ioMatListTab");
-                console.log(this.getView().getModel("UOMConfig").getData())
+                // console.log(this.getView().getModel("UOMConfig").getData())
 
                 if (oTable.getModel().getData().rows.length > 0) {
                     await this.lock(this);
@@ -11613,14 +11653,14 @@ sap.ui.define([
                 if (this._validationErrors === undefined) this._validationErrors = [];
                 // console.log("ok")
                 var oSource = oEvent.getSource();
-                console.log(oSource)
+                // console.log(oSource)
                 // var sModel = oSource.getBindingInfo("value").parts[0].model;
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
                 var vDecPlaces = this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC');
                 var bError = false;
 
-                console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/SEQNO'));
-                console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC'));
+                // console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/SEQNO'));
+                // console.log(this._ReorderDialog.getModel().getProperty(sRowPath + '/ANDEC'));
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
                     if (vDecPlaces === 0) {
@@ -12049,7 +12089,7 @@ sap.ui.define([
             handleReorderValueHelp: function (oEvent) {
                 var oSource = oEvent.getSource();
                 var vh = this.getView().getModel("IOMATLIST_MODEL").getData();
-                console.log(vh)
+                // console.log(vh)
                 this._inputSource = oSource;
                 this._inputId = oSource.getId();
                 this._inputValue = oSource.getValue();
@@ -12092,9 +12132,9 @@ sap.ui.define([
 
                     if (oSelectedItem) {
                         this._inputSource.setValue(oSelectedItem.getTitle());
-                        console.log("dumaan dito")
+                        // console.log("dumaan dito")
                         if (this._inputValue !== oSelectedItem.getTitle()) {
-                            console.log("dumaan dito")
+                            // console.log("dumaan dito")
                             var sRowPath = this._inputSource.getBindingInfo("value").binding.oContext.sPath;
                             // var sVendor = this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.MATNO === oSelectedItem.getTitle() && fItem.SEQNO === oSelectedItem.getDescription())[0].VENDORCD;
 
@@ -12107,7 +12147,7 @@ sap.ui.define([
 
                             this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getDescription()).forEach(item => vUOM = item.UOM);
                             this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
-                            console.log(vUOM, vANDEC)
+                            // console.log(vUOM, vANDEC)
                             this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
                             this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
 
@@ -12161,7 +12201,7 @@ sap.ui.define([
 
                     this.getView().getModel("IOMATLIST_MODEL").getData().filter(fItem => fItem.SEQNO === oSelectedItem.getAdditionalText()).forEach(item => vUOM = item.UOM);
                     this.getView().getModel("UOMConfig").getData().filter(fItem => fItem.MSEHI === vUOM).forEach(item => vANDEC = item.ANDEC);
-                    console.log(vUOM, vANDEC)
+                    // console.log(vUOM, vANDEC)
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/UOM', vUOM);
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/ANDEC', vANDEC);
                 }
@@ -13602,13 +13642,13 @@ sap.ui.define([
                 oParamLock["Iv_Count"] = 300;
                 oParamLock["IO_MSG"] = [];
 
-                console.log(oParamLock);
+                // console.log(oParamLock);
 
                 var promise = new Promise((resolve, reject) => {
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
-                            console.log(oResultLock.IO_MSG.results);
+                            // console.log(oResultLock.IO_MSG.results);
                             oResultLock.IO_MSG.results.forEach(item => {
                                 // console.log("Lock IO");
                                 me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);

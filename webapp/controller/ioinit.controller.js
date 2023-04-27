@@ -941,13 +941,13 @@ sap.ui.define([
                 // });
 
                 // aFilters.push(lv_createdDateFilter);
-                // console.log("Statistics");
-                // console.log(aFilters);
+                console.log("Statistics Filter");
+                console.log(aFilters);
                 oModel.read(vEntitySet, {
-                    // filters: aFilters,
+                    filters: aFilters,
                     success: function (oData) {
-                        // console.log("Statistics oData");
-                        // console.log(oData);
+                        console.log("Statistics oData");
+                        console.log(oData);
                         oForecast.setNumber(oData.results[0].FORECASTQTY);
                         oOrder.setNumber(oData.results[0].ORDERQTY);
                         oShipped.setNumber(oData.results[0].SHIPQTY);
