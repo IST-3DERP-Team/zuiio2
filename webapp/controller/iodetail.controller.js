@@ -11253,6 +11253,12 @@ sap.ui.define([
                 var oParam = {};
                 var me = this;
 
+                await me.lock(me);
+                if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
+                    MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
+                    return;
+                }
+
                 if (oSelectedIndices.length > 0) {
                     oSelectedIndices.forEach(item => {
                         oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
@@ -11283,8 +11289,8 @@ sap.ui.define([
 
                     if (aParam.length > 0) {
                         Common.openLoadingDialog(this);
-                        await me.lock(me);
-                        if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                        // await me.lock(me);
+                        // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
                             oParam["SBU"] = this._sbu;
                             oParam["MRPTYP"] = "IOMRP";
                             oParam["N_CreateMRPDataParam"] = aParam;
@@ -11294,10 +11300,7 @@ sap.ui.define([
                                 method: "POST",
                                 success: function (oDataReturn, oResponse) {
                                     //assign the materials based on the return
-                                    // console.log(oDataReturn)
-
-                                    me.unlock();
-                                    Common.closeLoadingDialog(me);
+                                    // console.log(oDataReturn)                                    
 
                                     if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
                                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
@@ -11305,16 +11308,19 @@ sap.ui.define([
                                     }
 
                                     me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
+
+                                    // me.unlock();
+                                    Common.closeLoadingDialog(me);
                                 },
                                 error: function (err) {
-                                    me.unLock();
+                                    // me.unLock();
                                     Common.closeLoadingDialog(me);
                                 }
                             });
-                        } else {
-                            MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
-                        }
-                        Common.closeLoadingDialog(this);
+                        // } else {
+                        //     Common.closeLoadingDialog(me);
+                        //     MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
+                        // }
                     }
                     else {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
@@ -11322,6 +11328,10 @@ sap.ui.define([
                 }
                 else {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+
+                if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                    me.unLock();
                 }
             },
 
@@ -13654,7 +13664,7 @@ sap.ui.define([
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
-                            // console.log(oResultLock.IO_MSG.results);
+                            console.log(oResultLock.IO_MSG.results);
                             oResultLock.IO_MSG.results.forEach(item => {
                                 // console.log("Lock IO");
                                 me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
