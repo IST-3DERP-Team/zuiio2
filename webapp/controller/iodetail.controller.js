@@ -1113,30 +1113,35 @@ sap.ui.define([
                         aSelectedItems.push(aData.at(item));
 
                         oParamData.push({
-                            Saldocno: aData.at(item).SALESDOCNO === undefined ? "" : aData.at(item).SALESDOCNO,
-                            Saldocitem: aData.at(item).SALESDOCITEM === undefined ? "" : aData.at(item).SALESDOCITEM,
-                            Orderqty: aData.at(item).QTY === undefined ? "" : aData.at(item).QTY,
-                            Unitprice: aData.at(item).UNITPRICE === undefined ? "" : aData.at(item).UNITPRICE,
-                            Cpono: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
-                            Cporev: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
-                            Cpodt: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
-                            Dlvdt: aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),
-                            Styleno: aData.at(item).STYLENO === undefined ? "" : aData.at(item).STYLENO,
-                            Custcolor: aData.at(item).CUSTCOLOR === undefined ? "" : aData.at(item).CUSTCOLOR,
-                            Custsize: aData.at(item).CUSTSIZE === undefined ? "" : aData.at(item).CUSTSIZE,
-                            Custshipto: aData.at(item).CUSTSHIPTO === undefined ? "" : aData.at(item).CUSTSHIPTO,
-                            Custbillto: aData.at(item).CUSTBILLTO === undefined ? "" : aData.at(item).CUSTBILLTO
+                            // Saldocno: aData.at(item).SALESDOCNO === undefined ? "" : aData.at(item).SALESDOCNO,
+                            // Saldocitem: aData.at(item).SALESDOCITEM === undefined ? "" : aData.at(item).SALESDOCITEM,
+                            // Orderqty: aData.at(item).QTY === undefined ? "" : aData.at(item).QTY,
+                            // Unitprice: aData.at(item).UNITPRICE === undefined ? "" : aData.at(item).UNITPRICE,
+                            // Cpono: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
+                            // Cporev: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
+                            // Cpodt: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
+                            // Dlvdt: aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),
+                            // Styleno: aData.at(item).STYLENO === undefined ? "" : aData.at(item).STYLENO,
+                            // Custcolor: aData.at(item).CUSTCOLOR === undefined ? "" : aData.at(item).CUSTCOLOR,
+                            // Custsize: aData.at(item).CUSTSIZE === undefined ? "" : aData.at(item).CUSTSIZE,
+                            // Custshipto: aData.at(item).CUSTSHIPTO === undefined ? "" : aData.at(item).CUSTSHIPTO,
+                            // Custbillto: aData.at(item).CUSTBILLTO === undefined ? "" : aData.at(item).CUSTBILLTO
+
+                            CPONO: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
+                            CPOREV: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
+                            CPODT: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
+                            CUSTSTYLE: aData.at(item).CUSTSTYLE === undefined ? "" : aData.at(item).CUSTSTYLE
                         })
                     })
 
                     oParam = oParamHdr;
-                    oParam['N_IMPORT_SALDOCITEM'] = oParamData;
+                    oParam['N_IMPORT_CPO'] = oParamData;
 
-                    // console.log(oParam);
+                    console.log(oParam);
                 }
 
-                // Common.closeLoadingDialog(that);
-                // return;
+                Common.closeLoadingDialog(that);
+                return;
 
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.create("/IMPORTSALDOCSet", oParam, {
@@ -1178,7 +1183,7 @@ sap.ui.define([
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        this._oModel.read('/IMPORTPOSet', {
+                        this._oModel.read('/IMPORTPO2Set', {
                             // urlParameters: {
                             //     "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
                             // },
@@ -1187,7 +1192,7 @@ sap.ui.define([
                                 // console.log(oData);
                                 oData.results.forEach(item => {
                                     item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    item.DLVDT = dateFormat.format(new Date(item.DLVDT));
+                                    // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
                                 })
 
                                 oJSONModel.setData(oData);
@@ -1393,7 +1398,7 @@ sap.ui.define([
                                 rows: []
                             }));
 
-                            this.getSearchDynamicTableColumns("IMPORTPO", "ZDV_IMPORT_PO", "ImportPOTab", oColumns);
+                            this.getSearchDynamicTableColumns("IMPORTPO2", "ZDV_IMPORT_PO2", "ImportPOTab", oColumns);
 
                             me.getView().addDependent(me._ImportPODialog);
 
@@ -11309,6 +11314,7 @@ sap.ui.define([
                         } else {
                             MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
                         }
+                        Common.closeLoadingDialog(this);
                     }
                     else {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
