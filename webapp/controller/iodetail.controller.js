@@ -99,7 +99,8 @@ sap.ui.define([
                     IOPrefix: '',
                     IOOrdQty: 0,
                     IORevOrdQty: 0,
-                    hasCSData: true
+                    hasCSData: true,
+                    CustDlvDt: ''
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -170,8 +171,9 @@ sap.ui.define([
                             // ZSO_IO2-display
                             // ZSO_3DERP_ORD_IO-change
                             if (item === "ZSO_3DERP_ORD_IO-change" || item === "ZSO_3DERP_ORD_IO-display") {
+                                // this._router.navTo("Routeioinit", {}, true);
                                 window.history.go((index + 1) - window.history.state.sap.history.length);   
-                                // this._router.attachRouteMatched(this.onRouteMatched, this);  
+                                this._router.attachRouteMatched(this.onRouteMatched, this);  
                             }                       
                         })
                     }
@@ -1664,6 +1666,9 @@ sap.ui.define([
                                     } else
                                         item.ACTIVE = ""
                                 });
+
+                                oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
+
                                 me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IODLVTab").bindRows("/rows");
                                 me._tableRendered = "IODLVTab";
@@ -1921,11 +1926,14 @@ sap.ui.define([
                             "$filter": "STYLENO eq '" + pStyleNo + "'"
                         },
                         success: function (oData, oResponse) {
+                            console.log("IOSTYLISTDETSet");
+                            console.log(oData);
                             oData.results.forEach(item => {
 
                                 var styleData = {
                                     "STYLECD": item.STYLECD,
                                     "STYLENO": item.STYLENO,
+                                    "STYLECAT": item.STYLECAT,
                                     "VERNO": item.VERNO,
                                     "PRODTYPE": item.PRODTYP,
                                     "SALESGRP": item.SALESGRP,
@@ -2481,9 +2489,9 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable = this.getView().byId(sTabId);
 
-                console.log(sTabId);
-                console.log("setIOTableColumns");
-                console.log(oTable);
+                // console.log(sTabId);
+                // console.log("setIOTableColumns");
+                // console.log(oTable);
 
                 oTable.getModel().setProperty("/columns", oColumns);
 
@@ -2630,6 +2638,8 @@ sap.ui.define([
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                                oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
+                                
                                 oJSONModel.setData(oData);
                                 me.getView().setModel(oJSONModel, "IODETrowData");
                                 me._tableRendered = sTabId;
@@ -2646,8 +2656,9 @@ sap.ui.define([
                         });
                     }, 100);
 
-                })
-                await _promiseResult;
+                })                
+
+                await _promiseResult;                
 
                 // console.log("rowData");
                 // console.log(rowData)
@@ -5406,6 +5417,8 @@ sap.ui.define([
                     var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                     var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
+                    this.getView().getModel("ui2").setProperty("/CustDlvDt", sap.ui.getCore().byId("CUSTDLVDT").getValue());
+
                     if (arg === "IODET") {
                         if (vDlvSeq === undefined || vDlvSeq === "999") {
                             MessageBox.information("select a Delivery Sequence");
@@ -6069,6 +6082,8 @@ sap.ui.define([
                                         item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                     })
+
+                                    oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
                                 }
                                 // console.log("Reload IO Data");
                                 // console.log(ioNo);
@@ -7153,6 +7168,7 @@ sap.ui.define([
                 else if (arg === "costHdr") this._bCostHdrChanged = false;
                 else if (arg === "costDtls") this._bCostDtlsChanged = false;
 
+                this.getView().getModel("ui2").setProperty("/CustDlvDt", sap.ui.getCore().byId("CUSTDLVDT").getValue());
                 // console.log("on Edit Check if has Entries");
                 // console.log(this.byId(arg + "Tab").getModel());
                 // return;
@@ -9631,6 +9647,20 @@ sap.ui.define([
                                                 }
                                             }
                                         }));
+                                    } 
+                                    else if (arg === "IODLV") {
+                                        col.setTemplate(new sap.m.DatePicker({
+                                            value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
+                                            displayFormat: "short",
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "DELETED",
+                                                formatter: function (DELETED) {
+                                                    if (DELETED) { return false }
+                                                    else { return true }
+                                                }
+                                            }
+                                        }));
                                     }
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
@@ -11267,6 +11297,12 @@ sap.ui.define([
                 var aMatTypInfoRecChk = this.getView().getModel("matTypInfoRecChk").getData();
                 var aMatTypInfoRecInc = [];
 
+                await me.lock(me);
+                if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
+                    MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
+                    return;
+                }
+
                 if (oSelectedIndices.length > 0) {
                     oSelectedIndices.forEach(item => {
                         oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
@@ -11318,8 +11354,8 @@ sap.ui.define([
 
                     if (aParam.length > 0) {
                         Common.openLoadingDialog(this);
-                        await me.lock(me);
-                        if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                        // await me.lock(me);
+                        // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
                             if (!vInfoRec) {
                                 var uq = [...new Set(aMatTypInfoRecInc.map(i => i))];
 
@@ -11339,7 +11375,7 @@ sap.ui.define([
                                                     //assign the materials based on the return
                                                     // console.log(oDataReturn)
                 
-                                                    me.unLock();
+                                                    // me.unLock();
                                                     Common.closeLoadingDialog(me);
                 
                                                     if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
@@ -11351,7 +11387,7 @@ sap.ui.define([
                                                     me.createInfoRecord(oDataReturn.N_CreateMRPDataReturn.results, aParam2);
                                                 },
                                                 error: function (err) {
-                                                    me.unLock();
+                                                    // me.unLock();
                                                     Common.closeLoadingDialog(me);
                                                 }
                                             });                                            
@@ -11375,7 +11411,7 @@ sap.ui.define([
                                         //assign the materials based on the return
                                         // console.log(oDataReturn)
     
-                                        me.unLock();
+                                        // me.unLock();
                                         Common.closeLoadingDialog(me);
     
                                         if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
@@ -11387,15 +11423,15 @@ sap.ui.define([
                                         me.createInfoRecord(oDataReturn.N_CreateMRPDataReturn.results, aParam2);
                                     },
                                     error: function (err) {
-                                        me.unLock();
+                                        // me.unLock();
                                         Common.closeLoadingDialog(me);
                                     }
                                 });                                 
                             }
-                        } else {
-                            Common.closeLoadingDialog(this);
-                            MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
-                        }
+                        // } else {
+                        //     Common.closeLoadingDialog(this);
+                        //     MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
+                        // }
                         // Common.closeLoadingDialog(this);
                     }
                     else {
@@ -11404,6 +11440,10 @@ sap.ui.define([
                 }
                 else {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+
+                if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                    me.unLock();
                 }
             },
 
@@ -13811,7 +13851,7 @@ sap.ui.define([
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
-                            // console.log(oResultLock.IO_MSG.results);
+                            console.log(oResultLock.IO_MSG.results);
                             oResultLock.IO_MSG.results.forEach(item => {
                                 // console.log("Lock IO");
                                 me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
