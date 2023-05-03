@@ -902,6 +902,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ERR_IORELEASE_REQ" });
                 oDDTextParam.push({ CODE: "ERR_IOALREADYRELEASE" });
                 oDDTextParam.push({ CODE: "PLACEHOLDER_REQ" });
+                oDDTextParam.push({ CODE: "INFO_INVALID_CREATE_INFOREC" });
 
                 // console.log(oDDTextParam);
 
@@ -11036,6 +11037,7 @@ sap.ui.define([
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
+                this.getView().setModel(new JSONModel(), "matTypInfoRecChk");
 
                 this.byId("ioMatListTab")
                     .setModel(new JSONModel({
@@ -11074,6 +11076,14 @@ sap.ui.define([
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
                         me.byId("ioMatListTab").bindRows("/rows");
                         me._tableRendered = "ioMatListTab";
+
+    
+                        me._oModelIOMatList.read('/InfoRecCheckSet', {
+                            success: function (oData2) {
+                                me.getView().getModel("matTypInfoRecChk").setProperty("/", oData2.results);
+                            },
+                            error: function (err) { }
+                        })
                     },
                     error: function (err) { }
                 })
@@ -11294,14 +11304,18 @@ sap.ui.define([
             },
 
             onSubmitMRP: async function (oEvent) {
+                var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
                 var oTable = this.byId("ioMatListTab");
                 var oSelectedIndices = oTable.getSelectedIndices();
                 var oTmpSelectedIndices = [];
                 var aData = oTable.getModel().getData().rows;
-                var aParam = [];
+                var aParam = [],
+                    aParam2 = [];
                 var oParam = {};
-                var me = this;
+                var vInfoRec = true;
+                var aMatTypInfoRecChk = this.getView().getModel("matTypInfoRecChk").getData();
+                var aMatTypInfoRecInc = [];
 
                 await me.lock(me);
                 if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
@@ -11334,6 +11348,27 @@ sap.ui.define([
                                 Umren: aData.at(item).UMREN,
                                 Purplant: aData.at(item).PURPLANT
                             });
+
+                            aParam2.push({
+                                Matno: aData.at(item).MATNO,
+                                Baseuom: aData.at(item).UOM,
+                                Reqqty: aData.at(item).VARIANCE,
+                                Purgrp: aData.at(item).PURGRP,
+                                Supplytyp: aData.at(item).SUPPLYTYP,
+                                Vendorcd: aData.at(item).VENDORCD,
+                                Unitprice: aData.at(item).UNITPRICE,
+                                Orderuom: aData.at(item).ORDERUOM,
+                                Umrez: aData.at(item).UMREZ,
+                                Umren: aData.at(item).UMREN,
+                                Purplant: aData.at(item).PURPLANT,
+                                Currencycd: aData.at(item).CURRENCYCD
+                            });
+
+                            if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP).length > 0 && aData.at(item).SUPPLYTYP === "NOM" && 
+                                (aData.at(item).ORDERUOM === "" || aData.at(item).PURGRP === "" || aData.at(item).PURGRP === "" || aData.at(item).PURPLANT === "" || aData.at(item).VENDORCD === "" || +aData.at(item).UNITPRICE === 0)) {
+                                vInfoRec = false;
+                                aMatTypInfoRecInc.push(aData.at(item).MATTYP);
+                            }
                         }
                     })
 
@@ -11341,36 +11376,83 @@ sap.ui.define([
                         Common.openLoadingDialog(this);
                         // await me.lock(me);
                         // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
-                            oParam["SBU"] = this._sbu;
-                            oParam["MRPTYP"] = "IOMRP";
-                            oParam["N_CreateMRPDataParam"] = aParam;
-                            oParam["N_CreateMRPDataReturn"] = [];
-                            // console.log(oParam)
-                            oModel.create("/CreateMRPDataSet", oParam, {
-                                method: "POST",
-                                success: function (oDataReturn, oResponse) {
-                                    //assign the materials based on the return
-                                    // console.log(oDataReturn)                                    
+                            if (!vInfoRec) {
+                                var uq = [...new Set(aMatTypInfoRecInc.map(i => i))];
 
-                                    if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
-                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
-                                        me.onRefresh("ioMatList");
+                                MessageBox.confirm(me.getView().getModel("ddtext").getData()["INFO_INVALID_CREATE_INFOREC"].replace("{mattyp}", uq.join(", ")).replaceAll(".", ".\r\n"), {
+                                    actions: ["Yes", "No"],
+                                    onClose: function (sAction) {
+                                        if (sAction === "Yes") {
+                                            oParam["SBU"] = this._sbu;
+                                            oParam["MRPTYP"] = "IOMRP";
+                                            oParam["N_CreateMRPDataParam"] = aParam;
+                                            oParam["N_CreateMRPDataReturn"] = [];
+                                            // console.log(oParam)
+
+                                            oModel.create("/CreateMRPDataSet", oParam, {
+                                                method: "POST",
+                                                success: function (oDataReturn, oResponse) {
+                                                    //assign the materials based on the return
+                                                    // console.log(oDataReturn)
+                
+                                                    // me.unLock();
+                                                    Common.closeLoadingDialog(me);
+                
+                                                    if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
+                                                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
+                                                        me.onRefresh("ioMatList");
+                                                    }
+                
+                                                    me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
+                                                    me.createInfoRecord(oDataReturn.N_CreateMRPDataReturn.results, aParam2);
+                                                },
+                                                error: function (err) {
+                                                    // me.unLock();
+                                                    Common.closeLoadingDialog(me);
+                                                }
+                                            });                                            
+                                        }
+                                        else {
+                                            Common.closeLoadingDialog(me);
+                                            me.unLock();
+                                        }
                                     }
-
-                                    me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
-
-                                    // me.unlock();
-                                    Common.closeLoadingDialog(me);
-                                },
-                                error: function (err) {
-                                    // me.unLock();
-                                    Common.closeLoadingDialog(me);
-                                }
-                            });
+                                })
+                            }
+                            else {
+                                oParam["SBU"] = this._sbu;
+                                oParam["MRPTYP"] = "IOMRP";
+                                oParam["N_CreateMRPDataParam"] = aParam;
+                                oParam["N_CreateMRPDataReturn"] = [];
+                                // console.log(oParam)
+                                oModel.create("/CreateMRPDataSet", oParam, {
+                                    method: "POST",
+                                    success: function (oDataReturn, oResponse) {
+                                        //assign the materials based on the return
+                                        // console.log(oDataReturn)
+    
+                                        // me.unLock();
+                                        Common.closeLoadingDialog(me);
+    
+                                        if (oDataReturn.N_CreateMRPDataReturn.results.length > 0) {
+                                            MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_MRPDATA_CREATED"]);
+                                            me.onRefresh("ioMatList");
+                                        }
+    
+                                        me.extendMaterial(oDataReturn.N_CreateMRPDataReturn.results);
+                                        me.createInfoRecord(oDataReturn.N_CreateMRPDataReturn.results, aParam2);
+                                    },
+                                    error: function (err) {
+                                        // me.unLock();
+                                        Common.closeLoadingDialog(me);
+                                    }
+                                });                                 
+                            }
                         // } else {
-                        //     Common.closeLoadingDialog(me);
+                        //     Common.closeLoadingDialog(this);
                         //     MessageBox.information(this.getView().getModel("ui").getProperty("/LockMessage"));
                         // }
+                        // Common.closeLoadingDialog(this);
                     }
                     else {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
@@ -11397,6 +11479,7 @@ sap.ui.define([
                     oParam["ERETCODE"] = "";
                     oParam["N_ExtendMaterialReturn"] = [];
 
+                    oModel.setUseBatch(false);
                     oModel.create("/ExtendMaterialSet", oParam, {
                         method: "POST",
                         success: function (oDataReturn, oResponse) {
@@ -11408,6 +11491,76 @@ sap.ui.define([
                         }
                     })
                 })
+            },
+
+            createInfoRecord(arg1, arg2) {
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var aData = arg1,
+                    aData2 = arg2;
+                var oParam = {};
+                var oInput = [];
+                
+                aData.forEach(item => item.Vendorcd = this.pad(item.Vendorcd, 10));
+                aData2.forEach(item => item.Vendorcd = this.pad(item.Vendorcd, 10));
+
+                aData.forEach(item => {
+                    if (item.Supplytyp === "NOM") {
+                        var oCurr = aData2.filter(fItem => fItem.Matno === item.Matno && fItem.Vendorcd === item.Vendorcd && fItem.Baseuom === item.Baseuom && fItem.Orderuom === item.Orderuom  
+                            && +fItem.Unitprice === +item.Unitprice && +fItem.Reqqty === +item.Reqqty && fItem.Purplant === item.Purplant && fItem.Supplytyp === item.Supplytyp)
+
+                        oInput.push({
+                            Lifnr: item.Vendorcd,
+                            Matnr: item.Matno,
+                            Meins: item.Baseuom,
+                            Bstme: item.Orderuom,
+                            Umren: item.Umren === "" ? "1" : item.Umren,
+                            Umrez: item.Umrez === "" ? "1" : item.Umrez,
+                            Ekgrp: item.Purgrp,
+                            Netpr: item.Unitprice,
+                            Waers: oCurr.length > 0 ? oCurr[0].Currencycd : "",
+                            Meins2: item.Orderuom,
+                            Purplant: item.Purplant
+                        })                        
+                    }
+                })
+
+                // var oParam = {
+                //     "SBU": "VER",
+                //     "N_CreateInfoRecParam": [
+                //         {
+                //             "Lifnr": "0003102244",
+                //             "Matnr": "1000025-00040",
+                //             "Meins": "PC",
+                //             "Bstme": "PC",
+                //             "Umren": "1",
+                //             "Umrez": "1",
+                //             "Ekgrp": "601",
+                //             "Netpr": "1.000",
+                //             "Waers": "HKD",
+                //             "Meins2": "PC",
+                //             "Purplant": "C600"
+                //         }
+                //     ],
+                //     "N_CreateInfoRecReturn": []
+                // }
+
+                if (oInput.length > 0) {
+                    oParam["SBU"] = this._sbu;
+                    oParam["N_CreateInfoRecParam"] = oInput;
+                    oParam["N_CreateInfoRecReturn"] = [];
+                    console.log(oParam)
+                    oModel.setUseBatch(false);
+                    oModel.create("/CreateInfoRecordSet", oParam, {
+                        method: "POST",
+                        success: function (oDataReturn, oResponse) {
+                            //assign the materials based on the return
+                            console.log(oDataReturn);
+                        },
+                        error: function (err) {
+                            // Common.closeLoadingDialog(me);
+                        }
+                    })
+                }
             },
 
             onReorder: async function (oEvent) {
@@ -12971,6 +13124,12 @@ sap.ui.define([
                             me.byId(arg + "Tab").bindRows("/rows");
                             me._tableRendered = (arg + "Tab");
 
+                            me._oModelIOMatList.read('/InfoRecCheckSet', {
+                                success: function (oData2) {
+                                    me.getView().getModel("matTypInfoRecChk").setProperty("/", oData2.results);
+                                },
+                                error: function (err) { }
+                            })
                             // setTimeout(() => {
                             //     me.byId(arg + "Tab").getRows()[0].addStyleClass("activeRow");
                             // }, 50);
@@ -13405,8 +13564,6 @@ sap.ui.define([
                 oUploadCollection.attachUploadComplete(that.onUploadComplete);
                 oUploadCollection.setMode(sap.m.ListMode.None);
             },
-
-
 
             bindUploadCollection: function () {
                 var oUploadCollection = this.getView().byId('UploadCollection');
@@ -13933,7 +14090,15 @@ sap.ui.define([
                 if (this.byId(arg + "Tab").getBinding("rows").aSorters.length > 0) {
                     this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
                 }
-            }
+            },
+
+            pad: function (num, size) {
+                try {
+                    num = num.toString();
+                    while (num.length < size) num = "0" + num;
+                    return num;
+                } catch(err) {}
+            },
 
         });
     });
