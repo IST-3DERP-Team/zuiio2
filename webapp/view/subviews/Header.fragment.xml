@@ -35,7 +35,7 @@
             <!-- GROUP 1 FORM CONTAINER -->
             <f:FormContainer ariaLabelledBy="Grp1" class="sapUiNoContentPadding" >
                 <f:formElements>
-                    <f:FormElement id="feIONO" label="{i18n>IONO}" visible="{= ${VisibleFieldsData>/IONO} === true ? true : false }">
+                    <f:FormElement id="feIONO" label="{i18n>IONO}" visible="false">
                         <f:fields>
                             <Input id="IONO" 
                             value="{headerData>/IONO}" 
@@ -46,6 +46,17 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>  
+                    <!-- <f:FormElement id="feIONO" label="{i18n>IONO}" visible="{= ${VisibleFieldsData>/IONO} === true ? true : false }">
+                        <f:fields>
+                            <Input id="IONO" 
+                            value="{headerData>/IONO}" 
+                            showSuggestion="true" 
+                            showValueHelp="true"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IONO} : false }" 
+                            valueStateText="Required">
+                            </Input>
+                        </f:fields>
+                    </f:FormElement>   -->
                     <f:FormElement id="feIODESC" label="{i18n>IODESC}" visible="{= ${VisibleFieldsData>/IODESC} === true ? true : false }">
                         <f:fields>
                             <Input id="IODESC" 
@@ -143,7 +154,7 @@
                                 </suggestionItems> 
                             </Input>
                         </f:fields>
-                    </f:FormElement>  
+                    </f:FormElement>                      
                     <f:FormElement id="feORDQTY" label="{i18n>ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
@@ -212,6 +223,24 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>
+                    <!-- <f:FormElement id="feSTYLECAT" label="{i18n>STYLECAT}" visible="true">
+                        <f:fields>
+                            <Input id="STYLECAT" 
+                                value="{headerData>/StyleCat}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/STYLECAT} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange"  
+                                autocomplete="true" 
+                                valueHelpRequest="onStyleCatValueHelp"
+                                suggestionItems="{StyleCatModel>/results}" >
+                                <suggestionItems>
+                                    <core:ListItem text="{StyleCatModel>STYLCAT}" additionalText="{StyleCatModel>DESCRIPTION}"/>
+                                </suggestionItems> 
+                            </Input>
+                        </f:fields>
+                    </f:FormElement> -->
                     <f:FormElement id="fePRODPLANT" label="{i18n>PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODPLANT" 

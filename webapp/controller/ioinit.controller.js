@@ -602,11 +602,11 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                console.log(this.getView().byId("smartFilterBar").getFilterData().SBU);
+                // console.log(this.getView().byId("smartFilterBar").getFilterData().SBU);
                 this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
-                console.log(this._sbu);
+                // console.log(this._sbu);
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
-                console.log(this._sbu);
+                // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 // this._sbu = 'VER';
                 this._Model.setHeaders({
