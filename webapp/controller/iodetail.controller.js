@@ -160,22 +160,40 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-                }
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                // }
 
                 window.onhashchange = function () {
-                    if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
-                        window.history.state.sap.history.forEach((item, index) => {
-                            // console.log(item);
-                            // ZSO_IO2-display
-                            // ZSO_3DERP_ORD_IO-change
-                            if (item === "ZSO_3DERP_ORD_IO-change" || item === "ZSO_3DERP_ORD_IO-display") {
-                                // this._router.navTo("Routeioinit", {}, true);
-                                window.history.go((index + 1) - window.history.state.sap.history.length);   
-                                this._router.attachRouteMatched(this.onRouteMatched, this);  
-                            }                       
-                        })
+                    console.log("windows");
+                    console.log(window.history.state.sap.history);
+                    console.log(window.history.state.sap.history[window.history.state.sap.history.length - 1]);
+                    // if(!that._routeToStyle) {
+                    if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteIODetail") >= 0) { 
+                    // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("ZSO_3DERP_ORD_STYLE") >= 0 && !that._routeToStyle) { 
+                    // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0 && !that._routeToStyle) {
+
+                        window.history.go((window.history.state.sap.history.length * -1) + 3);  
+
+                        // window.history.state.sap.history.forEach((item, index) => {
+                        //     console.log("item");
+                        //     console.log(item);
+                        //     // ZSO_IO2-display
+                        //     // ZSO_3DERP_ORD_IO-change
+                        //     // if (item === "ZSO_3DERP_ORD_IO-change" || item === "ZSO_3DERP_ORD_IO-display") {
+                        //         if(item.indexOf("RouteIODetail") >= 0){
+                        //         // var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                        //         // oRouter.navTo("Routeioinit", {}, true /* replace URL */);
+                        //         window.history.go((window.history.state.sap.history.length * -1) + 1);  
+                        //         // this._router.navTo("Routeioinit", {}, true);
+                        //         // window.history.go((index + 1) - window.history.state.sap.history.length);   
+                        //         // console.log(index);
+                        //         // console.log(window.history.state.sap.history.length);
+                        //         // console.log(window.history.state.sap.history);
+                        //         // this._router.attachRouteMatched(this.onRouteMatched, this);  
+                        //         }
+                        //     // }                       
+                        // })
                     }
                 }
             },
@@ -252,19 +270,21 @@ sap.ui.define([
             // },
 
             // onNavBack: function (oEvent) {
-            //     // var oHistory = History.getInstance();
-            //     // var sPreviousHash = oHistory.getPreviousHash();
-
-            //     // if (sPreviousHash !== undefined) {
-            //     //     window.history.go(-1);
-            //     // } else {
-            //     //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //     //     oRouter.navTo("Routeioinit", {}, true);
-            //     // }
             //     console.log("onNavBack")
-            //     var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-            //     oRouter.navTo("Routeioinit", {}, true);
-            //     // console.log(window.history);
+
+            //     var oHistory = History.getInstance();
+            //     var sPreviousHash = oHistory.getPreviousHash();
+
+            //     if (sPreviousHash !== undefined) {
+            //         window.history.go(-1);
+            //     } else {
+            //         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //         oRouter.navTo("Routeioinit", {}, true);
+            //     }
+                
+            //     // var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+            //     // oRouter.navTo("Routeioinit", {}, true);
+            //     // // console.log(window.history);
             // },
 
             _routePatternMatched: async function (oEvent) {

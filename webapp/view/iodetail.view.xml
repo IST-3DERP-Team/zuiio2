@@ -17,7 +17,7 @@
     xmlns:smartfilterbar="sap.ui.comp.smartfilterbar"
     height="100%"
 >
-    <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet" showNavButton="true" navButtonPress="onNavBack">
+    <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet">
         <VBox fitContainer="true">
             <!-- HEADER DATA-->
             <ObjectHeader
