@@ -18,6 +18,8 @@ sap.ui.define([
         var that;
         var sbu;
         var IONOtxt;
+        var _sAction;
+        var _shellHash;
 
         var sIONo = "", sIODesc = "", sStyleCd = "", sSeason = "", sPlant = "", sIOType = "";
         var sStyleNo = "NEW", sVerNo, sStyleCd, sProdTyp, sSalesGrp, sSeasonCd, sCustGrp, sUOM;
@@ -70,6 +72,10 @@ sap.ui.define([
                     }, oView);
                 }
 
+                window.onhashchange = function () {
+                    _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
+                }
+
                 // sap.ui.getCore().byId("IOStyleSelectTab")
                 //     .setModel(new JSONModel({
                 //         columns: [],
@@ -88,6 +94,8 @@ sap.ui.define([
                     const urlParsing = await sap.ushell.Container.getServiceAsync("URLParsing");
                     const shellHash = urlParsing.parseShellHash(fullHash);
                     csAction = shellHash.action;
+                    _sAction = shellHash.action;
+                    _shellHash = shellHash;
                 }
 
                 var DisplayStateModel = new JSONModel();
@@ -176,7 +184,7 @@ sap.ui.define([
                 }
 
                 if (sTableName === "IOSDSelectTab") {
-                    console.log(sTableName);
+                    // console.log(sTableName);
                     // var oTable = this.byId("IOStyleSelectTab");
                     var oTable = sap.ui.getCore().byId(sTableName);
                     var oSelectedIndices = oTable.getSelectedIndices();
@@ -208,12 +216,12 @@ sap.ui.define([
 
                         })
 
-                        console.log("Route Model 1");
+                        // console.log("Route Model 1");
                         this.getOwnerComponent().getModel("routeModel").setProperty("/results", aSelectedItems);
 
                         var rowData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
-                        console.log("rowData");
-                        console.log(rowData);
+                        // console.log("rowData");
+                        // console.log(rowData);
 
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.SALESGRP === rowData.SALESGRP && t.STYLENO === rowData.STYLENO && t.UOM === rowData.UOM
@@ -245,7 +253,7 @@ sap.ui.define([
                     // console.log(that._sbu);
                     // console.log(sStyleNo);
 
-                    console.log("RouteIODetail");
+                    // console.log("RouteIODetail");
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
@@ -253,7 +261,7 @@ sap.ui.define([
                         icontabfilterkey: "itfIOHDR"
                     });
 
-                    console.log("RouteIODetail 2");
+                    // console.log("RouteIODetail 2");
 
                     me._IOfromSalesDocDialog.close();
                 }
@@ -604,7 +612,7 @@ sap.ui.define([
 
                 // console.log(this.getView().byId("smartFilterBar").getFilterData().SBU);
                 this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
-                // console.log(this._sbu);
+                console.log(this._sbu);
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
@@ -618,6 +626,7 @@ sap.ui.define([
                 //DynamicColumnsSet
                 this._Model.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
+                        console.log(oData);
                         oJSONColumnsModel.setData(oData);
                         me.oJSONModel.setData(oData);
                         me.getView().setModel(oJSONColumnsModel, "DynColumns");  //set the view model
@@ -634,7 +643,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                // console.log(aFilters);
+                console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -642,6 +651,7 @@ sap.ui.define([
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
                     success: function (oData, oResponse) {
+                        console.log(oData);
                         oData.results.forEach(item => {
                             // console.log(item.CUSTDLVDT);
                             item.CUSTDLVDT = item.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CUSTDLVDT));
@@ -941,13 +951,13 @@ sap.ui.define([
                 // });
 
                 // aFilters.push(lv_createdDateFilter);
-                console.log("Statistics Filter");
-                console.log(aFilters);
+                // console.log("Statistics Filter");
+                // console.log(aFilters);
                 oModel.read(vEntitySet, {
                     filters: aFilters,
                     success: function (oData) {
-                        console.log("Statistics oData");
-                        console.log(oData);
+                        // console.log("Statistics oData");
+                        // console.log(oData);
                         oForecast.setNumber(oData.results[0].FORECASTQTY);
                         oOrder.setNumber(oData.results[0].ORDERQTY);
                         oShipped.setNumber(oData.results[0].SHIPQTY);
@@ -1679,7 +1689,7 @@ sap.ui.define([
                 var ctr = 1;
 
                 if (arg === "IOStyleSelectTab") {
-                    console.log(sap.ui.getCore().byId(arg));
+                    // console.log(sap.ui.getCore().byId(arg));
                     var oTable = sap.ui.getCore().byId(arg);
                     var oColumns = oTable.getColumns();
                     var vSBU = this.getView().getModel("ui").getProperty("/sbu");
@@ -1691,7 +1701,7 @@ sap.ui.define([
                         "TableLayoutToItems": []
                     };
 
-                    console.log(oParam);
+                    // console.log(oParam);
 
                     //get information of columns, add to payload
                     oColumns.forEach((column) => {
@@ -1707,7 +1717,7 @@ sap.ui.define([
 
                         ctr++;
                     });
-                    console.log(oParam)
+                    // console.log(oParam)
                     //call the layout save
                     var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
 
