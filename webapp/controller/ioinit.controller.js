@@ -613,10 +613,16 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                // console.log(this.getView().byId("smartFilterBar").getFilterData().SBU);
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                //SBU as Combobox
+                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();  
                 console.log(this._sbu);
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
+
+                // //SBU as DropdownList
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                // console.log(this._sbu);
+                // this.getView().getModel("ui").setProperty("/sbu", this._sbu);
+
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 // this._sbu = 'VER';
@@ -629,7 +635,7 @@ sap.ui.define([
                 //DynamicColumnsSet
                 this._Model.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
-                        console.log(oData);
+                        // console.log(oData);
                         oJSONColumnsModel.setData(oData);
                         me.oJSONModel.setData(oData);
                         me.getView().setModel(oJSONColumnsModel, "DynColumns");  //set the view model
@@ -646,7 +652,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                console.log(aFilters);
+                // console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -654,7 +660,7 @@ sap.ui.define([
                 oModel.read("/IOHDRSet", {
                     filters: aFilters,
                     success: function (oData, oResponse) {
-                        console.log(oData);
+                        // console.log(oData);
                         oData.results.forEach(item => {
                             // console.log(item.CUSTDLVDT);
                             item.CUSTDLVDT = item.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CUSTDLVDT));
@@ -1526,6 +1532,65 @@ sap.ui.define([
                         sap.ui.getCore().byId("newPlant").setValue("");
                     }
                 }
+            },
+
+            onSBUChange: function(oEvent){
+                this._sbuChange = true;
+                var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER");
+                var me = this;
+
+                oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },                    
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0){
+                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                            me.getView().setModel(aData, "PlantSH");
+                        }
+                        else{
+                            var aData = new JSONModel({results: []});
+                            me.getView().setModel(aData, "PlantSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_SEASON_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },                    
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0){
+                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                            me.getView().setModel(aData, "SeasonSH");
+                        }
+                        else{
+                            var aData = new JSONModel({results: []});
+                            me.getView().setModel(aData, "SeasonSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_IO_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },                    
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0){
+                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                            me.getView().setModel(aData, "IOSH");
+                        }
+                        else{
+                            var aData = new JSONModel({results: []});
+                            me.getView().setModel(aData, "IOSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
             },
 
             onfragmentCopyIO: function () {

@@ -16,7 +16,7 @@ sap.ui.define([
             // console.log(oTable);
 
             oTable.getColumns().forEach(col => {
-                console.log(col);
+                // console.log(col);
                 // Loop onto each column and attach Column Menu Open event
                 col.attachColumnMenuOpen(function(oEvent) {
                     //Get Menu associated with column

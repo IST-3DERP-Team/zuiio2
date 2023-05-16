@@ -7716,8 +7716,8 @@ sap.ui.define([
                                 this.byId("onIOAttribSave").setVisible(true);
                                 this.byId("onIOAttribCancel").setVisible(true);
 
-                                // sap.ui.getCore().byId("onIOEdit").setVisible(false);
-                                // sap.ui.getCore().byId("onIORelease").setVisible(false);
+                                this.byId("onIOEdit").setVisible(false);
+                                this.byId("onIORelease").setVisible(false);
                             }
                             else if (arg === "costHdr") {
                                 this.byId("btnNewCostHdr").setVisible(false);
@@ -7887,8 +7887,8 @@ sap.ui.define([
                         this.byId("onIOAttribSave").setVisible(false);
                         this.byId("onIOAttribCancel").setVisible(false);
 
-                        // sap.ui.getCore().byId("onIOEdit").setVisible(true);
-                        // sap.ui.getCore().byId("onIORelease").setVisible(true);
+                        this.byId("onIOEdit").setVisible(true);
+                        this.byId("onIORelease").setVisible(true);
                     }
                     else if (arg === "costHdr") {
                         this.byId("btnNewCostHdr").setVisible(true);
@@ -9793,7 +9793,7 @@ sap.ui.define([
                         break;
 
                     case "IOATTRIB":
-                        await his.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
+                        await this.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
                         this._bIOATTRIBChanged = false;
                         break;
 
@@ -10962,8 +10962,8 @@ sap.ui.define([
                             this.byId("onIOAttribSave").setVisible(false);
                             this.byId("onIOAttribCancel").setVisible(false);
 
-                            // sap.ui.getCore().byId("onIOEdit").setVisible(true);
-                            // sap.ui.getCore().byId("onIORelease").setVisible(true);
+                            this.byId("onIOEdit").setVisible(true);
+                            this.byId("onIORelease").setVisible(true);
                         }
                         else if (this._sTableModel === "costHdr") {
                             this.byId("btnNewCostHdr").setVisible(true);

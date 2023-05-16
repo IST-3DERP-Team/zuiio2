@@ -24,8 +24,8 @@
         <!-- SMART FILTER BAR-->                
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true">
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
-                    <!-- <smartfilterbar:customControl>
+                <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
+                    <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
                                 change="onSBUChange"
@@ -34,8 +34,20 @@
                                 }">
                                 <core:Item key="{SBU}" text="{SBU}" />
                             </ComboBox>       
-                        </smartfilterbar:customControl> -->
+                        </smartfilterbar:customControl>
                 </smartfilterbar:ControlConfiguration>
+                <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
+                    <smartfilterbar:customControl>
+                            <ComboBox id="cboxSBU"
+                                selectedKey="{ui>/sbu}"
+                                change="onSBUChange"
+                                items="{
+                                    path: '/ZVB_3DERP_SBU_SH'
+                                }">
+                                <core:Item key="{SBU}" text="{SBU}" />
+                            </ComboBox>       
+                        </smartfilterbar:customControl>
+                </smartfilterbar:ControlConfiguration> -->
             </smartfilterbar:controlConfiguration>
                     
             <smartfilterbar:controlConfiguration>
@@ -55,6 +67,36 @@
 
             <smartfilterbar:controlConfiguration>
                 <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
+                                <MultiInput id="multiInputSeason"
+                                    
+                                    change="onCustomSmartFilterValueHelpChange"
+                                    valueHelpRequest=".onCustomSmartFilterValueHelp"
+                                    suggestionRows="{
+                                        path: 'SeasonSH>/results',
+                                        sorter: { path: 'SeasonCd' },
+                                        length: 1000,
+                                        templateShareable: false
+                                    }">
+                                    <suggestionColumns>
+                                        <Column>
+                                            <Label text="Season Code"/>
+                                        </Column>
+                                        <Column>
+                                            <Label text="Description"/>
+                                        </Column>
+                                    </suggestionColumns>
+                                    <suggestionRows>
+                                        <ColumnListItem>
+                                            <cells>
+                                                <Label text="{SeasonSH>SEASONCD}" />
+                                                <Label text="{SeasonSH>DESCRIPTION}" />
+                                            </cells>
+                                        </ColumnListItem>
+                                    </suggestionRows>
+                                </MultiInput>
+                            </smartfilterbar:customControl>
+                             -->
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSEASON"
                                 selectedKey="{ui>/seasoncd}"
