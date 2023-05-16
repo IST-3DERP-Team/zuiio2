@@ -9185,13 +9185,13 @@ sap.ui.define([
                                 // }
                                 // _promiseResult = new Promise((resolve, reject) => {
                                 setTimeout(() => {
-                                    // console.log(entitySet);
+                                    console.log("PUT");
                                     oModel.update(entitySet, param, {
                                         method: "PUT",
                                         success: async function (data, oResponse) {
                                             iEdited++;
                                             // resolve();
-                                            // console.log(oResponse);
+                                            console.log(oResponse);
 
                                             if (iEdited === aEditedRows.length) {
                                                 // Common.closeProcessingDialog(me);

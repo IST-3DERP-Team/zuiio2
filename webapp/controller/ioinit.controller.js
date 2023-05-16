@@ -7,12 +7,13 @@ sap.ui.define([
     "sap/ui/export/Spreadsheet",
     "../control/DynamicTable",
     "sap/ui/model/FilterOperator",
-    "sap/ui/core/routing/HashChanger"
+    "sap/ui/core/routing/HashChanger",
+    "../js/TableFilter"
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger) {
+    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger, TableFilter) {
         "use strict";
 
         var that;
@@ -30,6 +31,8 @@ sap.ui.define([
         return Controller.extend("zuiio2.controller.ioinit", {
             onInit: async function () {
                 that = this;
+                this._tableFilter = TableFilter;
+                this._colFilters = {};
 
                 this.getView().setModel(new JSONModel({
                     activeSTYLENO: "",
@@ -681,13 +684,15 @@ sap.ui.define([
 
                         oText.setText(oData.results.length + "");
                         oJSONDataModel.setData(oData);
-                        me.getView().setModel(oJSONDataModel, "DataModel");
+                        me.getView().setModel(oJSONDataModel, "IODynTable");
                         me.setTableData();
 
                         if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
                         if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
 
                         me.setChangeStatus(false);
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -698,7 +703,7 @@ sap.ui.define([
 
                 //the selected dynamic columns
                 var oColumnsModel = this.getView().getModel("DynColumns");
-                var oDataModel = this.getView().getModel("DataModel");
+                var oDataModel = this.getView().getModel("IODynTable");
 
                 //the selected styles data
                 var oColumnsData = oColumnsModel.getProperty('/results');
@@ -729,7 +734,8 @@ sap.ui.define([
                 };
 
                 this.byId("IODynTable").addEventDelegate(oDelegateKeyUp);
-
+                this._colFilters = [];
+                
                 var oTable = this.getView().byId("IODynTable");
                 oTable.setModel(oModel);
 
@@ -762,6 +768,9 @@ sap.ui.define([
 
                 //bind the data to the table
                 oTable.bindRows("/rows");
+                TableFilter.updateColumnMenu("IODynTable", this);
+
+                TableFilter.applyColFilters(me);
             },
 
             columnTemplate: function (sColumnId, sColumnType) {
@@ -1337,6 +1346,7 @@ sap.ui.define([
             setTableColumns: function (arg1, arg2) {
                 var oColumn = arg1;
                 var oMetadata = arg2;
+                var oTable = this.getView().byId("IODynTable");
 
                 // console.log(oColumn);
                 // console.log(oMetadata);
@@ -1411,6 +1421,8 @@ sap.ui.define([
                         scale: prop.Scale !== undefined ? prop.Scale : null
                     })
                 })
+
+                TableFilter.updateColumnMenu("IODynTable", this);
 
                 // aSortableColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
                 // this.createViewSettingsDialog("sort", 
@@ -1629,6 +1641,20 @@ sap.ui.define([
                 });
             },
 
+            applyColFilter() {
+                var pFilters = this._colFilters;
+
+                if (pFilters.length > 0) {
+                    var oTable = this.byId("IODynTable");
+                    var oColumns = oTable.getColumns();                    
+    
+                    pFilters.forEach(item => {
+                        oColumns.filter(fItem => fItem.getFilterProperty() === item.sPath)
+                            .forEach(col => col.filter(item.oValue1))
+                    }) 
+                }
+            },
+
             onCloseDialog: function (oEvent) {
                 oEvent.getSource().getParent().close();
             },
@@ -1785,6 +1811,45 @@ sap.ui.define([
                 this.getDynamicTableData("");
             },
 
-            pad: Common.pad
+            pad: Common.pad ,
+            //******************************************* */
+            // Column Filtering
+            //******************************************* */
+
+            onColFilterClear: function(oEvent) {
+                TableFilter.onColFilterClear(oEvent, this);
+            },
+
+            onColFilterCancel: function(oEvent) {
+                TableFilter.onColFilterCancel(oEvent, this);
+            },
+
+            onColFilterConfirm: function(oEvent) {
+                TableFilter.onColFilterConfirm(oEvent, this);
+            },
+
+            onFilterItemPress: function(oEvent) {
+                TableFilter.onFilterItemPress(oEvent, this);
+            },
+
+            onFilterValuesSelectionChange: function(oEvent) {
+                TableFilter.onFilterValuesSelectionChange(oEvent, this);
+            },
+
+            onSearchFilterValue: function(oEvent) {
+                TableFilter.onSearchFilterValue(oEvent, this);
+            },
+
+            onCustomColFilterChange: function(oEvent) {
+                TableFilter.onCustomColFilterChange(oEvent, this);
+            },
+
+            onSetUseColFilter: function(oEvent) {
+                TableFilter.onSetUseColFilter(oEvent, this);
+            },
+
+            onRemoveColFilter: function(oEvent) {
+                TableFilter.onRemoveColFilter(oEvent, this);
+            },
         });
     });
