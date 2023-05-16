@@ -177,7 +177,8 @@ sap.ui.define([
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
-                        sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
+                        // sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
+                        sbu: this.getView().byId("cboxSBU").getSelectedKey(),
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
@@ -259,7 +260,8 @@ sap.ui.define([
                     // console.log("RouteIODetail");
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
-                        sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
+                        // sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
+                        sbu: this.getView().byId("cboxSBU").getSelectedKey(),
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
@@ -1075,7 +1077,9 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
+                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+
                 // console.log(this._sbu);
                 // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
                 // this._sbu = 'VER';
@@ -1467,7 +1471,12 @@ sap.ui.define([
             onCopyIO: function (oEvent) {
                 var me = this;
 
-                if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+                // if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+                //     Common.showMessage("SBU required.");
+                //     return;
+                // }
+
+                if(this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
                     Common.showMessage("SBU required.");
                     return;
                 }
@@ -1745,12 +1754,20 @@ sap.ui.define([
 
             onCreateIO: function (createTyp) {
                 // console.log("on Create IO");
-                if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+
+                // if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+                //     Common.showMessage("SBU required.");
+                //     return;
+                // }
+
+                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;
+
+                if(this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
                     Common.showMessage("SBU required.");
                     return;
-                }
+                }                
 
-                this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;
+                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
 
                 var screateTyp = createTyp;
                 // Common.showMessage("Create IO : " + screateTyp);
@@ -1877,6 +1894,13 @@ sap.ui.define([
             },
 
             pad: Common.pad ,
+
+            onCustomSmartFilterValueHelpChange: function(oEvent) {
+                if (oEvent.getParameter("value") === "") {
+                    this._oMultiInput.setValueState("None");
+                }
+            },
+
             //******************************************* */
             // Column Filtering
             //******************************************* */
