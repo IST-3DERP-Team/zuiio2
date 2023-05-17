@@ -1234,8 +1234,8 @@ sap.ui.define([
                     console.log(oParam);
                 }
 
-                Common.closeLoadingDialog(that);
-                return;
+                // Common.closeLoadingDialog(that);
+                // return;
 
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.create("/IMPORTSALDOC2Set", oParam, {
@@ -1937,12 +1937,12 @@ sap.ui.define([
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
 
-                                oData.results.forEach(item => {
-                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
-                                    item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-                                    item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
-                                    item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
-                                })
+                                // oData.results.forEach(item => {
+                                //     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                //     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                    // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
+                                    // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                // })
 
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
@@ -8890,7 +8890,7 @@ sap.ui.define([
                                     oModel = me.getOwnerComponent().getModel();
                                     break;
                                 case "IOATTRIB":
-                                    entitySet = entitySet + "IOATTRIBSet"
+                                    entitySet = entitySet + "IOATTRIBTYPSet"
                                     oModel = me.getOwnerComponent().getModel();
                                     break;
                                 default: break;
@@ -9057,7 +9057,7 @@ sap.ui.define([
                                     oModel = me.getOwnerComponent().getModel();
                                     break;
                                 case "IOATTRIB":
-                                    entitySet = entitySet + "IOATTRIBSet"
+                                    entitySet = entitySet + "IOATTRIBTYPSet"
                                     oModel = me.getOwnerComponent().getModel();
                                     break;
                                 case "costHdr":
@@ -9108,6 +9108,17 @@ sap.ui.define([
                                             param[col.ColumnName] = itemValue;
                                     }
                                     //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
+                                    // else if(arg === "IOATTRIB") {
+                                    //     console.log(col.ColumnName);
+                                    //     console.log(col.DataType);
+                                    //     if(col.DataType === "DATETIME") {
+                                    //         param[col.ColumnName] = sapDateFormat.format(new Date(itemValue)) + "T00:00:00";
+                                    //     } else if(col.DataType === "TIME") {
+                                    //         param[col.ColumnName] = timeFormat.format(new Date(itemValue.ms + TZOffsetMs));                                            
+                                    //     } else {
+                                    //         param[col.ColumnName] = itemValue;
+                                    //     }                                             
+                                    // } 
                                     else {
                                         if (col.Editable) {
                                             param[col.ColumnName] = itemValue;

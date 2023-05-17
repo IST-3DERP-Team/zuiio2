@@ -37,6 +37,7 @@
                         </smartfilterbar:customControl>
                 </smartfilterbar:ControlConfiguration>
                 <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
+                    
                     <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
