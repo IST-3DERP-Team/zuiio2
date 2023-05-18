@@ -34,6 +34,8 @@ sap.ui.define([
                 this._tableFilter = TableFilter;
                 this._colFilters = {};
 
+                // this.oSmartFilterBar = this.getView().byId("smartFilterBar");
+
                 this.getView().setModel(new JSONModel({
                     activeSTYLENO: "",
                     activeSALDOCNO: "",
@@ -86,6 +88,12 @@ sap.ui.define([
                 //     }));
 
                 // this.onSearch();
+
+
+            },
+            onInitialize: function () {
+                console.log("SmartFilterBar Initialized");
+                this.oSmartFilterBar = this.getView().byId("smartFilterBar");
             },
 
             getAppAction: async function () {
@@ -175,10 +183,19 @@ sap.ui.define([
                     }
                     // return;
 
+                    var routeSBU;
+
+                    if (this.getView().byId("cboxSBU") !== undefined) {
+                        routeSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                    } else {
+                        //SBU as DropdownList
+                        routeSBU = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                    }
+
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         // sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
-                        sbu: this.getView().byId("cboxSBU").getSelectedKey(),
+                        sbu: routeSBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
@@ -253,15 +270,21 @@ sap.ui.define([
                         }
 
                     }
-                    // return;
-                    // console.log(that._sbu);
-                    // console.log(sStyleNo);
 
-                    // console.log("RouteIODetail");
+                    var routeSBU;
+
+                    if (this.getView().byId("cboxSBU") !== undefined) {
+                        routeSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                    } else {
+                        //SBU as DropdownList
+                        routeSBU = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                    }
+
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
                         // sbu: this.getView().byId("smartFilterBar").getFilterData().SBU,
-                        sbu: this.getView().byId("cboxSBU").getSelectedKey(),
+                        // sbu: this.getView().byId("cboxSBU").getSelectedKey(),
+                        sbu: routeSBU,
                         styleno: sStyleNo,
                         icontabfilterkey: "itfIOHDR"
                     });
@@ -616,18 +639,17 @@ sap.ui.define([
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
                 //SBU as Combobox
-                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();  
-                console.log(this._sbu);
+                if (this.getView().byId("cboxSBU") !== undefined) {
+                    this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                    console.log(this._sbu);
+                } else {
+                    //SBU as DropdownList
+                    this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                    console.log(this._sbu);
+                }
+
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
 
-                // //SBU as DropdownList
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
-                // console.log(this._sbu);
-                // this.getView().getModel("ui").setProperty("/sbu", this._sbu);
-
-                // console.log(this._sbu);
-                // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
-                // this._sbu = 'VER';
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: 'IOINIT',
@@ -743,7 +765,7 @@ sap.ui.define([
 
                 this.byId("IODynTable").addEventDelegate(oDelegateKeyUp);
                 this._colFilters = [];
-                
+
                 var oTable = this.getView().byId("IODynTable");
                 oTable.setModel(oModel);
 
@@ -1077,12 +1099,15 @@ sap.ui.define([
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
 
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU.Text;  //get selected SBU
-                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                if (this.getView().byId("cboxSBU") !== undefined) {
+                    this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                } else {
+                    //SBU as DropdownList
+                    this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                }
 
-                // console.log(this._sbu);
-                // this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
-                // this._sbu = 'VER';
+                this.getView().getModel("ui").setProperty("/sbu", this._sbu);
+
                 this._Model.setHeaders({
                     sbu: this._sbu,
                     type: sType,
@@ -1471,14 +1496,16 @@ sap.ui.define([
             onCopyIO: function (oEvent) {
                 var me = this;
 
-                // if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
-                //     Common.showMessage("SBU required.");
-                //     return;
-                // }
-
-                if(this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
-                    Common.showMessage("SBU required.");
-                    return;
+                if (this.getView().byId("cboxSBU") !== undefined) {
+                    if (this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
+                        Common.showMessage("SBU required.");
+                        return;
+                    }
+                } else {
+                    if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+                        Common.showMessage("SBU required.");
+                        return;
+                    }
                 }
 
                 var oTable = this.byId("IODynTable");
@@ -1543,23 +1570,52 @@ sap.ui.define([
                 }
             },
 
-            onSBUChange: function(oEvent){
-                this._sbuChange = true;
-                var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
-                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER");
-                var me = this;
+            onSBUChange: function (oEvent) {
+                console.log("onSBUChange");
+                var oSmartFilterBar = this.getView().byId("smartFilterBar");
+                var oField1Control = oSmartFilterBar.getControlByKey("SBU");
+                var oField2Control = oSmartFilterBar.getControlByKey("PLANPLANT");
+
+                console.log(oField1Control);
+                console.log(oField2Control);
+
+                var sField1Value = oField1Control.getValue();
+                console.log("sField1Value");
+                console.log(sField1Value);
+
+                // if (sField1Value) {
+                //     oField2Control.setSelectedKey(sField1Value);
+                // } else {
+                //     oField2Control.setSelectedKey("");
+                // }
+
+                var oComboBox = this.getView().byId("cboxPLANPLANT");
+                var sFilterValue = "VER"; // Filter value to apply
+
+                var oBinding = oComboBox.getBinding("items");
+                if (oBinding) {
+                    var oFilter = new sap.ui.model.Filter({
+                        path: "SBU", // Replace with the actual property name of the items to filter
+                        operator: sap.ui.model.FilterOperator.EQ,
+                        value1: sFilterValue
+                    });
+
+                    oBinding.filter([oFilter]);
+                }
+
+                return;
 
                 oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
                     urlParameters: {
                         "$filter": "SBU eq '" + vSBU + "'"
-                    },                    
+                    },
                     success: function (oData, oResponse) {
-                        if (oData.results.length > 0){
-                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
                             me.getView().setModel(aData, "PlantSH");
                         }
-                        else{
-                            var aData = new JSONModel({results: []});
+                        else {
+                            var aData = new JSONModel({ results: [] });
                             me.getView().setModel(aData, "PlantSH");
                         }
                     },
@@ -1569,14 +1625,14 @@ sap.ui.define([
                 oModel.read("/ZVB_3DERP_SEASON_SH", {
                     urlParameters: {
                         "$filter": "SBU eq '" + vSBU + "'"
-                    },                    
+                    },
                     success: function (oData, oResponse) {
-                        if (oData.results.length > 0){
-                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
                             me.getView().setModel(aData, "SeasonSH");
                         }
-                        else{
-                            var aData = new JSONModel({results: []});
+                        else {
+                            var aData = new JSONModel({ results: [] });
                             me.getView().setModel(aData, "SeasonSH");
                         }
                     },
@@ -1586,14 +1642,14 @@ sap.ui.define([
                 oModel.read("/ZVB_3DERP_IO_SH", {
                     urlParameters: {
                         "$filter": "SBU eq '" + vSBU + "'"
-                    },                    
+                    },
                     success: function (oData, oResponse) {
-                        if (oData.results.length > 0){
-                            var aData = new JSONModel({results: oData.results.filter(item => item.SBU === vSBU)});
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
                             me.getView().setModel(aData, "IOSH");
                         }
-                        else{
-                            var aData = new JSONModel({results: []});
+                        else {
+                            var aData = new JSONModel({ results: [] });
                             me.getView().setModel(aData, "IOSH");
                         }
                     },
@@ -1720,12 +1776,12 @@ sap.ui.define([
 
                 if (pFilters.length > 0) {
                     var oTable = this.byId("IODynTable");
-                    var oColumns = oTable.getColumns();                    
-    
+                    var oColumns = oTable.getColumns();
+
                     pFilters.forEach(item => {
                         oColumns.filter(fItem => fItem.getFilterProperty() === item.sPath)
                             .forEach(col => col.filter(item.oValue1))
-                    }) 
+                    })
                 }
             },
 
@@ -1753,21 +1809,19 @@ sap.ui.define([
             },
 
             onCreateIO: function (createTyp) {
-                // console.log("on Create IO");
-
-                // if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
-                //     Common.showMessage("SBU required.");
-                //     return;
-                // }
-
-                // this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;
-
-                if(this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
-                    Common.showMessage("SBU required.");
-                    return;
-                }                
-
-                this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                if (this.getView().byId("cboxSBU") !== undefined) {
+                    if (this.getView().byId("cboxSBU").getSelectedKey() === undefined) {
+                        Common.showMessage("SBU required.");
+                        return;
+                    } else
+                        this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
+                } else {
+                    if (this.getView().byId("smartFilterBar").getFilterData().SBU === undefined) {
+                        Common.showMessage("SBU required.");
+                        return;
+                    } else
+                        this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
+                }
 
                 var screateTyp = createTyp;
                 // Common.showMessage("Create IO : " + screateTyp);
@@ -1837,7 +1891,7 @@ sap.ui.define([
                         error: function (err) {
                             sap.m.MessageBox.error(err);
                         }
-                    });                    
+                    });
                 }
             },
 
@@ -1893,9 +1947,9 @@ sap.ui.define([
                 this.getDynamicTableData("");
             },
 
-            pad: Common.pad ,
+            pad: Common.pad,
 
-            onCustomSmartFilterValueHelpChange: function(oEvent) {
+            onCustomSmartFilterValueHelpChange: function (oEvent) {
                 if (oEvent.getParameter("value") === "") {
                     this._oMultiInput.setValueState("None");
                 }
@@ -1905,39 +1959,39 @@ sap.ui.define([
             // Column Filtering
             //******************************************* */
 
-            onColFilterClear: function(oEvent) {
+            onColFilterClear: function (oEvent) {
                 TableFilter.onColFilterClear(oEvent, this);
             },
 
-            onColFilterCancel: function(oEvent) {
+            onColFilterCancel: function (oEvent) {
                 TableFilter.onColFilterCancel(oEvent, this);
             },
 
-            onColFilterConfirm: function(oEvent) {
+            onColFilterConfirm: function (oEvent) {
                 TableFilter.onColFilterConfirm(oEvent, this);
             },
 
-            onFilterItemPress: function(oEvent) {
+            onFilterItemPress: function (oEvent) {
                 TableFilter.onFilterItemPress(oEvent, this);
             },
 
-            onFilterValuesSelectionChange: function(oEvent) {
+            onFilterValuesSelectionChange: function (oEvent) {
                 TableFilter.onFilterValuesSelectionChange(oEvent, this);
             },
 
-            onSearchFilterValue: function(oEvent) {
+            onSearchFilterValue: function (oEvent) {
                 TableFilter.onSearchFilterValue(oEvent, this);
             },
 
-            onCustomColFilterChange: function(oEvent) {
+            onCustomColFilterChange: function (oEvent) {
                 TableFilter.onCustomColFilterChange(oEvent, this);
             },
 
-            onSetUseColFilter: function(oEvent) {
+            onSetUseColFilter: function (oEvent) {
                 TableFilter.onSetUseColFilter(oEvent, this);
             },
 
-            onRemoveColFilter: function(oEvent) {
+            onRemoveColFilter: function (oEvent) {
                 TableFilter.onRemoveColFilter(oEvent, this);
             },
         });

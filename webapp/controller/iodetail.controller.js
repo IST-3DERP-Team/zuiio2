@@ -9057,8 +9057,9 @@ sap.ui.define([
                                     oModel = me.getOwnerComponent().getModel();
                                     break;
                                 case "IOATTRIB":
-                                    entitySet = entitySet + "IOATTRIBTYPSet"
-                                    oModel = me.getOwnerComponent().getModel();
+                                    entitySet = entitySet + "IOATTRIBSet"
+                                    // oModel = me.getOwnerComponent().getModel();
+                                    oModel = this._oModel;
                                     break;
                                 case "costHdr":
                                     entitySet = entitySet + "VersionsSet";
@@ -9152,6 +9153,8 @@ sap.ui.define([
                                 console.log(entitySet);
                                 console.log(param);
                                 console.log(arg);
+                                console.log("oModel");
+                                console.log(oModel)
 
                                 // if (arg === "color") {
                                 //     me.byId("btnEditColor").setVisible(true);

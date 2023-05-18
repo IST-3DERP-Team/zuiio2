@@ -22,10 +22,10 @@
         <VBox fitContainer="true">
 
         <!-- SMART FILTER BAR-->                
-        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true">
+        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized="OnInitialize">
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
-                    <smartfilterbar:customControl>
+                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
                                 change="onSBUChange"
@@ -34,10 +34,10 @@
                                 }">
                                 <core:Item key="{SBU}" text="{SBU}" />
                             </ComboBox>       
-                        </smartfilterbar:customControl>
+                        </smartfilterbar:customControl> -->
                 </smartfilterbar:ControlConfiguration>
                 <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
-                    
+                     <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
                     <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
@@ -133,8 +133,9 @@
                                 selectedKey="{ui>/PLANPLANT}"
                                 change="onPLANPLANTChange"
                                 items="{
-                                    path: '/ZVB_3DERP_PLANPLANT_SH'
-                                    }">
+                                    path: '/ZVB_3DERP_PLANPLANT_SH', filters: [{path: 'SBU', operator: 'EQ', value1: 'VER'}]
+                                    }"
+                                >
                                 <core:Item key="{PLANPLANT}" text="{PLANPLANT}" />
                             </ComboBox>                                   
                         </smartfilterbar:customControl> -->
