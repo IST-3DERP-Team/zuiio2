@@ -3846,8 +3846,8 @@ sap.ui.define([
                     oSHModel2.read(sEntitySet, {
                         success: function (oData, oResponse) {
 
-                            console.log(sModelName);
-                            console.log(oData);
+                            // console.log(sModelName);
+                            // console.log(oData);
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
 
@@ -3921,8 +3921,8 @@ sap.ui.define([
 
                             },
                             success: function (oData, oResponse) {
-                                console.log(sModelName);
-                                console.log(oData);
+                                // console.log(sModelName);
+                                // console.log(oData);
 
                                 if (sModelName === "SOLDTOModel") {
                                     oData.results.forEach(item => {
