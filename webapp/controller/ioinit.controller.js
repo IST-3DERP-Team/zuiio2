@@ -31,10 +31,11 @@ sap.ui.define([
         return Controller.extend("zuiio2.controller.ioinit", {
             onInit: async function () {
                 that = this;
-                this._tableFilter = TableFilter;
-                this._colFilters = {};
 
-                // this.oSmartFilterBar = this.getView().byId("smartFilterBar");
+                // this._tableFilter = TableFilter;
+                // this._colFilters = {};
+
+                this._oSmartFilterBar = this.getView().byId("smartFilterBar");
 
                 this.getView().setModel(new JSONModel({
                     activeSTYLENO: "",
@@ -55,6 +56,7 @@ sap.ui.define([
 
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._oModel = this.getOwnerComponent().getModel();
+                this.setSmartFilterModel();
 
                 this._aIOColumns = {};
                 this._aColumns = {};
@@ -91,9 +93,29 @@ sap.ui.define([
 
 
             },
+
+            setSmartFilterModel: function () {
+                //Model StyleHeaderFilters is for the smartfilterbar
+                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER_CDS");
+                var oSmartFilter = this.getView().byId("smartFilterBar");
+                oSmartFilter.setModel(oModel);
+            },
+
             onInitialize: function () {
                 console.log("SmartFilterBar Initialized");
-                this.oSmartFilterBar = this.getView().byId("smartFilterBar");
+                // this.oSmartFilterBar = this.getView().byId("smartFilterBar");
+
+                console.log(this._oSmartFilterBar);
+                this._oSmartFilterBar.setFilterData({
+                    PLANPLANT: {
+                        filter: [
+                            { value: "SBU eq 'VER'"}
+                        ]
+                        // items: [
+                        //     { key: "C601", text: "C601 (Test Plant)"}
+                        // ]
+                    }
+                });
             },
 
             getAppAction: async function () {
@@ -722,7 +744,7 @@ sap.ui.define([
 
                         me.setChangeStatus(false);
 
-                        TableFilter.applyColFilters(me);
+                        // TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -798,9 +820,9 @@ sap.ui.define([
 
                 //bind the data to the table
                 oTable.bindRows("/rows");
-                TableFilter.updateColumnMenu("IODynTable", this);
+                // TableFilter.updateColumnMenu("IODynTable", this);
 
-                TableFilter.applyColFilters(me);
+                // TableFilter.applyColFilters(me);
             },
 
             columnTemplate: function (sColumnId, sColumnType) {
@@ -1457,7 +1479,7 @@ sap.ui.define([
                     })
                 })
 
-                TableFilter.updateColumnMenu("IODynTable", this);
+                // TableFilter.updateColumnMenu("IODynTable", this);
 
                 // aSortableColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
                 // this.createViewSettingsDialog("sort", 
@@ -1572,36 +1594,21 @@ sap.ui.define([
 
             onSBUChange: function (oEvent) {
                 console.log("onSBUChange");
-                var oSmartFilterBar = this.getView().byId("smartFilterBar");
-                var oField1Control = oSmartFilterBar.getControlByKey("SBU");
-                var oField2Control = oSmartFilterBar.getControlByKey("PLANPLANT");
+                var oField1Control = this._oSmartFilterBar.getControlByKey("SBU");
+                var oField2Control = this._oSmartFilterBar.getControlByKey("PLANPLANT");
 
                 console.log(oField1Control);
                 console.log(oField2Control);
 
-                var sField1Value = oField1Control.getValue();
-                console.log("sField1Value");
-                console.log(sField1Value);
+                // var sField1Value = oField1Control.getValue();
+                // console.log("sField1Value");
+                // console.log(sField1Value);
 
                 // if (sField1Value) {
                 //     oField2Control.setSelectedKey(sField1Value);
                 // } else {
                 //     oField2Control.setSelectedKey("");
                 // }
-
-                var oComboBox = this.getView().byId("cboxPLANPLANT");
-                var sFilterValue = "VER"; // Filter value to apply
-
-                var oBinding = oComboBox.getBinding("items");
-                if (oBinding) {
-                    var oFilter = new sap.ui.model.Filter({
-                        path: "SBU", // Replace with the actual property name of the items to filter
-                        operator: sap.ui.model.FilterOperator.EQ,
-                        value1: sFilterValue
-                    });
-
-                    oBinding.filter([oFilter]);
-                }
 
                 return;
 

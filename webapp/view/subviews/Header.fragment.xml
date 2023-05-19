@@ -508,7 +508,7 @@
                                 valueHelpRequest="onSoldToValueHelp"
                                 suggestionItems="{SOLDTOModel>/results}">
                                 <suggestionItems>
-                                    <core:ListItem text="{SOLDTOModel>KUNNR}" additionalText=""/>
+                                    <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/>
                                 </suggestionItems>
                                 </Input>
                         </f:fields>
@@ -546,7 +546,7 @@
                                 valueHelpRequest="onPlantValueHelp"
                                 suggestionItems="{PlantModel>/results}">
                                 <suggestionItems>
-                                    <core:ListItem text="{PlantModel>PRODPLANT}" additionalText=""/>
+                                    <core:ListItem text="{PlantModel>PRODPLANT} - ({PlantModel>DESCRIPTION})" additionalText=""/>
                                 </suggestionItems>
                                 </Input>
                         </f:fields>

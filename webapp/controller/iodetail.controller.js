@@ -1560,7 +1560,8 @@ sap.ui.define([
                             me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
                             me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                             // console.log(me._aColumns[sTabId.replace("Tab", "")]);
-                            me._aFilterableColumns[sTabId.replace("Tab", "")] = aColumns["filterableColumns"];
+                            
+                            //me._aFilterableColumns[sTabId.replace("Tab", "")] = aColumns["filterableColumns"];
 
                             // console.log("io style list filterable columns");
                             // console.log(me._aFilterableColumns["iostylist"]);
@@ -2609,6 +2610,45 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
                     // console.log(sColumnDataType);
+
+                    var oText = new sap.m.Text({
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
+                    })
+
+                    var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+                    
+                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                        oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                        oText.bindText({  
+                            parts: [  
+                                { path: sColumnId }
+                            ],  
+                            formatter: function(sKey) {
+                                var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
+                                
+                                if (oValue && oValue.length > 0) {
+                                    if (oColProp[0].TextFormatMode === "Value") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text];
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "ValueKey") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "KeyValue") {
+                                        return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
+                                    }
+                                }
+                                else return sKey;
+                            }
+                        });                        
+                    }
+                    else {
+                        oText.bindText({  
+                            parts: [  
+                                { path: sColumnId }
+                            ]
+                        }); 
+                    }
 
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
@@ -3806,8 +3846,8 @@ sap.ui.define([
                     oSHModel2.read(sEntitySet, {
                         success: function (oData, oResponse) {
 
-                            // console.log("SOLD TO CUST");
-                            // console.log(oData);
+                            console.log(sModelName);
+                            console.log(oData);
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
 
@@ -3881,8 +3921,8 @@ sap.ui.define([
 
                             },
                             success: function (oData, oResponse) {
-                                // console.log(sModelName);
-                                // console.log(oData);
+                                console.log(sModelName);
+                                console.log(oData);
 
                                 if (sModelName === "SOLDTOModel") {
                                     oData.results.forEach(item => {
@@ -14233,7 +14273,7 @@ sap.ui.define([
                 oParamLock["Iv_Count"] = 300;
                 oParamLock["IO_MSG"] = [];
 
-                // console.log(oParamLock);
+                console.log(oParamLock);
 
                 var promise = new Promise((resolve, reject) => {
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
