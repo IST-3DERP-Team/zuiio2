@@ -4544,7 +4544,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                // console.log("onBillToValueHelp : " + soldtoCust);
+                console.log("onBillToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._billtoHelpDialog) {
                     that._billtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.BillTo", that);
@@ -4585,7 +4585,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                // console.log("onShipToValueHelp : " + soldtoCust);
+                console.log("onShipToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._shiptoHelpDialog) {
                     that._shiptoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ShipTo", that);

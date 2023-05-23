@@ -174,7 +174,7 @@ sap.ui.define([
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
 
-                    // console.log(aData);
+                    console.log(aData);
                     // console.log(oTable.getBinding("rows"));
                     var oParamData = [];
                     var oParam = {};
@@ -213,6 +213,9 @@ sap.ui.define([
                         //SBU as DropdownList
                         routeSBU = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
                     }
+
+                    console.log("routeSBU");
+                    console.log(routeSBU);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
