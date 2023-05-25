@@ -36,6 +36,19 @@
             <f:FormContainer ariaLabelledBy="Grp1" class="sapUiNoContentPadding" >
                 <f:formElements>
 
+                    <!-- IONO -->
+                    <f:FormElement id="feIONO" label="{i18n>IONO}" visible="false">
+                        <f:fields>
+                            <Input id="IONO" 
+                            value="{headerData>/IONO}" 
+                            showSuggestion="true" 
+                            showValueHelp="true"
+                            editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IONO} : false }" 
+                            valueStateText="Required">
+                            </Input>
+                        </f:fields>
+                    </f:FormElement> 
+
                     <!-- IOTYPE -->
                     <f:FormElement id="feIOTYPE" label="{i18n>IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                         <f:fields>

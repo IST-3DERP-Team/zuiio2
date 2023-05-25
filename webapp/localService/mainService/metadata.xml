@@ -789,7 +789,9 @@
                     <PropertyRef Name="ATTRIBTYP"/>
                     <PropertyRef Name="ATTRIBCD"/>
                 </Key>
+                <Property Name="CREATEDBY" Type="Edm.String" Nullable="false" MaxLength="12" sap:unicode="false" sap:label="Created By" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CREATEDDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="Created on" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VERNO" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="Seq No" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBTYP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Attrib Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="ATTRIBCD" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attrib Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>

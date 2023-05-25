@@ -328,7 +328,7 @@
                                                 alternateRowColors="true"
                                             >
                                                 <t:extension>
-                                                    <Toolbar>
+                                                    <Toolbar>onGenMatList
                                                         <ToolbarSpacer />
                                                         <Button id= "btnFabGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>

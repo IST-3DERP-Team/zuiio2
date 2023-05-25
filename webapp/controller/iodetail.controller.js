@@ -7815,11 +7815,11 @@ sap.ui.define([
                             //         .forEach(item => item.setProperty("enabled", false));
                             // }
 
-                            if (arg === "IOATTRIB") {
-                                var oIconTabBarStyle = this.byId("itfIOATTRIB");
-                                oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                                    .forEach(item => item.setProperty("enabled", false));
-                            }
+                            // if (arg === "IOATTRIB") {
+                            //     var oIconTabBarStyle = this.byId("itfIOATTRIB");
+                            //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                            //         .forEach(item => item.setProperty("enabled", false));
+                            // }
                         }
                     }
                 }
@@ -9098,8 +9098,8 @@ sap.ui.define([
                                     break;
                                 case "IOATTRIB":
                                     entitySet = entitySet + "IOATTRIBSet"
-                                    // oModel = me.getOwnerComponent().getModel();
-                                    oModel = this._oModel;
+                                    oModel = me.getOwnerComponent().getModel();
+                                    // oModel = this._oModel;
                                     break;
                                 case "costHdr":
                                     entitySet = entitySet + "VersionsSet";
@@ -9147,7 +9147,11 @@ sap.ui.define([
                                         
                                         if(col.Editable)
                                             param[col.ColumnName] = itemValue;
-                                    }
+                                    } 
+                                    // else if(arg === "IOATTRIB") {
+                                    //     param[col.ColumnName] = itemValue;
+                                    // }
+
                                     //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
                                     // else if(arg === "IOATTRIB") {
                                     //     console.log(col.ColumnName);
@@ -9239,7 +9243,7 @@ sap.ui.define([
                                 // }
                                 // _promiseResult = new Promise((resolve, reject) => {
                                 setTimeout(() => {
-                                    console.log("PUT");
+                                    // console.log("PUT");
                                     oModel.update(entitySet, param, {
                                         method: "PUT",
                                         success: async function (data, oResponse) {
@@ -9915,6 +9919,7 @@ sap.ui.define([
 
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
+                            // console.log(ci);
                             if (ci.Editable) {
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
 
@@ -10688,6 +10693,7 @@ sap.ui.define([
                 // console.log(oEvent.getSource());
 
                 var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
+                console.log("Test");
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
                     if (oEvent.getParameters().value.split(".")[1].length > decPlaces) {

@@ -1597,6 +1597,9 @@ sap.ui.define([
 
             onSBUChange: function (oEvent) {
                 console.log("onSBUChange");
+                var oFilterData = this._oSmartFilterBar.getFilterData();
+                console.log(oFilterData);
+
                 var oField1Control = this._oSmartFilterBar.getControlByKey("SBU");
                 var oField2Control = this._oSmartFilterBar.getControlByKey("PLANPLANT");
 
