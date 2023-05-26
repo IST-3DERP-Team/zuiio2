@@ -25,8 +25,8 @@
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
         useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
-                    <smartfilterbar:customControl>
+                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
+                    <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
                                 change="onSBUChange"
@@ -35,7 +35,7 @@
                                 }">
                                 <core:Item key="{SBU}" text="{SBU}" />
                             </ComboBox>       
-                        </smartfilterbar:customControl>
+                        </smartfilterbar:customControl> -->
                 </smartfilterbar:ControlConfiguration>
                 <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                      <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
@@ -174,7 +174,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_ADVANCED" label="{i18n>IONO}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IONO}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSTYLECD"
                                 selectedKey="{ui>/STYLECD}"

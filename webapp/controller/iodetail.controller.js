@@ -4119,7 +4119,7 @@ sap.ui.define([
                 // Common.openLoadingDialog(that);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
 
-                await me.UpdateIOHdrQuantity();
+                // await me.UpdateIOHdrQuantity();
 
                 await new Promise((resolve, reject) => {
                     oModel.read(entitySet, {
@@ -11799,6 +11799,8 @@ sap.ui.define([
                                         oParam["N_CreateMRPDataParam"] = aParam;
                                         oParam["N_CreateMRPDataReturn"] = [];
                                         // console.log(oParam)
+                                        // Common.closeLoadingDialog(me);
+                                        // return;
 
                                         oModel.create("/CreateMRPDataSet", oParam, {
                                             method: "POST",
@@ -11836,6 +11838,9 @@ sap.ui.define([
                             oParam["N_CreateMRPDataParam"] = aParam;
                             oParam["N_CreateMRPDataReturn"] = [];
                             // console.log(oParam)
+                            // Common.closeLoadingDialog(me);
+                            // return;
+
                             oModel.create("/CreateMRPDataSet", oParam, {
                                 method: "POST",
                                 success: function (oDataReturn, oResponse) {
@@ -11875,6 +11880,7 @@ sap.ui.define([
 
                 if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
                     me.unLock();
+                    Common.closeLoadingDialog(me);
                 }
             },
 
