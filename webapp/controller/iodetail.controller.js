@@ -1232,7 +1232,7 @@ sap.ui.define([
                     oParam['N_IMPORT_CPO'] = oParamData;
                     oParam['N_EXPORT_MSG'] = oParamImportMSG;
 
-                    console.log(oParam);
+                    // console.log(oParam);
                 }
 
                 // Common.closeLoadingDialog(that);
@@ -1243,7 +1243,7 @@ sap.ui.define([
                         method: "POST",
                         success: function (oData, oResponse) {
                             Common.closeLoadingDialog(me);
-                            console.log(oData);
+                            // console.log(oData);
                             MessageBox.success("Sales Document Item/s Successfully added.");
                             resolve();
                         }, error: function (error) {
@@ -1934,17 +1934,19 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + ioNo + "'"
                             },
                             success: function (oData, response) {
+
                                 // console.log("ATTRIBSet");
                                 // console.log(oData.results);
+
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
 
-                                // oData.results.forEach(item => {
-                                //     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
-                                //     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                oData.results.forEach(item => {
+                                    item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " || item.CREATEDDT === "" ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                                    // item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " || item.UPDATEDDT === "" ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
                                 // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
-                                // })
+                                })
 
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
@@ -2025,8 +2027,8 @@ sap.ui.define([
                             "$filter": "STYLENO eq '" + pStyleNo + "'"
                         },
                         success: function (oData, oResponse) {
-                            console.log("IOSTYLISTDETSet");
-                            console.log(oData);
+                            // console.log("IOSTYLISTDETSet");
+                            // console.log(oData);
                             oData.results.forEach(item => {
 
                                 var styleData = {
@@ -3380,10 +3382,13 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         // oText.setText(oData.Results.length + "");
 
-                        // oData.results.forEach(item => {
-                        //     item.CREATEDDT = dateFormat.format(item.CREATEDDT);    
-                        //     item.UPDATEDDT = dateFormat.format(item.UPDATEDDT);                            
-                        // })
+                        // console.log("ATTRIBSet getAttribDynamicTableData");
+                        // console.log(oData.results);
+
+                        oData.results.forEach(item => {
+                            item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));                           
+                        })
 
                         oJSONDataModel.setData(oData);
                         me.getView().setModel(oJSONDataModel, "AttribDataModel");
@@ -3643,39 +3648,39 @@ sap.ui.define([
                 }
 
                 if (srcInput === "/CUSTDLVDT") {
-                    console.log("On Header Change Customer Delivery date");
+                    // console.log("On Header Change Customer Delivery date");
                     let cntBlank = 0;
                     let inputField = this.getView().byId("PRODSCEN");
                     if (this.isInputFieldBlank(inputField)) {
-                        console.log("PRODSCEN");
+                        // console.log("PRODSCEN");
                         cntBlank++;
                     }
 
                     inputField = this.getView().byId("PRODPLANT");
                     if (this.isInputFieldBlank(inputField)) {
-                        console.log("PRODPLANT");
+                        // console.log("PRODPLANT");
                         cntBlank++;
                     }
 
                     inputField = this.getView().byId("IOTYPE");
                     if (this.isInputFieldBlank(inputField)) {
-                        console.log("IOTYPE");
+                        // console.log("IOTYPE");
                         cntBlank++;
                     }
 
                     let inputValue = this.getView().byId("CUSTDLVDT").getValue();
-                    console.log(inputValue);
+                    // console.log(inputValue);
                     if (!Date.parse(inputValue)) {
-                        console.log("CUSTDLVDT");
+                        // console.log("CUSTDLVDT");
                         cntBlank++;
                     }
 
-                    console.log("cntBlank");
-                    console.log(cntBlank);
+                    // console.log("cntBlank");
+                    // console.log(cntBlank);
 
                     //cntBlank value is zero, no errors / has values(at least valid)
                     if (cntBlank === 0) {
-                        console.log("true");
+                        // console.log("true");
                         let txtWeaveTyp;
                         let txtProdPlant;
                         let txtProdScen = this.getView().byId("PRODSCEN").getValue();
@@ -3697,7 +3702,7 @@ sap.ui.define([
                         let fldCustDlvDt = this.getView().byId("CUSTDLVDT");
                         let CustDlvDtValue = new Date(fldCustDlvDt.getDateValue());
 
-                        console.log(txtWeaveTyp);
+                        // console.log(txtWeaveTyp);
 
                         await new Promise((resolve, reject) => {
                             oModel.read("/PRDLEADTMSet", {
@@ -3706,8 +3711,8 @@ sap.ui.define([
                                 },
                                 success: function (oData, response) {
                                     // me.getView().setModel(new JSONModel(oData), "PRDLEADTMModel");
-                                    console.log("PRDLEADTMModel");
-                                    console.log(oData);
+                                    // console.log("PRDLEADTMModel");
+                                    // console.log(oData);
                                     var dtProdStart = me.getView().byId("PRODSTART");
                                     oData.results.forEach(item => {
                                         CustDlvDtValue.setDate(CustDlvDtValue.getDate() - item.LEADTM);
@@ -3730,15 +3735,15 @@ sap.ui.define([
                         let vProdDt = sapDateFormat.format(new Date(inputField.getValue()));
                         let txtYear = new Date(inputField.getValue()).getFullYear();
 
-                        console.log(vProdDt);
-                        console.log(txtYear);
+                        // console.log(vProdDt);
+                        // console.log(txtYear);
 
                         var dateFormatter = sap.ui.core.format.DateFormat.getDateTimeInstance({
                             pattern: "yyyy-MM-dd'T'HH:mm:ss"
                         });
 
                         vProdDt = dateFormatter.format(new Date(vProdDt)); // 2023-04-23T00:00:00
-                        console.log(vProdDt);
+                        // console.log(vProdDt);
 
                         await new Promise((resolve, reject) => {
                             oModel.read("/PRDCALSet", {
@@ -3746,7 +3751,7 @@ sap.ui.define([
                                     "$filter": "Plantcd eq '" + txtProdPlant + "' and Prodyr eq '" + txtYear + "' and Startdt eq datetime'" + vProdDt + "'"
                                 },
                                 success: function (oData, response) {
-                                    console.log(oData);
+                                    // console.log(oData);
                                     oData.results.forEach(item => {
                                         me.getView().byId("PLANMONTH").setValue(item.Prodyr + "/" + item.Prodmo);
                                         me.getView().byId("PRODWK").setValue(+item.Prodwk);
@@ -3766,13 +3771,13 @@ sap.ui.define([
 
                 if (srcInput === "/PLANDLVDT") {
                     let inputValue = this.getView().byId("PLANDLVDT").getValue();
-                    console.log(inputValue);
+                    // console.log(inputValue);
                     if (Date.parse(inputValue)) {
                         let dtPlanDlv = new Date(inputValue);
                         let dtCustDlv = new Date(this.getView().byId("CUSTDLVDT").getValue());
 
-                        console.log(dtPlanDlv);
-                        console.log(dtCustDlv);
+                        // console.log(dtPlanDlv);
+                        // console.log(dtCustDlv);
 
                         if (dtPlanDlv > dtCustDlv) {
                             // sap.m.MessageBox.error(this.getView().getModel("ddtext").getData()["PLANDLVDT_ERR_VALIDATION"]);
@@ -4125,21 +4130,23 @@ sap.ui.define([
                 await new Promise((resolve, reject) => {
                     oModel.read(entitySet, {
                         success: function (oData, oResponse) {
+                            // console.log("/IOHDRSet('" + ioNo + "')");
                             // console.log(oData);
-                            oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
-                            oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
-                            oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
-                            oData.PRODSTART = oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
-                            oData.MATETA = oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
-                            oData.MAINMATETA = oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
-                            oData.SUBMATETA = oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
-                            oData.CUTMATETA = oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
-                            oData.PLANDLVDT = oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
-                            oData.CREATEDDT = oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
-                            oData.UPDATEDDT = oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+                            // oData.CUSTDLVDT = oData.CUSTDLVDT === "" || oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                            // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "" || oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
+                            // oData.REQEXFTYDT = oData.REQEXFTYDT === "" || oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
+                            // oData.PRODSTART = oData.PRODSTART === "" || oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
+                            // oData.MATETA = oData.MATETA === "" || oData.MATETA === "0000-00-00" || oData.MATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MATETA));
+                            // oData.MAINMATETA = oData.MAINMATETA === "" || oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
+                            // oData.SUBMATETA = oData.SUBMATETA === "" || oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
+                            // oData.CUTMATETA = oData.CUTMATETA === "" || oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
+                            // oData.PLANDLVDT = oData.PLANDLVDT === "" || oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                            // oData.CREATEDDT = oData.CREATEDDT === "" || oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                            // oData.UPDATEDDT = oData.UPDATEDDT === "" || oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
 
                             me._prodplant = oData.PRODPLANT;
 
+                            // console.log("end date handler");
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, "headerData");
 
@@ -5292,8 +5299,8 @@ sap.ui.define([
                             };
                         }
 
-                        console.log("oParamIOHeaderData");
-                        console.log(oParamIOHeaderData);
+                        // console.log("oParamIOHeaderData");
+                        // console.log(oParamIOHeaderData);
 
                         // var oModel = this.getOwnerComponent().getModel();
 
@@ -9195,11 +9202,11 @@ sap.ui.define([
                                 if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                 entitySet += ")";
 
-                                console.log(entitySet);
-                                console.log(param);
-                                console.log(arg);
-                                console.log("oModel");
-                                console.log(oModel)
+                                // console.log(entitySet);
+                                // console.log(param);
+                                // console.log(arg);
+                                // console.log("oModel");
+                                // console.log(oModel)
 
                                 // if (arg === "color") {
                                 //     me.byId("btnEditColor").setVisible(true);
@@ -9250,7 +9257,7 @@ sap.ui.define([
                                         success: async function (data, oResponse) {
                                             iEdited++;
                                             // resolve();
-                                            console.log(oResponse);
+                                            // console.log(oResponse);
 
                                             if (iEdited === aEditedRows.length) {
                                                 // Common.closeProcessingDialog(me);
@@ -11975,13 +11982,13 @@ sap.ui.define([
                     oParam["SBU"] = this._sbu;
                     oParam["N_CreateInfoRecParam"] = oInput;
                     oParam["N_CreateInfoRecReturn"] = [];
-                    console.log(oParam)
+                    // console.log(oParam)
                     oModel.setUseBatch(false);
                     oModel.create("/CreateInfoRecordSet", oParam, {
                         method: "POST",
                         success: function (oDataReturn, oResponse) {
                             //assign the materials based on the return
-                            console.log(oDataReturn);
+                            // console.log(oDataReturn);
                         },
                         error: function (err) {
                             // Common.closeLoadingDialog(me);
@@ -14301,7 +14308,7 @@ sap.ui.define([
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
-                            console.log(oResultLock.IO_MSG.results);
+                            // console.log(oResultLock.IO_MSG.results);
                             oResultLock.IO_MSG.results.forEach(item => {
                                 // console.log("Lock IO");
                                 me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
