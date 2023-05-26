@@ -971,6 +971,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_INVALID_CREATE_INFOREC" });
                 oDDTextParam.push({ CODE: "PLANDLVDT_ERR_VALIDATION" });
                 oDDTextParam.push({ CODE: "ERR_CUSTDLVDT_REQUIRED" });
+                oDDTextParam.push({ CODE: "INFO_INVALID_PURGRP" });
 
                 // console.log(oDDTextParam);
 
@@ -1560,7 +1561,7 @@ sap.ui.define([
                             me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
                             me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                             // console.log(me._aColumns[sTabId.replace("Tab", "")]);
-                            
+
                             //me._aFilterableColumns[sTabId.replace("Tab", "")] = aColumns["filterableColumns"];
 
                             // console.log("io style list filterable columns");
@@ -1941,8 +1942,8 @@ sap.ui.define([
                                 // oData.results.forEach(item => {
                                 //     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                 //     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-                                    // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
-                                    // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
+                                // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
                                 // })
 
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
@@ -2617,16 +2618,16 @@ sap.ui.define([
                     })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
-                    
+
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
-                        oText.bindText({  
-                            parts: [  
+                        oText.bindText({
+                            parts: [
                                 { path: sColumnId }
-                            ],  
-                            formatter: function(sKey) {
+                            ],
+                            formatter: function (sKey) {
                                 var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
-                                
+
                                 if (oValue && oValue.length > 0) {
                                     if (oColProp[0].TextFormatMode === "Value") {
                                         return oValue[0][oColProp[0].ValueHelp["items"].text];
@@ -2640,14 +2641,14 @@ sap.ui.define([
                                 }
                                 else return sKey;
                             }
-                        });                        
+                        });
                     }
                     else {
-                        oText.bindText({  
-                            parts: [  
+                        oText.bindText({
+                            parts: [
                                 { path: sColumnId }
                             ]
-                        }); 
+                        });
                     }
 
                     if (sColumnDataType === "STRING") {
@@ -9142,12 +9143,12 @@ sap.ui.define([
 
                                     //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
                                     if (arg === "IODLV" || arg === "IODET" || arg === "IOATTRIB") {
-                                        if(col.Key === "X")
+                                        if (col.Key === "X")
                                             param[col.ColumnName] = itemValue;
-                                        
-                                        if(col.Editable)
+
+                                        if (col.Editable)
                                             param[col.ColumnName] = itemValue;
-                                    } 
+                                    }
                                     // else if(arg === "IOATTRIB") {
                                     //     param[col.ColumnName] = itemValue;
                                     // }
@@ -9172,7 +9173,7 @@ sap.ui.define([
 
                                     if (iKeyCount === 1) {
                                         if (col.Key === "X") {
-                                            if(col.DictType.indexOf("INT") !== -1)
+                                            if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += item[col.ColumnName]
                                             else
                                                 entitySet += "'" + item[col.ColumnName] + "'"
@@ -9183,7 +9184,7 @@ sap.ui.define([
                                             // console.log(col.DictType);
                                             // console.log(col.DictType.indexOf("INT"));
                                             // if (col.ColumnName === "DLVSEQ")
-                                            if(col.DictType.indexOf("INT") !== -1)
+                                            if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
                                             else
                                                 entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
@@ -11727,6 +11728,7 @@ sap.ui.define([
                 var vInfoRec = true;
                 var aMatTypInfoRecChk = this.getView().getModel("matTypInfoRecChk").getData();
                 var aMatTypInfoRecInc = [];
+                var invalidPurGrp = 0;
 
                 await me.lock(me);
                 if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
@@ -11743,47 +11745,52 @@ sap.ui.define([
 
                     oSelectedIndices.forEach((item, index) => {
                         if (aData.at(item).VARIANCE > 0 && aData.at(item).MATNO !== "" && aData.at(item).DELETED === false) {
-                            aParam.push({
-                                Mrptyp: "IOMRP",
-                                Plantcd: me._prodplant,
-                                Iono: aData.at(item).IONO,
-                                Matno: aData.at(item).MATNO,
-                                Baseuom: aData.at(item).UOM,
-                                Reqqty: aData.at(item).VARIANCE,
-                                Purgrp: aData.at(item).PURGRP,
-                                Supplytyp: aData.at(item).SUPPLYTYP,
-                                Vendorcd: aData.at(item).VENDORCD,
-                                Unitprice: aData.at(item).UNITPRICE,
-                                Orderuom: aData.at(item).ORDERUOM,
-                                Umrez: aData.at(item).UMREZ,
-                                Umren: aData.at(item).UMREN,
-                                Purplant: aData.at(item).PURPLANT
-                            });
 
-                            aParam2.push({
-                                Matno: aData.at(item).MATNO,
-                                Baseuom: aData.at(item).UOM,
-                                Reqqty: aData.at(item).VARIANCE,
-                                Purgrp: aData.at(item).PURGRP,
-                                Supplytyp: aData.at(item).SUPPLYTYP,
-                                Vendorcd: aData.at(item).VENDORCD,
-                                Unitprice: aData.at(item).UNITPRICE,
-                                Orderuom: aData.at(item).ORDERUOM,
-                                Umrez: aData.at(item).UMREZ,
-                                Umren: aData.at(item).UMREN,
-                                Purplant: aData.at(item).PURPLANT,
-                                Currencycd: aData.at(item).CURRENCYCD
-                            });
+                            if (aData.at(item).PURGRP === undefined || aData.at(item).PURGRP === "") {
+                                invalidPurGrp = 1;
+                            } else {
+                                aParam.push({
+                                    Mrptyp: "IOMRP",
+                                    Plantcd: me._prodplant,
+                                    Iono: aData.at(item).IONO,
+                                    Matno: aData.at(item).MATNO,
+                                    Baseuom: aData.at(item).UOM,
+                                    Reqqty: aData.at(item).VARIANCE,
+                                    Purgrp: aData.at(item).PURGRP,
+                                    Supplytyp: aData.at(item).SUPPLYTYP,
+                                    Vendorcd: aData.at(item).VENDORCD,
+                                    Unitprice: aData.at(item).UNITPRICE,
+                                    Orderuom: aData.at(item).ORDERUOM,
+                                    Umrez: aData.at(item).UMREZ,
+                                    Umren: aData.at(item).UMREN,
+                                    Purplant: aData.at(item).PURPLANT
+                                });
 
-                            if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP).length > 0 && aData.at(item).SUPPLYTYP === "NOM" &&
-                                (aData.at(item).ORDERUOM === "" || aData.at(item).PURGRP === "" || aData.at(item).PURGRP === "" || aData.at(item).PURPLANT === "" || aData.at(item).VENDORCD === "" || +aData.at(item).UNITPRICE === 0)) {
-                                vInfoRec = false;
-                                aMatTypInfoRecInc.push(aData.at(item).MATTYP);
+                                aParam2.push({
+                                    Matno: aData.at(item).MATNO,
+                                    Baseuom: aData.at(item).UOM,
+                                    Reqqty: aData.at(item).VARIANCE,
+                                    Purgrp: aData.at(item).PURGRP,
+                                    Supplytyp: aData.at(item).SUPPLYTYP,
+                                    Vendorcd: aData.at(item).VENDORCD,
+                                    Unitprice: aData.at(item).UNITPRICE,
+                                    Orderuom: aData.at(item).ORDERUOM,
+                                    Umrez: aData.at(item).UMREZ,
+                                    Umren: aData.at(item).UMREN,
+                                    Purplant: aData.at(item).PURPLANT,
+                                    Currencycd: aData.at(item).CURRENCYCD
+                                });
+
+                                if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP).length > 0 && aData.at(item).SUPPLYTYP === "NOM" &&
+                                    (aData.at(item).ORDERUOM === "" || aData.at(item).PURGRP === "" || aData.at(item).PURGRP === "" || aData.at(item).PURPLANT === "" || aData.at(item).VENDORCD === "" || +aData.at(item).UNITPRICE === 0)) {
+                                    vInfoRec = false;
+                                    aMatTypInfoRecInc.push(aData.at(item).MATTYP);
+                                }
                             }
                         }
                     })
 
-                    if (aParam.length > 0) {
+                    if (aParam.length > 0 && invalidPurGrp === 0) {
                         Common.openLoadingDialog(this);
                         // await me.lock(me);
                         // if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
@@ -11871,7 +11878,10 @@ sap.ui.define([
                         // Common.closeLoadingDialog(this);
                     }
                     else {
-                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
+                        if(invalidPurGrp > 0) {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_INVALID_PURGRP"]);
+                        } else
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
                     }
                 }
                 else {
