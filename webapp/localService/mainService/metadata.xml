@@ -804,7 +804,6 @@
                 <Property Name="ATTRIBVAL" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Attribute Val" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VALUNIT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VALUNIT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPOATTRIB" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="PO Attribute" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="DELETED" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="Deleted" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="OutputBreakdwonIO" sap:content-version="1">
                 <Key>

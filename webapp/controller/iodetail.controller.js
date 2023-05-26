@@ -1942,10 +1942,12 @@ sap.ui.define([
                                     item.ACTIVE = index === 0 ? "X" : "");
 
                                 oData.results.forEach(item => {
+                                    item.DELETED = item.DELETED === "X" ? true : false;
+                                    item.BASEIND = item.BASEIND === "X" ? true : false;
                                     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " || item.CREATEDDT === "" ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                     // item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " || item.UPDATEDDT === "" ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-                                // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
-                                // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                    // item.CREATEDTM = timeFormat.format(new Date(item.CREATEDTM.ms + TZOffsetMs));
+                                    // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
                                 })
 
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
@@ -2550,6 +2552,11 @@ sap.ui.define([
                     await new Promise((resolve, reject) => {
                         oModel.read("/ColumnsSet", {
                             success: function (oData, oResponse) {
+
+                                if (arg1 === "IOATTRIB") {
+                                    // console.log(oData);
+                                }
+
                                 if (oData.results.length > 0) {
                                     // console.log("getIODynamicColumns " + sTabId);
                                     // console.log(oData.results);
@@ -3354,6 +3361,8 @@ sap.ui.define([
 
                 this._Model2.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
+                        //    console.log(oData);
+
                         oJSONColumnsModel.setData(oData);
                         me.oJSONModel.setData(oData);
                         me.getView().setModel(oJSONColumnsModel, "AttribDynColumns");  //set the view model
@@ -3387,7 +3396,9 @@ sap.ui.define([
 
                         oData.results.forEach(item => {
                             item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
-                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));                           
+                            item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                            item.DELETED = item.DELETED === "X" ? true : false;
+                            item.BASEIND = item.BASEIND === "X" ? true : false;
                         })
 
                         oJSONDataModel.setData(oData);
@@ -6455,6 +6466,16 @@ sap.ui.define([
                                     oData.results.forEach(item => {
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                         item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                        item.DELETED = item.DELETED === "X" ? true : false;
+                                    })
+                                }
+
+                                if (sSource === "IOATTRIBTab") {
+                                    oData.results.forEach(item => {
+                                        // item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                        // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
+                                        item.DELETED = item.DELETED === "X" ? true : false;
+                                        item.BASEIND = item.BASEIND === "X" ? true : false;
                                     })
                                 }
 
@@ -6465,6 +6486,7 @@ sap.ui.define([
                                         item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                                         item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                        item.DELETED = item.DELETED === "X" ? true : false;
                                     })
                                 }
 
@@ -6473,6 +6495,7 @@ sap.ui.define([
                                         item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                                         item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
+                                        item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
                                     oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
@@ -9202,11 +9225,11 @@ sap.ui.define([
                                 if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                 entitySet += ")";
 
-                                // console.log(entitySet);
-                                // console.log(param);
-                                // console.log(arg);
-                                // console.log("oModel");
-                                // console.log(oModel)
+                                console.log(entitySet);
+                                console.log(param);
+                                console.log(arg);
+                                console.log("oModel");
+                                console.log(oModel)
 
                                 // if (arg === "color") {
                                 //     me.byId("btnEditColor").setVisible(true);
@@ -9253,7 +9276,7 @@ sap.ui.define([
                                 setTimeout(() => {
                                     // console.log("PUT");
                                     oModel.update(entitySet, param, {
-                                        method: "PUT",
+                                        method: "POST",
                                         success: async function (data, oResponse) {
                                             iEdited++;
                                             // resolve();
@@ -9638,6 +9661,10 @@ sap.ui.define([
                                 entitySet = entitySet + "DetailsSet";
                                 oModel = this._oModelIOCosting;
                                 break;
+                            case "IOATTRIB":
+                                entitySet = entitySet + "IOATTRIBSet"
+                                oModel = me.getOwnerComponent().getModel();
+                                break;
                             default:
                                 break;
                         }
@@ -9671,6 +9698,12 @@ sap.ui.define([
                                 //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
                                 if (arg === "IODLV" || arg === "IODET") {
                                     param[col.ColumnName] = itemValue;
+                                } else if (arg === "IOATTRIB") {
+                                    if (col.Key === "X")
+                                        param[col.ColumnName] = itemValue;
+
+                                    if (col.Editable)
+                                        param[col.ColumnName] = itemValue;
                                 }
                                 //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
                                 else {
@@ -9681,11 +9714,17 @@ sap.ui.define([
 
                                 if (iKeyCount === 1) {
                                     if (col.Key === "X")
-                                        entitySet += "'" + item[col.ColumnName] + "'"
+                                        if (col.DictType.indexOf("INT") !== -1)
+                                            entitySet += item[col.ColumnName]
+                                        else
+                                            entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
                                     if (col.Key === "X") {
-                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        if (col.DictType.indexOf("INT") !== -1)
+                                            entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                        else
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                     }
                                 }
                             })
@@ -9793,6 +9832,14 @@ sap.ui.define([
                                     me.byId("btnEditCostHdr").setEnabled(true);
                                     me.byId("btnRefreshCostHdr").setEnabled(true);
                                 }
+                                else if (arg === "IOATTRIB") {
+                                    me.byId("onIOAttribEdit").setVisible(true);
+                                    me.byId("onIOAttribSave").setVisible(false);
+                                    me.byId("onIOAttribCancel").setVisible(false);
+
+                                    me.byId("onIOEdit").setVisible(true);
+                                    me.byId("onIORelease").setVisible(true);
+                                }
 
                                 // if (arg !== "IODET")
                                 me.setActiveRowHighlightByTableId(arg + "Tab");
@@ -9804,6 +9851,10 @@ sap.ui.define([
 
                                 var oIconTabBar = me.byId("idIconTabBarInlineMode");
                                 oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                var oIconTabBarIO = me.byId("idIconTabBarInlineIOHdr");
+                                oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                                    .forEach(item => item.setProperty("enabled", true));
 
                                 me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
                                     me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
@@ -11885,7 +11936,7 @@ sap.ui.define([
                         // Common.closeLoadingDialog(this);
                     }
                     else {
-                        if(invalidPurGrp > 0) {
+                        if (invalidPurGrp > 0) {
                             MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_INVALID_PURGRP"]);
                         } else
                             MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_IVALID_RECORD_FOR_MRP"]);
@@ -13951,16 +14002,17 @@ sap.ui.define([
                             }
                             else row.removeStyleClass("activeRow");
                         })
-                    } else {
-                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                        // console.log(iActiveRowIndex)
-                        oTable.getRows().forEach(row => {
-                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                                row.addStyleClass("activeRow");
-                            }
-                            else row.removeStyleClass("activeRow");
-                        })
                     }
+                    // else {
+                    //     var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                    //     // console.log(iActiveRowIndex)
+                    //     oTable.getRows().forEach(row => {
+                    //         if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                    //             row.addStyleClass("activeRow");
+                    //         }
+                    //         else row.removeStyleClass("activeRow");
+                    //     })
+                    // }
                 }, 10);
             },
 
