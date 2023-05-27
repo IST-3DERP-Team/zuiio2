@@ -9669,6 +9669,9 @@ sap.ui.define([
                                 break;
                         }
 
+                        console.log("Batch Save oModel");
+                        console.log(oModel);
+
                         oModel.setUseBatch(true);
                         oModel.setDeferredGroups(["update"]);
 
@@ -9713,19 +9716,25 @@ sap.ui.define([
                                 }
 
                                 if (iKeyCount === 1) {
-                                    if (col.Key === "X")
-                                        if (col.DictType.indexOf("INT") !== -1)
-                                            entitySet += item[col.ColumnName]
-                                        else
-                                            entitySet += "'" + item[col.ColumnName] + "'"
+                                    if (arg === "IOATTRIB") {
+                                        if (col.Key === "X")
+                                            if (col.DictType.indexOf("INT") !== -1)
+                                                entitySet += item[col.ColumnName]
+                                            else
+                                                entitySet += "'" + item[col.ColumnName] + "'"
+                                    } else
+                                        entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
-                                    if (col.Key === "X") {
-                                        if (col.DictType.indexOf("INT") !== -1)
-                                            entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
-                                        else
-                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                    }
+                                    if (arg === "IOATTRIB") {
+                                        if (col.Key === "X") {
+                                            if (col.DictType.indexOf("INT") !== -1)
+                                                entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                            else
+                                                entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        }
+                                    } else
+                                        entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                             })
 
