@@ -301,9 +301,9 @@ sap.ui.define([
             // },
 
             onNavBack: function (oEvent) {
-                console.log("onNavBack")
-                console.log(window.location.href);
-                console.log(window.location.hash);
+                // console.log("onNavBack")
+                // console.log(window.location.href);
+                // console.log(window.location.hash);
                 if (!that._routeToStyle) {
                     this.routeTOIO(window.location.hash);
                     //sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
@@ -972,6 +972,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "PLANDLVDT_ERR_VALIDATION" });
                 oDDTextParam.push({ CODE: "ERR_CUSTDLVDT_REQUIRED" });
                 oDDTextParam.push({ CODE: "INFO_INVALID_PURGRP" });
+                oDDTextParam.push({ CODE: "INFO_NO_VALID_COST" });
 
                 // console.log(oDDTextParam);
 
@@ -3630,14 +3631,14 @@ sap.ui.define([
             },
 
             onHeaderChange: async function (oEvent) {
-                console.log("onHeaderChange");
+                // console.log("onHeaderChange");
                 var me = this;
                 if (oEvent === undefined)
                     return;
 
                 var oSource = oEvent.getSource();
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
-                console.log(srcInput);
+                // console.log(srcInput);
                 // alert(oSource.getBindingInfo("value").parts[0].path);
                 if (srcInput === "/PRODSCEN") {
                     var sProdScen = this.getView().byId("PRODSCEN").getValue();
@@ -4098,8 +4099,8 @@ sap.ui.define([
                     "PLANMONTH": this.getView().byId("PLANMONTH").getValue()
                 };
 
-                console.log("IO Prefix oParam");
-                console.log(oParam);
+                // console.log("IO Prefix oParam");
+                // console.log(oParam);
 
                 return new Promise((resolve, reject) => {
                     oModel.create("/GetIOPrefixSet", oParam, {
@@ -4563,7 +4564,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                console.log("onBillToValueHelp : " + soldtoCust);
+                // console.log("onBillToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._billtoHelpDialog) {
                     that._billtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.BillTo", that);
@@ -4604,7 +4605,7 @@ sap.ui.define([
                 //load the seasons search help
                 var sInputValue = oEvent.getSource().getValue();
                 var soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                console.log("onShipToValueHelp : " + soldtoCust);
+                // console.log("onShipToValueHelp : " + soldtoCust);
                 that.inputId = oEvent.getSource().getId();
                 if (!that._shiptoHelpDialog) {
                     that._shiptoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.ShipTo", that);
@@ -9226,11 +9227,11 @@ sap.ui.define([
                                 if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                 entitySet += ")";
 
-                                console.log(entitySet);
-                                console.log(param);
-                                console.log(arg);
-                                console.log("oModel");
-                                console.log(oModel)
+                                // console.log(entitySet);
+                                // console.log(param);
+                                // console.log(arg);
+                                // console.log("oModel");
+                                // console.log(oModel)
 
                                 // if (arg === "color") {
                                 //     me.byId("btnEditColor").setVisible(true);
@@ -9670,8 +9671,8 @@ sap.ui.define([
                                 break;
                         }
 
-                        console.log("Batch Save oModel");
-                        console.log(oModel);
+                        // console.log("Batch Save oModel");
+                        // console.log(oModel);
 
                         oModel.setUseBatch(true);
                         oModel.setDeferredGroups(["update"]);
@@ -13524,9 +13525,29 @@ sap.ui.define([
                 var me = this;
                 var oTable = oEvent.getSource().oParent.oParent;
                 var oData = oTable.getModel().getData().rows;
+                var iCost = 0;
 
                 if (oData.length > 0) {
                     var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === oData[0].CSTYPE && fi.VERSION === oData[0].VERSION)[0].COSTSTATUS;
+
+                    // console.log(this.byId("costDtlsTab").getModel().getData().rows.filter(fi => fi.COST > 0));
+
+                    this.byId("costDtlsTab").getModel().getData().rows.filter(fi => fi.COST > 0)
+                        .forEach(costItem => {
+                            iCost++;
+                        })
+
+                    // console.log(iCost);    
+                    // console.log(isNaN(iCost));
+                    // console.log(parseFloat(iCost));
+
+                    if (isNaN(iCost) || parseFloat(iCost) <= 0) {
+                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_VALID_COST"]);
+                        return;
+                    }
+
+                    // console.log(iCost);
+                    // return;
 
                     if (vStatus === "REL") {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
@@ -14366,7 +14387,7 @@ sap.ui.define([
                 oParamLock["Iv_Count"] = 300;
                 oParamLock["IO_MSG"] = [];
 
-                console.log(oParamLock);
+                // console.log(oParamLock);
 
                 var promise = new Promise((resolve, reject) => {
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
