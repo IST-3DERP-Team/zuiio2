@@ -5466,7 +5466,8 @@ sap.ui.define([
                 var csstat;
                 var hasFilter = false;
 
-                this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
+                // this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
+                this._oModelIOCosting = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
 
                 this._oModelIOCosting.setHeaders({
                     PRODPLANT: this.getView().byId("PRODPLANT").getValue()
@@ -9734,7 +9735,9 @@ sap.ui.define([
                                                 entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                         }
                                     } else
-                                        entitySet += "'" + item[col.ColumnName] + "'"
+                                        if (col.Key === "X") {
+                                            entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        }
                                 }
                             })
 
@@ -12934,8 +12937,8 @@ sap.ui.define([
             //******************************************* */            
 
             initIOCosting: function (oEvent) {
-                // this._oModelIOCosting = this.getOwnerComponent().getModel("ZGW_3DERP_IOCOSTING_SRV");
-                this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
+                this._oModelIOCosting = this.getOwnerComponent().getModel("ZGW_3DERP_IOCOSTING_SRV");
+                // this._oModelIOCosting = new sap.ui.model.odata.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/");
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
