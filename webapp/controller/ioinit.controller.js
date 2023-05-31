@@ -701,7 +701,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                // console.log(aFilters);
+                console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters

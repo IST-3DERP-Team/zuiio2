@@ -2993,7 +2993,7 @@ sap.ui.define([
                 // return oColumnTemplate;
 
                 if (column.DataType === "STRING") {
-                    oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: true, tooltip: "{DataModel>" + columnName + "}" });
+                    oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });
                 } else if (sColumnDataType === "BOOLEAN") {
                     // console.log(sColumnDataType + " : " + sColumnId);
                     oColumnTemplate = new new sap.m.CheckBox({ selected: true, editable: false });
@@ -3522,7 +3522,7 @@ sap.ui.define([
                 else {
                     oDetColumnTemplate = new sap.m.Text({
                         text: "{" + sColumnId + "}"
-                        , wrapping: true
+                        , wrapping: false
                         // , tooltip: "{" + sColumnId + "}"
                     }); //default text
                 }
@@ -8696,6 +8696,10 @@ sap.ui.define([
                                     this._aColumns[arg].forEach(col => {
                                         //FILTER COLUMNS: NOT A KEY COLUMN AND COLUMN HAS VALUE
                                         if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
+
+                                            console.log(col);
+                                            // updEntitySet += "IOITEM='" + item["IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY"] + "'"
+
                                             //IF DATETIME DATATYPE: FORMAT VALUE AS VALID ABAP DATETIME FORMAT
                                             if (col.DataType === "DATETIME") {
                                                 // alert(item[col.ColumnName]);
@@ -9718,7 +9722,7 @@ sap.ui.define([
                                 }
 
                                 if (iKeyCount === 1) {
-                                    if (arg === "IOATTRIB") {
+                                    if (arg === "IOATTRIB" || arg === "IODET") {
                                         if (col.Key === "X")
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += item[col.ColumnName]
@@ -9728,7 +9732,7 @@ sap.ui.define([
                                         entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
-                                    if (arg === "IOATTRIB") {
+                                    if (arg === "IOATTRIB" || arg === "IODET") {
                                         if (col.Key === "X") {
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
@@ -9745,10 +9749,13 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
+
+                        console.log(oModel);
 
                         oModel.submitChanges({
                             groupId: "update",
@@ -13622,6 +13629,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
+                            // console.log(oData);
                             Common.closeProcessingDialog(me);
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
