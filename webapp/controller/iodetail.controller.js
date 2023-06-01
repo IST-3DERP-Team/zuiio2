@@ -4137,7 +4137,7 @@ sap.ui.define([
                 // Common.openLoadingDialog(that);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
 
-                // await me.UpdateIOHdrQuantity();
+                await me.UpdateIOHdrQuantity();
 
                 await new Promise((resolve, reject) => {
                     oModel.read(entitySet, {
