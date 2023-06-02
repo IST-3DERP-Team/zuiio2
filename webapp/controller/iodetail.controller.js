@@ -8547,9 +8547,9 @@ sap.ui.define([
                                     // }
 
                                     // console.log(this._iosizes);
-                                    // console.log(entitySet);
-                                    // console.log(param);
-                                    // console.log(arg);
+                                    console.log(entitySet);
+                                    console.log(param);
+                                    console.log(arg);
 
                                     // return;
 
@@ -8758,9 +8758,9 @@ sap.ui.define([
 
                                     updEntitySet += ")";
 
-                                    // console.log(updEntitySet);
-                                    // console.log(param);
-                                    // console.log(arg);
+                                    console.log(updEntitySet);
+                                    console.log(param);
+                                    console.log(arg);
 
                                     // return;
 
@@ -11796,6 +11796,7 @@ sap.ui.define([
             onSubmitMRP: async function (oEvent) {
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var oModelIO = this.getOwnerComponent().getModel();
                 var oTable = this.byId("ioMatListTab");
                 var oSelectedIndices = oTable.getSelectedIndices();
                 var oTmpSelectedIndices = [];
@@ -11807,6 +11808,22 @@ sap.ui.define([
                 var aMatTypInfoRecChk = this.getView().getModel("matTypInfoRecChk").getData();
                 var aMatTypInfoRecInc = [];
                 var invalidPurGrp = 0;
+
+                me.getView().setModel(new JSONModel(), "MRPINFORECModel");
+
+                oModelIO.read("/SUPTYPFILTERSet", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + this._sbu + "' and FIELD1 eq 'MRPINFOREC'"
+                    },
+                    success: function (oData, oResponse) {
+                        // console.log("SUPTYPFILTERSet", oData);
+                        oData.results.forEach(item => {
+                            me.getView().getModel("MRPINFORECModel").setProperty("/", oData.results);
+                        });
+                    },
+                    error: function (err) {
+                    }
+                });
 
                 await me.lock(me);
                 if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
@@ -11856,10 +11873,19 @@ sap.ui.define([
                                     Umrez: aData.at(item).UMREZ,
                                     Umren: aData.at(item).UMREN,
                                     Purplant: aData.at(item).PURPLANT,
-                                    Currencycd: aData.at(item).CURRENCYCD
+                                    Currencycd: aData.at(item).CURRENCYCD,
+                                    Mattyp: aData.at(item).MATTYP
                                 });
 
-                                if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP).length > 0 && aData.at(item).SUPPLYTYP === "NOM" &&
+                                // //ORIGINAL FROM SIR ARNOLD
+                                // if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP).length > 0 && aData.at(item).SUPPLYTYP === "NOM" &&
+                                //     (aData.at(item).ORDERUOM === "" || aData.at(item).PURGRP === "" || aData.at(item).PURGRP === "" || aData.at(item).PURPLANT === "" || aData.at(item).VENDORCD === "" || +aData.at(item).UNITPRICE === 0)) {
+                                //     vInfoRec = false;
+                                //     aMatTypInfoRecInc.push(aData.at(item).MATTYP);
+                                // }    
+
+                                //FILTER SUPPLYTYP from ZERP_CHECK
+                                if (aMatTypInfoRecChk.filter(fItem => fItem.MATTYP === aData.at(item).MATTYP && fItem.FIELD3.split(',').includes(aData.at(item).SUPPLYTYP)).length > 0 &&
                                     (aData.at(item).ORDERUOM === "" || aData.at(item).PURGRP === "" || aData.at(item).PURGRP === "" || aData.at(item).PURPLANT === "" || aData.at(item).VENDORCD === "" || +aData.at(item).UNITPRICE === 0)) {
                                     vInfoRec = false;
                                     aMatTypInfoRecInc.push(aData.at(item).MATTYP);
@@ -12005,29 +12031,49 @@ sap.ui.define([
                 var oParam = {};
                 var oInput = [];
 
+                var aMatTypInfoRecChk = this.getView().getModel("matTypInfoRecChk").getData();
+                var aMRPINFORECModel = this.getView().getModel("MRPINFORECModel").getData();
+
+                // console.log("aData", aData);
+                // console.log("aData2", aData2);
+                // console.log("aMatTypInfoRecChk", aMatTypInfoRecChk);
+                // console.log("aMRPINFORECModel", aMRPINFORECModel);
+
+                var aSupplyTyp = aMRPINFORECModel[0].FIELD3.split(',');
+
+                // console.log("aSupplyTyp", aSupplyTyp);
+
                 aData.forEach(item => item.Vendorcd = this.pad(item.Vendorcd, 10));
                 aData2.forEach(item => item.Vendorcd = this.pad(item.Vendorcd, 10));
 
                 aData.forEach(item => {
-                    if (item.Supplytyp === "NOM") {
+                    // if (item.Supplytyp === "NOM") {
+                    if (aSupplyTyp.includes(item.Supplytyp)) {
                         var oCurr = aData2.filter(fItem => fItem.Matno === item.Matno && fItem.Vendorcd === item.Vendorcd && fItem.Baseuom === item.Baseuom && fItem.Orderuom === item.Orderuom
                             && +fItem.Unitprice === +item.Unitprice && +fItem.Reqqty === +item.Reqqty && fItem.Purplant === item.Purplant && fItem.Supplytyp === item.Supplytyp)
 
-                        oInput.push({
-                            Lifnr: item.Vendorcd,
-                            Matnr: item.Matno,
-                            Meins: item.Baseuom,
-                            Bstme: item.Orderuom,
-                            Umren: item.Umren === "" ? "1" : item.Umren,
-                            Umrez: item.Umrez === "" ? "1" : item.Umrez,
-                            Ekgrp: item.Purgrp,
-                            Netpr: item.Unitprice,
-                            Waers: oCurr.length > 0 ? oCurr[0].Currencycd : "",
-                            Meins2: item.Orderuom,
-                            Purplant: item.Purplant
-                        })
+                        // console.log("oCurr", oCurr);
+                        if (aMatTypInfoRecChk.filter(fItem2 => fItem2.MATTYP === oCurr[0].Mattyp && fItem2.FIELD3.split(',').includes(oCurr[0].Supplytyp)).length > 0) {
+
+                            oInput.push({
+                                Lifnr: item.Vendorcd,
+                                Matnr: item.Matno,
+                                Meins: item.Baseuom,
+                                Bstme: item.Orderuom,
+                                Umren: item.Umren === "" ? "1" : item.Umren,
+                                Umrez: item.Umrez === "" ? "1" : item.Umrez,
+                                Ekgrp: item.Purgrp,
+                                Netpr: item.Unitprice,
+                                Waers: oCurr.length > 0 ? oCurr[0].Currencycd : "",
+                                Meins2: item.Orderuom,
+                                Purplant: item.Purplant
+                            })
+
+                        }
                     }
                 })
+
+                // console.log("oInput", oInput);
 
                 // var oParam = {
                 //     "SBU": "VER",
@@ -12053,7 +12099,7 @@ sap.ui.define([
                     oParam["SBU"] = this._sbu;
                     oParam["N_CreateInfoRecParam"] = oInput;
                     oParam["N_CreateInfoRecReturn"] = [];
-                    // console.log(oParam)
+                    // console.log("CreateInfoRecordSet Parameters", oParam)
                     oModel.setUseBatch(false);
                     oModel.create("/CreateInfoRecordSet", oParam, {
                         method: "POST",
