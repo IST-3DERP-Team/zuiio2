@@ -25,7 +25,7 @@
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
         useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{ddtext>/SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
@@ -53,7 +53,7 @@
             </smartfilterbar:controlConfiguration>
                     
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SALESGRP}" filterType="multiple" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SALESGRP}" filterType="multiple" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSALESGRP"
                                 selectedKey="{ui>/sbu}"
@@ -68,7 +68,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                                 <MultiInput id="multiInputSeason"
                                     
@@ -113,7 +113,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{i18n>CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxCUSTGRP"
                                 selectedKey="{ui>/CUSTGRP}"
@@ -128,7 +128,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="Plant" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/PLANT}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxPLANPLANT"
                                 selectedKey="{ui>/PLANPLANT}"
@@ -144,7 +144,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxIOTYPE"
                                 selectedKey="{ui>/IOTYPE}"
@@ -159,7 +159,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{i18n>STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSTYLECD"
                                 selectedKey="{ui>/STYLECD}"
@@ -174,7 +174,7 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_BASIC" label="{i18n>IONO}" preventInitialDataFetchInValueHelpDialog="false">
+                <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IONO}" preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSTYLECD"
                                 selectedKey="{ui>/STYLECD}"
@@ -197,15 +197,15 @@
 
         <!-- STATISTICS TOOLBAR-->
         <Toolbar>
-            <GenericTag id="_IDGenGenericTag1" text="Forecast" design="StatusIconHidden" status="Warning">
+            <GenericTag id="_IDGenGenericTag1" text="{ddtext>/FORECAST}" design="StatusIconHidden" status="Warning">
 				<ObjectNumber id="forecastNumber" state="Warning" emphasized="false"/>
 			</GenericTag>
 
-			<GenericTag id="_IDGenGenericTag3" text="Order"  design="StatusIconHidden" status="Error">
+			<GenericTag id="_IDGenGenericTag3" text="{ddtext>/ORDER}"  design="StatusIconHidden" status="Error">
 				<ObjectNumber id="orderNumber" state="Error" emphasized="false"/>
 			</GenericTag>
 
-			<GenericTag id="_IDGenGenericTag4" text="Shipped"  design="StatusIconHidden" status="Success">
+			<GenericTag id="_IDGenGenericTag4" text="{ddtext>/SHIPPED}"  design="StatusIconHidden" status="Success">
 				<ObjectNumber id="shippedNumber" state="Success" emphasized="false"/>
 			</GenericTag>
         </Toolbar>
@@ -218,19 +218,19 @@
             <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document">
 			    <menu>
 			        <Menu id="_IDGenMenu1">
-                        <MenuItem id="_IDGenMenuItem1" text="Manually" press="onCreateIO('Manual')" visible="true"/>
-                        <MenuItem id="_IDGenMenuItem2" text="From Sales Document" press="onCreateIO('SalesDoc')" visible="true"/>
-			            <MenuItem id="_IDGenMenuItem3" text="From Style" press="onCreateIO('Style')" visible="true"/>
+                        <MenuItem id="_IDGenMenuItem1" text="{ddtext>/MANUALLY}" press="onCreateIO('Manual')" visible="true"/>
+                        <MenuItem id="_IDGenMenuItem2" text="{ddtext>/FRMSALESDOC}" press="onCreateIO('SalesDoc')" visible="true"/>
+			            <MenuItem id="_IDGenMenuItem3" text="{ddtext>/FRMSTYLE}" press="onCreateIO('Style')" visible="true"/>
                     </Menu>
 			    </menu>                    
 		        </MenuButton>
-                    <Button id="btnCopy" text="Copy" icon="sap-icon://copy" tooltip="Copy" press="onCopyIO" visible="true"/>
-                    <Button icon="sap-icon://excel-attachment" tooltip="Export to Excel" press="onExport" visible="true">
+                    <Button id="btnCopy" text="{ddtext>/COPY}" icon="sap-icon://copy" tooltip="{ddtext>/COPY}" press="onCopyIO" visible="true"/>
+                    <Button icon="sap-icon://excel-attachment" tooltip="{ddtext>/EXPORTTOEXCEL}" press="onExport" visible="true">
                         <customData>
                             <core:CustomData key="TableName" value="IODynTable" />
                         </customData>
                     </Button>
-                <Button text="Save" icon="sap-icon://grid" tooltip="Save" press="onSaveTableLayout" visible="true"/>
+                <Button text="{ddtext>/SAVE}" icon="sap-icon://grid" tooltip="{ddtext>/SAVE}" press="onSaveTableLayout" visible="true"/>
 
             <layoutData>
                 <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>

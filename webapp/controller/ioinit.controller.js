@@ -35,6 +35,8 @@ sap.ui.define([
                 // this._tableFilter = TableFilter;
                 // this._colFilters = {};
 
+                that.getCaptionSet();
+
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
 
                 this.getView().setModel(new JSONModel({
@@ -2007,5 +2009,53 @@ sap.ui.define([
             onRemoveColFilter: function (oEvent) {
                 TableFilter.onRemoveColFilter(oEvent, this);
             },
+
+            getCaptionSet: function () {
+                let me = this;
+                var oDDTextParam = [], oDDTextResult = {};
+                var oJSONModelDDText = new JSONModel();
+                var oModel = me.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
+                oDDTextParam.push({ CODE: "COPY" });
+                oDDTextParam.push({ CODE: "SAVE" });
+                oDDTextParam.push({ CODE: "FORECAST" });
+                oDDTextParam.push({ CODE: "ORDER" });
+                oDDTextParam.push({ CODE: "SHIPPED" });
+                oDDTextParam.push({ CODE: "EXPORTOEXCEL" });
+                oDDTextParam.push({ CODE: "MANUALLY" });
+                oDDTextParam.push({ CODE: "FRMSALESDOC" });
+                oDDTextParam.push({ CODE: "FRMSTYLE" });
+                oDDTextParam.push({ CODE: "IONO" });
+                oDDTextParam.push({ CODE: "STYLECD" });
+                oDDTextParam.push({ CODE: "IOTYPE" });
+                oDDTextParam.push({ CODE: "PLANT" });
+                oDDTextParam.push({ CODE: "CUSTGRP" });
+                oDDTextParam.push({ CODE: "SEASONCD" });
+                oDDTextParam.push({ CODE: "SALESGRP" });
+                oDDTextParam.push({ CODE: "SBU" });
+
+                // console.log(oDDTextParam);
+
+                setTimeout(() => {
+                    oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam }, {
+                        method: "POST",
+                        success: function (oData, oResponse) {
+                            // console.log(oData);
+                            oData.CaptionMsgItems.results.forEach(item => {
+                                oDDTextResult[item.CODE] = item.TEXT;
+                            })
+
+                            oJSONModelDDText.setData(oDDTextResult);
+                            me.getView().setModel(oJSONModelDDText, "ddtext");
+                            me.getOwnerComponent().getModel("CAPTION_MSGS_MODEL").setData({ oDDTextResult })
+
+                            // console.log("oJSONModelDDText");
+                            // console.log(oJSONModelDDText);
+                        },
+                        error: function (err) {
+                            // sap.m.MessageBox.error(err);
+                        }
+                    });
+                }, 100);
+            }
         });
     });
