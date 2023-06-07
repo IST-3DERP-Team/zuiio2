@@ -4130,11 +4130,14 @@ sap.ui.define([
 
             refreshHeaderData: async function () {
                 var me = this;
-                var ioNo = me._ioNo;
+                // var ioNo = me._ioNo;
+                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var oModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
                 // Common.openLoadingDialog(that);
+
+                console.log(ioNo);
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
 
                 await me.UpdateIOHdrQuantity();
@@ -4253,7 +4256,8 @@ sap.ui.define([
 
             reloadHeaderData: function (iono) {
                 var me = this;
-                var ioNo = iono;
+                // var ioNo = iono;
+                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var oModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
@@ -4264,9 +4268,12 @@ sap.ui.define([
 
                 Common.openLoadingDialog(that);
 
+                console.log(ioNo);
+
                 var entitySet = "/IOHDRSet('" + ioNo + "')"
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
+                        console.log("/IOHDRSet", oData);
                         oData.CUSTDLVDT = oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
                         oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
                         oData.REQEXFTYDT = oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
@@ -5726,6 +5733,7 @@ sap.ui.define([
             },
 
             onIORelease: async function (TableName) {
+                var me = this;
                 sTableName = TableName;
                 var oParam;
                 var sIONo = this.getView().byId("IONO").getValue();
@@ -5763,10 +5771,11 @@ sap.ui.define([
 
                             var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
 
+                            // oModelRelease.setUseBatch(false);
                             oModelRelease.create(sEntitySet, oParam, {
                                 method: sMethod,
                                 success: function (oData, oResponse) {
-                                    // console.log(oData);
+                                    console.log("oData", oData);
                                     //capture oData output if needed
                                     resultType = oData.Type;
                                     resultDescription = oData.Description;
@@ -5780,12 +5789,18 @@ sap.ui.define([
                                             sap.m.MessageBox.information(sIONo + " Released.");
                                         }
                                     }, 100);
+
+                                    me.unLock();
                                 },
                                 error: function (err) {
-                                    // console.log(err);
-                                    this.unLock();
-                                    resultDescription = err.responseText;
+                                    // console.log("Err", err);
+                                    // console.log("err.error.message.value", err.error.message.value);
+                                    // console.log("JSON.parse", JSON.parse(err.responseText).error.message.value);
+                                    
+                                    resultDescription = JSON.parse(err.responseText).error.message.value;                                    
                                     sap.m.MessageBox.error(resultDescription);
+
+                                    me.unLock();
                                 }
                             });
 
@@ -14441,7 +14456,7 @@ sap.ui.define([
                 oParamLock["Iv_Count"] = 300;
                 oParamLock["IO_MSG"] = [];
 
-                // console.log(oParamLock);
+                console.log(oParamLock);
 
                 var promise = new Promise((resolve, reject) => {
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
@@ -14490,7 +14505,7 @@ sap.ui.define([
                 oParamUnLock["Iv_Count"] = 300;
                 oParamUnLock["IO_MSG"] = [];
 
-                // console.log(oParamUnLock);
+                console.log(oParamUnLock);
 
                 oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
                     method: "POST",
