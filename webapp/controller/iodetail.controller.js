@@ -6928,7 +6928,7 @@ sap.ui.define([
                                             aStyleHdr.push({
                                                 KEY: item.ColumnName,
                                                 LABEL: item.ColumnLabel,
-                                                VALUE: oData.results[0][item.ColumnName],
+                                                VALUE: oData.results.length > 0 ? oData.results[0][item.ColumnName] : "",
                                                 VISIBLE: item.Visible
                                             });
                                         })
