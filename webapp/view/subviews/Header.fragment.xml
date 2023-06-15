@@ -13,10 +13,10 @@
     <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
     <ToolbarSpacer />
         <!-- <Button id = "onIORefresh" type="Ghost"  icon="sap-icon://refresh" tooltip="Refresh" press="onIORefresh('IOHDR')" visible="true"/> -->
-        <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="Edit IO" press="onIOEdit('IOHDR')" visible="true"/>
-        <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="Release IO" tooltip="Release IO" press="onIORelease('IOHDR')" visible="true"/>
-        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="Save" tooltip="save" press="onIOSave('IOHDR')" visible="false"/>
-        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="Cancel" tooltip="Cancel" press="onIOCancel('IOHDR')" visible="false"/>
+        <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="{ddtext>/TTEDITIO}" press="onIOEdit('IOHDR')" visible="true"/>
+        <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="{ddtext>/TXTRELIO}" tooltip="{ddtext>/TXTRELIO}" press="onIORelease('IOHDR')" visible="true"/>
+        <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="{ddtext>/SAVE}" tooltip="{ddtext>/SAVE}" press="onIOSave('IOHDR')" visible="false"/>
+        <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="{ddtext>/CANCEL}" tooltip="{ddtext>/CANCEL}" press="onIOCancel('IOHDR')" visible="false"/>
     </OverflowToolbar>
 
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>
@@ -37,7 +37,7 @@
                 <f:formElements>
 
                     <!-- IONO -->
-                    <f:FormElement id="feIONO" label="{i18n>IONO}" visible="false">
+                    <f:FormElement id="feIONO" label="{ddtext>/IONO}" visible="false">
                         <f:fields>
                             <Input id="IONO" 
                             value="{headerData>/IONO}" 
@@ -50,7 +50,7 @@
                     </f:FormElement> 
 
                     <!-- IOTYPE -->
-                    <f:FormElement id="feIOTYPE" label="{i18n>IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
+                    <f:FormElement id="feIOTYPE" label="{ddtext>/IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                         <f:fields>
                             <Input id="IOTYPE"  
                                 value="{headerData>/IOTYPE}" 
@@ -71,7 +71,7 @@
                     </f:FormElement>   
                     
                     <!-- IODESC -->
-                    <f:FormElement id="feIODESC" label="{i18n>IODESC}" visible="{= ${VisibleFieldsData>/IODESC} === true ? true : false }">
+                    <f:FormElement id="feIODESC" label="{ddtext>/IODESC}" visible="{= ${VisibleFieldsData>/IODESC} === true ? true : false }">
                         <f:fields>
                             <Input id="IODESC" 
                             value="{headerData>/IODESC}" 
@@ -84,7 +84,7 @@
                     </f:FormElement>  
 
                     <!-- REFIONO -->
-                    <f:FormElement id="feREFIONO" label="{i18n>REFIONO}" visible="{= ${VisibleFieldsData>/REFIONO} === true ? true : false }">
+                    <f:FormElement id="feREFIONO" label="{ddtext>/REFIONO}" visible="{= ${VisibleFieldsData>/REFIONO} === true ? true : false }">
                         <f:fields>
                             <Input id="REFIONO" type="Text" showSuggestion="true" showValueHelp="true" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REFIONO} : false }" valueStateText="Required"
@@ -95,7 +95,7 @@
                     </f:FormElement>  
 
                     <!-- IOSUFFIX -->
-                    <f:FormElement id="feIOSUFFIX" label="{i18n>IOSUFFIX}" visible="{= ${VisibleFieldsData>/IOSUFFIX} === true ? true : false }">
+                    <f:FormElement id="feIOSUFFIX" label="{ddtext>/IOSUFFIX}" visible="{= ${VisibleFieldsData>/IOSUFFIX} === true ? true : false }">
                         <f:fields>
                             <Input id="IOSUFFIX" type="Text" showSuggestion="true" showValueHelp="false" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/IOSUFFIX} : false }" valueStateText="Required"
@@ -106,7 +106,7 @@
                     </f:FormElement>         
 
                     <!-- STYLECD -->
-                    <f:FormElement id="feSTYLECD" label="{i18n>STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
+                    <f:FormElement id="feSTYLECD" label="{ddtext>/STYLECD}" visible="{= ${VisibleFieldsData>/STYLECD} === true ? true : false }">
                         <f:fields>
                             <Input id="STYLECD" 
                                 value="{headerData>/STYLECD}" 
@@ -119,7 +119,7 @@
                     </f:FormElement>
 
                      <!-- SEASONCD -->
-                     <f:FormElement id="feSEASONCD" label="{i18n>SEASONCD}" visible="{= ${VisibleFieldsData>/SEASONCD} === true ? true : false }">
+                     <f:FormElement id="feSEASONCD" label="{ddtext>/SEASONCD}" visible="{= ${VisibleFieldsData>/SEASONCD} === true ? true : false }">
                         <f:fields>
                             <Input id="SEASONCD" 
                                 type="Text" 
@@ -141,7 +141,7 @@
                     </f:FormElement>
                     
                     <!-- STYLENO/VER -->
-                    <f:FormElement id="feSTYLENOVER" label="{i18n>STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
+                    <f:FormElement id="feSTYLENOVER" label="{dtext>/STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
                             <Input id="STYLENOVER" 
                                 type="Text" 
@@ -155,7 +155,7 @@
                     </f:FormElement>
 
                     <!-- STYLENO -->
-                    <f:FormElement id="feSTYLENO" label="{i18n>STYLENO}" visible="false">
+                    <f:FormElement id="feSTYLENO" label="{ddtext>/STYLENO}" visible="false">
                         <f:fields>
                             <Input id="STYLENO" 
                                 type="Text" 
@@ -177,7 +177,7 @@
                     </f:FormElement>
 
                     <!-- VERNO -->
-                    <f:FormElement id="feVERNO" label="{i18n>VERNO}" visible="false">
+                    <f:FormElement id="feVERNO" label="{dtext>/VERNO}" visible="false">
                         <f:fields>
                             <Input id="VERNO" type="Number" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/VERNO} : false }"
@@ -188,7 +188,7 @@
                     </f:FormElement>      
 
                     <!-- SOLDTOCUST -->
-                    <f:FormElement id="feSOLDTOCUST" label="{i18n>SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
+                    <f:FormElement id="feSOLDTOCUST" label="{ddtext>/SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
                         <f:fields>
                             <Input id="SOLDTOCUST" 
                                 value="{headerData>/SOLDTOCUST}" 
@@ -216,7 +216,7 @@
                 <f:formElements>        
 
                     <!-- CUSTGRP -->
-                    <f:FormElement id="feCUSTGRP" label="{i18n>CUSTGRP}" visible="{= ${VisibleFieldsData>/CUSTGRP} === true ? true : false }">
+                    <f:FormElement id="feCUSTGRP" label="{ddtext>/CUSTGRP}" visible="{= ${VisibleFieldsData>/CUSTGRP} === true ? true : false }">
                         <f:fields>
                             <Input id="CUSTGRP" 
                                 type="Text" 
@@ -238,7 +238,7 @@
                     </f:FormElement> 
 
                     <!-- PRODTYPE -->
-                    <f:FormElement id="fePRODTYPE" label="{i18n>PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
+                    <f:FormElement id="fePRODTYPE" label="{ddtext>/PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODTYPE"  
                                 value="{headerData>/PRODTYPE}" 
@@ -259,7 +259,7 @@
                     </f:FormElement>
 
                     <!-- SALESORG -->
-                    <f:FormElement id="feSALESORG" label="{i18n>SALESORG}" visible="{= ${VisibleFieldsData>/SALESORG} === true ? true : false }">
+                    <f:FormElement id="feSALESORG" label="{ddtext>/SALESORG}" visible="{= ${VisibleFieldsData>/SALESORG} === true ? true : false }">
                         <f:fields>
                             <Input id="SALESORG" 
                                 value="{headerData>/SALESORG}" 
@@ -279,7 +279,7 @@
                     </f:FormElement> 
 
                     <!-- SALESGRP -->
-                    <f:FormElement id="feSALESGRP" label="{i18n>SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
+                    <f:FormElement id="feSALESGRP" label="{ddtext>/SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
                         <f:fields>
                             <Input id="SALESGRP" 
                                 value="{headerData>/SALESGRP}" 
@@ -298,7 +298,7 @@
                         </f:fields>
                     </f:FormElement>
 
-                    <f:FormElement id="feBASEUOM" label="{i18n>BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
+                    <f:FormElement id="feBASEUOM" label="{ddtext>/BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
                         <f:fields>
                             <Input id="BASEUOM" 
                                 type="Text" 
@@ -320,7 +320,7 @@
                     </f:FormElement>
                     
                     <!-- PRODSCEN -->
-                    <f:FormElement id="fePRODSCEN" label="{i18n>PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
+                    <f:FormElement id="fePRODSCEN" label="{ddtext>/PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODSCEN" 
                                 value="{headerData>/PRODSCEN}" 
@@ -341,7 +341,7 @@
                     </f:FormElement>
                     
                     <!-- PRODPLANT -->
-                    <f:FormElement id="fePRODPLANT" label="{i18n>PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
+                    <f:FormElement id="fePRODPLANT" label="{ddtext>/PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODPLANT" 
                                 value="{headerData>/PRODPLANT}" 
@@ -361,7 +361,7 @@
                     </f:FormElement>
 
                     <!-- FTYSALESTERM -->
-                    <f:FormElement id="feFTYSALTERM" label="{i18n>FTYSALESTERM}" visible="{= ${VisibleFieldsData>/FTYSALTERM} === true ? true : false }">
+                    <f:FormElement id="feFTYSALTERM" label="{ddtext>/FTYSALESTERM}" visible="{= ${VisibleFieldsData>/FTYSALTERM} === true ? true : false }">
                         <f:fields>
                             <Input id="FTYSALTERM" 
                                 value="{headerData>/FTYSALTERM}" 
@@ -406,7 +406,7 @@
                 <f:formElements>                             
 
                     <!-- CUSSALTERM -->
-                    <f:FormElement id="feCUSSALTERM" label="{i18n>CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
+                    <f:FormElement id="feCUSSALTERM" label="{ddtext>/CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
                         <f:fields>
                             <Input id="CUSSALTERM" 
                                 type="Text" 
@@ -427,7 +427,7 @@
                     </f:FormElement>
 
                     <!-- TRADPLANT -->
-                    <f:FormElement id="feTRADPLANT" label="{i18n>TRADPLANT}" visible="{= ${VisibleFieldsData>/TRADPLANT} === true ? true : false }">
+                    <f:FormElement id="feTRADPLANT" label="{ddtext>/TRADPLANT}" visible="{= ${VisibleFieldsData>/TRADPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="TRADPLANT" 
                                 type="Text" 
@@ -449,7 +449,7 @@
                     </f:FormElement>    
                     
                     <!-- PLANPLANT -->
-                    <f:FormElement id="fePLANPLANT" label="{i18n>PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
+                    <f:FormElement id="fePLANPLANT" label="{ddtetx>/PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANPLANT" 
                                 value="{headerData>/PLANPLANT}" 
@@ -470,7 +470,7 @@
                     </f:FormElement>    
 
                     <!-- ORDQTY -->
-                    <f:FormElement id="feORDQTY" label="{i18n>ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
+                    <f:FormElement id="feORDQTY" label="{ddtext>/ORDQTY}" visible="{= ${VisibleFieldsData>/ORDQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="ORDQTY" type="Number" value="{headerData>/ORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/REVORDQTY} > 0 ? false : ${EditableFieldsData>/ORDQTY} : false }"
@@ -480,7 +480,7 @@
                     </f:FormElement>  
 
                     <!-- REVORDQTY -->
-                    <f:FormElement id="feREVORDQTY" label="{i18n>REVORDQTY}" visible="{= ${VisibleFieldsData>/REVORDQTY} === true ? true : false }">
+                    <f:FormElement id="feREVORDQTY" label="{ddtext>/REVORDQTY}" visible="{= ${VisibleFieldsData>/REVORDQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="REVORDQTY" type="Number" value="{headerData>/REVORDQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REVORDQTY} : false }"
@@ -490,7 +490,7 @@
                     </f:FormElement>  
                     
                     <!-- PLANQTY -->
-                     <f:FormElement id="fePLANQTY" label="{i18n>PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
+                     <f:FormElement id="fePLANQTY" label="{ddtext>/PLANQTY}"  visible="{= ${VisibleFieldsData>/PLANQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANQTY" type="Number" value="{headerData>/PLANQTY}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANQTY} : false }" valueStateText="Required"
@@ -499,7 +499,7 @@
                     </f:FormElement>
 
                     <!-- ACTUALQTY -->
-                    <f:FormElement id="feACTUALQTY" label="{i18n>ACTUALQTY}" visible="{= ${VisibleFieldsData>/ACTUALQTY} === true ? true : false }">
+                    <f:FormElement id="feACTUALQTY" label="{ddtext>/ACTUALQTY}" visible="{= ${VisibleFieldsData>/ACTUALQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="ACTUALQTY" type="Number" value="{headerData>/ACTUALQTY}" 
                             editable="false"
@@ -509,7 +509,7 @@
                     </f:FormElement> 
 
                     <!-- SHIPQTY -->
-                    <f:FormElement id="feSHIPQTY" label="{i18n>SHIPQTY}" visible="{= ${VisibleFieldsData>/SHIPQTY} === true ? true : false }">
+                    <f:FormElement id="feSHIPQTY" label="{ddtext>/SHIPQTY}" visible="{= ${VisibleFieldsData>/SHIPQTY} === true ? true : false }">
                         <f:fields>
                             <Input id="SHIPQTY" type="Number" value="{headerData>/SHIPQTY}" 
                             editable="false"
@@ -539,7 +539,7 @@
                     </f:FormElement>                                                                                 -->
                     
                    <!-- STATUSCD                      -->
-                    <f:FormElement id="feSTATUSCD" label="{i18n>STATUSCD}"  visible="false">
+                    <f:FormElement id="feSTATUSCD" label="{ddtext>/STATUSCD}"  visible="false">
                         <f:fields>
                             <Input id="STATUSCD" value="{headerData>/STATUSCD}" 
                             editable="false" valueStateText="Required"/>
@@ -547,7 +547,7 @@
                     </f:FormElement>     
 
                     <!-- IOPREFIX   -->
-                    <f:FormElement id="feIOPREFIX" label="{i18n>IOPREFIX}"  visible="false">
+                    <f:FormElement id="feIOPREFIX" label="{ddtext>/IOPREFIX}"  visible="false">
                         <f:fields>
                             <Input id="IOPREFIX" value="{headerData>/IOPREFIX}" 
                             editable="false" valueStateText="Required"/>
@@ -570,7 +570,7 @@
                 <f:formElements> 
 
                 <!-- CUSTDLVDT -->
-                <f:FormElement id="feCUSTDLVDT" label="{i18n>CUSTDLVDT}"  visible="{= ${VisibleFieldsData>/CUSTDLVDT} === true ? true : false }">
+                <f:FormElement id="feCUSTDLVDT" label="{ddtext>/CUSTDLVDT}"  visible="{= ${VisibleFieldsData>/CUSTDLVDT} === true ? true : false }">
                         <f:fields>
                             <DatePicker
                                 id="CUSTDLVDT"
@@ -584,7 +584,7 @@
                     </f:FormElement>  
 
                 <!-- PLANDLVDT -->
-                <f:FormElement id="fePLANDLVDT" label="{i18n>PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
+                <f:FormElement id="fePLANDLVDT" label="{dtext>/PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
                         <f:fields>
                             <DatePicker
                                 id="PLANDLVDT"
@@ -597,7 +597,7 @@
                     </f:FormElement>
 
                 <!-- PLANMONTH -->
-                <f:FormElement id="fePLANMONTH" label="{i18n>PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
+                <f:FormElement id="fePLANMONTH" label="{ddtext>/PLANMONTH}" visible="{= ${VisibleFieldsData>/PLANMONTH} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANMONTH" value="{headerData>/PLANMONTH}" showSuggestion="true" showValueHelp="false" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANMONTH} : false}" 
@@ -618,7 +618,7 @@
                     </f:FormElement>  -->
 
                 <!-- PRODWK -->
-                 <f:FormElement id="fePRODWK" label="{i18n>PRODWK}" visible="{= ${VisibleFieldsData>/PRODWK} === true ? true : false }">
+                 <f:FormElement id="fePRODWK" label="{ddtext>/PRODWK}" visible="{= ${VisibleFieldsData>/PRODWK} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODWK" type="Number" value="{headerData>/PRODWK}" showSuggestion="true" showValueHelp="true" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODWK} : false }" valueStateText="Required"
@@ -628,7 +628,7 @@
                     </f:FormElement>
 
                 <!-- PRODDAYS -->
-                <f:FormElement id="fePRODDAYS" label="{i18n>PRODDAYS}" visible="{= ${VisibleFieldsData>/PRODDAYS} === true ? true : false }">
+                <f:FormElement id="fePRODDAYS" label="{ddtext>/PRODDAYS}" visible="{= ${VisibleFieldsData>/PRODDAYS} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODDAYS" type="Number" value="{headerData>/PRODDAYS}" showSuggestion="true" showValueHelp="true" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODDAYS} : false }" valueStateText="Required"
@@ -638,7 +638,7 @@
                     </f:FormElement>    
 
                 <!-- PRODSTART -->
-                <f:FormElement id="fePRODSTART" label="{i18n>PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
+                <f:FormElement id="fePRODSTART" label="{ddtext>/PRODSTART}"  visible="{= ${VisibleFieldsData>/PRODSTART} === true ? true : false }">
                         <f:fields>
                             <DatePicker
                                 id="PRODSTART"
@@ -652,7 +652,7 @@
                     </f:FormElement>
 
                 <!-- REMARKS -->
-                <f:FormElement id="feREMARKS" label="{i18n>REMARKS}"  visible="{= ${VisibleFieldsData>/REMARKS} === true ? true : false }">
+                <f:FormElement id="feREMARKS" label="{ddtext>/REMARKS}"  visible="{= ${VisibleFieldsData>/REMARKS} === true ? true : false }">
                         <f:fields>
                             <TextArea id="REMARKS" value="{headerData>/REMARKS}" 
                             editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/REMARKS} : false }" valueStateText="Required"/>

@@ -1,34 +1,34 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout">
-	<Dialog title="Copy IO" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="45%">
+	<Dialog title="{ddtext>/COPYIO}" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="45%">
 		<Panel height="230px" >
             <l:HorizontalLayout class="sapUiNoContentPadding" >
                 <l:VerticalLayout class="sapUiContentPadding" width="100%">
                     <l:content>
-                        <Label text="Source IO No"/>
+                        <Label text="{ddtext>/SRCIO}"/>
                         <Input id="iIONo" width = "7rem" editable="false" value="IONO"/>
                     </l:content>
                 </l:VerticalLayout>
                 <l:VerticalLayout class="sapUiContentPadding" width="100%">
                     <l:content>
-                        <Label text="IO Desc"/>
+                        <Label text="{ddtext>/IODESC}"/>
                         <Input id="iIODesc" width = "7rem"  editable="false"/> 
                     </l:content>
                 </l:VerticalLayout>
                 <l:VerticalLayout class="sapUiContentPadding" width="100%">
                     <l:content>
-                        <Label text="Style Code"/>
+                        <Label text="{ddtext>/STYLECD}"/>
                         <Input id="iStyleCd" width = "7rem"  editable="false"/> 
                     </l:content>
                 </l:VerticalLayout>
                 <l:VerticalLayout class="sapUiContentPadding" width="100%">
                     <l:content>
-                        <Label text="Season"/>
+                        <Label text="{ddtext>/SEASONCD}"/>
                         <Input id="iSeasonCd" width = "7rem"  editable="false"/> 
                     </l:content>
                 </l:VerticalLayout>
                 <l:VerticalLayout class="sapUiContentPadding" width="100%">
                     <l:content>
-                        <Label text="Plant"/>
+                        <Label text="{ddtext>/PLANTCD}"/>
                         <Input id="iPlant" width = "7rem"  editable="false"/> 
                     </l:content>
                 </l:VerticalLayout>
@@ -41,17 +41,17 @@
                 <f:formContainers>
                     <f:FormContainer ariaLabelledBy="Grp1">
                         <f:formElements>
-                            <f:FormElement label="New IO Desc">
+                            <f:FormElement label="{ddtext>/NEWIODESC}">
                                 <f:fields>
                                     <Input id="newIODesc"/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="New Style Code">
+                            <f:FormElement label="{ddtext>/NEWSTYLECD}">
                                 <f:fields>
                                     <Input id="newStyleCd"/>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="New Season">
+                            <f:FormElement label="{ddtext>/NEWSEASONCD}">
                                 <f:fields>
                                     <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" showValueHelp="true" suggestionItems="{SeasonsModel>/results}">
                                         <suggestionItems>
@@ -60,7 +60,7 @@
                                     </Input>
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="New Plant">
+                            <f:FormElement label="{ddtext>/NEWPLANTCD}">
                                 <f:fields>
                                     <Input id="newPlant" type="Text" editable="true" showSuggestion="true" suggestionItems="{PlantModel>/results}">
                                     <suggestionItems>
@@ -111,22 +111,22 @@
                 
                     <f:FormContainer ariaLabelledBy="Grp2">
                         <f:formElements>
-                            <f:FormElement label="New Style">
+                            <f:FormElement label="{ddtext>/NEWSTYLE}">
                                 <f:fields>
                                     <CheckBox id="StyleCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Color">
+                            <f:FormElement label="{ddtext>/COLOR}">
                                 <f:fields>
                                     <CheckBox id="ColorCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="BOM">
+                            <f:FormElement label="{ddtext>/BOM}">
                                 <f:fields>
                                     <CheckBox id="BOMCB" selected="true" />
                                 </f:fields>
                             </f:FormElement>
-                            <f:FormElement label="Costing">
+                            <f:FormElement label="{ddtext>/COSTING}">
                                 <f:fields>
                                     <CheckBox id="CostingCB" selected="true" />
                                 </f:fields>
@@ -171,8 +171,8 @@
             </t:Table> -->
 		</Panel>
 		<buttons>
-			<Button text="{i18n>Copy}" press="onfragmentCopyIO" tooltip="Copy"/>
-			<Button text="{i18n>Cancel}" press="onCloseCopyIO" tooltip="Cancel"/>
+			<Button text="{ddtext>/COPY}" press="onfragmentCopyIO" tooltip="{ddtext>/COPY}"/>
+			<Button text="{ddtext>/CANCEL}" press="onCloseCopyIO" tooltip="{ddtext>/CANCEL}"/>
 		</buttons>
 	</Dialog>
 </core:FragmentDefinition>

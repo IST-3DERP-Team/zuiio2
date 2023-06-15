@@ -2032,6 +2032,29 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "SEASONCD" });
                 oDDTextParam.push({ CODE: "SALESGRP" });
                 oDDTextParam.push({ CODE: "SBU" });
+                oDDTextParam.push({ CODE: "SELECT" });
+                oDDTextParam.push({ CODE: "CANCEL" });
+                oDDTextParam.push({ CODE: "FILTER" });
+                oDDTextParam.push({ CODE: "SELECTSD" });
+                oDDTextParam.push({ CODE: "SELECTSTYLE" });
+                oDDTextParam.push({ CODE: "COPYIO" });
+                oDDTextParam.push({ CODE: "SRCIO" });
+                oDDTextParam.push({ CODE: "IODESC" });
+                oDDTextParam.push({ CODE: "STYLECD" });
+                oDDTextParam.push({ CODE: "SEASONCD" });
+                oDDTextParam.push({ CODE: "PLANTCD" });
+
+                oDDTextParam.push({ CODE: "NEWIODESC" });
+                oDDTextParam.push({ CODE: "NEWSTYLECD" });
+                oDDTextParam.push({ CODE: "NEWSEASONCD" });
+                oDDTextParam.push({ CODE: "NEWPLANTCD" });
+                oDDTextParam.push({ CODE: "PLANTCD" });
+
+                oDDTextParam.push({ CODE: "NEWSTYLE" });
+                oDDTextParam.push({ CODE: "COLOR" });
+                oDDTextParam.push({ CODE: "BOM" });
+                oDDTextParam.push({ CODE: "COSTING" });
+
 
                 // console.log(oDDTextParam);
 

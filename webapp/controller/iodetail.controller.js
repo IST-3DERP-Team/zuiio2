@@ -876,11 +876,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "DTLDBOM" });
                 oDDTextParam.push({ CODE: "BOMBYUV" });
                 oDDTextParam.push({ CODE: "MATLIST" });
-                oDDTextParam.push({ CODE: "EDIT" });
-                oDDTextParam.push({ CODE: "SAVE" });
-                oDDTextParam.push({ CODE: "CANCEL" });
                 oDDTextParam.push({ CODE: "MANAGESTYLE" });
-                oDDTextParam.push({ CODE: "NEW" });
                 oDDTextParam.push({ CODE: "STYLEHDR" });
                 oDDTextParam.push({ CODE: "PARTCD" });
                 oDDTextParam.push({ CODE: "PARTDESC" });
@@ -973,6 +969,66 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ERR_CUSTDLVDT_REQUIRED" });
                 oDDTextParam.push({ CODE: "INFO_INVALID_PURGRP" });
                 oDDTextParam.push({ CODE: "INFO_NO_VALID_COST" });
+
+                oDDTextParam.push({ CODE: "STYLENO" });
+                oDDTextParam.push({ CODE: "STATUS" });
+                oDDTextParam.push({ CODE: "UPDATEDDT" });
+
+                oDDTextParam.push({ CODE: "ITFIOHDR" });
+                oDDTextParam.push({ CODE: "ITFATTRIB" });
+                oDDTextParam.push({ CODE: "ITFSTAT" });
+                oDDTextParam.push({ CODE: "ITFSTYLE" });
+                oDDTextParam.push({ CODE: "ITFSTYLHDR" });
+                oDDTextParam.push({ CODE: "ITFIODET" });
+                oDDTextParam.push({ CODE: "IMPORTPO" });
+                oDDTextParam.push({ CODE: "ITFCOSTING" });
+                oDDTextParam.push({ CODE: "ITFCOSTVER" });
+                oDDTextParam.push({ CODE: "ITFCOSTDET" });
+                oDDTextParam.push({ CODE: "ITFFASUMM" });
+                oDDTextParam.push({ CODE: "ITFATTACH" });
+
+                oDDTextParam.push({ CODE: "TTDELSELATT" });
+                oDDTextParam.push({ CODE: "TTEDITATT" });
+                oDDTextParam.push({ CODE: "TTCANCELATT" });
+                oDDTextParam.push({ CODE: "TXTDELSEL" });
+
+                oDDTextParam.push({ CODE: "TTEDITIO" });
+                oDDTextParam.push({ CODE: "TXTRELIO" });
+                oDDTextParam.push({ CODE: "IONO" });
+                oDDTextParam.push({ CODE: "IOTYPE" });
+                oDDTextParam.push({ CODE: "IODESC" });
+                oDDTextParam.push({ CODE: "REFIONO" });
+                oDDTextParam.push({ CODE: "IOSUFFIX" });
+                oDDTextParam.push({ CODE: "STYLECD" });
+                oDDTextParam.push({ CODE: "SEASONCD" });
+                oDDTextParam.push({ CODE: "STYLENO" });
+                oDDTextParam.push({ CODE: "VERNO" });
+                oDDTextParam.push({ CODE: "SOLDTOCUST" });
+                oDDTextParam.push({ CODE: "CUSTGRP" });
+                oDDTextParam.push({ CODE: "PRODTYPE" });
+                oDDTextParam.push({ CODE: "SALESORG" });
+                oDDTextParam.push({ CODE: "SALESGRP" });
+                oDDTextParam.push({ CODE: "BASEUOM" });
+                oDDTextParam.push({ CODE: "PRODSCEN" });
+                oDDTextParam.push({ CODE: "PRODPLANT" });
+                oDDTextParam.push({ CODE: "FTYSALESTERM" });
+                oDDTextParam.push({ CODE: "CUSSALTERM" });
+                oDDTextParam.push({ CODE: "TRADPLANT" });
+                oDDTextParam.push({ CODE: "PLANPLANT" });
+                oDDTextParam.push({ CODE: "ORDQTY" });
+                oDDTextParam.push({ CODE: "REVORDQTY" });
+                oDDTextParam.push({ CODE: "PLANQTY" });
+                oDDTextParam.push({ CODE: "ACTUALQTY" });
+                oDDTextParam.push({ CODE: "SHIPQTY" });
+                oDDTextParam.push({ CODE: "STATUSCD" });
+                oDDTextParam.push({ CODE: "IOPREFIX" });
+                oDDTextParam.push({ CODE: "CUSTDLVDT" });
+                oDDTextParam.push({ CODE: "PLANDLVDT" });
+                oDDTextParam.push({ CODE: "PLANMONTH" });
+                oDDTextParam.push({ CODE: "PRODDAYS" });
+                oDDTextParam.push({ CODE: "PRODWK" });
+                oDDTextParam.push({ CODE: "PRODSTART" });
+                oDDTextParam.push({ CODE: "REMARKS" });
 
                 // console.log(oDDTextParam);
 
@@ -6564,7 +6620,7 @@ sap.ui.define([
                 // this.getReloadIOColumnProp();
             },
 
-            //******************************************* */
+            //******************************************* */onIOGenMatList
             // STYLE
             //******************************************* */
 
