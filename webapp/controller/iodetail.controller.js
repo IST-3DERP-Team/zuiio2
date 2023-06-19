@@ -1029,6 +1029,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "PRODWK" });
                 oDDTextParam.push({ CODE: "PRODSTART" });
                 oDDTextParam.push({ CODE: "REMARKS" });
+                oDDTextParam.push({ CODE: "ENTERDATE" });
 
                 // console.log(oDDTextParam);
 

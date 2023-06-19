@@ -449,7 +449,7 @@
                     </f:FormElement>    
                     
                     <!-- PLANPLANT -->
-                    <f:FormElement id="fePLANPLANT" label="{ddtetx>/PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
+                    <f:FormElement id="fePLANPLANT" label="{ddtext>/PLANPLANT}" visible="{= ${VisibleFieldsData>/PLANPLANT} === true ? true : false }">
                         <f:fields>
                             <Input id="PLANPLANT" 
                                 value="{headerData>/PLANPLANT}" 
@@ -574,7 +574,7 @@
                         <f:fields>
                             <DatePicker
                                 id="CUSTDLVDT"
-                                placeholder="Enter Date"
+                                placeholder="{ddtext>/ENTERDATE}"
                                 change="onHeaderChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}"                                 
@@ -584,11 +584,11 @@
                     </f:FormElement>  
 
                 <!-- PLANDLVDT -->
-                <f:FormElement id="fePLANDLVDT" label="{dtext>/PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
+                <f:FormElement id="fePLANDLVDT" label="{ddtext>/PLANDLVDT}" visible="{= ${VisibleFieldsData>/PLANDLVDT} === true ? true : false }">
                         <f:fields>
                             <DatePicker
                                 id="PLANDLVDT"
-                                placeholder="Enter Date"
+                                placeholder="{ddtext>/ENTERDATE}"
                                 value="{headerData>/PLANDLVDT}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANDLVDT} : false }"
                                 change="onHeaderChange"                                
@@ -642,7 +642,7 @@
                         <f:fields>
                             <DatePicker
                                 id="PRODSTART"
-                                placeholder="Enter Date"
+                                placeholder="{ddtext>/ENTERDATE}"
                                 change="handleChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"        
                                 value="{headerData>/PRODSTART}"                          
