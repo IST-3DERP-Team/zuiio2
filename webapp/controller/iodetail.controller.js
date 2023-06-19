@@ -374,6 +374,30 @@ sap.ui.define([
                 this.getView().getModel("ui2").setProperty("/currIONo", oEvent.getParameter("arguments").iono);
                 this.getView().getModel("ui2").setProperty("/currStyleNo", oEvent.getParameter("arguments").styleno);
 
+                // var oIconTabBarIO = this.byId("idIconTabBarInlineMode");
+                // oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                //     .forEach(item => item.setProperty("enabled", true));
+
+                // console.log(this.getView().getModel("ui2").getProperty("/currStyleNo"));
+                // console.log(oIconTabBarIO);
+                // if (this.getView().getModel("ui2").getProperty("/currStyleNo") === undefined
+                //     || this.getView().getModel("ui2").getProperty("/currStyleNo") === ""
+                //     || this.getView().getModel("ui2").getProperty("/currStyleNo") === "0000000000"
+                //     || this.getView().getModel("ui2").getProperty("/currStyleNo") === "NEW") {
+                //     oIconTabBarIO.getItems().forEach(item => {
+                //         // console.log(item);
+                //         console.log(item.getProperty("key"));
+                //         if (item.getProperty("key") === "itfIOHDR" || item.getProperty("key") === "itfSTYLE") {
+                //             item.setProperty("enabled", true);
+                //         } else {
+                //             item.setProperty("enabled", false);
+                //         }
+                //     });
+                // } else {
+                //     oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                //         .forEach(item => item.setProperty("enabled", true));
+                // }
+
                 // this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
@@ -568,10 +592,14 @@ sap.ui.define([
                     }
                 } else {
                     this.cancelHeaderEdit();
+
                     this.enableOtherTabs();
-                    var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                    oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
-                        .forEach(item => item.setProperty("enabled", true));
+
+                    // var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
+                    // oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                    //     .forEach(item => item.setProperty("enabled", true));
+
+                    this.disableOtherTabsNoStyle();
 
                     this._validationErrors = [];
                 }
@@ -980,6 +1008,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ITFSTYLE" });
                 oDDTextParam.push({ CODE: "ITFSTYLHDR" });
                 oDDTextParam.push({ CODE: "ITFIODET" });
+                oDDTextParam.push({ CODE: "IOITFMATLIST" });                
                 oDDTextParam.push({ CODE: "IMPORTPO" });
                 oDDTextParam.push({ CODE: "ITFCOSTING" });
                 oDDTextParam.push({ CODE: "ITFCOSTVER" });
@@ -1030,6 +1059,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "PRODSTART" });
                 oDDTextParam.push({ CODE: "REMARKS" });
                 oDDTextParam.push({ CODE: "ENTERDATE" });
+                oDDTextParam.push({ CODE: "ISREQUIRED" });
 
                 // console.log(oDDTextParam);
 
@@ -4392,14 +4422,17 @@ sap.ui.define([
                     var feCName = "";
                     me._aColumns["IOHDRTab"].forEach(ci => {
                         if (ci.Mandatory === true && ci.Editable === true) {
-                            // console.log(ci.ColumnName);
+                            console.log(ci.ColumnName);
+                            console.log(ci.Mandatory);
+                            console.log(ci.Editable);
+                            console.log(ci.DataType);
                             feCName = "fe" + ci.ColumnName;
                             this.getView().byId(feCName)._oLabel.addStyleClass("sapMLabelRequired");
                             this.byId(ci.ColumnName).setPlaceholder(ci.ColumnLabel + " " + isRequiredText);
 
                             // this.getView().byId(ci.ColumnName).setValueState("Error");
                             // this.getView().byId(ci.ColumnName).setValueStateText("Required Field");
-                        }
+                        } 
                     })
                     resolve();
                 });
@@ -5244,19 +5277,19 @@ sap.ui.define([
                     if (me._validationErrors.length === 0) {
                         var sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
-                        else if (this.getView().byId("STYLECD").getValue() === "") sErrMsg = "Style Code";
-                        else if (this.getView().byId("PRODTYPE").getValue() === "") sErrMsg = "Product Type";
-                        else if (this.getView().byId("PRODSCEN").getValue() === "") sErrMsg = "Production Scenario";
-                        else if (this.getView().byId("PLANMONTH").getValue() === "") sErrMsg = "Prod. Period";
-                        else if (this.getView().byId("IOTYPE").getValue() === "") sErrMsg = "IO Type";
-                        else if (this.getView().byId("SALESGRP").getValue() === "") sErrMsg = "Sales Grp.";
+                        else if (this.getView().byId("STYLECD").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["STYLECD"];
+                        else if (this.getView().byId("PRODTYPE").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODTYPE"];
+                        else if (this.getView().byId("PRODSCEN").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODSCEN"];
+                        else if (this.getView().byId("PLANMONTH").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PLANMONTH"];
+                        else if (this.getView().byId("IOTYPE").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["IOTYPE"];
+                        else if (this.getView().byId("SALESGRP").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["SALESGRP"];
                         // else if (this.getView().byId("IOSUFFIX").getValue() === "") sErrMsg = "IO Suffix";
-                        else if (this.getView().byId("SEASONCD").getValue() === "") sErrMsg = "Season Code";
-                        else if (this.getView().byId("CUSTGRP").getValue() === "") sErrMsg = "Customer Group";
-                        else if (this.getView().byId("BASEUOM").getValue() === "") sErrMsg = "Base UOM";
-                        else if (this.getView().byId("SOLDTOCUST").getValue() === "") sErrMsg = "Sold-To Customer";
-                        else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = "Customer Dlv Date";
-                        else if (this.getView().byId("PRODSTART").getValue() === "") sErrMsg = "Production Start";
+                        else if (this.getView().byId("SEASONCD").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["SEASONCD"];
+                        else if (this.getView().byId("CUSTGRP").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTGRP"];
+                        else if (this.getView().byId("BASEUOM").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["BASEUOM"];
+                        else if (this.getView().byId("SOLDTOCUST").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["SOLDTOCUST"];
+                        else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        else if (this.getView().byId("PRODSTART").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODSTART"];
 
                         if (sErrMsg.length > 0) {
                             sErrMsg += " is required."
@@ -5267,7 +5300,7 @@ sap.ui.define([
                         let iOrdQty = 0;
                         iOrdQty = +this.getView().byId("ORDQTY").getValue();
                         if (iOrdQty <= 0) {
-                            sErrMsg = "Order Quantity must be greater than zero."
+                            sErrMsg = this.getView().getModel("ddtext").getData()["ERR_REQD_GT_ZERO_QTY"];
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
                         }
@@ -5438,7 +5471,7 @@ sap.ui.define([
                                             resolve();
                                         },
                                         error: function (err) {
-                                            MessageBox.error("Error encountered when saving the IO");
+                                            MessageBox.error(this.getView().getModel("ddtext").getData()["ERR_IO_SAVE"]);
                                             resolve();
                                         }
                                     });
@@ -5472,10 +5505,7 @@ sap.ui.define([
                             }
                         })
 
-                        // console.log("IO Save - idIconTabBarInlineIOHdr re-enable");
-                        var oIconTabBarIO = this.byId("idIconTabBarInlineIOHdr");
-                        oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
-                            .forEach(item => item.setProperty("enabled", true));
+                        this.disableOtherTabsNoStyle();
 
                         // console.log("IO Save - reload Header Data");
                         _promiseResult = new Promise((resolve, reject) => {
@@ -5898,7 +5928,7 @@ sap.ui.define([
 
                     if (arg === "IODET") {
                         if (vDlvSeq === undefined || vDlvSeq === "999") {
-                            MessageBox.information("select a Delivery Sequence");
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_DLV_SEQ"]);
                             return;
                         }
                     }
@@ -14607,6 +14637,27 @@ sap.ui.define([
                 this._ImportPODialog = null;
 
                 this.unLock();
+            },
+
+            //DISABLE OTHER TABS EXCEPT HEADER AND STYLE IF THERE IS NO VALID STYLENO ASSIGNED
+            disableOtherTabsNoStyle: function () {
+                console.log("StyleNo: ", this.getView().getModel("ui2").getProperty("/currStyleNo"));
+                var oIconTabBarIO = this.byId("idIconTabBarInlineMode");
+                if (this.getView().getModel("ui2").getProperty("/currStyleNo") === undefined
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === ""
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === "0000000000"
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === "NEW") {
+                    oIconTabBarIO.getItems().forEach(item => {
+                        if (item.getProperty("key") === "itfIOHDR" || item.getProperty("key") === "itfSTYLE") {
+                            item.setProperty("enabled", true);
+                        } else {
+                            item.setProperty("enabled", false);
+                        }
+                    });
+                } else {
+                    oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                        .forEach(item => item.setProperty("enabled", true));
+                }
             },
 
             disableOtherTabs: function () {

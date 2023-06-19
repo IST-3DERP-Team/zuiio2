@@ -141,7 +141,7 @@
                     </f:FormElement>
                     
                     <!-- STYLENO/VER -->
-                    <f:FormElement id="feSTYLENOVER" label="{dtext>/STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
+                    <f:FormElement id="feSTYLENOVER" label="{ddtext>/STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
                         <f:fields>
                             <Input id="STYLENOVER" 
                                 type="Text" 
@@ -578,7 +578,7 @@
                                 change="onHeaderChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}"                                 
-                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
+                                valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
                             <!-- <Input id="CUSTDLVDT" class="sapUiSmallMarginBottom"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement>  
@@ -588,11 +588,10 @@
                         <f:fields>
                             <DatePicker
                                 id="PLANDLVDT"
-                                placeholder="{ddtext>/ENTERDATE}"
                                 value="{headerData>/PLANDLVDT}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANDLVDT} : false }"
                                 change="onHeaderChange"                                
-                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
+                                valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
                         </f:fields>
                     </f:FormElement>
 
@@ -646,7 +645,7 @@
                                 change="handleChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODSTART} : false }"        
                                 value="{headerData>/PRODSTART}"                          
-                                valueFormat="yyyy-MM-dd" displayFormat="short"/>
+                                valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
                             <!-- <Input id="PRODSTART" class="sapUiSmallMarginBottom" value="{headerData>/PRODSTART}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement>

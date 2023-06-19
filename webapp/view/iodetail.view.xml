@@ -486,7 +486,7 @@
                     </IconTabFilter> -->
 
                     <!-- DELIVERY SCHEDULE -->                    
-                    <IconTabFilter text="{dtext>/ITFIODET}" key="itfDLVSCHED">
+                    <IconTabFilter text="{ddtext>/ITFIODET}" key="itfDLVSCHED">
                         <VBox height="100%">
                         <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
                             <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">

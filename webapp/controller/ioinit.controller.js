@@ -639,6 +639,7 @@ sap.ui.define([
                 var model = oTable.getModel();
                 var data = model.getProperty(sPath);
                 IONOtxt = data['IONO'];
+                sStyleNo = data['STYLENO'] === undefined || data['STYLENO'] === "" ? "NEW" : data['STYLENO'];
             },
 
             setChangeStatus: function (changed) {
