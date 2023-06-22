@@ -4,10 +4,10 @@
 	<SelectDialog
 		title="{i18n>SelectBillTo}"
 		class="sapUiPopupWithPadding"
-		items="{BillToModel>/results}"
+		items="{BILLTO_MODEL>/results}"
         search="_billtoGroupValueHelpSearch"
 		confirm="_billtoGroupValueHelpClose"
 		cancel="_billtoGroupValueHelpClose">
-		<StandardListItem title="{BillToModel>Billtocust}" info="{BillToModel>Name}"/>
+		<StandardListItem title="{BILLTO_MODEL>Billtocust}" info="{BILLTO_MODEL>Name}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

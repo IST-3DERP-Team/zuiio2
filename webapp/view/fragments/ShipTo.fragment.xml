@@ -4,10 +4,10 @@
 	<SelectDialog
 		title="{i18n>SelectShipTo}"
 		class="sapUiPopupWithPadding"
-		items="{ShipToModel>/results}"
+		items="{SHIPTO_MODEL>/results}"
         search="_shiptoGroupValueHelpSearch"
 		confirm="_shiptoGroupValueHelpClose"
 		cancel="_shiptoGroupValueHelpClose">
-		<StandardListItem title="{ShipToModel>SHIPTOCUST}" info="{ShipToModel>NAME}"/>
+		<StandardListItem title="{SHIPTO_MODEL>Shiptocust}" info="{SHIPTO_MODEL>Name}"/>
 	</SelectDialog>
 </core:FragmentDefinition>

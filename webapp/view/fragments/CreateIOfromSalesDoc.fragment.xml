@@ -178,8 +178,8 @@
             </t:Table>
         </Panel>
         <buttons>
-            <Button text="{ddtext>/SELECT}" press="onfragmentIOSelect('IOSDSelectTab')" tooltip="Select" />
-            <Button text="{ddtext>/CANCEL}" press="onCloseIOSD" tooltip="Cancel" />
+            <Button text="{ddtext>/SELECT}" press="onfragmentIOSelect('IOSDSelectTab')" tooltip="{ddtext>/SELECT}" />
+            <Button text="{ddtext>/CANCEL}" press="onCloseIOSD" tooltip="{ddtext>/CANCEL}" />
         </buttons>
     </Dialog>
 </core:FragmentDefinition>

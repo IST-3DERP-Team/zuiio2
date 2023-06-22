@@ -78,7 +78,7 @@
                 },
                 "SuggestionItems": {
                     "path": "BILLTO_MODEL>/",
-                    "title": "{SHIPTO_MODEL>Billtocust}",
+                    "title": "{BILLTO_MODEL>Billtocust}",
                     "info": "{BILLTO_MODEL>Name}"
                 }
             }

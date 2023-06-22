@@ -578,7 +578,7 @@
                                 change="onHeaderChange"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSTDLVDT} : false }"
                                 value="{headerData>/CUSTDLVDT}"                                 
-                                valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
+                                valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
                             <!-- <Input id="CUSTDLVDT" class="sapUiSmallMarginBottom"  value="{headerData>/CUSTDLVDT}" editable="{HeaderEditModeModel>/editMode}" valueStateText="Required"/> -->
                         </f:fields>
                     </f:FormElement>  
@@ -591,7 +591,7 @@
                                 value="{headerData>/PLANDLVDT}" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PLANDLVDT} : false }"
                                 change="onHeaderChange"                                
-                                valueFormat="dd/MM/yyyy" displayFormat="dd/MM/yyyy"/>
+                                valueFormat="yyyy-MM-dd" displayFormat="dd/MM/yyyy"/>
                         </f:fields>
                     </f:FormElement>
 

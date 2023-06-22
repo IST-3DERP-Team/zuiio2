@@ -104,10 +104,10 @@ sap.ui.define([
             },
 
             onInitialize: function () {
-                console.log("SmartFilterBar Initialized");
+                // console.log("SmartFilterBar Initialized");
                 // this.oSmartFilterBar = this.getView().byId("smartFilterBar");
 
-                console.log(this._oSmartFilterBar);
+                // console.log(this._oSmartFilterBar);
                 this._oSmartFilterBar.setFilterData({
                     PLANPLANT: {
                         filter: [
@@ -176,7 +176,7 @@ sap.ui.define([
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
 
-                    console.log(aData);
+                    // console.log(aData);
                     // console.log(oTable.getBinding("rows"));
                     var oParamData = [];
                     var oParam = {};
@@ -216,8 +216,8 @@ sap.ui.define([
                         routeSBU = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
                     }
 
-                    console.log("routeSBU");
-                    console.log(routeSBU);
+                    // console.log("routeSBU");
+                    // console.log(routeSBU);
 
                     that._router.navTo("RouteIODetail", {
                         iono: "NEW",
@@ -669,11 +669,11 @@ sap.ui.define([
                 //SBU as Combobox
                 if (this.getView().byId("cboxSBU") !== undefined) {
                     this._sbu = this.getView().byId("cboxSBU").getSelectedKey();
-                    console.log(this._sbu);
+                    // console.log(this._sbu);
                 } else {
                     //SBU as DropdownList
                     this._sbu = this.getView().byId("smartFilterBar").getFilterData().SBU;  //get selected SBU
-                    console.log(this._sbu);
+                    // console.log(this._sbu);
                 }
 
                 this.getView().getModel("ui").setProperty("/sbu", this._sbu);
@@ -704,7 +704,7 @@ sap.ui.define([
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                console.log(aFilters);
+                // console.log(aFilters);
                 var oText = this.getView().byId("IOCount");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -1599,15 +1599,15 @@ sap.ui.define([
             },
 
             onSBUChange: function (oEvent) {
-                console.log("onSBUChange");
+                // console.log("onSBUChange");
                 var oFilterData = this._oSmartFilterBar.getFilterData();
-                console.log(oFilterData);
+                // console.log(oFilterData);
 
                 var oField1Control = this._oSmartFilterBar.getControlByKey("SBU");
                 var oField2Control = this._oSmartFilterBar.getControlByKey("PLANPLANT");
 
-                console.log(oField1Control);
-                console.log(oField2Control);
+                // console.log(oField1Control);
+                // console.log(oField2Control);
 
                 // var sField1Value = oField1Control.getValue();
                 // console.log("sField1Value");
@@ -1619,7 +1619,7 @@ sap.ui.define([
                 //     oField2Control.setSelectedKey("");
                 // }
 
-                return;
+                // return;
 
                 oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
                     urlParameters: {

@@ -147,18 +147,18 @@
                     <Toolbar>
                         <ToolbarSpacer />
                         <SearchField id="searchFieldStyle" 
-                            placeholder="{ddtetx>/FILTER}" 
+                            placeholder="{ddtext>/FILTER}" 
                             value="" 
                             search="filterGlobally" 
                             width="15rem" />
-                            <Button text="Save" icon="sap-icon://grid" tooltip="{ddtetx>/SAVE}" press="onSaveSubTableLayout('IOStyleSelectTab')" visible="true"/>
+                            <Button text="{ddtext>/SAVE}" icon="sap-icon://grid" tooltip="{ddtetx>/SAVE}" press="onSaveSubTableLayout('IOStyleSelectTab')" visible="true"/>
                     </Toolbar>                    
                 </t:extension>
             </t:Table>
         </Panel>
         <buttons>
-            <Button text="{ddtetx>/SELECT}" press="onfragmentIOSelect('IOStyleSelectTab')" tooltip="Select" />
-            <Button text="{ddtetx>/CANCEL}" press="onCloseIOStyle" tooltip="Cancel" />
+            <Button text="{ddtext>/SELECT}" press="onfragmentIOSelect('IOStyleSelectTab')" tooltip="{ddtext>/SELECT}" />
+            <Button text="{ddtext>/CANCEL}" press="onCloseIOStyle" tooltip="{ddtext>/CANCEL}" />
         </buttons>
     </Dialog>
 </core:FragmentDefinition>
