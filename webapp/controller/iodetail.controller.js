@@ -3926,6 +3926,30 @@ sap.ui.define([
                     }
                 }
 
+                if (srcInput === "/CUSTGRP") {
+                    let sNewValue = oEvent.getParameter("CUSGRP");
+                    let sOldValue = oEvent.getSource().getBinding("CUSGRP").getValue();
+
+                    console.log("sNewValue", sNewValue);
+                    console.log("sOldValue", sOldValue);
+
+                    if(sNewValue !== sOldValue) {
+                        this.getView().byId("CUSTGRP").value("");
+                    }
+                }
+
+                if (srcInput === "/SALESGRP") {
+                    let sNewValue = oEvent.getParameter("SALESGRP");
+                    let sOldValue = oEvent.getSource().getBinding("SALESGRP").getValue();
+
+                    console.log("sNewValue", sNewValue);
+                    console.log("sOldValue", sOldValue);
+
+                    if(sNewValue !== sOldValue) {
+                        this.getView().byId("SALESGRP").value("");
+                    }
+                }
+
                 //set change flag for header
                 this._headerChanged = true;
                 this.setChangeStatus(true);
@@ -4621,6 +4645,11 @@ sap.ui.define([
                 var sInputValue = oEvent.getSource().getValue();
                 var custGrp = this.getView().byId("CUSTGRP").getValue(); //get customer group value
                 var salesGrp = this.getView().byId("SALESGRP").getValue(); //get customer group value
+
+                if(custGrp.length === 0 || salesGrp.length === 0) {
+                    sap.m.MessageBox.error(resultDescription);
+                }
+
                 that.inputId = oEvent.getSource().getId();
                 if (!that._soldtoHelpDialog) {
                     that._soldtoHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.SoldTo", that);

@@ -868,7 +868,7 @@ sap.ui.define([
                     oColumnTemplate.data("IONO", "{}"); //custom data to hold style number
                 }
                 else {
-                    oColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}" }); //default text
+                    oColumnTemplate = new sap.m.Text({ text: "{" + sColumnId + "}", wrapping: false, tooltip: "{IODynTable>" + sColumnId + "}" }); //default text
                 }
 
                 return oColumnTemplate;

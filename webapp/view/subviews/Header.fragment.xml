@@ -258,26 +258,6 @@
                         </f:fields>
                     </f:FormElement>
 
-                    <!-- SALESORG -->
-                    <f:FormElement id="feSALESORG" label="{ddtext>/SALESORG}" visible="{= ${VisibleFieldsData>/SALESORG} === true ? true : false }">
-                        <f:fields>
-                            <Input id="SALESORG" 
-                                value="{headerData>/SALESORG}" 
-                                showSuggestion="true" 
-                                showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SALESORG} : false }" 
-                                valueStateText="Required"
-                                change="onHeaderChange"  
-                                autocomplete="true" 
-                                valueHelpRequest="onSalesOrgValueHelp"
-                                suggestionItems="{SalesOrgModel>/results}" >
-                                <suggestionItems>
-                                    <core:ListItem text="{SalesOrgModel>SALESORG}" additionalText="{SalesOrgModel>DESCRIPTION}"/>
-                                </suggestionItems> 
-                            </Input>
-                        </f:fields>
-                    </f:FormElement> 
-
                     <!-- SALESGRP -->
                     <f:FormElement id="feSALESGRP" label="{ddtext>/SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
                         <f:fields>
@@ -298,6 +278,7 @@
                         </f:fields>
                     </f:FormElement>
 
+                    <!-- BASEUOM -->
                     <f:FormElement id="feBASEUOM" label="{ddtext>/BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
                         <f:fields>
                             <Input id="BASEUOM" 
@@ -339,23 +320,44 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>
-                    
-                    <!-- PRODPLANT -->
-                    <f:FormElement id="fePRODPLANT" label="{ddtext>/PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
+
+                    <!-- SALESORG -->
+                    <f:FormElement id="feSALESORG" label="{ddtext>/SALESORG}" visible="{= ${VisibleFieldsData>/SALESORG} === true ? true : false }">
                         <f:fields>
-                            <Input id="PRODPLANT" 
-                                value="{headerData>/PRODPLANT}" 
+                            <Input id="SALESORG" 
+                                value="{headerData>/SALESORG}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODPLANT} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SALESORG} : false }" 
                                 valueStateText="Required"
+                                change="onHeaderChange"  
+                                autocomplete="true" 
+                                valueHelpRequest="onSalesOrgValueHelp"
+                                suggestionItems="{SalesOrgModel>/results}" >
+                                <suggestionItems>
+                                    <core:ListItem text="{SalesOrgModel>SALESORG}" additionalText="{SalesOrgModel>DESCRIPTION}"/>
+                                </suggestionItems> 
+                            </Input>
+                        </f:fields>
+                    </f:FormElement> 
+
+                    <!-- CUSSALTERM -->
+                    <f:FormElement id="feCUSSALTERM" label="{ddtext>/CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
+                        <f:fields>
+                            <Input id="CUSSALTERM" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSSALTERM} : false }" 
+                                valueStateText="Required"
+                                value="{headerData>/CUSSALTERM}" 
                                 change="onHeaderChange" 
                                 autocomplete="true" 
-                                valueHelpRequest="onPlantValueHelp"
-                                suggestionItems="{PlantModel>/results}" >
+                                valueHelpRequest="onSalesTermValueHelp"
+                                suggestionItems="{SalesTermModel>/results}">
                                 <suggestionItems>
-                                    <core:ListItem text="{PlantModel>PRODPLANT}" additionalText=""/>
-                                </suggestionItems> 
+                                    <core:ListItem text="{SalesTermModel>FTYSALTERM}" additionalText="{SalesTermModel>DESCRIPTION}"/>
+                                </suggestionItems>
                             </Input>
                         </f:fields>
                     </f:FormElement>
@@ -403,25 +405,24 @@
                      
             <!-- GROUP 3 FORM CONTAINER -->
             <f:FormContainer ariaLabelledBy="Grp3" class="sapUiNoContentPadding">
-                <f:formElements>                             
-
-                    <!-- CUSSALTERM -->
-                    <f:FormElement id="feCUSSALTERM" label="{ddtext>/CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
+                <f:formElements>     
+                    
+                    <!-- PRODPLANT -->
+                    <f:FormElement id="fePRODPLANT" label="{ddtext>/PRODPLANT}" visible="{= ${VisibleFieldsData>/PRODPLANT} === true ? true : false }">
                         <f:fields>
-                            <Input id="CUSSALTERM" 
-                                type="Text" 
+                            <Input id="PRODPLANT" 
+                                value="{headerData>/PRODPLANT}" 
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSSALTERM} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/PRODPLANT} : false }" 
                                 valueStateText="Required"
-                                value="{headerData>/CUSSALTERM}" 
                                 change="onHeaderChange" 
                                 autocomplete="true" 
-                                valueHelpRequest="onSalesTermValueHelp"
-                                suggestionItems="{SalesTermModel>/results}">
+                                valueHelpRequest="onPlantValueHelp"
+                                suggestionItems="{PlantModel>/results}" >
                                 <suggestionItems>
-                                    <core:ListItem text="{SalesTermModel>FTYSALTERM}" additionalText="{SalesTermModel>DESCRIPTION}"/>
-                                </suggestionItems>
+                                    <core:ListItem text="{PlantModel>PRODPLANT}" additionalText=""/>
+                                </suggestionItems> 
                             </Input>
                         </f:fields>
                     </f:FormElement>
