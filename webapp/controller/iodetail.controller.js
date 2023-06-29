@@ -6040,6 +6040,8 @@ sap.ui.define([
                                     })
 
                                     // oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
+                                    console.log("Bill To Data", oData);
+                                    console.log("soldtoCust", soldtoCust);
                                     oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust);
                                     if (oFilterData.length === 1) {
                                         me.getView().getModel("ui2").setProperty("/defBillToCust", oFilterData[0].Billtocust);
@@ -10573,7 +10575,8 @@ sap.ui.define([
                             })
 
                             console.log("oData.results", oData.results);
-                            oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
+                            // oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
+                            oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust);
                             console.log("oFilterData", oFilterData[0].Billtocust);
                             if(oFilterData.length === 1) {
                                 me.getView().getModel("ui2").setProperty("/defBillToCust", oFilterData[0].Billtocust);
@@ -10581,7 +10584,8 @@ sap.ui.define([
 
                             console.log("BILLTOvhSet",oFilterData);
                             // console.log("IODET_MODEL");
-                            me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp)), "BILLTO_MODEL");
+                            // me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp)), "BILLTO_MODEL");
+                            me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust)), "BILLTO_MODEL");
                         },
                         error: function (err) { }
                     })
