@@ -6039,7 +6039,8 @@ sap.ui.define([
                                         item.KUNNR = item.KUNNR
                                     })
 
-                                    oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
+                                    // oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
+                                    oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust);
                                     if (oFilterData.length === 1) {
                                         me.getView().getModel("ui2").setProperty("/defBillToCust", oFilterData[0].Billtocust);
                                         sBillToCust = oFilterData[0].Billtocust;
