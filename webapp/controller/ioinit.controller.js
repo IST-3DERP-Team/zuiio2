@@ -35,6 +35,7 @@ sap.ui.define([
                 // this._tableFilter = TableFilter;
                 // this._colFilters = {};
 
+                console.log("INITIALIZE START");
                 that.getCaptionSet();
 
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
@@ -93,7 +94,7 @@ sap.ui.define([
 
                 // this.onSearch();
 
-
+                console.log("INITIALIZE END");
             },
 
             setSmartFilterModel: function () {

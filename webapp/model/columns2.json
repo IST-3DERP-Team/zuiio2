@@ -100,6 +100,14 @@
                     "info": "{SHIPTO_MODEL>Name}"
                 }
             }
+        },
+
+        {
+            "ColumnName": "CSTYPE", "TextFormatMode": "ValueKey",
+            "ValueHelp": {"show": true, "items": {"path": "CSTYPEModel", "value": "CSTYPE", "text": "VERDESC"},
+                "SuggestionItems": {"path": "CSTYPEModel>/results", "text": "{CSTYPEModel>CSTYPE}", "additionalText": "{CSTYPEModel>VERDESC}", "maxSuggestionWidth": "350px"},
+                "columns": "tvh_cstype"
+            }
         }
     ],
     "costHdr": [

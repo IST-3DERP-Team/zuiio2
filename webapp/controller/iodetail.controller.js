@@ -1011,6 +1011,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ITFSTYLE" });
                 oDDTextParam.push({ CODE: "ITFSTYLHDR" });
                 oDDTextParam.push({ CODE: "ITFIODET" });
+                oDDTextParam.push({ CODE: "ITFDLVDET" });
                 oDDTextParam.push({ CODE: "IOITFMATLIST" });                
                 oDDTextParam.push({ CODE: "IMPORTPO" });
                 oDDTextParam.push({ CODE: "ITFCOSTING" });
@@ -5925,7 +5926,8 @@ sap.ui.define([
                             //     this.reloadHeaderData(sIONo);
                             // }, 100);
 
-                            await this.reloadHeaderData();
+                            // await this.reloadHeaderData();
+                            await this.refreshHeaderData();
 
                             await this.reloadIOData("StatDynTable", "/IOSTATSet");
                             this._bIOSTATChanged = false;
@@ -5937,6 +5939,8 @@ sap.ui.define([
                     else
                         MessageBox.information(this.getView().getModel("ddtext").getData()["ERR_IORELEASE_REQ"]);
                 }
+
+                await this.refreshHeaderData();
             },
 
             //******************************************* */
