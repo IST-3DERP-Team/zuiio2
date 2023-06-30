@@ -3927,29 +3927,29 @@ sap.ui.define([
                     }
                 }
 
-                if (srcInput === "/CUSTGRP") {
-                    let sNewValue = oEvent.getParameter("CUSGRP");
-                    let sOldValue = oEvent.getSource().getBinding("CUSGRP").getValue();
+                // if (srcInput === "/CUSTGRP") {
+                //     let sNewValue = oEvent.getParameter("CUSTGRP");
+                //     let sOldValue = oEvent.getSource().getBinding("CUSTGRP").getValue();
 
-                    console.log("sNewValue", sNewValue);
-                    console.log("sOldValue", sOldValue);
+                //     console.log("sNewValue", sNewValue);
+                //     console.log("sOldValue", sOldValue);
 
-                    if(sNewValue !== sOldValue) {
-                        this.getView().byId("CUSTGRP").value("");
-                    }
-                }
+                //     if(sNewValue !== sOldValue) {
+                //         this.getView().byId("CUSTGRP").value("");
+                //     }
+                // }
 
-                if (srcInput === "/SALESGRP") {
-                    let sNewValue = oEvent.getParameter("SALESGRP");
-                    let sOldValue = oEvent.getSource().getBinding("SALESGRP").getValue();
+                // if (srcInput === "/SALESGRP") {
+                //     let sNewValue = oEvent.getParameter("SALESGRP");
+                //     let sOldValue = oEvent.getSource().getBinding("SALESGRP").getValue();
 
-                    console.log("sNewValue", sNewValue);
-                    console.log("sOldValue", sOldValue);
+                //     console.log("sNewValue", sNewValue);
+                //     console.log("sOldValue", sOldValue);
 
-                    if(sNewValue !== sOldValue) {
-                        this.getView().byId("SALESGRP").value("");
-                    }
-                }
+                //     if(sNewValue !== sOldValue) {
+                //         this.getView().byId("SALESGRP").value("");
+                //     }
+                // }
 
                 //set change flag for header
                 this._headerChanged = true;
@@ -5305,7 +5305,7 @@ sap.ui.define([
                     // console.log("this._validationErrors");
                     // console.log(me._validationErrors.length);
                     if (me._validationErrors.length === 0) {
-                        var sErrMsg = "";
+                        let sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
                         else if (this.getView().byId("STYLECD").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["STYLECD"];
                         else if (this.getView().byId("PRODTYPE").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODTYPE"];
@@ -5321,7 +5321,14 @@ sap.ui.define([
                         else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
                         else if (this.getView().byId("PRODSTART").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODSTART"];
 
-                        if (sErrMsg.length > 0) {
+                        console.log("sErrMsg.length", sErrMsg.length);
+
+                        let iMsgLen = +sErrMsg.length;
+
+                        console.log("iMsgLen", iMsgLen);
+
+                        // (sErrMsg.length >= 1)
+                        if (sErrMsg !== "") {
                             sErrMsg += " is required."
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
@@ -7294,11 +7301,13 @@ sap.ui.define([
                     styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
                     verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
-                // console.log(this._styleNo, this._styleVer);
+                console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         me._oModelStyle.read('/MatTypeSet', {
                             success: function (oDataMT, response) {
+
+                                console.log("oDataMT", oDataMT);
                                 var aFAB = oDataMT.results.filter(fItem => fItem.Mattypgrp === "FAB");
                                 var aACC = oDataMT.results.filter(fItem => fItem.Mattypgrp === "ACC");
 
@@ -7386,6 +7395,8 @@ sap.ui.define([
                                 oJSONModelFAB.setData(dataFAB);
                                 oTableFAB.setModel(oJSONModelFAB, "DataModel");
 
+                                console.log("oJSONModelFAB", oJSONModelFAB);
+
                                 var aDataACC = [];
 
                                 aACCBOM.forEach((item, index) => {
@@ -7456,6 +7467,8 @@ sap.ui.define([
 
                                 oJSONModelACC.setData(dataACC);
                                 oTableACC.setModel(oJSONModelACC, "DataModel");
+
+                                console.log("oJSONModelACC", oJSONModelACC);
                             },
                             error: function (err) { }
                         })
