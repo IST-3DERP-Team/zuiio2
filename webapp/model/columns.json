@@ -218,5 +218,26 @@
         {"ColumnName": "FINALCOST", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "SALESTERM", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "COSTSTATUS", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
+    ],
+    "headerData": [
+        {"ColumnName": "PRODSCEN", "TextFormatMode": "Key",
+            "ValueHelp": {"show": true, "items": {"path": "ProdScenModel", "value": "PRODCEN", "text": "DESC1"},
+                "SuggestionItems": {"path": "ProdScenModel>/", "text": "{ProdScenModel>PRODSCEN}", "additionalText": "{ProdScenModel>DESC1}", "maxSuggestionWidth": "200px" },
+                "columns": "tvh_prodscen"
+            }
+        }
+    ],
+    "tvh_prodscen": [
+        {"ColumnName": "PRODSCEN", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "PRODPLANT", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "TRADPLANT", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "PLANPLANT", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "SALESORG", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "FTY_SALES_TERM", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "CUST_SALES_TERM", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "WVTYP", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "PLNTPREFIX", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false}
+        
     ]
 }

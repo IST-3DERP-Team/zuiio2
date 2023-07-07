@@ -13,11 +13,12 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/core/routing/History",
     "sap/m/UploadCollectionParameter",
+    "../js/TableValueHelp"
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History, UploadCollectionParameter) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History, UploadCollectionParameter, TableValueHelp) {
         "use strict";
 
         var that;
@@ -1156,6 +1157,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
 
@@ -1236,6 +1238,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 // _promiseResult = new Promise((resolve, reject) => {
                 //     me._tblChange = true;
@@ -1589,6 +1592,7 @@ sap.ui.define([
                             await oModelColumns.loadData(sPath);
 
                             var oColumns = oModelColumns.getData();
+                            this._oModelColumns = oModelColumns.getData();
 
                             var oTable = sap.ui.getCore().byId("ImportPOTab");
                             oTable.setModel(new JSONModel({
@@ -2222,6 +2226,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
                 // console.log(oColumns)
 
                 // _promiseResult = new Promise((resolve, reject) => {
@@ -3992,6 +3997,7 @@ sap.ui.define([
                             // console.log(oData);
                             oJSONModel.setData(oData);
                             oView.setModel(oJSONModel, sModelName);
+                            // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
                             if (sModelName === "SOLDTOModel") {
                                 oData.results.forEach(item => {
@@ -4048,6 +4054,7 @@ sap.ui.define([
 
                                 oJSONModel.setData(oData);
                                 oView.setModel(oJSONModel, sModelName);
+                                // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
                                 // resolve();
                             },
@@ -4074,6 +4081,7 @@ sap.ui.define([
 
                                 oJSONModel.setData(oData);
                                 oView.setModel(oJSONModel, sModelName);
+                                // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
                                 // resolve();
                             },
@@ -6540,6 +6548,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 me._tblChange = true;
                 // setTimeout(() => {
@@ -6611,6 +6620,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 if (source === "IODETTab") {
 
@@ -7168,6 +7178,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 setTimeout(() => {
@@ -9170,6 +9181,7 @@ sap.ui.define([
                         await oModelColumns.loadData(sPath);
 
                         var oColumns = oModelColumns.getData();
+                        this._oModelColumns = oModelColumns.getData();
 
                         switch (arg) {
                             case "IODET":
@@ -9227,6 +9239,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 if (arg === "IODLV") {
                     if (bProceed) {
@@ -9765,6 +9778,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
                 switch (arg) {
                     // case "IODLV":
                     //     console.log("refresh IO Delivery Data");
@@ -10222,6 +10236,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
                 switch (arg) {
                     case "IODLV":
                         await this.reloadIOData("IODLVTab", "/IODLVSet");
@@ -13626,6 +13641,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
 
                 var oColumns = oModelColumns.getData();
+                this._oModelColumns = oModelColumns.getData();
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 setTimeout(() => {
@@ -14656,6 +14672,72 @@ sap.ui.define([
             },
 
             onExport: Utils.onExport,
+
+            //******************************************* */
+            // Form Value Help
+            //******************************************* */
+
+            handleFormValueHelp: function (oEvent) {
+                //open product type value help
+                TableValueHelp.handleFormValueHelp(oEvent, this);
+            },
+
+            onFormValueHelpInputChange: function(oEvent) {
+                var oSource = oEvent.getSource();
+                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
+                oSource.setValueState(isInvalid ? "Error" : "None");
+    
+                oSource.getSuggestionItems().forEach(item => {
+                    if (item.getProperty("key") === oSource.getValue().trim()) {
+                        isInvalid = false;
+                        oSource.setValueState(isInvalid ? "Error" : "None");
+                    }
+                })
+    
+                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
+                else {
+                    var sModel = oSource.getBindingInfo("value").parts[0].model;
+                    var sPath = oSource.getBindingInfo("value").parts[0].path;
+    
+                    this.getView().getModel(sModel).setProperty(sPath, oSource.getSelectedKey());
+    
+                    // if (sPath === "/SOLDTOCUST") {
+                    //     var oSoldToCust = this.getView().getModel("shiptocust").getData().filter(fItem => fItem.CUSTOMER === oSource.getSelectedKey());
+    
+                    //     if (this.getView().getModel(sModel).getProperty("/CUSTGRP") !== oSoldToCust[0].CUSTGRP) {
+                    //         this.getView().getModel(sModel).setProperty("/CUSTGRP", oSoldToCust[0].CUSTGRP);
+                    //         this.getView().getModel(sModel).setProperty("/CONSIGN", "");
+                    //         this.getView().getModel(sModel).setProperty("/MESSRS", "");
+    
+                    //         this._oModel.read("/ConsignSHSet", {
+                    //             urlParameters: {
+                    //                 "$filter": "CUSTGRP eq '" + oSoldToCust[0].CUSTGRP + "'"
+                    //             },
+                    //             success: function (oData, oResponse) {
+                    //                 me.getView().getModel("consign").setProperty("/", oData.results);
+                    //                 // me.getView().setModel(new JSONModel(oData.results), "consign");
+                    //             },
+                    //             error: function (err) { }
+                    //         });
+                    //     }
+                    // }
+                    // else if (sPath === "/SALESTERM") {
+                    //     var oSalesTerm = this.getView().getModel("salesterm").getData().filter(fItem => fItem.SALESTERM === oSource.getSelectedKey());
+                    //     this.getView().getModel(sModel).setProperty("/SALESTERMTEXT", oSalesTerm[0].DESCRIPTION);
+                    // }
+    
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                }
+    
+                // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
+                // console.log(this._validationErrors);
+                this._bHeaderChanged = true;
+            },
+
 
             //******************************************* */
             // FA Summary

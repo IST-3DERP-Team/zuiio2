@@ -300,8 +300,8 @@
                         </f:fields>
                     </f:FormElement>
                     
-                    <!-- PRODSCEN -->
-                    <f:FormElement id="fePRODSCEN" label="{ddtext>/PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
+                    <!-- PRODSCEN ORIG-->
+                    <!-- <f:FormElement id="fePRODSCEN" label="{ddtext>/PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODSCEN" 
                                 value="{headerData>/PRODSCEN}" 
@@ -316,6 +316,27 @@
                                 suggestionItems="{ProdScenModel>/results}">
                                 <suggestionItems>
                                     <core:ListItem text="{ProdScenModel>PRODSCEN}" additionalText="{ProdScenModel>DESC1}"/>
+                                </suggestionItems>                              
+                            </Input>
+                        </f:fields>
+                    </f:FormElement> -->
+
+                    <!-- PRODSCEN -->
+                    <f:FormElement id="fePRODSCEN" label="{ddtext>/PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
+                        <f:fields>
+                            <Input id="PRODSCEN" 
+                                value="{headerData>/PRODSCEN}" 
+                                showSuggestion="true" 
+                                showValueHelp="true"
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'ProdScenModel>/', length: 10000, templateShareable: false}" >
+                                <suggestionItems>
+                                    <core:Item key="{ProdScenModel>PRODSCEN}" text="{ProdScenModel>DESC1}" />
                                 </suggestionItems>                              
                             </Input>
                         </f:fields>
