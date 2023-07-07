@@ -422,7 +422,8 @@ sap.ui.define([
                 this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false, false);
                 this.getVHSet("/SEASONSet", "SeasonsModel", true, false);
                 this.getVHSet("/STYLENOvhSet", "StyleNoModel", false, false);
-                this.getVHSet("/UOMvhSet", "UOMModel", false, false);
+                // this.getVHSet("/UOMvhSet", "UOMModel", false, false);
+                this.getVHSet("/UOMINFOSet", "UOMModel", false, false);
                 this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false, false);
                 this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false, false);
                 this.getVHSet("/PRODPLANTvhSet", "PlantModel", false, false);
@@ -602,7 +603,7 @@ sap.ui.define([
                     // oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                     //     .forEach(item => item.setProperty("enabled", true));
 
-                    this.disableOtherTabsNoStyle();
+                    // this.disableOtherTabsNoStyle();
 
                     this._validationErrors = [];
                 }
@@ -1064,6 +1065,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "REMARKS" });
                 oDDTextParam.push({ CODE: "ENTERDATE" });
                 oDDTextParam.push({ CODE: "ISREQUIRED" });
+                oDDTextParam.push({ CODE: "ERR_REQD_GT_ZERO_QTY" });       
+                oDDTextParam.push({ CODE: "VSNUMMAXDEC" });       
+                oDDTextParam.push({ CODE: "VSNUMVALNODEC" });   
+                oDDTextParam.push({ CODE: "VSNOTVALIDNUM" });                
 
                 // console.log(oDDTextParam);
 
@@ -2877,7 +2882,8 @@ sap.ui.define([
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 })
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
-                                oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
+                                // oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
+                                oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? -1 : 1));
 
                                 oJSONModel.setData(oData);
                                 me.getView().setModel(oJSONModel, "IODETrowData");
@@ -5337,6 +5343,7 @@ sap.ui.define([
                         let iOrdQty = 0;
                         iOrdQty = +this.getView().byId("ORDQTY").getValue();
                         if (iOrdQty <= 0) {
+                            console.log("iOrdQty", iOrdQty);
                             sErrMsg = this.getView().getModel("ddtext").getData()["ERR_REQD_GT_ZERO_QTY"];
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
@@ -5542,7 +5549,7 @@ sap.ui.define([
                             }
                         })
 
-                        this.disableOtherTabsNoStyle();
+                        // this.disableOtherTabsNoStyle();
 
                         // console.log("IO Save - reload Header Data");
                         _promiseResult = new Promise((resolve, reject) => {
@@ -6649,8 +6656,11 @@ sap.ui.define([
                                 me.byId(sSource).bindRows("/rows");
                                 me._tableRendered = sSource;
 
-                                if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
-                                if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
+                                console.log("aFilters", aFilters);
+                                console.log("aSorters", aSorters);
+
+                                if (aFilters !== undefined && aFilters !== null && aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
+                                if (aSorters !== undefined && aSorters !== null && aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
 
                                 resolve();
                             },
@@ -6703,6 +6713,8 @@ sap.ui.define([
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
+
+                                    oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
                                 }
 
                                 if (sSource === "IODETTab") {
@@ -6713,7 +6725,8 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
+                                    // oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
+                                    oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? 1 : -1));
                                 }
                                 // console.log("Reload IO Data");
                                 // console.log(ioNo);
@@ -8889,12 +8902,12 @@ sap.ui.define([
                                 default: break;
                             }
 
-                            // oUpdModel.setUseBatch(true);
-                            // oUpdModel.setDeferredGroups(["update"]);
+                            oUpdModel.setUseBatch(true);
+                            oUpdModel.setDeferredGroups(["update"]);
 
-                            // var mParameters = {
-                            //     "groupId": "update"
-                            // };
+                            var mParameters = {
+                                "groupId": "update"
+                            };
 
                             //APPLY SIZE DATAMODEL UNPIVOT
                             var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
@@ -8983,28 +8996,28 @@ sap.ui.define([
 
                                     // return;
 
-                                    // //CREATE ENTRIES USING BATCH PROCESSING
-                                    // oUpdModel.update(entitySet, param, mParameters);
+                                    //CREATE ENTRIES USING BATCH PROCESSING
+                                    oUpdModel.update(updEntitySet, param, mParameters);
 
-                                    await new Promise((resolve, reject) => {
-                                        setTimeout(() => {
-                                            oUpdModel.update(updEntitySet, param, {
-                                                method: "PUT",
-                                                success: function (data, oResponse) {
-                                                    resolve();
-                                                },
-                                                error: function () {
-                                                    iEdited++;
-                                                    // alert("Error");
-                                                    resolve();
-                                                    if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
-                                                }
-                                            })
+                                    // await new Promise((resolve, reject) => {
+                                    //     setTimeout(() => {
+                                    //         oUpdModel.update(updEntitySet, param, {
+                                    //             method: "PUT",
+                                    //             success: function (data, oResponse) {
+                                    //                 resolve();
+                                    //             },
+                                    //             error: function () {
+                                    //                 iEdited++;
+                                    //                 // alert("Error");
+                                    //                 resolve();
+                                    //                 if (iEdited === aEditedRows.length) Common.closeProcessingDialog(me);
+                                    //             }
+                                    //         })
 
-                                        }, 100);
-                                        resolve();
-                                    });
-                                    // await _promiseResult;
+                                    //     }, 100);
+                                    //     resolve();
+                                    // });
+                                    // // await _promiseResult;
                                 });
 
                                 // oUpdModel.submitChanges({
@@ -9029,50 +9042,113 @@ sap.ui.define([
                                 // return;
 
                                 iEdited++;
-                                if (iEdited === aEditedRows.length) {
+                                // if (iEdited === aEditedRows.length) {
 
                                     // await me.UpdateIOHdrQuantity();
                                     // await me.getHeaderData();
 
                                     // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
-                                    if (arg === "IODET") {
-                                        me.byId("btnNewDlvSched").setVisible(true);
-                                        me.byId("btnImportPODlvSched").setVisible(true);
-                                        me.byId("btnEditDlvSched").setVisible(true);
-                                        me.byId("btnDeleteDlvSched").setVisible(true);
-                                        me.byId("btnCopyDlvSched").setVisible(true);
-                                        me.byId("btnRefreshDlvSched").setVisible(true);
-                                        me.byId("btnSaveDlvSched").setVisible(false);
-                                        me.byId("btnCancelDlvSched").setVisible(false);
-                                        me.byId("btnFullScreenDlvSched").setVisible(true);
-                                        me.byId("btnGenMatList").setVisible(true);
+                                //     if (arg === "IODET") {
+                                //         me.byId("btnNewDlvSched").setVisible(true);
+                                //         me.byId("btnImportPODlvSched").setVisible(true);
+                                //         me.byId("btnEditDlvSched").setVisible(true);
+                                //         me.byId("btnDeleteDlvSched").setVisible(true);
+                                //         me.byId("btnCopyDlvSched").setVisible(true);
+                                //         me.byId("btnRefreshDlvSched").setVisible(true);
+                                //         me.byId("btnSaveDlvSched").setVisible(false);
+                                //         me.byId("btnCancelDlvSched").setVisible(false);
+                                //         me.byId("btnFullScreenDlvSched").setVisible(true);
+                                //         me.byId("btnGenMatList").setVisible(true);
 
-                                        me.byId("btnNewIODet").setVisible(true);
-                                        me.byId("btnEditIODet").setVisible(true);
-                                        // me.byId("btnDeleteIODet").setVisible(true);
-                                        // me.byId("btnCopyIODet").setVisible(true);
-                                        me.byId("btnRefreshIODet").setVisible(true);
-                                        me.byId("btnSaveIODet").setVisible(false);
-                                        me.byId("btnCancelIODet").setVisible(false);
-                                        me.byId("btnFullScreenIODet").setVisible(true);
-                                    }
+                                //         me.byId("btnNewIODet").setVisible(true);
+                                //         me.byId("btnEditIODet").setVisible(true);
+                                //         // me.byId("btnDeleteIODet").setVisible(true);
+                                //         // me.byId("btnCopyIODet").setVisible(true);
+                                //         me.byId("btnRefreshIODet").setVisible(true);
+                                //         me.byId("btnSaveIODet").setVisible(false);
+                                //         me.byId("btnCancelIODet").setVisible(false);
+                                //         me.byId("btnFullScreenIODet").setVisible(true);
+                                //     }
 
-                                    // if (arg !== "IODET")
-                                    //     me.setActiveRowHighlightByTableId(arg + "Tab");
+                                //     // if (arg !== "IODET")
+                                //     //     me.setActiveRowHighlightByTableId(arg + "Tab");
 
-                                    var oIconTabBar = me.byId("idIconTabBarInlineMode");
-                                    oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+                                //     var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                //     oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
-                                    me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
-                                        me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
-                                    })
+                                //     me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                //         me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                //     })
 
-                                    me._dataMode = "READ";
+                                //     me._dataMode = "READ";
+
+                                //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                // }
+                            })
+
+                            oUpdModel.submitChanges({
+                                groupId: "update",
+                                success: function (oData, oResponse) {
+
+                                    setTimeout(() => {
+                                        me.UpdateIOHdrQuantity();
+                                    }, 100);
+
+                                    setTimeout(() => {
+                                        // me.getHeaderData();
+                                        me.reloadHeaderData();
+                                    }, 100);
 
                                     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                },
+                                error: function (oData, oResponse) {
                                 }
-                            })
+                            });
+
+                            if (iEdited === aEditedRows.length) {
+
+                                // await me.UpdateIOHdrQuantity();
+                                // await me.getHeaderData();
+
+                                // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+
+                                if (arg === "IODET") {
+                                    me.byId("btnNewDlvSched").setVisible(true);
+                                    me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnEditDlvSched").setVisible(true);
+                                    me.byId("btnDeleteDlvSched").setVisible(true);
+                                    me.byId("btnCopyDlvSched").setVisible(true);
+                                    me.byId("btnRefreshDlvSched").setVisible(true);
+                                    me.byId("btnSaveDlvSched").setVisible(false);
+                                    me.byId("btnCancelDlvSched").setVisible(false);
+                                    me.byId("btnFullScreenDlvSched").setVisible(true);
+                                    me.byId("btnGenMatList").setVisible(true);
+
+                                    me.byId("btnNewIODet").setVisible(true);
+                                    me.byId("btnEditIODet").setVisible(true);
+                                    // me.byId("btnDeleteIODet").setVisible(true);
+                                    // me.byId("btnCopyIODet").setVisible(true);
+                                    me.byId("btnRefreshIODet").setVisible(true);
+                                    me.byId("btnSaveIODet").setVisible(false);
+                                    me.byId("btnCancelIODet").setVisible(false);
+                                    me.byId("btnFullScreenIODet").setVisible(true);
+                                }
+
+                                // if (arg !== "IODET")
+                                //     me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                                var oIconTabBar = me.byId("idIconTabBarInlineMode");
+                                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                                me.byId(arg + "Tab").getModel("DataModel").getData().results.forEach((row, index) => {
+                                    me.byId(arg + "Tab").getModel("DataModel").setProperty('/results/' + index + '/EDITED', false);
+                                })
+
+                                me._dataMode = "READ";
+
+                                // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                            }
 
                             this.setRowReadMode(arg);
                         } else {
@@ -10431,13 +10507,16 @@ sap.ui.define([
                                             }
                                         }));
                                     }
-                                    else if (arg === "IODET") {
+                                    else if (arg === "IODET") {       
+                                        console.log("IODET", ci.Decimal);                                 
                                         col.setTemplate(new sap.m.Input({
-                                            type: sap.m.InputType.Number,
+                                            // type: sap.m.InputType.Number,
+                                            type: "Text",
                                             textAlign: sap.ui.core.TextAlign.Right,
                                             value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
                                             // change: this.onNumberChange.bind(this),
-                                            change: this.onNumberLiveChange.bind(this),
+                                            change: this.onIODETNumberLiveChange.bind(this),
+                                            // liveChange: this.onInputChange.bind(this),
                                             enabled: {
                                                 path: "DataModel>New",
                                                 formatter: function (New) {
@@ -10563,6 +10642,10 @@ sap.ui.define([
 
                             if (ci.Mandatory) {
                                 col.getLabel().addStyleClass("sapMLabelRequired");
+                            }
+                            
+                            if(arg === "IODET") {
+                                console.log("ci", ci);
                             }
                         })
                 })
@@ -10831,10 +10914,14 @@ sap.ui.define([
                 }
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
+                    // let decimalIndex = oEvent.getParameters().value.indexOf(".");
+                    // let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
+                    // console.log(decVal);
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         // console.log("Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
@@ -10842,7 +10929,8 @@ sap.ui.define([
                     else {
                         if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            // oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMMAXDEC"] + vDecPlaces.toString());
                             this._validationErrors.push(oEvent.getSource().getId());
                             bError = true;
                         }
@@ -10872,6 +10960,202 @@ sap.ui.define([
                     })
                     bError = false;
                 }
+            },
+
+            onInputChange: function (oEvent) {
+                var input = oEvent.getSource();
+                console.log("oEvent.getSource()", input);
+
+                var input = oEvent.getSource();
+                var newValue = input.getValue();
+
+                // If the value was changed using the up/down buttons
+                if (originalValue !== null && originalValue !== newValue) {
+                    input.setValue(originalValue); // Reset the value to its original value
+                } else {
+                    originalValue = newValue; // Update the original value
+                }
+            },
+
+            onIODETNumberLiveChange: function (oEvent) {
+                if (this._validationErrors === undefined) this._validationErrors = [];
+                // console.log("ok")
+                var oSource = oEvent.getSource();
+                var sModel = oSource.getBindingInfo("value").parts[0].model;
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+                var vDecPlaces = 0;
+                var bError = false;
+                var bNegative = false;
+
+                let input = oEvent.getSource();
+                let inputValue = input.getValue();
+
+                console.log("inputValue", inputValue);
+                let isValidNumber = !isNaN(parseFloat(inputValue));
+                console.log("isValidNumber1", isValidNumber);
+
+                // if(!isValidNumber) {
+                //     oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"] );
+                //     this._validationErrors.push(oEvent.getSource().getId());
+                //     bError = true;
+                // }
+
+                var sUOM = this.getView().getModel("headerData").getData()["BASEUOM"];
+                var iUOMDec = 0;
+                // console.log(sUOM);
+
+                // console.log(this.getView().getModel("UOMINFOModel").getData());
+                this.getView().getModel("UOMINFOModel").getData().results.filter(fItem => fItem.MSEHI === sUOM)
+                    .forEach((item) => {
+                        // console.log(item.MSEHI);
+                        iUOMDec = item.ANDEC;
+                    })
+
+                if (oSource.getBindingInfo("value").parts[0].path === "BASEPOQTY") {
+                    vDecPlaces = this.getView().getModel(sModel).getProperty(sRowPath + "/ANDEC");
+                }
+                else if (oSource.getBindingInfo("value").parts[0].path === "UNITPRICE"
+                    || oSource.getBindingInfo("value").parts[0].path === "GROSSPRICE"
+                    || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE1"
+                    || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE2"
+                    || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE3"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE1"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE2"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE3") {
+                    vDecPlaces = 4;
+                }
+                else {
+                    // console.log("Number ELSE");
+                    vDecPlaces = iUOMDec;
+                }
+
+                let decimalIndex = oEvent.getParameters().value.indexOf(".");
+                    let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
+                    console.log(decVal);
+
+                if (oEvent.getParameters().value.split(".").length > 1 && decVal > 0) {
+                    // let decimalIndex = oEvent.getParameters().value.indexOf(".");
+                    // let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
+                    // console.log(decVal);
+                    // if (vDecPlaces === 0 && decVal > 0) {
+                    if (vDecPlaces === 0) {
+                        // MessageBox.information("Value should not have decimal place/s.");
+                        oEvent.getSource().setValueState("Error");
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
+                        // console.log("1 Error Value should not have decimal place/s." + oEvent.getSource().getId());
+                        this._validationErrors.push(oEvent.getSource().getId());
+                        bError = true;
+                    }
+                    else {
+                        if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
+                            oEvent.getSource().setValueState("Error");
+                            oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMMAXDEC"] + vDecPlaces.toString());
+                            // oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            this._validationErrors.push(oEvent.getSource().getId());
+                            bError = true;
+                        }
+                        else {
+                            oEvent.getSource().setValueState("None");
+                            // console.log("3 None");
+                            this._validationErrors.forEach((item, index) => {
+                                if (item === oEvent.getSource().getId()) {
+                                    this._validationErrors.splice(index, 1)
+                                }
+                            })
+                            bError = false;
+                        }
+                    }
+                }
+                else if(!isValidNumber) {
+                    oEvent.getSource().setValueState("Error");
+                    oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"] );
+                    this._validationErrors.push(oEvent.getSource().getId());
+                    bError = true;
+                } else {
+                    oEvent.getSource().setValueState("None");
+                    // console.log("4 None");
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                    bError = false;
+                }
+
+                if (oEvent.getParameters().value < 0) {
+                    oEvent.getSource().setValueState("Error");
+                    oEvent.getSource().setValueStateText("Negative values are not allowed.");
+                    this._validationErrors.push(oEvent.getSource().getId());
+                    bNegative = true;
+                }
+
+                // this._bDetailsChanged = false;
+                if (!bError) {
+                    if (oEvent.getSource().getBindingInfo("value").parts[0].path === "BASEPOQTY") {
+                        var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
+
+                        this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
+                            .forEach((item, idx) => {
+                                if (idx.toString() === sRowPath.replace("/", "")) {
+                                    // console.log(item.BASEPOQTY)
+                                    // console.log(oEvent.getParameters().value);
+                                    item.BASEPOQTY = oEvent.getParameters().value;
+
+                                    var sOrderConvFactor = item.ORDERCONVFACTOR === "" || item.ORDERCONVFACTOR === "0" ? "1" : item.ORDERCONVFACTOR;
+                                    var sBaseConvFactor = item.BASECONVFACTOR === "" || item.BASECONVFACTOR === "0" ? "1" : item.BASECONVFACTOR;
+                                    var sPer = item.PER === "" ? "1" : item.PER;
+                                    var vComputedPOQty = +item.BASEPOQTY / ((+sOrderConvFactor) * (+sBaseConvFactor) * (+sPer));
+                                    var vFinalPOQty = "0";
+
+                                    if (item.ORDERUOMANDEC === 0) vFinalPOQty = Math.ceil(vComputedPOQty).toString();
+                                    else vFinalPOQty = vComputedPOQty.toFixed(item.ORDERUOMANDEC);
+
+                                    item.ORDERPOQTY = vFinalPOQty;
+                                    this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/ORDERPOQTY', vFinalPOQty);
+                                    this.getPOTolerance(sRowPath, item);
+                                }
+                            })
+                    }
+                    else if (oEvent.getSource().getBindingInfo("value").parts[0].path === "GROSSPRICE") {
+                        var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
+                        var sRowPath = oEvent.getSource().getBindingInfo("value").binding.oContext.sPath
+
+                        this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
+                            .forEach((item, idx) => {
+                                if (idx.toString() === sRowPath.replace("/", "")) {
+                                    // console.log(item.GROSSPRICE)
+                                    item.GROSSPRICE = oEvent.getParameters().value;
+                                    item.NETPRICE = item.GROSSPRICE;
+                                    this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/NETPRICE', item.GROSSPRICE);
+                                }
+                            })
+                    }
+                }
+
+                var oSource = oEvent.getSource();
+                var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
+
+                if (this._sTableModel === "IODET") {
+                    this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                }
+                else if (this._sTableModel === "reorder") {
+                    this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+                else {
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
+
+                if (this._sTableModel === "color") this._bColorChanged = true;
+                else if (this._sTableModel === "process") this._bProcessChanged = true;
+                else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
+                else if (this._sTableModel === "IODLV") this._bIODETChanged = true;
+                else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
+                else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
+                else if (this._sTableModel === "reorder") this._bReorderChanged = true;
+
+                // console.log("Table Model : " + this._sTableModel);
             },
 
             onNumberLiveChange: function (oEvent) {
@@ -10914,10 +11198,15 @@ sap.ui.define([
                 }
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
+                    // let decimalIndex = oEvent.getParameters().value.indexOf(".");
+                    // let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
+                    // console.log(decVal);
+                    // if (vDecPlaces === 0 && decVal > 0) {
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         // console.log("1 Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
@@ -10925,7 +11214,8 @@ sap.ui.define([
                     else {
                         if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMMAXDEC"] + vDecPlaces.toString());
+                            // oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
                             this._validationErrors.push(oEvent.getSource().getId());
                             bError = true;
                         }
@@ -12696,14 +12986,16 @@ sap.ui.define([
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
                     }
                     else {
                         if (oEvent.getParameters().value.split(".")[1].length > vDecPlaces) {
                             oEvent.getSource().setValueState("Error");
-                            oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
+                            oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMMAXDEC"] + vDecPlaces.toString());
+                            // oEvent.getSource().setValueStateText("Enter a number with a maximum decimal places: " + vDecPlaces.toString());
                             this._validationErrors.push(oEvent.getSource().getId());
                             bError = true;
                         }
@@ -14830,8 +15122,25 @@ sap.ui.define([
             },
 
             enableOtherTabs: function () {
-                var oIconTabBar = this.byId("idIconTabBarInlineMode");
-                oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+                // var oIconTabBar = this.byId("idIconTabBarInlineMode");
+                // oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
+
+                var oIconTabBarIO = this.byId("idIconTabBarInlineMode");
+                if (this.getView().getModel("ui2").getProperty("/currStyleNo") === undefined
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === ""
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === "0000000000"
+                    || this.getView().getModel("ui2").getProperty("/currStyleNo") === "NEW") {
+                    oIconTabBarIO.getItems().forEach(item => {
+                        if (item.getProperty("key") === "itfIOHDR" || item.getProperty("key") === "itfSTYLE") {
+                            item.setProperty("enabled", true);
+                        } else {
+                            item.setProperty("enabled", false);
+                        }
+                    });
+                } else {
+                    oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
+                        .forEach(item => item.setProperty("enabled", true));
+                }
             },
 
             formatValueHelp: function (sValue, sPath, sKey, sText, sFormat) {

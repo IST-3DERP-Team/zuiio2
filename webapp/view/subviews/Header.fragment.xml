@@ -139,6 +139,27 @@
                             </Input>
                         </f:fields>
                     </f:FormElement>
+
+                    <!-- PRODTYPE -->
+                    <f:FormElement id="fePRODTYPE" label="{ddtext>/PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
+                        <f:fields>
+                            <Input id="PRODTYPE"  
+                                value="{headerData>/PRODTYPE}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onProdTypeValueHelp"
+                                suggestionItems="{ProdTypeModel>/results}">     
+                                <suggestionItems>
+                                    <core:ListItem text="{ProdTypeModel>PRODTYP}" additionalText="{ProdTypeModel>DESC1}"/>
+                                </suggestionItems>                                
+                            </Input>
+                        </f:fields>
+                    </f:FormElement>
                     
                     <!-- STYLENO/VER -->
                     <f:FormElement id="feSTYLENOVER" label="{ddtext>/STYLENO}" visible="{= ${VisibleFieldsData>/STYLENO} === true ? true : false }">
@@ -185,28 +206,7 @@
                                 change="onHeaderChange" liveChange="onHeaderChange">
                             </Input>
                         </f:fields>
-                    </f:FormElement>      
-
-                    <!-- SOLDTOCUST -->
-                    <f:FormElement id="feSOLDTOCUST" label="{ddtext>/SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
-                        <f:fields>
-                            <Input id="SOLDTOCUST" 
-                                value="{headerData>/SOLDTOCUST}" 
-                                showSuggestion="true" 
-                                showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
-                                valueStateText="Required"
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
-                                autocomplete="true" 
-                                valueHelpRequest="onSoldToValueHelp"
-                                suggestionItems="{SOLDTOModel>/results}">
-                                <suggestionItems>
-                                    <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/>
-                                </suggestionItems>
-                                </Input>
-                        </f:fields>
-                    </f:FormElement>
+                    </f:FormElement> 
 
                 </f:formElements>
             </f:FormContainer> 
@@ -237,27 +237,6 @@
                         </f:fields>
                     </f:FormElement> 
 
-                    <!-- PRODTYPE -->
-                    <f:FormElement id="fePRODTYPE" label="{ddtext>/PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
-                        <f:fields>
-                            <Input id="PRODTYPE"  
-                                value="{headerData>/PRODTYPE}" 
-                                showSuggestion="true" 
-                                showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
-                                valueStateText="Required"
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
-                                autocomplete="true" 
-                                valueHelpRequest="onProdTypeValueHelp"
-                                suggestionItems="{ProdTypeModel>/results}">     
-                                <suggestionItems>
-                                    <core:ListItem text="{ProdTypeModel>PRODTYP}" additionalText="{ProdTypeModel>DESC1}"/>
-                                </suggestionItems>                                
-                            </Input>
-                        </f:fields>
-                    </f:FormElement>
-
                     <!-- SALESGRP -->
                     <f:FormElement id="feSALESGRP" label="{ddtext>/SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
                         <f:fields>
@@ -275,6 +254,27 @@
                                     <core:ListItem text="{SalesGrpModel>SALESGRP}" additionalText="{SalesGrpModel>DESC1}"/>
                                 </suggestionItems> 
                             </Input>
+                        </f:fields>
+                    </f:FormElement>
+
+                    <!-- SOLDTOCUST -->
+                    <f:FormElement id="feSOLDTOCUST" label="{ddtext>/SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
+                        <f:fields>
+                            <Input id="SOLDTOCUST" 
+                                value="{headerData>/SOLDTOCUST}" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
+                                valueStateText="Required"
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onSoldToValueHelp"
+                                suggestionItems="{SOLDTOModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/>
+                                </suggestionItems>
+                                </Input>
                         </f:fields>
                     </f:FormElement>
 
