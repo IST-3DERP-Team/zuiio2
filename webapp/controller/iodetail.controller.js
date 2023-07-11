@@ -229,6 +229,8 @@ sap.ui.define([
                 //     //     window.history.go((window.history.state.sap.history.length-1) - window.history.state.sap.history.length);  
                 //     // }
                 // }
+
+                this._tableValueHelp = TableValueHelp;
             },
 
             onRouteMatched: function (oEvent) {
@@ -3733,11 +3735,45 @@ sap.ui.define([
             },
 
             onHeaderChange: async function (oEvent) {
+                console.log("onHeaderChange");
                 var me = this;
                 if (oEvent === undefined)
                     return;
 
                 var oSource = oEvent.getSource();
+
+                console.log("oSource", oSource);
+                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
+                oSource.setValueState(isInvalid ? "Error" : "None");
+
+                oSource.getSuggestionItems().forEach(item => {
+                    console.log("item", item);
+                    if (item.getProperty("key") === oSource.getValue().trim()) {
+                        isInvalid = false;
+                        oSource.setValueState(isInvalid ? "Error" : "None");
+                    }
+                })
+
+                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
+                else {
+                    var sModel = oSource.getBindingInfo("value").parts[0].model;
+                    var sPath = oSource.getBindingInfo("value").parts[0].path;
+
+                    console.log("sModel", sModel);
+                    console.log("sPath", sPath);
+                    console.log("oSource.getSelectedKey()", oSource.getSelectedKey());
+                    this.getView().getModel(sModel).setProperty(sPath, oSource.getSelectedKey());
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                }
+
+                // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
+                // console.log(this._validationErrors);
+                this._bHeaderChanged = true;    
+
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
 
                 if (srcInput === "/PRODSCEN") {
@@ -3804,9 +3840,9 @@ sap.ui.define([
                         let txtWeaveTyp;
                         let txtProdPlant;
                         let txtProdScen = this.getView().byId("PRODSCEN").getValue();
-                        let oData = this.getView().getModel("ProdScenModel").oData;
-                        for (var i = 0; i < oData.results.length; i++) {
-                            if (oData.results[i].PRODSCEN === txtProdScen) {
+                        let oData = this.getView().getModel("ProdScenModel").oData.results;
+                        for (var i = 0; i < oDatalength; i++) {
+                            if (oData[i].PRODSCEN === txtProdScen) {
                                 txtWeaveTyp = oData.results[i].WVTYP;
                                 txtProdPlant = oData.results[i].PRODPLANT;
                             }
@@ -5154,6 +5190,7 @@ sap.ui.define([
             },
 
             onIOEdit: async function (source) {
+                // console.log(this.getView().getModel("ProdScenModel"));
                 var sSource = source;
 
                 // var bProceed = await this.lock(this);

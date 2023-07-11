@@ -27,7 +27,9 @@ sap.ui.define([
             var sTextFormatMode = vColProp[0].TextFormatMode === undefined || vColProp[0].TextFormatMode === "" ? "Key" : vColProp[0].TextFormatMode;
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = me._oModelColumns[sColumns];
-            var vh = me.getView().getModel(sPath).getData().results;            
+            console.log("sPath", sPath);
+            var vh = me.getView().getModel(sPath).getData().results;   
+            console.log("vh", vh);            
             var aColumns = [], oDDTextParam = [];
             var oDDText = me.getView().getModel("ddtext").getData();
 
@@ -37,8 +39,6 @@ sap.ui.define([
                     if (item.Value) sValue = item.ColumnName;
                 })
             }
-
-            console.log("vh", vh);
 
             vh.forEach(item => {
                 item.VHKey = item[sKey];
@@ -60,13 +60,11 @@ sap.ui.define([
 
             vh.sort((a, b) => (a.VHKey > b.VHKey ? 1 : -1));
 
-            console.log("vh sort", vh);
-
             if (vh.length > 0) {
                 Object.keys(vh[0]).filter(fItem => fItem !== "__metadata" && fItem !== "VHKey" && fItem !== "VHValue" && fItem !== "VHSelected").forEach(item => {
                     if (vhColumns !== undefined) {
                         var oColProp = vhColumns.filter(fItem => fItem.ColumnName === item);
-                        console.log("oColProp", oColProp);
+                        // console.log("oColProp", oColProp);
 
                         if (oColProp && oColProp.length > 0) {
                             if (oColProp[0].Visible) {
@@ -123,8 +121,6 @@ sap.ui.define([
                 } 
             }
 
-            console.log("aColumns", aColumns);
-
             aColumns.forEach(item => {
                 if (oDDText[item.ColumnName.toUpperCase()] === undefined || oDDText[item.ColumnName.toUpperCase()] === "") {
                     oDDTextParam.push({CODE: item.ColumnName.toUpperCase()});
@@ -179,14 +175,14 @@ sap.ui.define([
 
             var oColumns = { columns: aColumns };
 
-            console.log("oColumns", oColumns);
+            // console.log("oColumns", oColumns);
             var oVHModel = new JSONModel({
                 title: oDDText[sTitle.toUpperCase()],
                 count: vh.length,
                 textFormatMode: sTextFormatMode
             });          
             
-            console.log("oVHModel", oVHModel);
+            // console.log("oVHModel", oVHModel);
 
             // create value help dialog
             if (!me._tableValueHelpDialog) {
@@ -203,10 +199,10 @@ sap.ui.define([
             }
 
             me._tableValueHelpDialog.open();
-            console.log("me._tableValueHelpDialog", me._tableValueHelpDialog);
+            // console.log("me._tableValueHelpDialog", me._tableValueHelpDialog);
             var oTable = me._tableValueHelpDialog.getContent()[0].getAggregation("items")[0];
-            console.log("oTable", oTable);
-            console.log("me._tableValueHelp", me._tableValueHelp);
+            // console.log("oTable", oTable);
+            // console.log("me._tableValueHelp", me);
             oTable.attachCellClick(me._tableValueHelp.handleTableValueHelpSelect.bind(me));
             // sap.ui.getCore().byId("tvhSearchField").attachSearch(me._tableValueHelp.handleTableValueHelpFilter); 
             // sap.ui.getCore().byId("btnTVHCancel").attachPress(me._tableValueHelp.handleTableValueHelpCancel.bind(me));
@@ -298,7 +294,7 @@ sap.ui.define([
             var sTextFormatMode = vColProp[0].TextFormatMode === undefined || vColProp[0].TextFormatMode === "" ? "Key" : vColProp[0].TextFormatMode;
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = this._oModelColumns[sColumns];
-            var vh = this.getView().getModel(sPath).getData();
+            var vh = this.getView().getModel(sPath).getData().results;
             var aColumns = [], oDDTextParam = [];
             var oDDText = this.getView().getModel("ddtext").getData();
 
@@ -449,6 +445,7 @@ sap.ui.define([
 
             this._tableValueHelpDialog.open();
             var oTable = this._tableValueHelpDialog.getContent()[0].getAggregation("items")[0];
+            console.log("oTable", oTable);
             oTable.attachCellClick(this._tableValueHelp.handleTableValueHelpSelect.bind(this));
             // sap.ui.getCore().byId("tvhSearchField").attachSearch(this._tableValueHelp.handleTableValueHelpFilter);           
             // sap.ui.getCore().byId("btnTVHCancel").attachPress(me._tableValueHelp.handleTableValueHelpCancel.bind(me));
@@ -521,10 +518,12 @@ sap.ui.define([
         },
 
         handleTableValueHelpSelect: function (oEvent) {
-            console.log("handleTableValueHelpSelect");
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setValueState("None");
+
+            console.log("this._inputSource", this._inputSource);
+            
             this._tableValueHelpDialog.close(); 
         }, 
 

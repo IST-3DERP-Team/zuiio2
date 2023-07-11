@@ -221,8 +221,8 @@
     ],
     "headerData": [
         {"ColumnName": "PRODSCEN", "TextFormatMode": "Key",
-            "ValueHelp": {"show": true, "items": {"path": "ProdScenModel", "value": "PRODCEN", "text": "DESC1"},
-                "SuggestionItems": {"path": "ProdScenModel>/", "text": "{ProdScenModel>PRODSCEN}", "additionalText": "{ProdScenModel>DESC1}", "maxSuggestionWidth": "200px" },
+            "ValueHelp": {"show": true, "items": {"path": "ProdScenModel", "value": "PRODCEN", "text": "PRODCEN"},
+                "SuggestionItems": {"path": "ProdScenModel>/results", "text": "{ProdScenModel>PRODSCEN}", "additionalText": "{ProdScenModel>PRODCEN}", "maxSuggestionWidth": "200px" },
                 "columns": "tvh_prodscen"
             }
         }
@@ -237,7 +237,6 @@
         {"ColumnName": "FTY_SALES_TERM", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "CUST_SALES_TERM", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "WVTYP", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "PLNTPREFIX", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false}
-        
+        {"ColumnName": "PLNTPREFIX", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false}        
     ]
 }

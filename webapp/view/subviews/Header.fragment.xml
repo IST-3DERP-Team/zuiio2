@@ -60,9 +60,9 @@
                                 valueStateText="Required"
                                 change="onHeaderChange" 
                                 liveChange="onHeaderChange" 
-                                autocomplete="true" 
+                                autocomplete="true"
                                 valueHelpRequest="onIOTypeValueHelp"
-                                suggestionItems="{IOTypeModel>/results}">     
+                                suggestionItems="{path: 'IOTypeModel>/results', length: 10000, templateShareable: false}">     
                                 <suggestionItems>
                                     <core:ListItem text="{IOTypeModel>IOTYPE}" additionalText="{IOTypeModel>DESC1}"/>
                                 </suggestionItems>                                
@@ -132,9 +132,9 @@
                                 liveChange="onHeaderChange" 
                                 autocomplete="true" 
                                 valueHelpRequest="onSeasonsValueHelp"
-                                suggestionItems="{SeasonsModel>/results}">
+                                suggestionItems="{path: 'SeasonsModel>/results', length: 10000, templateShareable: false}">
                                 <suggestionItems>
-                                    <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
+                                    <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>SEASONCD}"/>
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -331,12 +331,10 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
                                 valueStateText="Required"
                                 change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
-                                autocomplete="true" 
                                 valueHelpRequest="handleFormValueHelp"
-                                suggestionItems="{path: 'ProdScenModel>/', length: 10000, templateShareable: false}" >
+                                suggestionItems="{path: 'ProdScenModel>/results', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:Item key="{ProdScenModel>PRODSCEN}" text="{ProdScenModel>DESC1}" />
+                                    <core:Item key="{ProdScenModel>PRODSCEN}" text="{ProdScenModel>PRODSCEN}" />
                                 </suggestionItems>                              
                             </Input>
                         </f:fields>
