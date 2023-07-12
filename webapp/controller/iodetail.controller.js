@@ -3742,34 +3742,6 @@ sap.ui.define([
 
                 var oSource = oEvent.getSource();
 
-                console.log("oSource", oSource);
-                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
-                oSource.setValueState(isInvalid ? "Error" : "None");
-
-                oSource.getSuggestionItems().forEach(item => {
-                    console.log("item", item);
-                    if (item.getProperty("key") === oSource.getValue().trim()) {
-                        isInvalid = false;
-                        oSource.setValueState(isInvalid ? "Error" : "None");
-                    }
-                })
-
-                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
-                else {
-                    var sModel = oSource.getBindingInfo("value").parts[0].model;
-                    var sPath = oSource.getBindingInfo("value").parts[0].path;
-
-                    console.log("sModel", sModel);
-                    console.log("sPath", sPath);
-                    console.log("oSource.getSelectedKey()", oSource.getSelectedKey());
-                    this.getView().getModel(sModel).setProperty(sPath, oSource.getSelectedKey());
-                    this._validationErrors.forEach((item, index) => {
-                        if (item === oEvent.getSource().getId()) {
-                            this._validationErrors.splice(index, 1)
-                        }
-                    })
-                }
-
                 // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
                 // console.log(this._validationErrors);
                 this._bHeaderChanged = true;    
@@ -3780,16 +3752,16 @@ sap.ui.define([
                     var sProdScen = this.getView().byId("PRODSCEN").getValue();
 
                     var oData = this.getView().getModel("ProdScenModel").oData;
-                    for (var i = 0; i < oData.results.length; i++) {
-                        if (oData.results[i].PRODSCEN === sProdScen) {
+                    for (var i = 0; i < oData.length; i++) {
+                        if (oData[i].PRODSCEN === sProdScen) {
                             // alert(oData.results[i].PRODPLANT);
-                            this.getView().byId("PRODPLANT").setValue(oData.results[i].PRODPLANT);
-                            this.getView().byId("TRADPLANT").setValue(oData.results[i].TRADPLANT);
-                            this.getView().byId("PLANPLANT").setValue(oData.results[i].PLANPLANT);
-                            this.getView().byId("FTYSALTERM").setValue(oData.results[i].FTY_SALES_TERM);
-                            this.getView().byId("CUSSALTERM").setValue(oData.results[i].CUST_SALES_TERM);
-                            this.getView().byId("SALESORG").setValue(oData.results[i].SALESORG);
-                            this.getView().getModel("ui2").setProperty("/WeaveTyp", oData.results[i].WVTYP);
+                            this.getView().byId("PRODPLANT").setValue(oData[i].PRODPLANT);
+                            this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
+                            this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
+                            this.getView().byId("FTYSALTERM").setValue(oData[i].FTY_SALES_TERM);
+                            this.getView().byId("CUSSALTERM").setValue(oData[i].CUST_SALES_TERM);
+                            this.getView().byId("SALESORG").setValue(oData[i].SALESORG);
+                            this.getView().getModel("ui2").setProperty("/WeaveTyp", oData[i].WVTYP);
 
                         }
                     }
@@ -3840,11 +3812,11 @@ sap.ui.define([
                         let txtWeaveTyp;
                         let txtProdPlant;
                         let txtProdScen = this.getView().byId("PRODSCEN").getValue();
-                        let oData = this.getView().getModel("ProdScenModel").oData.results;
-                        for (var i = 0; i < oDatalength; i++) {
+                        let oData = this.getView().getModel("ProdScenModel").oData;
+                        for (var i = 0; i < oData.length; i++) {
                             if (oData[i].PRODSCEN === txtProdScen) {
-                                txtWeaveTyp = oData.results[i].WVTYP;
-                                txtProdPlant = oData.results[i].PRODPLANT;
+                                txtWeaveTyp = oData[i].WVTYP;
+                                txtProdPlant = oData[i].PRODPLANT;
                             }
                         }
 
@@ -3974,29 +3946,265 @@ sap.ui.define([
                     }
                 }
 
-                // if (srcInput === "/CUSTGRP") {
-                //     let sNewValue = oEvent.getParameter("CUSTGRP");
-                //     let sOldValue = oEvent.getSource().getBinding("CUSTGRP").getValue();
+                if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
+                    var sCustGrp = this.getView().byId("CUSTGRP").getValue();
+                    var sSalesGrp = this.getView().byId("SALESGRP").getValue();
 
-                //     console.log("sNewValue", sNewValue);
-                //     console.log("sOldValue", sOldValue);
+                    var oModel = this.getModel("SOLDTOModel");
 
-                //     if(sNewValue !== sOldValue) {
-                //         this.getView().byId("CUSTGRP").value("");
-                //     }
-                // }
+                }
 
-                // if (srcInput === "/SALESGRP") {
-                //     let sNewValue = oEvent.getParameter("SALESGRP");
-                //     let sOldValue = oEvent.getSource().getBinding("SALESGRP").getValue();
+                //set change flag for header
+                this._headerChanged = true;
+                this.setChangeStatus(true);
+            },
+            onHeaderChangeTableFilter: async function (oEvent) {
+                console.log("onHeaderChangeTableFilter");
+                var me = this;
+                if (oEvent === undefined)
+                    return;
 
-                //     console.log("sNewValue", sNewValue);
-                //     console.log("sOldValue", sOldValue);
+                var oSource = oEvent.getSource();
 
-                //     if(sNewValue !== sOldValue) {
-                //         this.getView().byId("SALESGRP").value("");
-                //     }
-                // }
+                console.log("oSource", oSource);
+                var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
+                oSource.setValueState(isInvalid ? "Error" : "None");
+
+                oSource.getSuggestionItems().forEach(item => {
+                    console.log("item", item);
+                    if (item.getProperty("key") === oSource.getValue().trim()) {
+                        isInvalid = false;
+                        oSource.setValueState(isInvalid ? "Error" : "None");
+                    }
+                })
+
+                if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
+                else {
+                    var sModel = oSource.getBindingInfo("value").parts[0].model;
+                    var sPath = oSource.getBindingInfo("value").parts[0].path;
+
+                    console.log("sModel", sModel);
+                    console.log("sPath", sPath);
+                    console.log("oSource.getSelectedKey()", oSource.getSelectedKey());
+                    this.getView().getModel(sModel).setProperty(sPath, oSource.getSelectedKey());
+                    this._validationErrors.forEach((item, index) => {
+                        if (item === oEvent.getSource().getId()) {
+                            this._validationErrors.splice(index, 1)
+                        }
+                    })
+                }
+
+                // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
+                // console.log(this._validationErrors);
+                this._bHeaderChanged = true;    
+
+                var srcInput = oSource.getBindingInfo("value").parts[0].path;
+
+                if (srcInput === "/PRODSCEN") {
+                    var sProdScen = this.getView().byId("PRODSCEN").getValue();
+
+                    var oData = this.getView().getModel("ProdScenModel").oData;
+                    for (var i = 0; i < oData.length; i++) {
+                        if (oData[i].PRODSCEN === sProdScen) {
+                            // alert(oData.results[i].PRODPLANT);
+                            this.getView().byId("PRODPLANT").setValue(oData[i].PRODPLANT);
+                            this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
+                            this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
+                            this.getView().byId("FTYSALTERM").setValue(oData[i].FTY_SALES_TERM);
+                            this.getView().byId("CUSSALTERM").setValue(oData[i].CUST_SALES_TERM);
+                            this.getView().byId("SALESORG").setValue(oData[i].SALESORG);
+                            this.getView().getModel("ui2").setProperty("/WeaveTyp", oData[i].WVTYP);
+
+                        }
+                    }
+                }
+
+                if (srcInput === "/CUSTDLVDT") {
+                    let cntBlank = 0;
+                    let fieldList = "";
+                    let oFormElement;
+                    let oLabel;
+
+                    let inputField = this.getView().byId("PRODSCEN");
+                    if (this.isInputFieldBlank(inputField)) {
+                        cntBlank++;
+                        oFormElement = this.getView().byId("fePRODSCEN");
+                        oLabel = oFormElement.getLabel();
+                        fieldList += oLabel ? oLabel + ", " : "";                        
+                    }
+
+                    inputField = this.getView().byId("PRODPLANT");
+                    if (this.isInputFieldBlank(inputField)) {
+                        cntBlank++;
+                        oFormElement = this.getView().byId("fePRODPLANT");
+                        oLabel = oFormElement.getLabel();
+                        fieldList += oLabel ? oLabel + ", " : "";                        
+                    }
+
+                    inputField = this.getView().byId("IOTYPE");
+                    if (this.isInputFieldBlank(inputField)) {
+                        cntBlank++;
+                        oFormElement = this.getView().byId("feIOTYPE");
+                        oLabel = oFormElement.getLabel();
+                        fieldList += oLabel ? oLabel + ", " : "";                        
+                    }
+
+                    let inputValue = this.getView().byId("CUSTDLVDT").getValue();
+                    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
+                    var date = dateFormat.parse(inputValue);
+                    var isValid = this.isValidDate(date);
+
+                    if(!isValid){
+                        cntBlank++;
+                    }
+
+                    //cntBlank VALUE IS ZERO, NO ERRORS
+                    if (cntBlank === 0) {
+                        // console.log("true");
+                        let txtWeaveTyp;
+                        let txtProdPlant;
+                        let txtProdScen = this.getView().byId("PRODSCEN").getValue();
+                        let oData = this.getView().getModel("ProdScenModel").oData;
+                        for (var i = 0; i < oData.length; i++) {
+                            if (oData[i].PRODSCEN === txtProdScen) {
+                                txtWeaveTyp = oData[i].WVTYP;
+                                txtProdPlant = oData[i].PRODPLANT;
+                            }
+                        }
+
+                        let txtIOType = this.getView().byId("IOTYPE").getValue();
+                        if (txtProdPlant !== this.getView().byId("PRODPLANT").getValue()) {
+                            txtProdPlant = this.getView().byId("PRODPLANT").getValue();
+                        }
+
+                        let oModel = this.getOwnerComponent().getModel();
+
+                        let fldCustDlvDt = this.getView().byId("CUSTDLVDT");
+                        let CustDlvDtValue = new Date(fldCustDlvDt.getDateValue());
+
+                        // console.log(txtWeaveTyp);
+
+                        await new Promise((resolve, reject) => {
+                            oModel.read("/PRDLEADTMSet", {
+                                urlParameters: {
+                                    "$filter": "SBU eq '" + this._sbu + "' and IOTYPE eq '" + txtIOType + "' and EVENTCD eq 'ALL' and PLANTCD eq '" + txtProdPlant + "' and WEAVETYP eq '" + txtWeaveTyp + "'"
+                                },
+                                success: function (oData, response) {
+                                    // me.getView().setModel(new JSONModel(oData), "PRDLEADTMModel");
+                                    // console.log("PRDLEADTMModel");
+                                    // console.log(oData);
+                                    var dtProdStart = me.getView().byId("PRODSTART");
+                                    oData.results.forEach(item => {
+                                        CustDlvDtValue.setDate(CustDlvDtValue.getDate() - item.LEADTM);
+                                        me.getView().byId("PRODSTART").setValue(sapDateFormat.format(new Date(CustDlvDtValue)));
+                                        me.getView().byId("PRODDAYS").setValue(item.LEADTM);
+                                        me.getView().getModel("ui2").setProperty("/ProdDays", item.LEADTM);
+                                        // dtProdStart.setDateValue(CustDlvDtValue);
+                                    })
+
+                                    resolve();
+                                },
+                                error: function (err) {
+                                    resolve();
+                                }
+                            })
+                        })
+
+                        inputField = this.getView().byId("PRODSTART");
+                        // let vProdDt = new Date(inputField.getValue());
+                        let vProdDt = sapDateFormat.format(new Date(inputField.getValue()));
+                        let txtYear = new Date(inputField.getValue()).getFullYear();
+
+                        // console.log(vProdDt);
+                        // console.log(txtYear);
+
+                        var dateFormatter = sap.ui.core.format.DateFormat.getDateTimeInstance({
+                            pattern: "yyyy-MM-dd'T'HH:mm:ss"
+                        });
+
+                        vProdDt = dateFormatter.format(new Date(vProdDt)); // 2023-04-23T00:00:00
+                        // console.log(vProdDt);
+
+                        await new Promise((resolve, reject) => {
+                            oModel.read("/PRDCALSet", {
+                                urlParameters: {
+                                    "$filter": "Plantcd eq '" + txtProdPlant + "' and Prodyr eq '" + txtYear + "' and Startdt eq datetime'" + vProdDt + "'"
+                                },
+                                success: function (oData, response) {
+                                    // console.log(oData);
+                                    oData.results.forEach(item => {
+                                        me.getView().byId("PLANMONTH").setValue(item.Prodyr + "/" + item.Prodmo);
+                                        me.getView().byId("PRODWK").setValue(+item.Prodwk);
+                                        me.getView().getModel("ui2").setProperty("/ProdWk", item.Prodwk);
+                                    })
+                                    resolve();
+                                },
+                                error: function (err) {
+                                    resolve();
+                                }
+                            })
+                        })
+
+                        await this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
+                    } 
+                    //cntBlank VALUE IS GREATER THAN ZERO, WITH ERROR
+                    else if(cntBlank > 0) {
+                        //RESET VALUE OF CUSTDLVDT IF REQUIRED FIELDS NOT PROVIDED
+                        this.getView().byId("CUSTDLVDT").setValue("");
+                        //LIST OUT THE REQUIRED FIELDS THAT WERE NOT FILLED
+                        let trimFieldList = this.removeLastOccurrence(fieldList, ", ");
+                        MessageBox.error(trimFieldList + " " + this.getView().getModel("ddtext").getData()["ISREQUIRED"]);
+                    }
+                }
+
+                if (srcInput === "/PLANDLVDT") {
+                    //VALIDATE PLANDLVDT, MUST NOT BE MORE THAN CUSTDLVDT
+                    let inputValue = this.getView().byId("PLANDLVDT").getValue();
+                    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
+                    var date = dateFormat.parse(inputValue);
+                    var isValid = this.isValidDate(date);
+                    if (isValid) {
+                        let dtPlanDlv = dateFormat.format(new Date(inputValue));
+                        let dtCustDlv = dateFormat.format(new Date(this.getView().byId("CUSTDLVDT").getValue()));
+
+                        if (dtPlanDlv > dtCustDlv) {
+                            this.getView().byId("PLANDLVDT").setValueState("Error");
+                            this.getView().byId("PLANDLVDT").setValueStateText(this.getView().getModel("ddtext").getData()["PLANDLVDT_ERR_VALIDATION"]);
+                            this.getView().byId("PLANDLVDT").setValue("");
+                        } else if (!Date.parse(dtCustDlv)) {
+                            this.getView().byId("PLANDLVDT").setValueState("Error");
+                            this.getView().byId("PLANDLVDT").setValueStateText(this.getView().getModel("ddtext").getData()["ERR_CUSTDLVDT_REQUIRED"]);
+                            this.getView().byId("PLANDLVDT").setValue("");
+                        } else {
+                            this.getView().byId("PLANDLVDT").setValueState("None");
+                        }
+                    }
+                }
+
+                if (srcInput === "/STYLENO") {
+                    var sStyleNo = this.getView().byId("STYLENO").getValue();
+
+                    var oData = this.getView().getModel("StyleNoModel").oData;
+                    // console.log(oData);     
+                    for (var i = 0; i < oData.results.length; i++) {
+                        if (oData.results[i].STYLENO === sStyleNo) {
+                            this.getView().byId("VERNO").setValue(oData.results[i].VERNO);
+                            this.getView().byId("PRODTYPE").setValue(oData.results[i].PRODTYP);
+                            this.getView().byId("STYLECD").setValue(oData.results[i].STYLECD);
+                            this.getView().byId("SEASONCD").setValue(oData.results[i].SEASONCD);
+                            this.getView().byId("CUSTGRP").setValue(oData.results[i].CUSTGRP);
+                            this.getView().byId("BASEUOM").setValue(oData.results[i].UOM);
+                        }
+                    }
+                }
+
+                if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
+                    var sCustGrp = this.getView().byId("CUSTGRP").getValue();
+                    var sSalesGrp = this.getView().byId("SALESGRP").getValue();
+
+                    var oModel = this.getModel("SOLDTOModel");
+
+                }
 
                 //set change flag for header
                 this._headerChanged = true;
@@ -4031,7 +4239,7 @@ sap.ui.define([
 
                             // console.log(sModelName);
                             // console.log(oData);
-                            oJSONModel.setData(oData);
+                            oJSONModel.setData(oData.results);
                             oView.setModel(oJSONModel, sModelName);
                             // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
@@ -4054,7 +4262,7 @@ sap.ui.define([
                             "$filter": "SBU eq '" + this._sbu + "'"
                         },
                         success: function (oData, oResponse) {
-                            oJSONModel.setData(oData);
+                            oJSONModel.setData(oData.results);
                             oView.setModel(oJSONModel, sModelName);
                             // console.log(oView.setModel(oJSONModel, ModelName));
                             // resolve();
@@ -4088,7 +4296,7 @@ sap.ui.define([
                                     })
                                 }
 
-                                oJSONModel.setData(oData);
+                                oJSONModel.setData(oData.results);
                                 oView.setModel(oJSONModel, sModelName);
                                 // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
@@ -4115,7 +4323,7 @@ sap.ui.define([
                                     })
                                 }
 
-                                oJSONModel.setData(oData);
+                                oJSONModel.setData(oData.results);
                                 oView.setModel(oJSONModel, sModelName);
                                 // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
 
@@ -4130,123 +4338,123 @@ sap.ui.define([
                 }
             },
 
-            getSALESORGSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getSALESORGSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/SALESORGvhSet", {
-                    urlParameters: {
+            //     oSHModel.read("/SALESORGvhSet", {
+            //         urlParameters: {
 
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "SALESORGModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "SALESORGModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getUOMSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getUOMSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/UOMvhSet", {
-                    urlParameters: {
+            //     oSHModel.read("/UOMvhSet", {
+            //         urlParameters: {
 
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "UOMModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "UOMModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getStyleNoSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getStyleNoSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/STYLENOvhSet", {
-                    urlParameters: {
+            //     oSHModel.read("/STYLENOvhSet", {
+            //         urlParameters: {
 
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "StyleNoModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "StyleNoModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getSeasonsSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getSeasonsSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/SEASONSet", {
-                    urlParameters: {
-                        "$filter": "SBU eq '" + this._sbu + "'"
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "SeasonsModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //     oSHModel.read("/SEASONSet", {
+            //         urlParameters: {
+            //             "$filter": "SBU eq '" + this._sbu + "'"
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "SeasonsModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getProdScenSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getProdScenSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/PRODSCENvhSet", {
-                    urlParameters: {
+            //     oSHModel.read("/PRODSCENvhSet", {
+            //         urlParameters: {
 
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "ProdScenModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "ProdScenModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getIOTypeSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
+            // getIOTypeSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
 
-                oSHModel.read("/IOTYPSet", {
-                    urlParameters: {
+            //     oSHModel.read("/IOTYPSet", {
+            //         urlParameters: {
 
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "IOTypeModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "IOTypeModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
-            getProdTypeSet: function () {
-                var oSHModel = this.getOwnerComponent().getModel();
-                var oJSONModel = new JSONModel();
-                var oView = this.getView();
-                oSHModel.read("/PRODTYPvhSet", {
-                    urlParameters: {
-                        "$filter": "SBU eq '" + this._sbu + "'"
-                    },
-                    success: function (oData, oResponse) {
-                        oJSONModel.setData(oData);
-                        oView.setModel(oJSONModel, "ProdTypeModel");
-                    },
-                    error: function (err) { }
-                });
-            },
+            // getProdTypeSet: function () {
+            //     var oSHModel = this.getOwnerComponent().getModel();
+            //     var oJSONModel = new JSONModel();
+            //     var oView = this.getView();
+            //     oSHModel.read("/PRODTYPvhSet", {
+            //         urlParameters: {
+            //             "$filter": "SBU eq '" + this._sbu + "'"
+            //         },
+            //         success: function (oData, oResponse) {
+            //             oJSONModel.setData(oData);
+            //             oView.setModel(oJSONModel, "ProdTypeModel");
+            //         },
+            //         error: function (err) { }
+            //     });
+            // },
 
             getIOPrefixSet: async function (model, sbu, wvtyp) {
                 var me = this;
@@ -4674,15 +4882,15 @@ sap.ui.define([
                     var oData = this.getView().getModel("ProdScenModel").oData;
                     // console.log("ProdScenModel");
                     // console.log(oData);
-                    for (var i = 0; i < oData.results.length; i++) {
-                        if (oData.results[i].PRODSCEN === sProdScen) {
+                    for (var i = 0; i < oData.length; i++) {
+                        if (oData[i].PRODSCEN === sProdScen) {
                             // alert(oData.results[i].PRODPLANT);
-                            this.getView().byId("PRODPLANT").setValue(oData.results[i].PRODPLANT);
-                            this.getView().byId("TRADPLANT").setValue(oData.results[i].TRADPLANT);
-                            this.getView().byId("PLANPLANT").setValue(oData.results[i].PLANPLANT);
-                            this.getView().byId("FTYSALTERM").setValue(oData.results[i].FTY_SALES_TERM);
-                            this.getView().byId("CUSSALTERM").setValue(oData.results[i].CUST_SALES_TERM);
-                            this.getView().byId("SALESORG").setValue(oData.results[i].SALESORG);
+                            this.getView().byId("PRODPLANT").setValue(oData[i].PRODPLANT);
+                            this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
+                            this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
+                            this.getView().byId("FTYSALTERM").setValue(oData[i].FTY_SALES_TERM);
+                            this.getView().byId("CUSSALTERM").setValue(oData[i].CUST_SALES_TERM);
+                            this.getView().byId("SALESORG").setValue(oData[i].SALESORG);
                         }
                     }
 
@@ -10950,7 +11158,7 @@ sap.ui.define([
                 var sUOM = this.getView().getModel("headerData").getData()["BASEUOM"];
                 var iUOMDec = 0;
 
-                this.getView().getModel("UOMINFOModel").getData().results.filter(fItem => fItem.MSEHI === sUOM)
+                this.getView().getModel("UOMINFOModel").getData().filter(fItem => fItem.MSEHI === sUOM)
                     .forEach((item) => {
                         // console.log(item.MSEHI);
                         iUOMDec = item.ANDEC;

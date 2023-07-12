@@ -220,10 +220,84 @@
         {"ColumnName": "COSTSTATUS", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
     ],
     "headerData": [
-        {"ColumnName": "PRODSCEN", "TextFormatMode": "Key",
-            "ValueHelp": {"show": true, "items": {"path": "ProdScenModel", "value": "PRODCEN", "text": "PRODCEN"},
-                "SuggestionItems": {"path": "ProdScenModel>/results", "text": "{ProdScenModel>PRODSCEN}", "additionalText": "{ProdScenModel>PRODCEN}", "maxSuggestionWidth": "200px" },
-                "columns": "tvh_prodscen"
+        {
+        "ColumnName": "PRODSCEN", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "ProdScenModel", "value": "PRODCEN", "text": "PRODCEN"},
+            "SuggestionItems": {"path": "ProdScenModel>/", "text": "{ProdScenModel>PRODSCEN}", "additionalText": "{ProdScenModel>PRODCEN}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_prodscen"
+            }
+        },
+        {
+        "ColumnName": "IOTYPE", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "IOTypeModel", "value": "IOTYPE", "text": "IOTYPE"},
+            "SuggestionItems": {"path": "IOTypeModel>/", "text": "{IOTypeModel>IOTYPE}", "additionalText": "{IOTypeModel>DESC1}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_iotype"
+            }
+        },
+        {
+        "ColumnName": "PRODTYPE", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "ProdTypeModel", "value": "PRODTYPE", "text": "PRODTYPE"},
+            "SuggestionItems": {"path": "ProdTypeModel>/", "text": "{ProdTypeModel>PRODTYPE}", "additionalText": "{ProdTypeModel>PRODTYPE}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_prodtype"
+            }
+        },
+        {
+        "ColumnName": "SEASONCD", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "SeasonsModel", "value": "SEASONCD", "text": "SEASONCD"},
+            "SuggestionItems": {"path": "SeasonsModel>/", "text": "{SeasonsModel>SEASONCD}", "additionalText": "{SeasonsModel>SEASONCD}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_seasons"
+            }
+        },
+        {
+        "ColumnName": "CUSTGRP", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "CustGrpModel", "value": "CUSTGRP", "text": "CUSTGRP"},
+            "SuggestionItems": {"path": "CustGrpModel>/", "text": "{CustGrpModel>CUSTGRP}", "additionalText": "{CustGrpModel>CUSTGRP}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_custgrp"
+            }
+        },
+        {
+        "ColumnName": "SALESGRP", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "SalesGrpModel", "value": "SALESGRP", "text": "SALESGRP"},
+            "SuggestionItems": {"path": "SalesGrpModel>/", "text": "{SalesGrpModel>SALESGRP}", "additionalText": "{SalesGrpModel>SALESGRP}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_salesgrp"
+            }
+        },
+        {
+        "ColumnName": "SOLDTOCUST", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "SOLDTOModel", "value": "Soldtocust", "text": "Soldtocust"},
+            "SuggestionItems": {"path": "SOLDTOModel>/", "text": "{SOLDTOModel>Soldtocust}", "additionalText": "{SOLDTOModel>Soldtocust}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_soldtocust"
+            }
+        },
+        {
+        "ColumnName": "BASEUOM", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "UOMModel", "value": "MSEHI", "text": "MSEHI"},
+            "SuggestionItems": {"path": "UOMModel>/", "text": "{UOMModel>MSEHI}", "additionalText": "{UOMModel>MSEHI}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_baseuom"
             }
         }
     ],
@@ -238,5 +312,41 @@
         {"ColumnName": "CUST_SALES_TERM", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "WVTYP", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "PLNTPREFIX", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false}        
+    ],
+    "tvh_iotype": [
+        {"ColumnName": "IOTYPE", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "DESC2", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "LIAPREFIX", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}   
+    ],
+    "tvh_prodtype": [
+        {"ColumnName": "PRODTYP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "DESC2", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "SBU", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}   
+    ],
+    "tvh_seasons": [
+        {"ColumnName": "SEASONCD", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "SBU", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}   
+    ],
+    "tvh_custgrp": [
+        {"ColumnName": "CUSTGRP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESCRIPTION", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
+    ],
+    "tvh_salesgrp": [
+        {"ColumnName": "SALESGRP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
+    ],
+    "tvh_soldtocust": [
+        {"ColumnName": "Soldtocust", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "Name", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "Custgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+    ],
+    "tvh_baseuom": [
+        {"ColumnName": "MSEHI", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "MSEHL", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "ANDEC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
     ]
 }

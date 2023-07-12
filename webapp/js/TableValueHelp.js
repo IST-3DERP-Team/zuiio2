@@ -18,6 +18,13 @@ sap.ui.define([
 
             var sModel = oSource.getBindingInfo("value").parts[0].model;
             var sTitle = oSource.getProperty("name") === undefined || oSource.getProperty("name") === "" ? me._inputField : oSource.getProperty("name");
+
+            console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]);
+            console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]);
+            console.log("me._inputId", me._inputId);
+            console.log("me._inputValue", me._inputValue);
+            console.log("me._inputField", me._inputField);
+
             var oTableSource = oSource.oParent.oParent;
             // var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
             var oModel = me.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -28,7 +35,24 @@ sap.ui.define([
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = me._oModelColumns[sColumns];
             console.log("sPath", sPath);
-            var vh = me.getView().getModel(sPath).getData().results;   
+            var vh;
+            // var vh = me.getView().getModel(sPath).getData();       
+            
+            console.log(me.getView().getModel(sPath).getData());
+            if(sPath === "SOLDTOModel" && me._inputField === "SOLDTOCUST") {
+                console.log("with Filter");
+
+                var custGrp = me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]; //get customer group value
+                var salesGrp = me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]; //get sales group value
+
+                console.log("custGrp", custGrp, "salesGrp", salesGrp);
+
+                vh = me.getView().getModel(sPath).getData().filter(item => item.Custgrp === custGrp && item.Salesgrp === salesGrp); 
+
+            } else {
+                vh = me.getView().getModel(sPath).getData(); 
+            }
+
             console.log("vh", vh);            
             var aColumns = [], oDDTextParam = [];
             var oDDText = me.getView().getModel("ddtext").getData();
@@ -197,8 +221,8 @@ sap.ui.define([
             else {
                 me._tableValueHelpDialog.setModel(oVHModel);
             }
+            me._tableValueHelpDialog.open();            
 
-            me._tableValueHelpDialog.open();
             // console.log("me._tableValueHelpDialog", me._tableValueHelpDialog);
             var oTable = me._tableValueHelpDialog.getContent()[0].getAggregation("items")[0];
             // console.log("oTable", oTable);
@@ -294,7 +318,10 @@ sap.ui.define([
             var sTextFormatMode = vColProp[0].TextFormatMode === undefined || vColProp[0].TextFormatMode === "" ? "Key" : vColProp[0].TextFormatMode;
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = this._oModelColumns[sColumns];
-            var vh = this.getView().getModel(sPath).getData().results;
+            console.log("sPath", sPath);
+            var vh = this.getView().getModel(sPath).getData();
+
+            console.log("vh", vh);
             var aColumns = [], oDDTextParam = [];
             var oDDText = this.getView().getModel("ddtext").getData();
 
@@ -522,7 +549,8 @@ sap.ui.define([
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setValueState("None");
 
-            console.log("this._inputSource", this._inputSource);
+            // console.log("sRowPath", sRowPath);
+            // console.log("this._inputSource", this._inputSource);
             
             this._tableValueHelpDialog.close(); 
         }, 

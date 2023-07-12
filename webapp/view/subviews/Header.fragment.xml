@@ -58,13 +58,11 @@
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/IOTYPE} : false}" 
                                 valueStateText="Required"
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
-                                autocomplete="true"
-                                valueHelpRequest="onIOTypeValueHelp"
-                                suggestionItems="{path: 'IOTypeModel>/results', length: 10000, templateShareable: false}">     
+                                change="onHeaderChangeTableFilter" 
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'IOTypeModel>/', length: 10000, templateShareable: false}">     
                                 <suggestionItems>
-                                    <core:ListItem text="{IOTypeModel>IOTYPE}" additionalText="{IOTypeModel>DESC1}"/>
+                                    <core:Item key="{IOTypeModel>IOTYPE}" text="{IOTypeModel>IOTYPE}" />
                                 </suggestionItems>                                
                             </Input>
                         </f:fields>
@@ -128,13 +126,14 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/SEASONCD}" 
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onSeasonsValueHelp"
-                                suggestionItems="{path: 'SeasonsModel>/results', length: 10000, templateShareable: false}">
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'SeasonsModel>/', length: 10000, templateShareable: false}">
                                 <suggestionItems>
-                                    <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>SEASONCD}"/>
+                                    <!-- <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>SEASONCD}"/> -->
+                                    <core:Item key="{SeasonsModel>SEASONCD}" text="{SeasonsModel>SEASONCD}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -149,13 +148,13 @@
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
                                 valueStateText="Required"
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onProdTypeValueHelp"
-                                suggestionItems="{ProdTypeModel>/results}">     
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'ProdTypeModel>/', length: 10000, templateShareable: false}">     
                                 <suggestionItems>
-                                    <core:ListItem text="{ProdTypeModel>PRODTYP}" additionalText="{ProdTypeModel>DESC1}"/>
+                                    <core:Item key="{ProdTypeModel>PRODTYP}" text="{ProdTypeModel>PRODTYP}" />
                                 </suggestionItems>                                
                             </Input>
                         </f:fields>
@@ -225,13 +224,14 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/CUSTGRP}" 
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange"
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter"
                                 autocomplete="true" 
-                                valueHelpRequest="onCustGrpValueHelp"
-                                suggestionItems="{CustGrpModel>/results}">
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'CustGrpModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:ListItem text="{CustGrpModel>CUSTGRP}" additionalText="{CustGrpModel>DESCRIPTION}"/>
+                                    <!-- <core:ListItem text="{CustGrpModel>CUSTGRP}" additionalText="{CustGrpModel>DESCRIPTION}"/> -->
+                                    <core:Item key="{CustGrpModel>CUSTGRP}" text="{CustGrpModel>CUSTGRP}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -246,12 +246,13 @@
                                 showValueHelp="true"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false}" 
                                 valueStateText="Required"
-                                change="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onSalesGrpValueHelp"
-                                suggestionItems="{SalesGrpModel>/results}" >
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'SalesGrpModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:ListItem text="{SalesGrpModel>SALESGRP}" additionalText="{SalesGrpModel>DESC1}"/>
+                                    <!-- <core:ListItem text="{SalesGrpModel>SALESGRP}" additionalText="{SalesGrpModel>DESC1}"/> -->
+                                    <core:Item key="{SalesGrpModel>SALESGRP}" text="{SalesGrpModel>SALESGRP}" />
                                 </suggestionItems> 
                             </Input>
                         </f:fields>
@@ -266,13 +267,14 @@
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
                                 valueStateText="Required"
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onSoldToValueHelp"
-                                suggestionItems="{SOLDTOModel>/results}">
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'SOLDTOModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/>
+                                    <!-- <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/> -->
+                                    <core:Item key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust}" />
                                 </suggestionItems>
                                 </Input>
                         </f:fields>
@@ -288,13 +290,14 @@
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false}" 
                                 valueStateText="Required"
                                 value="{headerData>/BASEUOM}" 
-                                change="onHeaderChange" 
-                                liveChange="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onUOMValueHelp"
-                                suggestionItems="{UOMModel>/results}">
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'UOMModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/>
+                                    <!-- <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/> -->
+                                    <core:Item key="{UOMModel>MSEHI}" text="{UOMModel>MSEHI}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -330,11 +333,11 @@
                                 showValueHelp="true"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
                                 valueStateText="Required"
-                                change="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
                                 valueHelpRequest="handleFormValueHelp"
-                                suggestionItems="{path: 'ProdScenModel>/results', length: 10000, templateShareable: false}" >
+                                suggestionItems="{path: 'ProdScenModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:Item key="{ProdScenModel>PRODSCEN}" text="{ProdScenModel>PRODSCEN}" />
+                                    <core:Item key="{ProdScenModel>PRODSCEN}" text="{ProdScenModel>DESC1}" />
                                 </suggestionItems>                              
                             </Input>
                         </f:fields>
@@ -349,7 +352,7 @@
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SALESORG} : false }" 
                                 valueStateText="Required"
-                                change="onHeaderChange"  
+                                change="onHeaderChangeTableFilter"  
                                 autocomplete="true" 
                                 valueHelpRequest="onSalesOrgValueHelp"
                                 suggestionItems="{SalesOrgModel>/results}" >

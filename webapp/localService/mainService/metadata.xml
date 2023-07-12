@@ -16,7 +16,7 @@
                 <Property Name="PRODTYPE" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PRODTYPE" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="CUSTGRP" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSTGRP" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="STYLENO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="STYLENO" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
-                <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VERNO" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="VERNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="VERNO" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="SOLDTOCUST" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="SOLDTOCUST" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="PRODSCEN" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PRODSCEN" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="PRODPLANT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PRODPLANT" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -39,7 +39,7 @@
                 <Property Name="REVORDQTY" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:unit="BASEUOM" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="BASEUOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="UOM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="unit-of-measure"/>
                 <Property Name="UPRICE" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:label="UPRICE" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
-                <Property Name="CURRENCYCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CURRENCYCD" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="CURRENCYCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CURRENCYCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="currency-code"/>
                 <Property Name="SUBCON" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="SUBCON" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="VENDORCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VENDORCD" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="CUSSALTERM" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSSALTERM" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -145,13 +145,22 @@
                 <Property Name="DLVSEQ" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="DLVSEQ" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPONO" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="CPONO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPOREV" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="CPOREV" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CSTYPE" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="CSTYPE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPOITEM" Type="Edm.String" Nullable="false" MaxLength="6" sap:unicode="false" sap:label="CPOITEM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="VERSION" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="VERSION" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPODT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="CPODT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DRPSHIP1" Type="Edm.String" Nullable="false" MaxLength="150" sap:unicode="false" sap:label="DRPSHIP1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="DLVDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="DLVDT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="DRPSHIP2" Type="Edm.String" Nullable="false" MaxLength="150" sap:unicode="false" sap:label="DRPSHIP2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FGQLTY" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="FGQLTY" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="REVDLVDT" Type="Edm.String" MaxLength="10" sap:unicode="false" sap:label="REVDLVDT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="CTNMSR" Type="Edm.String" Nullable="false" MaxLength="100" sap:unicode="false" sap:label="CTNMSR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CUSTSHIPTO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSTSHIPTO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CUSTBILLTO" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSTBILLTO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="INVDISCPCT" Type="Edm.Decimal" Nullable="false" Precision="9" Scale="5" sap:unicode="false" sap:label="INVDISCPCT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="HTSNO" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="HTSNO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="INVDISCABS" Type="Edm.Decimal" Nullable="false" Precision="11" Scale="5" sap:unicode="false" sap:label="INVDISCABS" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="MATDESC" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="MATDESC" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="SHIPMODE" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="SHIPMODE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="PAYMETHOD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="PAYMETHOD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="LCNO" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="LCNO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -519,6 +528,8 @@
                 </Key>
                 <Property Name="Iono" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Custcolor" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSTCOLOR" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="BATCH" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="BATCH" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Matno" Type="Edm.String" Nullable="false" MaxLength="40" sap:unicode="false" sap:label="MATNO" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Custsize" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSTSIZE" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
             <EntityType Name="OUTPUTBREAKDOWN" sap:content-version="1">
@@ -618,7 +629,7 @@
                 <Property Name="Revordqty" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:unit="Baseuom" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Baseuom" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="UOM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="unit-of-measure"/>
                 <Property Name="Uprice" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:label="Unit Price" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="Currencycd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Currency Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="Currencycd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Currency Code" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false" sap:semantics="currency-code"/>
                 <Property Name="Subcon" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="SUBCON" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Vendorcd" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="Vendor" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Cussalterm" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Incoterms" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -805,6 +816,28 @@
                 <Property Name="VALUNIT" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VALUNIT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CPOATTRIB" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="PO Attribute" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="SUPTYPFILTER" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SBU"/>
+                    <PropertyRef Name="FIELD1"/>
+                </Key>
+                <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="SBU" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD1" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD2" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD3" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Field 3" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD4" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 4" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD5" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 5" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD6" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Field 6" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="FIELD7" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="Field 7" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="REMARKS" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
+            <EntityType Name="IOUVS" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="Iono"/>
+                </Key>
+                <Property Name="Iono" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityType Name="OutputBreakdwonIO" sap:content-version="1">
                 <Key>
                     <PropertyRef Name="IONO"/>
@@ -920,7 +953,7 @@
                 <Property Name="REVORDQTY" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:unit="BASEUOM" sap:label="Quantity" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="BASEUOM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="UOM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="unit-of-measure"/>
                 <Property Name="UPRICE" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:label="UPRICE" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
-                <Property Name="CURRENCYCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CURRENCYCD" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
+                <Property Name="CURRENCYCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CURRENCYCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:semantics="currency-code"/>
                 <Property Name="SUBCON" Type="Edm.String" Nullable="false" MaxLength="1" sap:unicode="false" sap:label="SUBCON" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="VENDORCD" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="VENDORCD" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
                 <Property Name="CUSSALTERM" Type="Edm.String" Nullable="false" MaxLength="10" sap:unicode="false" sap:label="CUSSALTERM" sap:creatable="false" sap:updatable="false" sap:sortable="false"/>
@@ -1089,22 +1122,6 @@
                 <Property Name="Dlvseq" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="DLVSEQ" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="Ioitem" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
-            <EntityType Name="SUPTYPFILTER" sap:content-version="1">
-                <Key>
-                    <PropertyRef Name="SBU"/>
-                    <PropertyRef Name="FIELD1"/>
-                </Key>
-                <Property Name="SBU" Type="Edm.String" Nullable="false" MaxLength="5" sap:unicode="false" sap:label="SBU" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD1" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 1" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="SEQNO" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Seq Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD2" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 2" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD3" Type="Edm.String" Nullable="false" MaxLength="30" sap:unicode="false" sap:label="Field 3" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD4" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 4" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD5" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Field 5" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD6" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Field 6" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="FIELD7" Type="Edm.Int16" Nullable="false" sap:unicode="false" sap:label="Field 7" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-                <Property Name="REMARKS" Type="Edm.String" Nullable="false" MaxLength="50" sap:unicode="false" sap:label="Description" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
-            </EntityType>
             <Association Name="A_IMPORTSALDOC" sap:content-version="1">
                 <End Type="ZGW_3DERP_IO_SRV.IMPORTSALDOC" Multiplicity="1" Role="FromRole_A_IMPORTSALDOC"/>
                 <End Type="ZGW_3DERP_IO_SRV.IMPORTSALDOCITEM" Multiplicity="*" Role="ToRole_A_IMPORTSALDOC"/>
@@ -1172,6 +1189,8 @@
                 <EntitySet Name="PRDCALSet" EntityType="ZGW_3DERP_IO_SRV.PRDCAL" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="PRDLEADTMSet" EntityType="ZGW_3DERP_IO_SRV.PRDLEADTM" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IOATTRIBSet" EntityType="ZGW_3DERP_IO_SRV.IOATTRIB" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="SUPTYPFILTERSet" EntityType="ZGW_3DERP_IO_SRV.SUPTYPFILTER" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="IOUVSSet" EntityType="ZGW_3DERP_IO_SRV.IOUVS" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="OutputBreakdwonIOSet" EntityType="ZGW_3DERP_IO_SRV.OutputBreakdwonIO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="OutputBreakdownProcessSet" EntityType="ZGW_3DERP_IO_SRV.OutputBreakdownProcess" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IOSDLISTSet" EntityType="ZGW_3DERP_IO_SRV.IOSDLIST" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -1187,7 +1206,6 @@
                 <EntitySet Name="IMPORTPOSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTPO" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="IMPORTSALDOCSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTSALDOC" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:addressable="false" sap:content-version="1"/>
                 <EntitySet Name="IMPORTSALDOCITEMSet" EntityType="ZGW_3DERP_IO_SRV.IMPORTSALDOCITEM" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
-                <EntitySet Name="SUPTYPFILTERSet" EntityType="ZGW_3DERP_IO_SRV.SUPTYPFILTER" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <AssociationSet Name="A_EXPORT_MSG" Association="ZGW_3DERP_IO_SRV.A_EXPORT_MSG" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
                     <End EntitySet="IMPORTSALDOC2Set" Role="FromRole_A_EXPORT_MSG"/>
                     <End EntitySet="RETURN_MSGSet" Role="ToRole_A_EXPORT_MSG"/>
