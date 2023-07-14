@@ -53,7 +53,11 @@
                     <f:FormElement id="feIOTYPE" label="{ddtext>/IOTYPE}" visible="{= ${VisibleFieldsData>/IOTYPE} === true ? true : false }">
                         <f:fields>
                             <Input id="IOTYPE"  
-                                value="{headerData>/IOTYPE}" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/IOTYPE' }, { value: 'IOTypeModel' }, { value: 'IOTYPE' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/IOTYPE} : false}" 
@@ -62,7 +66,7 @@
                                 valueHelpRequest="handleFormValueHelp"
                                 suggestionItems="{path: 'IOTypeModel>/', length: 10000, templateShareable: false}">     
                                 <suggestionItems>
-                                    <core:Item key="{IOTypeModel>IOTYPE}" text="{IOTypeModel>IOTYPE}" />
+                                    <core:ListItem key="{IOTypeModel>IOTYPE}" text="{IOTypeModel>DESC1}" additionalText="{IOTypeModel>IOTYPE}"/>
                                 </suggestionItems>                                
                             </Input>
                         </f:fields>
@@ -120,20 +124,22 @@
                      <f:FormElement id="feSEASONCD" label="{ddtext>/SEASONCD}" visible="{= ${VisibleFieldsData>/SEASONCD} === true ? true : false }">
                         <f:fields>
                             <Input id="SEASONCD" 
-                                type="Text" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/SEASONCD' }, { value: 'SeasonsModel' }, { value: 'SEASONCD' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SEASONCD} : false}" 
                                 valueStateText="Required"
-                                value="{headerData>/SEASONCD}" 
                                 change="onHeaderChangeTableFilter" 
                                 liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
                                 valueHelpRequest="handleFormValueHelp"
                                 suggestionItems="{path: 'SeasonsModel>/', length: 10000, templateShareable: false}">
                                 <suggestionItems>
-                                    <!-- <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>SEASONCD}"/> -->
-                                    <core:Item key="{SeasonsModel>SEASONCD}" text="{SeasonsModel>SEASONCD}" />
+                                    <core:ListItem key="{SeasonsModel>SEASONCD}" text="{SeasonsModel>DESC1}" additionalText="{SeasonsModel>SEASONCD}"/>
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -143,7 +149,11 @@
                     <f:FormElement id="fePRODTYPE" label="{ddtext>/PRODTYPE}" visible="{= ${VisibleFieldsData>/PRODTYPE} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODTYPE"  
-                                value="{headerData>/PRODTYPE}" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/PRODTYPE' }, { value: 'ProdTypeModel' }, { value: 'PRODTYP' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/PRODTYPE} : false}" 
@@ -154,7 +164,7 @@
                                 valueHelpRequest="handleFormValueHelp"
                                 suggestionItems="{path: 'ProdTypeModel>/', length: 10000, templateShareable: false}">     
                                 <suggestionItems>
-                                    <core:Item key="{ProdTypeModel>PRODTYP}" text="{ProdTypeModel>PRODTYP}" />
+                                    <core:Item key="{ProdTypeModel>PRODTYP}" text="{ProdTypeModel>DESC1}" />
                                 </suggestionItems>                                
                             </Input>
                         </f:fields>
@@ -218,12 +228,15 @@
                     <f:FormElement id="feCUSTGRP" label="{ddtext>/CUSTGRP}" visible="{= ${VisibleFieldsData>/CUSTGRP} === true ? true : false }">
                         <f:fields>
                             <Input id="CUSTGRP" 
-                                type="Text" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/CUSTGRP' }, { value: 'CustGrpModel' }, { value: 'CUSTGRP' }, { value: 'DESCRIPTION' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/CUSTGRP} : false}" 
                                 valueStateText="Required"
-                                value="{headerData>/CUSTGRP}" 
                                 change="onHeaderChangeTableFilter" 
                                 liveChange="onHeaderChangeTableFilter"
                                 autocomplete="true" 
@@ -231,7 +244,7 @@
                                 suggestionItems="{path: 'CustGrpModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
                                     <!-- <core:ListItem text="{CustGrpModel>CUSTGRP}" additionalText="{CustGrpModel>DESCRIPTION}"/> -->
-                                    <core:Item key="{CustGrpModel>CUSTGRP}" text="{CustGrpModel>CUSTGRP}" />
+                                    <core:Item key="{CustGrpModel>CUSTGRP}" text="{CustGrpModel>DESCRIPTION}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -241,7 +254,11 @@
                     <f:FormElement id="feSALESGRP" label="{ddtext>/SALESGRP}" visible="{= ${VisibleFieldsData>/SALESGRP} === true ? true : false }">
                         <f:fields>
                             <Input id="SALESGRP" 
-                                value="{headerData>/SALESGRP}" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/SALESGRP' }, { value: 'SalesGrpModel' }, { value: 'SALESGRP' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/SALESGRP} : false}" 
@@ -252,7 +269,7 @@
                                 suggestionItems="{path: 'SalesGrpModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
                                     <!-- <core:ListItem text="{SalesGrpModel>SALESGRP}" additionalText="{SalesGrpModel>DESC1}"/> -->
-                                    <core:Item key="{SalesGrpModel>SALESGRP}" text="{SalesGrpModel>SALESGRP}" />
+                                    <core:Item key="{SalesGrpModel>SALESGRP}" text="{SalesGrpModel>DESC1}" />
                                 </suggestionItems> 
                             </Input>
                         </f:fields>
@@ -262,7 +279,11 @@
                     <f:FormElement id="feSOLDTOCUST" label="{ddtext>/SOLDTOCUST}" visible="{= ${VisibleFieldsData>/SOLDTOCUST} === true ? true : false }">
                         <f:fields>
                             <Input id="SOLDTOCUST" 
-                                value="{headerData>/SOLDTOCUST}" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/SOLDTOCUST' }, { value: 'SOLDTOModel' }, { value: 'Soldtocust' }, { value: 'Name' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/SOLDTOCUST} : false }" 
@@ -274,7 +295,7 @@
                                 suggestionItems="{path: 'SOLDTOModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
                                     <!-- <core:ListItem id="liSoldToCust" key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust} - ({SOLDTOModel>Name})" additionalText=""/> -->
-                                    <core:Item key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Soldtocust}" />
+                                    <core:Item key="{SOLDTOModel>Soldtocust}" text="{SOLDTOModel>Name}" />
                                 </suggestionItems>
                                 </Input>
                         </f:fields>
@@ -284,12 +305,15 @@
                     <f:FormElement id="feBASEUOM" label="{ddtext>/BASEUOM}" visible="{= ${VisibleFieldsData>/BASEUOM} === true ? true : false }">
                         <f:fields>
                             <Input id="BASEUOM" 
-                                type="Text" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/BASEUOM' }, { value: 'UOMModel' }, { value: 'MSEHI' }, { value: 'MSEHL' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/STYLENO} !== '' ? false : ${EditableFieldsData>/BASEUOM} : false}" 
                                 valueStateText="Required"
-                                value="{headerData>/BASEUOM}" 
                                 change="onHeaderChangeTableFilter" 
                                 liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
@@ -297,7 +321,7 @@
                                 suggestionItems="{path: 'UOMModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
                                     <!-- <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/> -->
-                                    <core:Item key="{UOMModel>MSEHI}" text="{UOMModel>MSEHI}" />
+                                    <core:Item key="{UOMModel>MSEHI}" text="{UOMModel>MSEHL}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
@@ -328,7 +352,11 @@
                     <f:FormElement id="fePRODSCEN" label="{ddtext>/PRODSCEN}" visible="{= ${VisibleFieldsData>/PRODSCEN} === true ? true : false }">
                         <f:fields>
                             <Input id="PRODSCEN" 
-                                value="{headerData>/PRODSCEN}" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/PRODSCEN' }, { value: 'ProdScenModel' }, { value: 'PRODSCEN' }, { value: 'DESC1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true"
                                 editable="{= ${HeaderEditModeModel>/editMode} === true ? ${headerData>/IONO} === '' ? true : ${EditableFieldsData>/PROSCEN} : false}" 
