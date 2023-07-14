@@ -3749,7 +3749,7 @@ sap.ui.define([
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
 
                 if (srcInput === "/PRODSCEN") {
-                    var sProdScen = this.getView().byId("PRODSCEN").getValue();
+                    var sProdScen = this.getView().byId("PRODSCEN").getSelectedKey();
 
                     var oData = this.getView().getModel("ProdScenModel").oData;
                     for (var i = 0; i < oData.length; i++) {
@@ -3811,7 +3811,8 @@ sap.ui.define([
                         // console.log("true");
                         let txtWeaveTyp;
                         let txtProdPlant;
-                        let txtProdScen = this.getView().byId("PRODSCEN").getValue();
+                        // let txtProdScen = this.getView().byId("PRODSCEN").getValue();
+                        let txtProdScen = this.getView().byId("PRODSCEN").getSelectedKey();
                         let oData = this.getView().getModel("ProdScenModel").oData;
                         for (var i = 0; i < oData.length; i++) {
                             if (oData[i].PRODSCEN === txtProdScen) {
@@ -3820,7 +3821,8 @@ sap.ui.define([
                             }
                         }
 
-                        let txtIOType = this.getView().byId("IOTYPE").getValue();
+                        // let txtIOType = this.getView().byId("IOTYPE").getValue();
+                        let txtIOType = this.getView().byId("IOTYPE").getSelectedKey();
                         if (txtProdPlant !== this.getView().byId("PRODPLANT").getValue()) {
                             txtProdPlant = this.getView().byId("PRODPLANT").getValue();
                         }
@@ -3947,8 +3949,11 @@ sap.ui.define([
                 }
 
                 if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
-                    var sCustGrp = this.getView().byId("CUSTGRP").getValue();
-                    var sSalesGrp = this.getView().byId("SALESGRP").getValue();
+                    // var sCustGrp = this.getView().byId("CUSTGRP").getValue();
+                    // var sSalesGrp = this.getView().byId("SALESGRP").getValue();
+
+                    var sCustGrp = this.getView().byId("CUSTGRP").getSelectedKey();
+                    var sSalesGrp = this.getView().byId("SALESGRP").getSelectedKey();
 
                     var oModel = this.getModel("SOLDTOModel");
 
@@ -4001,7 +4006,8 @@ sap.ui.define([
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
 
                 if (srcInput === "/PRODSCEN") {
-                    var sProdScen = this.getView().byId("PRODSCEN").getValue();
+                    // var sProdScen = this.getView().byId("PRODSCEN").getValue();
+                    var sProdScen = this.getView().byId("PRODSCEN").getSelectedKey();
 
                     var oData = this.getView().getModel("ProdScenModel").oData;
                     for (var i = 0; i < oData.length; i++) {
@@ -4063,7 +4069,8 @@ sap.ui.define([
                         // console.log("true");
                         let txtWeaveTyp;
                         let txtProdPlant;
-                        let txtProdScen = this.getView().byId("PRODSCEN").getValue();
+                        // let txtProdScen = this.getView().byId("PRODSCEN").getValue();
+                        let txtProdScen = this.getView().byId("PRODSCEN").getSelectedKey();
                         let oData = this.getView().getModel("ProdScenModel").oData;
                         for (var i = 0; i < oData.length; i++) {
                             if (oData[i].PRODSCEN === txtProdScen) {
@@ -4072,7 +4079,8 @@ sap.ui.define([
                             }
                         }
 
-                        let txtIOType = this.getView().byId("IOTYPE").getValue();
+                        // let txtIOType = this.getView().byId("IOTYPE").getValue();
+                        let txtIOType =  this.getView().byId("IOTYPE").getSelectedKey();
                         if (txtProdPlant !== this.getView().byId("PRODPLANT").getValue()) {
                             txtProdPlant = this.getView().byId("PRODPLANT").getValue();
                         }
@@ -4199,10 +4207,10 @@ sap.ui.define([
                 }
 
                 if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
-                    var sCustGrp = this.getView().byId("CUSTGRP").getValue();
-                    var sSalesGrp = this.getView().byId("SALESGRP").getValue();
+                    var sCustGrp = this.getView().byId("CUSTGRP").getSelectedKey();
+                    var sSalesGrp = this.getView().byId("SALESGRP").getSelectedKey();
 
-                    var oModel = this.getModel("SOLDTOModel");
+                    // var oModel = this.getModel("SOLDTOModel");
 
                 }
 
@@ -5625,17 +5633,17 @@ sap.ui.define([
 
                             oParamIOHeaderData = {
                                 STYLECD: this.getView().byId("STYLECD").getValue(),
-                                PRODTYPE: this.getView().byId("PRODTYPE").getValue(),
-                                PRODSCEN: this.getView().byId("PRODSCEN").getValue(),
+                                PRODTYPE: this.getView().byId("PRODTYPE").getSelectedKey(),
+                                PRODSCEN: this.getView().byId("PRODSCEN").getSelectedKey(),
                                 SALESORG: this.getView().byId("SALESORG").getValue(),
                                 ORDQTY: this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
                                 ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
                                 PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
-                                IOTYPE: this.getView().byId("IOTYPE").getValue(),
+                                IOTYPE: this.getView().byId("IOTYPE").getSelectedKey(),
                                 IOPREFIX: this.getView().byId("IOPREFIX").getValue(),
                                 IODESC: this.getView().byId("IODESC").getValue(),
                                 SBU: this._sbu,
-                                SALESGRP: this.getView().byId("SALESGRP").getValue(),
+                                SALESGRP: this.getView().byId("SALESGRP").getSelectedKey(),
                                 PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
                                 FTYSALTERM: this.getView().byId("FTYSALTERM").getValue(),
                                 REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
@@ -5643,11 +5651,11 @@ sap.ui.define([
                                 PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : +this.getView().byId("PRODWK").getValue(),
                                 PRODDAYS: this.getView().byId("PRODDAYS").getValue() === "" || this.getView().byId("PRODDAYS").getValue() === "0" ? 0 : +this.getView().byId("PRODDAYS").getValue(),
                                 IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
-                                SEASONCD: this.getView().byId("SEASONCD").getValue(),
-                                CUSTGRP: this.getView().byId("CUSTGRP").getValue(),
+                                SEASONCD: this.getView().byId("SEASONCD").getSelectedKey(),
+                                CUSTGRP: this.getView().byId("CUSTGRP").getSelectedKey(),
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                                 CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
-                                BASEUOM: this.getView().byId("BASEUOM").getValue(),
+                                BASEUOM: this.getView().byId("BASEUOM").getSelectedKey(),
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),
                                 STYLENO: this.getView().byId("STYLENO").getValue(),
@@ -5657,7 +5665,7 @@ sap.ui.define([
                                 PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
                                 PRODSTART: this.getView().byId("PRODSTART").getValue() === undefined || this.getView().byId("PRODSTART").getValue() === "" || this.getView().byId("PRODSTART").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                                 REMARKS: this.getView().byId("REMARKS").getValue(),
-                                SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
+                                SOLDTOCUST: this.getView().byId("SOLDTOCUST").getSelectedKey(),
                                 STATUSCD: this.getView().byId("STATUSCD").getValue().length > 0 ? this.getView().byId("STATUSCD").getValue() : "CRT",
                                 // PRODWK: this.getView().getModel("ui2").getProperty("/ProdWk"),
                                 // PRODDAYS: this.getView().getModel("ui2").getProperty("/ProdDays")
@@ -5666,17 +5674,17 @@ sap.ui.define([
 
                             oParamIOHeaderData = {
                                 STYLECD: this.getView().byId("STYLECD").getValue(),
-                                PRODTYPE: this.getView().byId("PRODTYPE").getValue(),
-                                PRODSCEN: this.getView().byId("PRODSCEN").getValue(),
+                                PRODTYPE: this.getView().byId("PRODTYPE").getSelectedKey(),
+                                PRODSCEN: this.getView().byId("PRODSCEN").getSelectedKey(),
                                 SALESORG: this.getView().byId("SALESORG").getValue(),
                                 ORDQTY: this.getView().byId("ORDQTY").getValue() === "" ? "0" : this.getView().byId("ORDQTY").getValue(),
                                 ACTUALQTY: this.getView().byId("ACTUALQTY").getValue() === "" ? "0" : this.getView().byId("ACTUALQTY").getValue(),
                                 PLANMONTH: this.getView().byId("PLANMONTH").getValue(),
-                                IOTYPE: this.getView().byId("IOTYPE").getValue(),
+                                IOTYPE: this.getView().byId("IOTYPE").getSelectedKey(),
                                 IOPREFIX: this.getView().byId("IOPREFIX").getValue(),
                                 IODESC: this.getView().byId("IODESC").getValue(),
                                 SBU: this._sbu,
-                                SALESGRP: this.getView().byId("SALESGRP").getValue(),
+                                SALESGRP: this.getView().byId("SALESGRP").getSelectedKey(),
                                 PRODPLANT: this.getView().byId("PRODPLANT").getValue(),
                                 FTYSALTERM: this.getView().byId("FTYSALTERM").getValue(),
                                 REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
@@ -5684,11 +5692,11 @@ sap.ui.define([
                                 PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : +this.getView().byId("PRODWK").getValue(),
                                 PRODDAYS: this.getView().byId("PRODDAYS").getValue() === "" || this.getView().byId("PRODDAYS").getValue() === "0" ? 0 : this.getView().byId("PRODDAYS").getValue(),
                                 IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
-                                SEASONCD: this.getView().byId("SEASONCD").getValue(),
-                                CUSTGRP: this.getView().byId("CUSTGRP").getValue(),
+                                SEASONCD: this.getView().byId("SEASONCD").getSelectedKey(),
+                                CUSTGRP: this.getView().byId("CUSTGRP").getSelectedKey(),
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
                                 CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
-                                BASEUOM: this.getView().byId("BASEUOM").getValue(),
+                                BASEUOM: this.getView().byId("BASEUOM").getSelectedKey(),
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),
                                 STYLENO: this.getView().byId("STYLENO").getValue(),
@@ -5698,7 +5706,7 @@ sap.ui.define([
                                 PLANQTY: this.getView().byId("PLANQTY").getValue() === "" ? "0" : this.getView().byId("PLANQTY").getValue(),
                                 PRODSTART: this.getView().byId("PRODSTART").getValue() === undefined || this.getView().byId("PRODSTART").getValue() === "" || this.getView().byId("PRODSTART").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PRODSTART").getValue())),
                                 REMARKS: this.getView().byId("REMARKS").getValue(),
-                                SOLDTOCUST: this.getView().byId("SOLDTOCUST").getValue(),
+                                SOLDTOCUST: this.getView().byId("SOLDTOCUST").getSelectedKey(),
                                 STATUSCD: this.getView().byId("STATUSCD").getValue().length > 0 ? this.getView().byId("STATUSCD").getValue() : "CRT",
                                 // PRODWK: this.getView().getModel("ui2").getProperty("/ProdWk"),
                                 // PRODDAYS: this.getView().getModel("ui2").getProperty("/ProdDays")
@@ -5865,11 +5873,11 @@ sap.ui.define([
                     PRODPLANT: this.getView().byId("PRODPLANT").getValue()
                 })
 
-                if (hasFilter === false && this.getView().byId("CUSTGRP").getValue() !== "") {
+                if (hasFilter === false && this.getView().byId("CUSTGRP").getSelectedKey() !== "") {
                     hasFilter = true;
                     this._oModelIOCosting.read(entitySet, {
                         success: function (oData) {
-                            oData.filter(fitem => fitem.CUSTGRP === this.getView().byId("CUSTGRP").getValue())
+                            oData.filter(fitem => fitem.CUSTGRP === this.getView().byId("CUSTGRP").getSelectedKey())
                                 .forEach(costitem => {
                                     csvcd = costitem.CSVCD;
                                     cstype = costitem.CSTYPE;
@@ -6291,9 +6299,9 @@ sap.ui.define([
                     oNewRow["New"] = true;
 
                     if(arg === "IODLV") {
-                        let soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                        let custGrp = this.getView().byId("CUSTGRP").getValue(); //get customer group value
-                        let salesGrp = this.getView().byId("SALESGRP").getValue(); //get customer group value
+                        let soldtoCust = this.getView().byId("SOLDTOCUST").getSelectedKey(); //get Sold-To Customer value
+                        let custGrp = this.getView().byId("CUSTGRP").getSelectedKey(); //get customer group value
+                        let salesGrp = this.getView().byId("SALESGRP").getSelectedKey(); //get customer group value
                         let oFilterData;
 
                         let sBillToCust = "";
@@ -10913,9 +10921,9 @@ sap.ui.define([
                 // console.log("setRowEditMode 2");
 
                 if (arg === "IODLV") {
-                    let soldtoCust = this.getView().byId("SOLDTOCUST").getValue(); //get Sold-To Customer value
-                    let custGrp = this.getView().byId("CUSTGRP").getValue(); //get customer group value
-                    let salesGrp = this.getView().byId("SALESGRP").getValue(); //get customer group value
+                    let soldtoCust = this.getView().byId("SOLDTOCUST").getSelectedKey(); //get Sold-To Customer value
+                    let custGrp = this.getView().byId("CUSTGRP").getSelectedKey(); //get customer group value
+                    let salesGrp = this.getView().byId("SALESGRP").getSelectedKey(); //get customer group value
 
                     console.log("soldtoCust", soldtoCust);
                     console.log("custGrp", custGrp);
