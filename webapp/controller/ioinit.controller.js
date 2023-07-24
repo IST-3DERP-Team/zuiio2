@@ -82,9 +82,9 @@ sap.ui.define([
                     }, oView);
                 }
 
-                window.onhashchange = function () {
-                    _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
-                }
+                // window.onhashchange = function () {
+                //     _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
+                // }
 
                 // sap.ui.getCore().byId("IOStyleSelectTab")
                 //     .setModel(new JSONModel({
@@ -1723,6 +1723,8 @@ sap.ui.define([
                 var oCopyIOModel = this.getOwnerComponent().getModel();
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
+
+                console.log("IOCOPYSet", oParam);
 
                 setTimeout(() => {
                     oCopyIOModel.create("/IOCOPYSet", oParam, {

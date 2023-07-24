@@ -170,16 +170,23 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
+                //         that.onNavBack();
+                //     }
+                // }
+
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
+                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function(oEvent) {
                         that.onNavBack();
                     }
                 }
 
-                window.onhashchange = function () {
-                    _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
-                }
+                // window.onhashchange = function () {
+                //     _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
+                // }
+
                 // window.onhashchange = function () {
                 //     console.log("windows");
                 //     let iCnt = 0;
@@ -1340,17 +1347,38 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
+                console.log("onfragmentImportPO", oParam);
+                let outputMessage = "";
+
                 _promiseResult = new Promise((resolve, reject) => {
                     oModel.create("/IMPORTSALDOC2Set", oParam, {
                         method: "POST",
                         success: function (oData, oResponse) {
-                            Common.closeLoadingDialog(me);
-                            // console.log(oData);
-                            MessageBox.success("Sales Document Item/s Successfully added.");
+                            console.log(oData);
+
+                            oData.N_EXPORT_MSG.results.forEach(item => {
+                                if(item.SUBRC === "E") {
+                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n"; 
+                                }
+                            })
+
+                            if(outputMessage.length > 0) {
+                                MessageBox.error(outputMessage);
+                            } else
+                                MessageBox.success("Sales Document Item/s Successfully added.");
+
+                            Common.closeLoadingDialog(me);                            
                             resolve();
                         }, error: function (error) {
                             Common.closeLoadingDialog(me);
-                            MessageBox.error("Error Encountered in Process!");
+
+                            oData.N_EXPORT_MSG.results.forEach(item => {
+                                if(item.SUBRC === "E") {
+                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n"; 
+                                }
+                            })
+
+                            MessageBox.error(outputMessage);
                             resolve();
                         }
                     })
@@ -1369,13 +1397,15 @@ sap.ui.define([
             },
 
             getImportPOData: async function () {
+                console.log("getImportPOData");
                 var me = this;
                 var oView = this.getView();
                 var oJSONModel = new JSONModel();
                 var currStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
 
                 // var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
-                var currCUSTGRP = this.getView().byId("CUSTGRP").getValue();
+                var currCUSTGRP = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
+                console.log("currCUSTGRP", currCUSTGRP);
 
                 // alert(currStyle);
                 // alert(currCustSoldTo);
@@ -5715,7 +5745,7 @@ sap.ui.define([
 
                         // console.log(this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]);
                         // // console.log("oParamIOHeaderData");
-                        // console.log("oParamIOHeaderData", oParamIOHeaderData);
+                        console.log("oParamIOHeaderData", oParamIOHeaderData);
                         // return;
 
                         // var oModel = this.getOwnerComponent().getModel();
@@ -9859,6 +9889,9 @@ sap.ui.define([
                                 //     this.byId("onIOAttribCancel").setVisible(false);
                                 // }
                                 // _promiseResult = new Promise((resolve, reject) => {
+
+                                console.log("entitySet", entitySet);
+                                console.log("param", param);
                                 setTimeout(() => {
                                     // console.log("PUT");
                                     oModel.update(entitySet, param, {
@@ -12168,6 +12201,21 @@ sap.ui.define([
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
+                var oIOParam = {
+                    "Iono": vIONo
+                };
+
+                // MCA: EXECUTE IOUVSSET - FOR ZERP_PRDUSGUV
+                this._oModel.create("/IOUVSSet", oIOParam, {
+                    method: "POST",
+                    success: async function (data, oResponse) { 
+                        console.log("IOUVSSet consumed.");
+                    },
+                    error: function (err) {
+                        // sap.m.MessageBox.error(err);
+                    }
+                })
+
                 if (iAccRowCount + iFabRowCount > 0) {
                     oParam = {
                         "SBU": this._sbu,
@@ -12287,6 +12335,22 @@ sap.ui.define([
                 if (iRowCount > 0) {
                     await this.lock(this);
                     if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+
+                        var oIOParam = {
+                            "Iono": vIONo
+                        };
+
+                        // MCA: EXECUTE IOUVSSET - FOR ZERP_PRDUSGUV
+                        this._oModel.create("/IOUVSSet", oIOParam, {
+                            method: "POST",
+                            success: async function (data, oResponse) { 
+                                console.log("IOUVSSet consumed.");
+                            },
+                            error: function (err) {
+                                // sap.m.MessageBox.error(err);
+                            }
+                        })
+
                         var oParam = {
                             "SBU": this._sbu,
                             "IONO": vIONo,
