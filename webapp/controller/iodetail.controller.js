@@ -178,7 +178,7 @@ sap.ui.define([
                 // }
 
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function(oEvent) {
+                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
                         that.onNavBack();
                     }
                 }
@@ -314,15 +314,12 @@ sap.ui.define([
             // },
 
             onNavBack: function (oEvent) {
-                // console.log("onNavBack")
-                // console.log(window.location.href);
-                // console.log(window.location.hash);
                 if (!that._routeToStyle) {
                     this.routeTOIO(window.location.hash);
-                    //sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
                 }
                 else {
                     var oHistory = History.getInstance();
+                    var iHistoryLength = oHistory.aHistory.length;
                     var sPreviousHash = oHistory.getPreviousHash();
 
                     if (sPreviousHash !== undefined) {
@@ -330,15 +327,14 @@ sap.ui.define([
                     } else {
                         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                         oRouter.navTo("Routeioinit", {}, true);
+                        // Remove the rest of the entries from the history
+                        oHistory.aHistory.splice(0, iHistoryLength - 1);
                     }
                 }
             },
 
             routeTOIO: function (arg) {
                 let currentPath = arg;
-                // console.log("current path: " + currentPath);
-                // console.log(currentPath.indexOf("ZSO_3DERP_ORD_IO-change&/RouteIODetail"));
-                // console.log(currentPath.indexOf("ZSO_3DERP_ORD_IO-display&/RouteIODetail"));
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
                 let hash;
                 if ((currentPath.indexOf("ZSO_3DERP_ORD_IO-change&/RouteIODetail") > 0
@@ -445,6 +441,7 @@ sap.ui.define([
                 this.getVHSet("/SoldToCustSet", "SOLDTOModel", false, false);
                 this.getVHSet("/UOMINFOSet", "UOMINFOModel", false, false);
                 this.getVHSet("/SALTERMvhSet", "SalesTermModel", false, false);
+                this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
 
                 // console.log("Sales Document Data");
                 // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
@@ -1023,7 +1020,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ITFSTYLHDR" });
                 oDDTextParam.push({ CODE: "ITFIODET" });
                 oDDTextParam.push({ CODE: "ITFDLVDET" });
-                oDDTextParam.push({ CODE: "IOITFMATLIST" });                
+                oDDTextParam.push({ CODE: "IOITFMATLIST" });
                 oDDTextParam.push({ CODE: "IMPORTPO" });
                 oDDTextParam.push({ CODE: "ITFCOSTING" });
                 oDDTextParam.push({ CODE: "ITFCOSTVER" });
@@ -1075,10 +1072,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "REMARKS" });
                 oDDTextParam.push({ CODE: "ENTERDATE" });
                 oDDTextParam.push({ CODE: "ISREQUIRED" });
-                oDDTextParam.push({ CODE: "ERR_REQD_GT_ZERO_QTY" });       
-                oDDTextParam.push({ CODE: "VSNUMMAXDEC" });       
-                oDDTextParam.push({ CODE: "VSNUMVALNODEC" });   
-                oDDTextParam.push({ CODE: "VSNOTVALIDNUM" });                
+                oDDTextParam.push({ CODE: "ERR_REQD_GT_ZERO_QTY" });
+                oDDTextParam.push({ CODE: "VSNUMMAXDEC" });
+                oDDTextParam.push({ CODE: "VSNUMVALNODEC" });
+                oDDTextParam.push({ CODE: "VSNOTVALIDNUM" });
 
                 // console.log(oDDTextParam);
 
@@ -1357,24 +1354,24 @@ sap.ui.define([
                             console.log(oData);
 
                             oData.N_EXPORT_MSG.results.forEach(item => {
-                                if(item.SUBRC === "E") {
-                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n"; 
+                                if (item.SUBRC === "E") {
+                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n";
                                 }
                             })
 
-                            if(outputMessage.length > 0) {
+                            if (outputMessage.length > 0) {
                                 MessageBox.error(outputMessage);
                             } else
                                 MessageBox.success("Sales Document Item/s Successfully added.");
 
-                            Common.closeLoadingDialog(me);                            
+                            Common.closeLoadingDialog(me);
                             resolve();
                         }, error: function (error) {
                             Common.closeLoadingDialog(me);
 
                             oData.N_EXPORT_MSG.results.forEach(item => {
-                                if(item.SUBRC === "E") {
-                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n"; 
+                                if (item.SUBRC === "E") {
+                                    outputMessage += item.CPONO + " " + item.CPOREV + " " + item.REMARKS + "\n";
                                 }
                             })
 
@@ -3774,9 +3771,10 @@ sap.ui.define([
 
                 // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
                 // console.log(this._validationErrors);
-                this._bHeaderChanged = true;    
+                this._bHeaderChanged = true;
 
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
+                console.log("part", oSource.getBindingInfo("value").parts[0]);
 
                 if (srcInput === "/PRODSCEN") {
                     var sProdScen = this.getView().byId("PRODSCEN").mBindingInfos.value.binding.aValues[0];
@@ -3808,7 +3806,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("fePRODSCEN");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     inputField = this.getView().byId("PRODPLANT");
@@ -3816,7 +3814,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("fePRODPLANT");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     inputField = this.getView().byId("IOTYPE");
@@ -3824,7 +3822,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("feIOTYPE");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     let inputValue = this.getView().byId("CUSTDLVDT").getValue();
@@ -3832,7 +3830,7 @@ sap.ui.define([
                     var date = dateFormat.parse(inputValue);
                     var isValid = this.isValidDate(date);
 
-                    if(!isValid){
+                    if (!isValid) {
                         cntBlank++;
                     }
 
@@ -3926,9 +3924,9 @@ sap.ui.define([
                         })
 
                         await this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
-                    } 
+                    }
                     //cntBlank VALUE IS GREATER THAN ZERO, WITH ERROR
-                    else if(cntBlank > 0) {
+                    else if (cntBlank > 0) {
                         //RESET VALUE OF CUSTDLVDT IF REQUIRED FIELDS NOT PROVIDED
                         this.getView().byId("CUSTDLVDT").setValue("");
                         //LIST OUT THE REQUIRED FIELDS THAT WERE NOT FILLED
@@ -3978,7 +3976,7 @@ sap.ui.define([
                     }
                 }
 
-                if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
+                if (srcInput === "/CUSTGRP" || srcInput === "SALESGRP") {
                     // var sCustGrp = this.getView().byId("CUSTGRP").getValue();
                     // var sSalesGrp = this.getView().byId("SALESGRP").getValue();
 
@@ -4031,7 +4029,7 @@ sap.ui.define([
 
                 // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
                 // console.log(this._validationErrors);
-                this._bHeaderChanged = true;    
+                this._bHeaderChanged = true;
 
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
 
@@ -4066,7 +4064,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("fePRODSCEN");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     inputField = this.getView().byId("PRODPLANT");
@@ -4074,7 +4072,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("fePRODPLANT");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     inputField = this.getView().byId("IOTYPE");
@@ -4082,7 +4080,7 @@ sap.ui.define([
                         cntBlank++;
                         oFormElement = this.getView().byId("feIOTYPE");
                         oLabel = oFormElement.getLabel();
-                        fieldList += oLabel ? oLabel + ", " : "";                        
+                        fieldList += oLabel ? oLabel + ", " : "";
                     }
 
                     let inputValue = this.getView().byId("CUSTDLVDT").getValue();
@@ -4090,7 +4088,7 @@ sap.ui.define([
                     var date = dateFormat.parse(inputValue);
                     var isValid = this.isValidDate(date);
 
-                    if(!isValid){
+                    if (!isValid) {
                         cntBlank++;
                     }
 
@@ -4110,7 +4108,7 @@ sap.ui.define([
                         }
 
                         // let txtIOType = this.getView().byId("IOTYPE").getValue();
-                        let txtIOType =  this.getView().byId("IOTYPE").mBindingInfos.value.binding.aValues[0];
+                        let txtIOType = this.getView().byId("IOTYPE").mBindingInfos.value.binding.aValues[0];
                         if (txtProdPlant !== this.getView().byId("PRODPLANT").getValue()) {
                             txtProdPlant = this.getView().byId("PRODPLANT").getValue();
                         }
@@ -4184,9 +4182,9 @@ sap.ui.define([
                         })
 
                         await this.getIOPrefixSet("ZGW_3DERP_RFC_SRV", this._sbu, "");
-                    } 
+                    }
                     //cntBlank VALUE IS GREATER THAN ZERO, WITH ERROR
-                    else if(cntBlank > 0) {
+                    else if (cntBlank > 0) {
                         //RESET VALUE OF CUSTDLVDT IF REQUIRED FIELDS NOT PROVIDED
                         this.getView().byId("CUSTDLVDT").setValue("");
                         //LIST OUT THE REQUIRED FIELDS THAT WERE NOT FILLED
@@ -4236,7 +4234,7 @@ sap.ui.define([
                     }
                 }
 
-                if(srcInput === "/CUSTGRP" || srcInput === "SALESGRP"){
+                if (srcInput === "/CUSTGRP" || srcInput === "SALESGRP") {
                     var sCustGrp = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
                     var sSalesGrp = this.getView().byId("SALESGRP").mBindingInfos.value.binding.aValues[0];
 
@@ -4342,6 +4340,23 @@ sap.ui.define([
                             },
                             error: function (err) {
                                 // resolve();
+                            }
+                        });
+                    } else if (sModelName === "CostSheetModel") {
+                        var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                        oSHModel.read(sEntitySet, {
+                            urlParameters: {
+                                "$filter": "Iono eq '" + cIONo + "'"
+                            },
+                            success: function (oData, oResponse) {
+                                // console.log(sModelName);
+                                // console.log(oData);
+
+                                oJSONModel.setData(oData.results);
+                                oView.setModel(oJSONModel, sModelName);
+                                console.log("CostSheetModel", oView.setModel(oJSONModel, sModelName));
+                            },
+                            error: function (err) {
                             }
                         });
                     } else {
@@ -4759,7 +4774,7 @@ sap.ui.define([
 
                             // this.getView().byId(ci.ColumnName).setValueState("Error");
                             // this.getView().byId(ci.ColumnName).setValueStateText("Required Field");
-                        } 
+                        }
                     })
                     resolve();
                 });
@@ -4943,7 +4958,7 @@ sap.ui.define([
                 var custGrp = this.getView().byId("CUSTGRP").getValue(); //get customer group value
                 var salesGrp = this.getView().byId("SALESGRP").getValue(); //get customer group value
 
-                if(custGrp.length === 0 || salesGrp.length === 0) {
+                if (custGrp.length === 0 || salesGrp.length === 0) {
                     sap.m.MessageBox.error(resultDescription);
                 }
 
@@ -5402,6 +5417,39 @@ sap.ui.define([
             },
 
             _custgrpGroupValueHelpClose: function (evt) {
+                //on select season
+                var oSelectedItem = evt.getParameter("selectedItem");
+                if (oSelectedItem) {
+                    var input = this.byId(this.inputId);
+                    input.setValue(oSelectedItem.getTitle()); //set input field selected value
+                    this.onHeaderChange();
+                }
+                evt.getSource().getBinding("items").filter([]);
+            },
+            onCostSheetValueHelp: function (oEvent) {
+                //load the seasons search help
+                var sInputValue = oEvent.getSource().getValue();
+
+                that.inputId = oEvent.getSource().getId();
+                if (!that._costSheetHelpDialog) {
+                    that._costSheetHelpDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CostSheet", that);
+                    that._costSheetHelpDialog.attachSearch(that._costSheetGroupValueHelpSearch);
+                    that.getView().addDependent(that._costSheetHelpDialog);
+                }
+
+                that._costSheetHelpDialog.open(sInputValue);
+            },
+
+            _costSheetGroupValueHelpSearch: function (evt) {
+                //search seasons
+                var sValue = evt.getParameter("value");
+                orFilter.push(new sap.ui.model.Filter("CSTYPE", sap.ui.model.FilterOperator.Contains, sValue));
+                // orFilter.push(new sap.ui.model.Filter("DESC1", sap.ui.model.FilterOperator.Contains, sValue));
+                andFilter.push(new sap.ui.model.Filter(orFilter, false));
+                evt.getSource().getBinding("items").filter(new sap.ui.model.Filter(andFilter, true));
+            },
+
+            _costSheetGroupValueHelpClose: function (evt) {
                 //on select season
                 var oSelectedItem = evt.getParameter("selectedItem");
                 if (oSelectedItem) {
@@ -6220,8 +6268,8 @@ sap.ui.define([
                                     // console.log("Err", err);
                                     // console.log("err.error.message.value", err.error.message.value);
                                     // console.log("JSON.parse", JSON.parse(err.responseText).error.message.value);
-                                    
-                                    resultDescription = JSON.parse(err.responseText).error.message.value;                                    
+
+                                    resultDescription = JSON.parse(err.responseText).error.message.value;
                                     sap.m.MessageBox.error(resultDescription);
 
                                     me.unLock();
@@ -6320,6 +6368,13 @@ sap.ui.define([
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                         .forEach(item => item.setProperty("enabled", false));
 
+                    if (arg === "IODLV") {
+                        var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                        console.log("oIconTabBar2", oIconTabBar2);
+                        oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", false));
+                    }
+
                     // console.log("2");
                     //GET TABLE
                     var aNewRow = [];
@@ -6330,7 +6385,7 @@ sap.ui.define([
 
                     oNewRow["New"] = true;
 
-                    if(arg === "IODLV") {
+                    if (arg === "IODLV") {
                         let soldtoCust = this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]; //get Sold-To Customer value
                         let custGrp = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0]; //get customer group value
                         let salesGrp = this.getView().byId("SALESGRP").mBindingInfos.value.binding.aValues[0]; //get customer group value
@@ -8174,6 +8229,13 @@ sap.ui.define([
                         var oIconTabBar = this.byId("idIconTabBarInlineMode");
                         oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
                             .forEach(item => item.setProperty("enabled", false));
+
+                        if (arg === "IODLV") {
+                            var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                            console.log("oIconTabBar2", oIconTabBar2);
+                            oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                                .forEach(item => item.setProperty("enabled", false));
+                        }
                     }
                     else if (arg === "costHdr" || arg === "costDtls") {
                         if (this.byId(arg + "Tab").getModel().getData().rows.length === 0) {
@@ -8347,6 +8409,10 @@ sap.ui.define([
                                 this.byId("btnRefreshCostHdr").setEnabled(false);
                             }
 
+                            if(arg === "IODLV") {
+                                this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
+                            }
+
                             this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
                             this.setRowEditMode(arg);
                             this._validationErrors = [];
@@ -8372,11 +8438,16 @@ sap.ui.define([
                                     .forEach(item => item.setProperty("enabled", false));
                             }
 
-                            // if (arg === "IODLV" || arg === "IODET") {
-                            //     var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                            //     oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
-                            //         .forEach(item => item.setProperty("enabled", false));
-                            // }
+                            if (arg === "IODLV" || arg === "IODET") {
+                                var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                                oIconTabBarStyle.getItems().filter(item => item.getProperty("key") !== oIconTabBarStyle.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));
+
+                                var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                                console.log("oIconTabBar2", oIconTabBar2);
+                                oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                                    .forEach(item => item.setProperty("enabled", false));
+                            }
 
                             // if (arg === "IOATTRIB") {
                             //     var oIconTabBarStyle = this.byId("itfIOATTRIB");
@@ -8549,9 +8620,14 @@ sap.ui.define([
                         oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
                     }
 
-                    if (arg === "IODVL" || arg === "IODET") {
-                        // var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
-                        // oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+                    if (arg === "IODLV" || arg === "IODET") {
+                        var oIconTabBarStyle = this.byId("idIconTabBarInlineIOHdr");
+                        oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
+
+                        var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                        console.log("oIconTabBar2", oIconTabBar2);
+                        oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                            .forEach(item => item.setProperty("enabled", true));
 
                         // setTimeout(() => {
                         //     this.reloadIOData("IODETTab", "/IODETSet");
@@ -9342,10 +9418,10 @@ sap.ui.define([
                                 iEdited++;
                                 // if (iEdited === aEditedRows.length) {
 
-                                    // await me.UpdateIOHdrQuantity();
-                                    // await me.getHeaderData();
+                                // await me.UpdateIOHdrQuantity();
+                                // await me.getHeaderData();
 
-                                    // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                 //     if (arg === "IODET") {
                                 //         me.byId("btnNewDlvSched").setVisible(true);
@@ -9582,11 +9658,11 @@ sap.ui.define([
                                 this._aColumns[arg].forEach(col => {
                                     if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
                                         if (col.DataType === "DATETIME") {
-                                            if(arg === "IODLV" && col.ColumnName === "DLVDT") {
+                                            if (arg === "IODLV" && col.ColumnName === "DLVDT") {
                                                 dDlvDt = sapDateFormat.format(new Date(item[col.ColumnName]));
                                             }
 
-                                            if(arg === "IODLV" && col.ColumnName === "REVDLVDT") {
+                                            if (arg === "IODLV" && col.ColumnName === "REVDLVDT") {
                                                 bRevDlvDt = true;
                                             }
 
@@ -9598,7 +9674,7 @@ sap.ui.define([
                                     }
                                 })
 
-                                if(!bRevDlvDt && arg === "IODLV"){
+                                if (!bRevDlvDt && arg === "IODLV") {
                                     param["REVDLVDT"] = dDlvDt;
                                 }
 
@@ -9669,12 +9745,11 @@ sap.ui.define([
                                                 var oIconTabBar = me.byId("idIconTabBarInlineMode");
                                                 oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
-                                                // if (arg === "IODLV" || arg === "IODET") {
-                                                //     var oIconTabBarStyle = me.byId("itfDLVSCHED");
-                                                //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
-                                                // }
-
                                                 if (arg === "IODLV") {
+                                                    var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                                                    console.log("oIconTabBar2", oIconTabBar2);
+                                                    oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                                                        .forEach(item => item.setProperty("enabled", true));
 
                                                     await me.reloadIOData("IODLVTab", "/IODLVSet");
 
@@ -10216,6 +10291,12 @@ sap.ui.define([
                                             var oIconTabBar = me.byId("idIconTabBarInlineMode");
                                             oIconTabBar.getItems().forEach(item => item.setProperty("enabled", true));
 
+                                            if (arg === "IODLV") {
+                                                var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                                                console.log("oIconTabBar2", oIconTabBar2);
+                                                oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                                                    .forEach(item => item.setProperty("enabled", true));
+                                            }
                                             // if (arg === "IODLV" || arg === "IODET") {
                                             //     var oIconTabBarStyle = me.byId("itfDLVSCHED");
                                             //     oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
@@ -10489,6 +10570,13 @@ sap.ui.define([
                                 var oIconTabBarIO = me.byId("idIconTabBarInlineIOHdr");
                                 oIconTabBarIO.getItems().filter(item => item.getProperty("key"))
                                     .forEach(item => item.setProperty("enabled", true));
+
+                                if (arg === "IODLV") {
+                                    var oIconTabBar2 = this.byId("idIconTabBarInlineIODet");
+                                    console.log("OnBatchSave oIconTabBar2", oIconTabBar2);
+                                    oIconTabBar2.getItems().filter(item => item.getProperty("key") !== oIconTabBar2.getSelectedKey())
+                                        .forEach(item => item.setProperty("enabled", true));
+                                }
 
                                 me.byId(arg + "Tab").getModel().getData().rows.forEach((row, index) => {
                                     me.byId(arg + "Tab").getModel().setProperty('/rows/' + index + '/EDITED', false);
@@ -10812,8 +10900,8 @@ sap.ui.define([
                                             }
                                         }));
                                     }
-                                    else if (arg === "IODET") {       
-                                        console.log("IODET", ci.Decimal);                                 
+                                    else if (arg === "IODET") {
+                                        console.log("IODET", ci.Decimal);
                                         col.setTemplate(new sap.m.Input({
                                             // type: sap.m.InputType.Number,
                                             type: "Text",
@@ -10948,8 +11036,8 @@ sap.ui.define([
                             if (ci.Mandatory) {
                                 col.getLabel().addStyleClass("sapMLabelRequired");
                             }
-                            
-                            if(arg === "IODET") {
+
+                            if (arg === "IODET") {
                                 console.log("ci", ci);
                             }
                         })
@@ -10979,11 +11067,11 @@ sap.ui.define([
                             // oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp);
                             oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust);
                             console.log("oFilterData", oFilterData[0].Billtocust);
-                            if(oFilterData.length === 1) {
+                            if (oFilterData.length === 1) {
                                 me.getView().getModel("ui2").setProperty("/defBillToCust", oFilterData[0].Billtocust);
                             }
 
-                            console.log("BILLTOvhSet",oFilterData);
+                            console.log("BILLTOvhSet", oFilterData);
                             // console.log("IODET_MODEL");
                             // me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp)), "BILLTO_MODEL");
                             me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust)), "BILLTO_MODEL");
@@ -10998,10 +11086,10 @@ sap.ui.define([
                             })
 
                             oFilterData = oData.results.filter(fItem => fItem.Soldtocust === soldtoCust);
-                            if(oFilterData.length === 1) {
+                            if (oFilterData.length === 1) {
                                 me.getView().getModel("ui2").setProperty("/defShipToCust", oFilterData[0].Shiptocust);
                             }
-                            console.log("SHIPTOvhSet",oFilterData);
+                            console.log("SHIPTOvhSet", oFilterData);
                             // console.log("IODET_MODEL");
                             me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust)), "SHIPTO_MODEL");
                         },
@@ -11225,7 +11313,7 @@ sap.ui.define([
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"]);
                         // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         // console.log("Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
@@ -11335,8 +11423,8 @@ sap.ui.define([
                 }
 
                 let decimalIndex = oEvent.getParameters().value.indexOf(".");
-                    let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
-                    console.log(decVal);
+                let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
+                console.log(decVal);
 
                 if (oEvent.getParameters().value.split(".").length > 1 && decVal > 0) {
                     // let decimalIndex = oEvent.getParameters().value.indexOf(".");
@@ -11346,7 +11434,7 @@ sap.ui.define([
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"]);
                         // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         // console.log("1 Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
@@ -11372,9 +11460,9 @@ sap.ui.define([
                         }
                     }
                 }
-                else if(!isValidNumber) {
+                else if (!isValidNumber) {
                     oEvent.getSource().setValueState("Error");
-                    oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"] );
+                    oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"]);
                     this._validationErrors.push(oEvent.getSource().getId());
                     bError = true;
                 } else {
@@ -11510,7 +11598,7 @@ sap.ui.define([
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"]);
                         // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         // console.log("1 Error Value should not have decimal place/s." + oEvent.getSource().getId());
                         this._validationErrors.push(oEvent.getSource().getId());
@@ -12208,7 +12296,7 @@ sap.ui.define([
                 // MCA: EXECUTE IOUVSSET - FOR ZERP_PRDUSGUV
                 this._oModel.create("/IOUVSSet", oIOParam, {
                     method: "POST",
-                    success: async function (data, oResponse) { 
+                    success: async function (data, oResponse) {
                         console.log("IOUVSSet consumed.");
                     },
                     error: function (err) {
@@ -12343,7 +12431,7 @@ sap.ui.define([
                         // MCA: EXECUTE IOUVSSET - FOR ZERP_PRDUSGUV
                         this._oModel.create("/IOUVSSet", oIOParam, {
                             method: "POST",
-                            success: async function (data, oResponse) { 
+                            success: async function (data, oResponse) {
                                 console.log("IOUVSSet consumed.");
                             },
                             error: function (err) {
@@ -13322,7 +13410,7 @@ sap.ui.define([
                     if (vDecPlaces === 0) {
                         // MessageBox.information("Value should not have decimal place/s.");
                         oEvent.getSource().setValueState("Error");
-                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"] );
+                        oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"]);
                         // oEvent.getSource().setValueStateText("Value should not have decimal place/s.");
                         this._validationErrors.push(oEvent.getSource().getId());
                         bError = true;
@@ -14620,6 +14708,8 @@ sap.ui.define([
                                 row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                             });
 
+                            console.log("Costing oData.results", oData.results);
+
                             me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
                             me.byId("costHdrTab").bindRows("/rows");
                             me._tableRendered = "costHdrTab";
@@ -15003,33 +15093,33 @@ sap.ui.define([
                 TableValueHelp.handleFormValueHelp(oEvent, this);
             },
 
-            onFormValueHelpInputChange: function(oEvent) {
+            onFormValueHelpInputChange: function (oEvent) {
                 var oSource = oEvent.getSource();
                 var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
                 oSource.setValueState(isInvalid ? "Error" : "None");
-    
+
                 oSource.getSuggestionItems().forEach(item => {
                     if (item.getProperty("key") === oSource.getValue().trim()) {
                         isInvalid = false;
                         oSource.setValueState(isInvalid ? "Error" : "None");
                     }
                 })
-    
+
                 if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
                 else {
                     var sModel = oSource.getBindingInfo("value").parts[0].model;
                     var sPath = oSource.getBindingInfo("value").parts[0].path;
-    
+
                     this.getView().getModel(sModel).setProperty(sPath, oSource.getSelectedKey());
-    
+
                     // if (sPath === "/SOLDTOCUST") {
                     //     var oSoldToCust = this.getView().getModel("shiptocust").getData().filter(fItem => fItem.CUSTOMER === oSource.getSelectedKey());
-    
+
                     //     if (this.getView().getModel(sModel).getProperty("/CUSTGRP") !== oSoldToCust[0].CUSTGRP) {
                     //         this.getView().getModel(sModel).setProperty("/CUSTGRP", oSoldToCust[0].CUSTGRP);
                     //         this.getView().getModel(sModel).setProperty("/CONSIGN", "");
                     //         this.getView().getModel(sModel).setProperty("/MESSRS", "");
-    
+
                     //         this._oModel.read("/ConsignSHSet", {
                     //             urlParameters: {
                     //                 "$filter": "CUSTGRP eq '" + oSoldToCust[0].CUSTGRP + "'"
@@ -15046,14 +15136,14 @@ sap.ui.define([
                     //     var oSalesTerm = this.getView().getModel("salesterm").getData().filter(fItem => fItem.SALESTERM === oSource.getSelectedKey());
                     //     this.getView().getModel(sModel).setProperty("/SALESTERMTEXT", oSalesTerm[0].DESCRIPTION);
                     // }
-    
+
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
                             this._validationErrors.splice(index, 1)
                         }
                     })
                 }
-    
+
                 // this.getView().getModel(sModel).setProperty(sRowPath + '/Edited', true);
                 // console.log(this._validationErrors);
                 this._bHeaderChanged = true;

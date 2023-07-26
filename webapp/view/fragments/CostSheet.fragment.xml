@@ -1,0 +1,13 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		title="{i18n>SelectCostSheet}"
+		class="sapUiPopupWithPadding"
+		items="{CostSheetModel>/results}"
+        search="_costSheetGroupValueHelpSearch"
+		confirm="_costSheetGroupValueHelpClose"
+		cancel="_costSheetGroupValueHelpClose">
+		<StandardListItem title="{CostSheetModel>Cstype}" info="{CostSheetModel>Verdesc}"/>
+	</SelectDialog>
+</core:FragmentDefinition>

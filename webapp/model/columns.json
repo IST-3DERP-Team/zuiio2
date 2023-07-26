@@ -67,6 +67,23 @@
     ],
     "IODLV": [
         {
+            "ColumnName": "CSTYPE",
+            "ValueHelp": {
+                "show": true,
+                "valueHelpRequest": "onCostSheetValueHelp",
+                "items": {
+                    "path": "CostSheetModel",
+                    "value": "Cstype",
+                    "text": "Verdesc"
+                },
+                "SuggestionItems": {
+                    "path": "CostSheetModel>/",
+                    "title": "{CostSheetModel>Cstype}",
+                    "info": "{CostSheetModel>Verdesc}"
+                }
+            }
+        },
+        {
             "ColumnName": "CUSTBILLTO",
             "ValueHelp": {
                 "show": true,
