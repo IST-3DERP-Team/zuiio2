@@ -498,6 +498,7 @@
                                         <!-- <Text text="{i18n>DeliverySchedule}" /> -->
                                         <ToolbarSpacer />
                                         <Button id="btnNewDlvSched" type="Ghost" icon="sap-icon://add" press="onAdd('IODLV')" tooltip="{ddtext>/NEW}" visible="true" />
+                                        <Button id="btnRemoveRowDlvSched" type="Ghost" icon="sap-icon://less" press="onRemoveLine('IODLV')" tooltip="{ddtext>/REMOVENEWLINE}" visible="false" />
                                         <Button id="btnEditDlvSched" type="Ghost" icon="sap-icon://edit" press="onEdit('IODLV')" tooltip="{ddtext>/EDIT}" visible="true" />
                                         <Button id="btnDeleteDlvSched" type="Ghost" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="{ddtext>/DELETE}" visible="true" />
                                         <Button id="btnCopyDlvSched" type="Ghost" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="{ddtext>/COPY}" visible="true" />

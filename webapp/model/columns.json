@@ -79,7 +79,8 @@
                 "SuggestionItems": {
                     "path": "CostSheetModel>/",
                     "title": "{CostSheetModel>Cstype}",
-                    "info": "{CostSheetModel>Verdesc}"
+                    "additionalText": "{CostSheetModel>Verdesc}",
+                    "maxSuggestionWidth": "250px"
                 }
             }
         },
