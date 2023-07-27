@@ -803,6 +803,10 @@ sap.ui.define([
 
                 await this.getReloadIOColumnProp();
 
+                // FA Summary
+                // console.log("FASummary", FASummary);
+                FASummary.onInit(this);
+
                 var oIconTabBarStyle = this.byId("itbStyleDetail");
                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
 
@@ -2211,6 +2215,7 @@ sap.ui.define([
                 // await _promiseResult;
 
                 // FA Summary
+                console.log("FASummary", FASummary);
                 FASummary.onInit(this);
                 //console.log("fadcsend2", sap.ui.getCore().byId("dcSendDetailTab"), this.getView().byId("dcSendDetailTab"))
             },
@@ -6279,10 +6284,11 @@ sap.ui.define([
                 var arg = source;
                 var me = this;
 
-                // if (this._dataMode === "ADD" && (arg === "IODLV" || arg === "IODET")) {
-                //     this.addAnotherLine(arg);
-                //     return;
-                // }
+                if (this._dataMode === "ADD" && (arg === "IODLV" || arg === "IODET")) {
+                    this.byId("btnRemoveRowDlvSched").setVisible(true);
+                    this.addAnotherLine(arg);
+                    return;
+                }
 
                 await this.lock(this);
                 if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
@@ -6299,7 +6305,7 @@ sap.ui.define([
 
                     if (arg === "IODLV") {
                         // this.byId("btnNewDlvSched").setVisible(false);
-                        this.byId("btnRemoveRowDlvSched").setVisible(false);
+                        this.byId("btnRemoveRowDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(false);
                         this.byId("btnEditDlvSched").setVisible(false);
                         this.byId("btnDeleteDlvSched").setVisible(false);
@@ -6356,7 +6362,7 @@ sap.ui.define([
                     var tabName = arg + "Tab";
                     var oTable = this.getView().byId(tabName);
 
-                    oNewRow["New"] = true;
+                    oNewRow["NEW"] = true;
 
                     if (arg === "IODLV") {
                         let soldtoCust = this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]; //get Sold-To Customer value
@@ -6500,7 +6506,7 @@ sap.ui.define([
                 var oData = oTable.getModel().oData;
                 console.log("oData", oData);
 
-                oNewRow["New"] = true;
+                oNewRow["NEW"] = true;
 
                 if (arg === "IODLV") {
                     oNewRow["CPOREV"] = "1";
@@ -6561,7 +6567,7 @@ sap.ui.define([
                     }
                 }
 
-                if (arg === "IODLV") {
+                if (arg === "IODLV" && this.getView().getModel("ui2").getProperty("/currDlvSeq") !== "999") {
                     this.getView().getModel("ui2").setProperty("/currDlvSeq", "999");
                     await this.reloadIOData("IODETTab", "/IODETSet");
                 }
@@ -6572,8 +6578,9 @@ sap.ui.define([
                 var oTable = this.getView().byId(tabName);
                 console.log("oTable", oTable);
                 var oData = oTable.getModel().oData.rows;
+                var oModel = oTable.getModel();
                 console.log("oData", oData);
-                var oNewData = oData.filter(fItem => fItem.New === true);
+                var oNewData = oData.filter(fItem => fItem.NEW === true);
                 console.log("oNewData", oNewData);
                 var aSelIndices = oTable.getSelectedIndices();
                 console.log("aSelIndices", aSelIndices);
@@ -6582,6 +6589,7 @@ sap.ui.define([
 
                 if (oNewData.length > 0) {
                     if (aSelIndices.length > 0) {
+                        console.log("RowOnly , Multi Selection");
                         aSelIndices.forEach(item => {
                             console.log("aSelIndices.forEach", oTable.getBinding("rows").aIndices[item]);
                             oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
@@ -6600,7 +6608,7 @@ sap.ui.define([
                         })
 
                         if (bProceed) {
-                            oModel.setProperty('/results', oData);
+                            oModel.setProperty('/rows', oData);
                             oTable.clearSelection();
                         }
                         else {
@@ -6608,17 +6616,23 @@ sap.ui.define([
                         }
                     }  
                     else {
+                        console.log("RowOnly , Single Selection");
                         var iIndexToActivate = -1;
 
                         oData.forEach((item, index) => {
                             if (item.ACTIVE === "X") {
+                                console.log("before splice", oData);
+                                console.log(index);
                                 oData.splice(index, 1);
-                                oModel.setProperty('/results', oData);
+                                console.log("after splice", oData);
+                                console.log(oModel);
+                                oModel.setProperty('/rows', oData);
                             }
                         })
 
                         oData.forEach((item, index) => {
                             if (item.NEW && iIndexToActivate === -1) {
+                                console.log("set active row");
                                 item.ACTIVE = "X";
                                 iIndexToActivate = index;
                             }
@@ -8582,6 +8596,7 @@ sap.ui.define([
                         this.byId("btnDeleteIOMatList").setVisible(true);
                         this.byId("btnTabLayoutIOMatList").setVisible(true);
                     } else if (arg === "IODLV") {
+                        this.byId("btnRemoveRowDlvSched").setVisible(false);
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
                         this.byId("btnEditDlvSched").setVisible(true);
@@ -8666,7 +8681,19 @@ sap.ui.define([
                         await this.reloadIOData("IODETTab", "/IODETSet");
                         this._bIODETChanged = false;
                     }
-                    else {
+                    else if (arg === "IODLV") {
+                        console.log(this._aDataBeforeChange);
+                        console.log("before currDlvSeq : ", this.getView().getModel("ui2").getProperty("/currDlvSeq"));
+                        this._aDataBeforeChange.filter(item => item.ACTIVE === "X")
+                        .forEach(item2 => this.getView().getModel("ui2").setProperty("/currDlvSeq", item2.DLVSEQ));
+
+                        console.log("after currDlvSeq : ", this.getView().getModel("ui2").getProperty("/currDlvSeq"));
+                        this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
+                        this.byId(arg + "Tab").bindRows("/rows");
+
+                        await this.reloadIOData("IODETTab", "/IODETSet");
+
+                    } else {
                         this.byId(arg + "Tab").getModel().setProperty("/rows", this._aDataBeforeChange);
                         // console.log("Other Table aDataBeforeChange");
                         // console.log(this.byId(arg + "Tab").getModel());
@@ -9104,7 +9131,7 @@ sap.ui.define([
             onSaveIODET: async function () {
                 var me = this;
                 var arg = "IODET";
-                var aNewRows = this.byId("IODETTab").getModel("DataModel").getData().results.filter(item => item.New === true);
+                var aNewRows = this.byId("IODETTab").getModel("DataModel").getData().results.filter(item => item.NEW === true);
                 var iNew = 0;
                 var aEditedRows = this.byId("IODETTab").getModel("DataModel").getData().results.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
@@ -9652,7 +9679,7 @@ sap.ui.define([
                 // alert("on Save");
                 var me = this;
                 var bProceed = true;
-                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
+                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.NEW === true);
                 var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
@@ -10251,7 +10278,7 @@ sap.ui.define([
                 // alert("on Save");
                 var me = this;
 
-                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.New === true);
+                var aNewRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.NEW === true);
                 var iNew = 0;
                 var aEditedRows = this.byId(arg + "Tab").getModel().getData().rows.filter(item => item.EDITED === true && item.New !== true);
                 var iEdited = 0;
