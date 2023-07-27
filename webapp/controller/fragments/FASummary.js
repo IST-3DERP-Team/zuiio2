@@ -691,7 +691,7 @@ sap.ui.define([
             var oTable = oEvent.getSource();
             var sModel = "faSummary";
 
-            this.setActiveRowHighlight(sModel);
+            _this.setActiveRowHighlight(sModel);
         },
 
         setActiveRowHighlight(arg) {
