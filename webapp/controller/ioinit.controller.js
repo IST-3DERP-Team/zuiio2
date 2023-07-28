@@ -430,6 +430,8 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
                             item.SOLDTOCUST = item.SOLDTOCUST;
+                            // item.CURRENTVER = item.CURRENTVER === "X" ? true : false;
+                            // item.COMPLETED = item.CURRENTVER === "X" ? true : false;
                         })
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
@@ -542,7 +544,10 @@ sap.ui.define([
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                             label: sColumnLabel,
-                            template: new sap.m.CheckBox({ selected: true, editable: false }),
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
                             filterProperty: sColumnId,
@@ -573,6 +578,63 @@ sap.ui.define([
                         });
                     }
                 });
+
+                //remove sort icon of currently sorted column
+                oTable.attachSort(function (oEvent) {
+                    var sPath = oEvent.getParameter("column").getSortProperty();
+                    var bDesceding = false;
+                    oTable.getColumns().forEach(col => {
+                        if (col.getSorted()) {
+                            col.setSorted(false);
+                        }
+                    })
+
+
+                    oEvent.getParameter("column").setSorted(true); //sort icon initiator
+
+                    if (oEvent.getParameter("sortOrder") === "Descending") {
+                        bDescending = true;
+                        oEvent.getParameter("column").setSortOrder("Descending");
+                    } else {
+                        oEvent.getParamter("column").setSortOrder("Ascending");
+                    }
+
+                    var oSorter = new sap.ui.model.Sorter(sPath, bDescending);
+                    var oColumn = oColumns.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
+                    var columnType = oColumn[0].DataType;
+
+                    if (columnType === "DATETIME") {
+                        oSorter.fnCompare = function (a, b) {
+                            //parse to Date Object
+                            var aDate = new Date(a);
+                            var bDate = new Date(b);
+
+                            if (bDate === null) { return -1 };
+                            if (aDate === null) { return 1 };
+                            if (aDate < bDate) { return -1 };
+                            if (aDate > bDate) { return 1 };
+
+                            return 0;
+                        }
+                    } else if (columnType === "NUMBER") {
+                        oSorter.fnCompare = function (a, b) {
+                            //parse to Number Object
+                            var aNumber = +a;
+                            var bNumber = +b;
+
+                            if (aNumber === null) { return 1 };
+                            if (bNumber === null) { return -1 };
+                            if (aNumber < bNumber) { return -1 };
+                            if (aNumber > bNumber) { return 1 };
+
+                            return 0;
+                        };
+                    };
+
+                    oTable.getBinding('rows').sort(oSorter);
+                    //prevent internal sorting of table
+                    oEvent.preventDefault();
+                })
             },
 
             onAfterRendering: function () {
@@ -825,11 +887,66 @@ sap.ui.define([
                     });
                 });
 
-                //bind the data to the table
                 oTable.bindRows("/rows");
-                // TableFilter.updateColumnMenu("IODynTable", this);
 
-                // TableFilter.applyColFilters(me);
+                //remove sort icon of currently sorted column
+                oTable.attachSort(function (oEvent) {
+                    var sPath = oEvent.getParameter("column").getSortProperty();
+                    var bDescending = false;
+                    oTable.getColumns().forEach(col => {
+                        if (col.getSorted()) {
+                            col.setSorted(false);
+                        }
+                    })
+
+
+                    oEvent.getParameter("column").setSorted(true); //sort icon initiator
+
+                    if (oEvent.getParameter("sortOrder") === "Descending") {
+                        bDescending = true;
+                        oEvent.getParameter("column").setSortOrder("Descending");
+                    } else {
+                        oEvent.getParameter("column").setSortOrder("Ascending");
+                    }
+
+                    var oSorter = new sap.ui.model.Sorter(sPath, bDescending);
+                    var oColumn = oColumnsData.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
+                    var columnType = oColumn[0].DataType;
+
+                    if (columnType === "DATETIME") {
+                        oSorter.fnCompare = function (a, b) {
+                            //parse to Date Object
+                            var aDate = new Date(a);
+                            var bDate = new Date(b);
+
+                            if (bDate === null) { return -1 };
+                            if (aDate === null) { return 1 };
+                            if (aDate < bDate) { return -1 };
+                            if (aDate > bDate) { return 1 };
+
+                            return 0;
+                        }
+                    } else if (columnType === "NUMBER") {
+                        oSorter.fnCompare = function (a, b) {
+                            //parse to Number Object
+                            var aNumber = +a;
+                            var bNumber = +b;
+
+                            if (aNumber === null) { return 1 };
+                            if (bNumber === null) { return -1 };
+                            if (aNumber < bNumber) { return -1 };
+                            if (aNumber > bNumber) { return 1 };
+
+                            return 0;
+                        };
+                    };
+
+                    
+                    oTable.getBinding('rows').sort(oSorter);
+                    //prevent internal sorting of table
+                    oEvent.preventDefault();
+                })
+
             },
 
             columnTemplate: function (sColumnId, sColumnType) {
@@ -1278,23 +1395,45 @@ sap.ui.define([
                     var sColumnVisible = context.getObject().Visible;
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
+                    var sColumnDataType = context.getObject().ColumnType;
                     // var sColumnToolTip = context.getObject().Tooltip;
 
                     // console.log(context.getObject());
 
-                    return new sap.ui.table.Column({
-                        // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
-                        template: me.columnTemplate(sColumnId, sColumnType),
-                        // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
-                        width: sColumnWidth + 'px',
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    console.log(sColumnId, sColumnType, sColumnDataType);
+
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            // id: sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            template: me.columnTemplate(sColumnId, sColumnType),
+                            // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
+                            width: sColumnWidth + 'px',
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
                 });
 
                 //bind the data to the table
