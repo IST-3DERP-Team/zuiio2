@@ -153,6 +153,17 @@ sap.ui.define([
                     }
                 };
 
+                var me = this;
+                var oView = this.getView();
+
+                oView.addEventDelegate({
+                    onBeforeHide: function(oEvent) {
+                        if (me._oLock.length > 0) {
+                            me.unLock();
+                        }
+                    },
+                }, oView);
+
                 this.byId("ioMatListTab").addEventDelegate(oTableEventDelegate);
                 this.byId("colorTab").addEventDelegate(oTableEventDelegate);
                 this.byId("processTab").addEventDelegate(oTableEventDelegate);
@@ -170,72 +181,11 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-                //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
-                //         that.onNavBack();
-                //     }
-                // }
-
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
                     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
                         that.onNavBack();
                     }
                 }
-
-                // window.onhashchange = function () {
-                //     _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
-                // }
-
-                // window.onhashchange = function () {
-                //     console.log("windows");
-                //     let iCnt = 0;
-                //     console.log(window.history.state.sap.history);
-                //     console.log(window.history.state.sap.history[window.history.state.sap.history.length - 1]);
-
-                //     console.log(iCnt);
-                //     console.log(that._routeToStyle);
-                //     console.log(that._fromIOroute);
-
-                //     if(window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteIODetail") >= 0 && !that._routeToStyle && that._fromIOroute){
-                //         window.history.state.sap.history.forEach((item, index) => {
-                //             console.log(item);
-                //             if(item.indexOf(("ZSO_3DERP_ORD_IO-change") >= 0 || item.indexOf("ZSO_3DERP_ORD_IO-display") >= 0) && iCnt === 0){
-
-                //                 iCnt = 1;
-                //                 window.history.go((index + 1) - window.history.state.sap.history.length);
-                //             }
-                //         })
-                //     }
-
-                //     // // if(!that._routeToStyle) {
-                //     // // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteIODetail") >= 0) { 
-
-                //     // // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("ZSO_3DERP_ORD_STYLE") >= 0 && !that._routeToStyle) { 
-                //     // if ((window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteIODetail") >= 0
-                //     //     || window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteStyleDetail") >= 0
-                //     //     || window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("RouteVersion") >= 0)
-                //     //     && !that._routeToStyle && that._fromIOroute) {
-                //     // // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("ZSO_3DERP_ORD_STYLE") >= 0 && !that._routeToStyle) {
-
-                //     //     // window.history.go((index + 1) - window.history.state.sap.history.length);   
-
-                //     //     window.history.state.sap.history.forEach((item, index) => {
-                //     //             if(item.indexOf("RouteIODetail") >= 0){
-                //     //             window.history.go((index + 1) - window.history.state.sap.history.length);   
-                //     //             }     
-
-                //     //             // if(item.indexOf("RouteIODetail") >= 0){
-                //     //             //     window.history.go((index + 1) - window.history.state.sap.history.length);   
-                //     //             //     }  
-                //     //     })
-                //     // }
-
-                //     // if (window.history.state.sap.history[window.history.state.sap.history.length - 1].indexOf("Shell-home") >= 0 && window.history.state.sap.history.length > 0 
-                //     // && !that._routeToStyle && that._fromIOroute) {
-                //     //     window.history.go((window.history.state.sap.history.length-1) - window.history.state.sap.history.length);  
-                //     // }
-                // }
 
                 this._tableValueHelp = TableValueHelp;
             },
@@ -312,6 +262,12 @@ sap.ui.define([
             // onExit: function() {
             //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             // },
+
+            onExit: function () {
+                if(this._oLock.length > 0) {
+                    this.unLock();
+                }
+            },
 
             onNavBack: function (oEvent) {
                 if (!that._routeToStyle) {
@@ -1231,10 +1187,13 @@ sap.ui.define([
                 }               
 
                 Common.openLoadingDialog(this); 
+                console.log("oRow.DLVSEQ", oRow.DLVSEQ);
                 this.getView().getModel("ui2").setProperty("/currDlvSeq", oRow.DLVSEQ);
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+
+                console.log("vDlvSeq", vDlvSeq);
 
                 me._tblChange = true;
                 await this.reloadIOData("IODETTab", "/IODETSet");
@@ -6284,6 +6243,8 @@ sap.ui.define([
                 var arg = source;
                 var me = this;
 
+                console.log("currDlvSeq", this.getView().getModel("ui2").getProperty("/currDlvSeq"));
+
                 if (this._dataMode === "ADD" && (arg === "IODLV" || arg === "IODET")) {
                     this.byId("btnRemoveRowDlvSched").setVisible(true);
                     this.addAnotherLine(arg);
@@ -6293,8 +6254,10 @@ sap.ui.define([
                 await this.lock(this);
                 if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
 
-                    var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-                    var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+                    let vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                    let vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+
+                    console.log("vDlvSeq", vDlvSeq);
 
                     if (arg === "IODET") {
                         if (vDlvSeq === undefined || vDlvSeq === "999") {
@@ -6437,11 +6400,12 @@ sap.ui.define([
 
                         if (oModel.getData().results.length > 0) {
                             oModel.getData().results.forEach(item => {
-                                item.New = false;
+                                item.NEW = false;
                                 item.ACTIVE = "";
                                 oData.push(item);
                             })
                         }
+                        console.log("oModel", oModel);
                         oModel.setProperty("/results", oData);
                     }
 
@@ -6453,7 +6417,7 @@ sap.ui.define([
                         if (oModel.getData().rows.length > 0) {
 
                             oModel.getData().rows.forEach(item => {
-                                item.New = false;
+                                item.NEW = false;
 
                                 item.ACTIVE = "";
                                 oData.push(item);
@@ -7063,16 +7027,6 @@ sap.ui.define([
                                     item.DELETED = item.DELETED === "X" ? true : false;
                                 })
 
-                                oData.results.forEach((item, index) => {
-                                    if (index === 0) {
-                                        item.ACTIVE = "X"
-                                        // console.log("index zero Delivery Sequence");
-                                        // console.log(item.DLVSEQ);
-                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
-                                    } else
-                                        item.ACTIVE = ""
-                                });
-
                                 oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
                                 var aFilters = [], aSorters = [];
@@ -7143,6 +7097,16 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
+                                    oData.results.forEach((item, index) => {
+                                        if (index === 0) {
+                                            item.ACTIVE = "X"
+                                            // console.log("index zero Delivery Sequence");
+                                            // console.log(item.DLVSEQ);
+                                            me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                        } else
+                                            item.ACTIVE = ""
+                                    });
+                                    
                                     oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
                                 }
 
@@ -10545,9 +10509,9 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(mParameters);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
 
@@ -10889,9 +10853,9 @@ sap.ui.define([
                                             // suggest: this.handleSuggestion.bind(this),
                                             change: this.handleValueHelpChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>New",
-                                                formatter: function (New) {
-                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                path: "DataModel>NEW",
+                                                formatter: function (NEW) {
+                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
                                                     else { return false }
                                                 }
                                             }
@@ -10955,9 +10919,9 @@ sap.ui.define([
                                             displayFormat: "short",
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>New",
-                                                formatter: function (New) {
-                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                path: "DataModel>NEW",
+                                                formatter: function (NEW) {
+                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
                                                     else { return false }
                                                 }
                                             }
@@ -11014,9 +10978,9 @@ sap.ui.define([
                                             change: this.onIODETNumberLiveChange.bind(this),
                                             // liveChange: this.onInputChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>New",
-                                                formatter: function (New) {
-                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                path: "DataModel>NEW",
+                                                formatter: function (NEW) {
+                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
                                                     else { return false }
                                                 }
                                             }
@@ -11039,9 +11003,9 @@ sap.ui.define([
                                             value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
                                             change: this.onNumberChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>New",
-                                                formatter: function (New) {
-                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                path: "DataModel>NEW",
+                                                formatter: function (NEW) {
+                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
                                                     else { return false }
                                                 }
                                             }
@@ -11108,8 +11072,8 @@ sap.ui.define([
                                         }));
                                     }
                                     else if (arg === "IODET") {
-                                        // console.log("IODET");
-                                        // console.log(sColName);
+                                        console.log("IODET");
+                                        console.log(sColName);
 
                                         col.setTemplate(new sap.m.Input({
                                             type: "Text",
@@ -11117,9 +11081,9 @@ sap.ui.define([
                                             maxLength: ci.Length,
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>New",
-                                                formatter: function (New) {
-                                                    if (New === true || me._dataMode === "EDIT") { return true }
+                                                path: "DataModel>NEW",
+                                                formatter: function (NEW) {
+                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
                                                     else { return false }
                                                 }
                                             }
@@ -11140,9 +11104,9 @@ sap.ui.define([
                                 col.getLabel().addStyleClass("sapMLabelRequired");
                             }
 
-                            if (arg === "IODET") {
-                                console.log("ci", ci);
-                            }
+                            // if (arg === "IODET") {
+                            //     console.log("ci", ci);
+                            // }
                         })
                 })
 
@@ -15589,8 +15553,8 @@ sap.ui.define([
             },
 
             lock: async (me) => {
-                var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
-                // var oModelLock = me._oModelLock;
+                // var oModelLock = me.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oModelLock = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_LOCK_SRV/");
                 var oParamLock = {};
                 var oIO_TAB = [];
                 var sError = "";
@@ -15604,30 +15568,26 @@ sap.ui.define([
                 oParamLock["Iv_Count"] = 300;
                 oParamLock["IO_MSG"] = [];
 
-                console.log(oParamLock);
+                // console.log(oParamLock);
 
                 var promise = new Promise((resolve, reject) => {
                     oModelLock.create("/ZERP_IOHDR", oParamLock, {
                         method: "POST",
                         success: function (oResultLock) {
-                            // console.log(oResultLock.IO_MSG.results);
                             oResultLock.IO_MSG.results.forEach(item => {
-                                // console.log("Lock IO");
                                 me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
-                                // if (item.Type === "S") {
                                 me.getView().getModel("ui").setProperty("/LockType", item.Type);
                                 me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
-                                // alert(me.getView().getModel("ui").getProperty("/isLocked"));
-                                // }
                                 sError += item.Message + ".\r\n ";
                             })
 
                             if (sError.length > 0) {
                                 resolve(false);
-                                // sap.m.MessageBox.information(sError);
-                                // me.closeLoadingDialog();
                             }
-                            else resolve(true);
+                            else {
+                                me._oLock = oResultLock.IO_MSG.results;
+                                resolve(true);
+                            }
                         },
                         error: function (err) {
                             resolve(false);
@@ -15638,7 +15598,9 @@ sap.ui.define([
             },
 
             unLock() {
-                var oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                console.log("unLock");
+                // var oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
+                var oModelLock = new sap.ui.model.odata.v2.ODataModel("/sap/opu/odata/sap/ZGW_3DERP_LOCK_SRV/");
                 var oParamUnLock = {};
                 var oIO_TAB = [];
                 var me = this;
