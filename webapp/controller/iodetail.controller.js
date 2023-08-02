@@ -1794,6 +1794,7 @@ sap.ui.define([
                 var me = this;
                 // var ioNo = iono;
                 var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
+                var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
                 if (ioNo === "NEW")
                     return;
@@ -1816,17 +1817,29 @@ sap.ui.define([
                                     item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                     item.DELETED = item.DELETED === "X" ? true : false;
-                                })
-                                oData.results.forEach((item, index) => {
-                                    if (index === 0) {
-                                        item.ACTIVE = "X"
-                                        // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
-                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
-                                    } else
-                                        item.ACTIVE = ""
-                                });
+                                })                                
 
                                 oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
+
+                                if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
+                                    oData.results.forEach((item, index) => {
+                                        if (index === 0) {
+                                            item.ACTIVE = "X"
+                                            // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
+                                            me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                        } else
+                                            item.ACTIVE = ""
+                                    });
+                                }
+
+                                if (cDlvSeq !== undefined && cDlvSeq !== "0" && cDlvSeq !== "999") {
+                                    oData.results.forEach(item => {
+                                        if(item.DLVSEQ === cDlvSeq) {
+                                            item.ACTIVE = "X";
+                                        } else
+                                            item.ACTIVE = "";
+                                    })
+                                }
 
                                 me.byId("IODLVTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IODLVTab").bindRows("/rows");
@@ -7029,6 +7042,26 @@ sap.ui.define([
 
                                 oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
+                                if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
+                                    oData.results.forEach((item, index) => {
+                                        if (index === 0) {
+                                            item.ACTIVE = "X"
+                                            // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
+                                            me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                        } else
+                                            item.ACTIVE = ""
+                                    });
+                                }
+
+                                if (cDlvSeq !== undefined && cDlvSeq !== "0" && cDlvSeq !== "999") {
+                                    oData.results.forEach(item => {
+                                        if(item.DLVSEQ === cDlvSeq) {
+                                            item.ACTIVE = "X";
+                                        } else
+                                            item.ACTIVE = "";
+                                    })
+                                }
+
                                 var aFilters = [], aSorters = [];
                                 if (me.byId("IODETTab").getBinding("rows")) {
                                     aFilters = me.byId("IODETTab").getBinding("rows").aFilters;
@@ -7096,18 +7129,28 @@ sap.ui.define([
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
-
-                                    oData.results.forEach((item, index) => {
-                                        if (index === 0) {
-                                            item.ACTIVE = "X"
-                                            // console.log("index zero Delivery Sequence");
-                                            // console.log(item.DLVSEQ);
-                                            me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
-                                        } else
-                                            item.ACTIVE = ""
-                                    });
                                     
                                     oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
+
+                                    if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
+                                        oData.results.forEach((item, index) => {
+                                            if (index === 0) {
+                                                item.ACTIVE = "X"
+                                                // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
+                                                me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                            } else
+                                                item.ACTIVE = ""
+                                        });
+                                    }
+    
+                                    if (cDlvSeq !== undefined && cDlvSeq !== "0" && cDlvSeq !== "999") {
+                                        oData.results.forEach(item => {
+                                            if(item.DLVSEQ === cDlvSeq) {
+                                                item.ACTIVE = "X";
+                                            } else
+                                                item.ACTIVE = "";
+                                        })
+                                    }
                                 }
 
                                 if (sSource === "IODETTab") {
@@ -7118,22 +7161,28 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    // oData.results.sort((a, b,) => (a.DLVITEM > b.DLVITEM ? -1 : 1));
                                     oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? 1 : -1));
+
+                                    if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
+                                        oData.results.forEach((item, index) => {
+                                            if (index === 0) {
+                                                item.ACTIVE = "X"
+                                                me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                            } else
+                                                item.ACTIVE = ""
+                                        });
+                                    }
+    
+                                    if (cDlvSeq !== undefined && cDlvSeq !== "0" && cDlvSeq !== "999") {
+                                        oData.results.forEach(item => {
+                                            if(item.DLVSEQ === cDlvSeq) {
+                                                item.ACTIVE = "X";
+                                            } else
+                                                item.ACTIVE = "";
+                                        })
+                                    }
                                 }
-                                // console.log("Reload IO Data");
-                                // console.log(ioNo);
-                                // console.log(oData);
-                                oData.results.forEach((item, index) => {
-                                    // console.log(item);
-                                    if (index === 0) {
-                                        item.ACTIVE = "X"
-                                        // console.log("index zero Delivery Sequence");
-                                        // console.log(item.DLVSEQ);
-                                        me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
-                                    } else
-                                        item.ACTIVE = ""
-                                });
+                                
                                 console.log("sSource", sSource);
                                 console.log(me.byId(sSource).getModel());
                                 me.byId(sSource).getModel().setProperty("/rows", oData.results);
