@@ -59,7 +59,7 @@
 
                                         <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
                                             <ToolbarSpacer />
-                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
+                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="false" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
                                             <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
                                         </OverflowToolbar>

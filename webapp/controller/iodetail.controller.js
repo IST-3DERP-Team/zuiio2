@@ -8601,7 +8601,7 @@ sap.ui.define([
                         this.byId("btnCancelIODet").setVisible(false);
                         this.byId("btnFullScreenIODet").setVisible(true);
                     } else if (arg === "IOATTRIB") {
-                        this.byId("onIOAttribEdit").setVisible(true);
+                        this.byId("onIOAttribEdit").setVisible(false);
                         this.byId("onIOAttribSave").setVisible(false);
                         this.byId("onIOAttribCancel").setVisible(false);
 
@@ -10133,7 +10133,7 @@ sap.ui.define([
                                                     me.byId("btnRefreshCostHdr").setEnabled(true);
                                                 }
                                                 else if (arg === "IOATTRIB") {
-                                                    me.byId("onIOAttribEdit").setVisible(true);
+                                                    me.byId("onIOAttribEdit").setVisible(false);
                                                     me.byId("onIOAttribSave").setVisible(false);
                                                     me.byId("onIOAttribCancel").setVisible(false);
                                                 }
@@ -10615,7 +10615,7 @@ sap.ui.define([
                                     me.byId("btnRefreshCostHdr").setEnabled(true);
                                 }
                                 else if (arg === "IOATTRIB") {
-                                    me.byId("onIOAttribEdit").setVisible(true);
+                                    me.byId("onIOAttribEdit").setVisible(false);
                                     me.byId("onIOAttribSave").setVisible(false);
                                     me.byId("onIOAttribCancel").setVisible(false);
 
@@ -12122,7 +12122,7 @@ sap.ui.define([
                             this.byId("btnCancelIODet").setVisible(false);
                             this.byId("btnFullScreenIODet").setVisible(true);
                         } else if (this._sTableModel === "IOATTRIB") {
-                            this.byId("onIOAttribEdit").setVisible(true);
+                            this.byId("onIOAttribEdit").setVisible(false);
                             this.byId("onIOAttribSave").setVisible(false);
                             this.byId("onIOAttribCancel").setVisible(false);
 
