@@ -5805,7 +5805,7 @@ sap.ui.define([
                         //Set Button Visibility for Read Mode
                         this.byId("onIOEdit").setVisible(true);
                         this.byId("onIORelease").setVisible(true);
-                        // this.byId("onIOAttribEdit").setVisible(true);
+                        // this.byId("git").setVisible(true);
                         // this.byId("onIOStatEdit").setVisible(true);
                         this.byId("onIOSave").setVisible(false);
                         this.byId("onIOCancel").setVisible(false);
