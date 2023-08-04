@@ -1036,6 +1036,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "VSNUMMAXDEC" });
                 oDDTextParam.push({ CODE: "VSNUMVALNODEC" });
                 oDDTextParam.push({ CODE: "VSNOTVALIDNUM" });
+                oDDTextParam.push({ CODE: "CCOLOREXISTS" });
 
                 // console.log(oDDTextParam);
 
@@ -9993,6 +9994,11 @@ sap.ui.define([
                 // console.log(aEditedRows);
                 // return;
 
+                if (this._validationErrors.length > 0) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
+                    return;
+                }
+
                 if (aNewRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         var entitySet = "/";
@@ -10377,10 +10383,9 @@ sap.ui.define([
                                 me.byId("onIOEdit").setVisible(true);
                                 me.byId("onIORelease").setVisible(true);
                             }
-
-                            // if (arg !== "IODET")
+                            
                             me.setActiveRowHighlightByTableId(arg + "Tab");
-
+                            //ICON TAB BAR ENABLING
                             if (arg === "color" || arg === "process") {
                                 var oIconTabBarStyle = me.byId("itbStyleDetail");
                                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
@@ -11774,36 +11779,41 @@ sap.ui.define([
             },
 
             onInputLiveChange: function (oEvent) {
-                // if (this._validationErrors === undefined) this._validationErrors = [];
+                if (this._validationErrors === undefined) this._validationErrors = [];
                 var oSource = oEvent.getSource();
                 var sModel = oSource.getBindingInfo("value").parts[0].model;
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
-                // var bError = false;
-
-                // console.log("sRowPath", sRowPath);
-                // console.log("sRowPath.split('/').pop()", sRowPath.split('/').pop());
-                // // console.log("this._aDataBeforeChange", this._aDataBeforeChange);
-                // console.log(this.byId(this._sTableModel + "Tab").getModel("DataModel").getData());
+                var bError = false;
 
                 if (this._sTableModel === "IODET") {
-                    // var iCustColor = "";
                     this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
 
-                    // if (oSource.getBindingInfo("value").parts[0].path === "CUSTCOLOR") {
-                    //     let cellValue = oEvent.getParameters().value;
-                    //     console.log(cellValue);
+                    if (oSource.getBindingInfo("value").parts[0].path === "CUSTCOLOR") {
+                        let cellValue = oEvent.getParameters().value;
+                        console.log(cellValue);
                         
-                    //     this.byId(this._sTableModel + "Tab").getModel("DataModel").getData().results.filter((item, index) => index != sRowPath.split('/').pop())
-                    //     .forEach(row => {
-                    //         if(row.CUSTCOLOR === cellValue) {
-                    //             oEvent.getSource().setValueState("Error");
-                    //             oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNUMVALNODEC"]);
+                        this.byId(this._sTableModel + "Tab").getModel("DataModel").getData().results.filter((item, index) => index != sRowPath.split('/').pop())
+                        .forEach(row => {
+                            if(row.CUSTCOLOR === cellValue) {
+                                oEvent.getSource().setValueState("Error");
+                                oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["CCOLOREXISTS"]);
 
-                    //             this._validationErrors.push(oEvent.getSource().getId());
-                    //             bError = true;
-                    //         }
-                    //     })
-                    // }
+                                this._validationErrors.push(oEvent.getSource().getId());
+                                bError = true;
+                            }
+
+                            if(!bError) {
+                                oEvent.getSource().setValueState("None");
+                                // console.log("3 None");
+                                this._validationErrors.forEach((item, index) => {
+                                    if (item === oEvent.getSource().getId()) {
+                                        this._validationErrors.splice(index, 1)
+                                    }
+                                })
+                                bError = false;
+                            }
+                        })
+                    }
                 }
                 else if (this._sTableModel === "reorder") {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
