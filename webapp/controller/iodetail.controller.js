@@ -2014,8 +2014,8 @@ sap.ui.define([
                             },
                             success: function (oData, response) {
 
-                                // console.log("ATTRIBSet");
-                                // console.log(oData.results);
+                                console.log("ATTRIBSet");
+                                console.log(oData.results);
 
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
@@ -3955,6 +3955,7 @@ sap.ui.define([
                 var oSource = oEvent.getSource();
 
                 console.log("oSource", oSource);
+                console.log("oSource.getValue().trim()", oSource.getValue().trim());
                 var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
                 oSource.setValueState(isInvalid ? "Error" : "None");
 
@@ -8543,7 +8544,7 @@ sap.ui.define([
                         this.byId("btnCancelIODet").setVisible(false);
                         this.byId("btnFullScreenIODet").setVisible(true);
                     } else if (arg === "IOATTRIB") {
-                        this.byId("onIOAttribEdit").setVisible(false);
+                        this.byId("onIOAttribEdit").setVisible(true);
                         this.byId("onIOAttribSave").setVisible(false);
                         this.byId("onIOAttribCancel").setVisible(false);
 
@@ -9886,7 +9887,7 @@ sap.ui.define([
                                                     me.byId("btnRefreshCostHdr").setEnabled(true);
                                                 }
                                                 else if (arg === "IOATTRIB") {
-                                                    me.byId("onIOAttribEdit").setVisible(false);
+                                                    me.byId("onIOAttribEdit").setVisible(true);
                                                     me.byId("onIOAttribSave").setVisible(false);
                                                     me.byId("onIOAttribCancel").setVisible(false);
                                                 }
@@ -10077,7 +10078,7 @@ sap.ui.define([
 
                             batchPromise.then(function() {
                                 if (iNew === aNewRows.length) {
-                                    MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                                    // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
 
                                     if (arg === "IODLV") {
                                         me.byId("btnRemoveRowDlvSched").setVisible(false);
@@ -10148,28 +10149,28 @@ sap.ui.define([
                                 await oModelColumns.loadData(sPath);
     
                                 var oColumns = oModelColumns.getData();
-                                this._oModelColumns = oModelColumns.getData();
+                                // this._oModelColumns = oModelColumns.getData();
                                 switch (arg) {
                                     case "IODLV":
-                                        await this.getIODLVData();
-                                        this._bIODLVChanged = false;
+                                        await me.getIODLVData();
+                                        me._bIODLVChanged = false;
                                         break;
     
                                     case "IODET":
                                         console.log("IODET Save New");
                                         //RELOAD IO DETAIL DATA PER IO & DLVSEQ
-                                        await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                        await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
     
     
                                         //RELOAD IO DELIVERY DATA PER IO
-                                        await this.getIODLVData();
-                                        this._bIODLVChanged = false;
+                                        await me.getIODLVData();
+                                        me._bIODLVChanged = false;
     
                                         break;
     
                                     case "IOATTRIB":
-                                        await this.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
-                                        this._bIOATTRIBChanged = false;
+                                        await me.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
+                                        me._bIOATTRIBChanged = false;
                                         break;
     
                                     default: break;
@@ -10272,8 +10273,8 @@ sap.ui.define([
                             // }, 100)
                         
 
-                        this.setRowReadMode(arg);
-                        this.unLock();
+                        // this.setRowReadMode(arg);
+                        // this.unLock();
                     }
                     else {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_CHECK_INVALID_ENTRIES"]);
@@ -10370,7 +10371,7 @@ sap.ui.define([
                                 }
 
                                 if (iKeyCount === 1) {
-                                    if (arg === "IOATTRIB" || arg === "IODET") {
+                                    if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X")
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += item[col.ColumnName]
@@ -10380,7 +10381,7 @@ sap.ui.define([
                                         entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
-                                    if (arg === "IOATTRIB" || arg === "IODET") {
+                                    if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X") {
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
@@ -10397,9 +10398,9 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(mParameters);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
 
@@ -10516,7 +10517,7 @@ sap.ui.define([
                                 me.byId("btnRefreshCostHdr").setEnabled(true);
                             }
                             else if (arg === "IOATTRIB") {
-                                me.byId("onIOAttribEdit").setVisible(false);
+                                me.byId("onIOAttribEdit").setVisible(true);
                                 me.byId("onIOAttribSave").setVisible(false);
                                 me.byId("onIOAttribCancel").setVisible(false);
 
@@ -10565,27 +10566,27 @@ sap.ui.define([
                             await oModelColumns.loadData(sPath);
 
                             var oColumns = oModelColumns.getData();
-                            this._oModelColumns = oModelColumns.getData();
+                            // this._oModelColumns = oModelColumns.getData();
                             switch (arg) {
                                 case "IODLV":
-                                    await this.getIODLVData();
-                                    this._bIODLVChanged = false;
+                                    await me.getIODLVData();
+                                    me._bIODLVChanged = false;
                                     break;
 
                                 case "IODET":
                                     //RELOAD IO DETAIL DATA PER IO & DLVSEQ
-                                    await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                    await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
 
 
                                     //RELOAD IO DELIVERY DATA PER IO
-                                    await this.getIODLVData();
-                                    this._bIODLVChanged = false;
+                                    await me.getIODLVData();
+                                    me._bIODLVChanged = false;
 
                                     break;
 
                                 case "IOATTRIB":
-                                    await this.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
-                                    this._bIOATTRIBChanged = false;
+                                    await me.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
+                                    me._bIOATTRIBChanged = false;
                                     break;
 
                                 default: break;
@@ -11962,9 +11963,9 @@ sap.ui.define([
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
 
-                if(this._sTableModel === "IODLV") {
-                    console.log(this._sTableModel, this.getView().getModel(this._sTableModel).getData());
-                }
+                // if(this._sTableModel === "IODLV") {
+                //     console.log(this._sTableModel, this.getView().getModel(this._sTableModel).getData());
+                // }
 
                 if (this._sTableModel === "color") this._bColorChanged = true;
                 else if (this._sTableModel === "process") this._bProcessChanged = true;
@@ -12244,7 +12245,7 @@ sap.ui.define([
                             this.byId("btnCancelIODet").setVisible(false);
                             this.byId("btnFullScreenIODet").setVisible(true);
                         } else if (this._sTableModel === "IOATTRIB") {
-                            this.byId("onIOAttribEdit").setVisible(false);
+                            this.byId("onIOAttribEdit").setVisible(true);
                             this.byId("onIOAttribSave").setVisible(false);
                             this.byId("onIOAttribCancel").setVisible(false);
 

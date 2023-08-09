@@ -59,7 +59,7 @@
 
                                         <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
                                             <ToolbarSpacer />
-                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="false" />
+                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
                                             <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
                                         </OverflowToolbar>
@@ -503,7 +503,7 @@
                                         <Button id="btnDeleteDlvSched" type="Ghost" icon="sap-icon://delete" press="onDelete('IODLVTab')" tooltip="{ddtext>/DELETE}" visible="true" />
                                         <Button id="btnCopyDlvSched" type="Ghost" icon="sap-icon://copy" press="onCopy('IODLVTab')" tooltip="{ddtext>/COPY}" visible="true" />
                                         <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="{ddtext>/REFRESH}" visible="true" />
-                                        <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
+                                        <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onBatchSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                         <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="{ddtext>/IMPORTPO}" visible="true" />
                                         <Button id="btnGenMatList" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
