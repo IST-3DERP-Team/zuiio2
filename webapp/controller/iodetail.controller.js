@@ -1037,6 +1037,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "VSNUMVALNODEC" });
                 oDDTextParam.push({ CODE: "VSNOTVALIDNUM" });
                 oDDTextParam.push({ CODE: "CCOLOREXISTS" });
+                oDDTextParam.push({ CODE: "ERR_IOMISSINGCOSTCOMP" });
 
                 // console.log(oDDTextParam);
 
@@ -4531,7 +4532,7 @@ sap.ui.define([
                     oModel.read(entitySet, {
                         success: function (oData, oResponse) {
                             // console.log("/IOHDRSet('" + ioNo + "')");
-                            // console.log(oData);
+                            console.log("IOHDRSet", oData);
                             // oData.CUSTDLVDT = oData.CUSTDLVDT === "" || oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
                             // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "" || oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
                             // oData.REQEXFTYDT = oData.REQEXFTYDT === "" || oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
@@ -6166,26 +6167,42 @@ sap.ui.define([
                 sTableName = TableName;
                 var oParam;
                 var sIONo = this.getView().byId("IONO").getValue();
-                var sStatusCd = this.getView().byId("STATUSCD").getValue();
+                var sStatusCd = this.getView().byId("STATUSCD").getValue();   
+                var errMessage = "";            
 
-                // alert(sStatusCd);
+                // var oDataMatList = this.byId("ioMatListTab").getModel().getData().rows;
+                // oDataMatList.forEach(item => {
+                //     if(item.COSTCOMPCD === "" || item.COSTCOMPCD === undefined && errMessage === "") {
+                //         errMessage = this.getView().getModel("ddtext").getData()["ERR_IOMISSINGCOSTCOMP"];
+                //     }
+                // });
+             
                 await this.reloadModel("/IOCSCHECKSet", true, "hasCSData");
 
-                // console.log(sStatusCd);
-                // console.log(this.getView().getModel("ui2").getProperty("/hasCSData"));
+                if(sStatusCd === "REL") {
+                    if(errMessage.length > 0) {
+                        errMessage = erMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"];
+                    } else
+                    errMessage = this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"];
+                }
 
-                if (sStatusCd === "REL") {
-                    MessageBox.information(this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"]);
-                } else {
+                if(this.getView().getModel("ui2").getProperty("/hasCSData") !== true) {
+                    if(errMessage.length > 0) {
+                        errMessage = erMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IORELEASE_REQ"];
+                    } else
+                    errMessage = this.getView().getModel("ddtext").getData()["ERR_IORELEASE_REQ"];
+                }
 
-                    if (sStatusCd === "MAT" && this.getView().getModel("ui2").getProperty("/hasCSData") === true) {
-                        // alert(this.getView().getModel("ui2").getProperty("/hasCSData"));
+                if(errMessage.length > 0) {
+                    MessageBox.information(errMessage);
+                    return;
+                }
+
                         if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
                             await this.lock(this);
                         }
 
                         if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
-                            // alert(sTableName);
                             if (sTableName === "IOHDR") {
                                 oParam = {
                                     "Iono": sIONo
@@ -6200,59 +6217,48 @@ sap.ui.define([
 
                             var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
 
-                            // oModelRelease.setUseBatch(false);
+                            var batchPromise = new Promise(function (resolve, reject) {
+                                oModelRelease.attachBatchRequestCompleted(function () {
+                                    resolve();
+                                });
+
+                                oModelRelease.attachBatchRequestFailed(function () {
+                                    reject(new Error("Batch request failed"));
+                                });
+                            });
+
                             oModelRelease.create(sEntitySet, oParam, {
                                 method: sMethod,
                                 success: function (oData, oResponse) {
-                                    // console.log("oData", oData);
-                                    //capture oData output if needed
                                     resultType = oData.Type;
                                     resultDescription = oData.Description;
-
-                                    //show MessageBox for successful execution
-                                    setTimeout(() => {
+                                    console.log("IO Release Success");
                                         if (resultType === "E") {
                                             sap.m.MessageBox.error(resultDescription);
                                         }
                                         if (resultType !== "E") {
                                             sap.m.MessageBox.information(sIONo + " Released.");
                                         }
-                                    }, 100);
-
-                                    me.unLock();
                                 },
                                 error: function (err) {
-                                    // console.log("Err", err);
-                                    // console.log("err.error.message.value", err.error.message.value);
-                                    // console.log("JSON.parse", JSON.parse(err.responseText).error.message.value);
-
+                                    console.log("IO Release Error");
                                     resultDescription = JSON.parse(err.responseText).error.message.value;
                                     sap.m.MessageBox.error(resultDescription);
-
-                                    me.unLock();
                                 }
                             });
 
-                            // //reload data for both IO Delivery and IO Detail
-                            // setTimeout(() => {
-                            //     this.reloadHeaderData(sIONo);
-                            // }, 100);
-
-                            // await this.reloadHeaderData();
-                            await this.refreshHeaderData();
-
-                            await this.reloadIOData("IOSTATUSTab", "/IOSTATSet");
-                            this._bIOSTATChanged = false;
-
-                            this.unLock();
+                            batchPromise.then(async function () {
+                                console.log("refreshHeaderData");
+                                await me.refreshHeaderData();
+                            }).then(async function() {
+                                console.log("reloadIOData");
+                                await me.reloadIOData("IOSTATUSTab", "/IOSTATSet");
+                                me._bIOSTATChanged = false;
+                            }).then(function () {
+                                me.unLock();
+                            })
                         } else
                             MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
-                    }
-                    else
-                        MessageBox.information(this.getView().getModel("ddtext").getData()["ERR_IORELEASE_REQ"]);
-                }
-
-                await this.refreshHeaderData();
             },
 
             //******************************************* */
@@ -7020,6 +7026,7 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "'"
                             },
                             success: function (oData, response) {
+                                console.log("sSource", oData);
                                 if (sSource === "IOSTATUSTab") {
                                     oData.results.forEach(item => {
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
