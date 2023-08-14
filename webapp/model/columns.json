@@ -65,60 +65,83 @@
             }
         }
     ],
-    "IODLV": [
+    "IODLV": [        
         {
-            "ColumnName": "CSTYPE",
+            "ColumnName": "CSTYPE", 
+            "TextFormatMode": "ValueKey",
             "ValueHelp": {
-                "show": true,
-                "valueHelpRequest": "onCostSheetValueHelp",
-                "items": {
-                    "path": "CostSheetModel",
-                    "value": "Cstype",
+                "show": true
+                , "items": {
+                    "path": "CostSheetModel", 
+                    "value": "Cstype", 
                     "text": "Verdesc"
                 },
                 "SuggestionItems": {
-                    "path": "CostSheetModel>/",
-                    "title": "{CostSheetModel>Cstype}",
-                    "additionalText": "{CostSheetModel>Verdesc}",
-                    "maxSuggestionWidth": "250px"
-                }
+                    "path": "CostSheetModel>/", 
+                    "text": "{CostSheetModel>Cstype}", 
+                    "additionalText": "{CostSheetModel>Verdesc}", 
+                    "maxSuggestionWidth": "200px" 
+                },
+                "columns": "tvh_cstype"
             }
         },
         {
-            "ColumnName": "CUSTBILLTO",
+            "ColumnName": "CUSTSHIPTO", 
+            "TextFormatMode": "ValueKey",
             "ValueHelp": {
-                "show": true,
-                "valueHelpRequest": "onBillToValueHelp",
-                "items": {
-                    "path": "BILLTO_MODEL",
-                    "value": "Billtocust",
+                "show": true
+                , "items": {
+                    "path": "SHIPTO_MODEL", 
+                    "value": "Shiptocust", 
                     "text": "Name"
                 },
                 "SuggestionItems": {
-                    "path": "BILLTO_MODEL>/",
-                    "title": "{BILLTO_MODEL>Billtocust}",
-                    "info": "{BILLTO_MODEL>Name}"
-                }
-            }
-        },
-
-        {
-            "ColumnName": "CUSTSHIPTO",
-            "ValueHelp": {
-                "show": true,
-                "valueHelpRequest": "onShipToValueHelp",
-                "items": {
-                    "path": "SHIPTO_MODEL",
-                    "value": "Shiptocust",
-                    "text": "Name"
+                    "path": "SHIPTO_MODEL>/", 
+                    "text": "{SHIPTO_MODEL>Shiptocust}", 
+                    "additionalText": "{SHIPTO_MODEL>Name}", 
+                    "maxSuggestionWidth": "200px" 
                 },
-                "SuggestionItems": {
-                    "path": "SHIPTO_MODEL>/",
-                    "title": "{SHIPTO_MODEL>Shiptocust}",
-                    "info": "{SHIPTO_MODEL>Name}"
+                "columns": "tvh_shiptocust"
                 }
+            },
+            {
+                "ColumnName": "CUSTBILLTO", 
+                "TextFormatMode": "ValueKey",
+                "ValueHelp": {
+                    "show": true
+                    , "items": {
+                        "path": "BILLTO_MODEL", 
+                        "value": "Billtocust", 
+                        "text": "Name"
+                    },
+                    "SuggestionItems": {
+                        "path": "BILLTO_MODEL>/", 
+                        "text": "{BILLTO_MODEL>Billtocust}", 
+                        "additionalText": "{BILLTO_MODEL>Name}", 
+                        "maxSuggestionWidth": "200px" 
+                    },
+                    "columns": "tvh_billtocust"
+                }
+            },
+            {
+                "ColumnName": "COSTCOMP", 
+                "TextFormatMode": "ValueKey",
+                "ValueHelp": {
+                    "show": true
+                    , "items": {
+                        "path": "COSTCOMP_MODEL", 
+                        "value": "COSTCOMPCD", 
+                        "text": "COMPDESC"
+                    },
+                    "SuggestionItems": {
+                        "path": "COSTCOMP_MODEL>/", 
+                        "text": "{COSTCOMP_MODEL>COSTCOMPCD}", 
+                        "additionalText": "{COSTCOMP_MODEL>COMPDESC}", 
+                        "maxSuggestionWidth": "200px" 
+                    },
+                    "columns": "tvh_costcomp"
+                    }
             }
-        }
     ],
     "costHdr": [
         {
@@ -229,13 +252,11 @@
         }
     ],
     "tvh_cstype": [
-        {"ColumnName": "CSTYPE", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "VERSION", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "VERDESC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "CSVCD", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "FINALCOST", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "SALESTERM", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "COSTSTATUS", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
+        {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "Version", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Verdesc", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
     ],
     "headerData": [
         {
@@ -360,11 +381,33 @@
         {"ColumnName": "Soldtocust", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
         {"ColumnName": "Name", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "Custgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "KUNNR", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
     ],
     "tvh_baseuom": [
         {"ColumnName": "MSEHI", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
         {"ColumnName": "MSEHL", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "ANDEC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+    ],
+    "tvh_shiptocust": [
+        {"ColumnName": "Shiptocust", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "Name", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "KUNNR", "DataType": "STRING", "ColumnWidth": "120px", "Visible": false, "Key": false, "Value": false},        
+        {"ColumnName": "Custgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Soldtocust", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+    ],
+    "tvh_billtocust": [
+        {"ColumnName": "Billtocust", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "Name", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "KUNNR", "DataType": "STRING", "ColumnWidth": "120px", "Visible": false, "Key": false, "Value": false},    
+        {"ColumnName": "Custgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Soldtocust", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+    ],
+    "tvh_costcomp": [
+        {"ColumnName": "COSTCOMPCD", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "COMPDESC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "MATTYP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": false, "Key": false, "Value": false}
     ]
 }
