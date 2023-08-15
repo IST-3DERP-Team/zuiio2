@@ -306,7 +306,7 @@
                         <f:fields>
                             <Input id="BASEUOM" 
                                 type="Text"
-                                value="{ parts: [{ path: 'headerData>/BASEUOM' }, { value: 'UOMModel' }, { value: 'MSEHI' }, { value: 'MSEHL' }, { value: 'ValueKey' }],
+                                value="{ parts: [{ path: 'headerData>/BASEUOM' }, { value: 'IOUOMModel' }, { value: 'MSEHI' }, { value: 'MSEHL' }, { value: 'ValueKey' }],
                                     formatter: '.formatValueHelp'
                                 }" 
                                 textFormatMode="ValueKey"
@@ -318,10 +318,10 @@
                                 liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
                                 valueHelpRequest="handleFormValueHelp"
-                                suggestionItems="{path: 'UOMModel>/', length: 10000, templateShareable: false}" >
+                                suggestionItems="{path: 'IOUOMModel>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
                                     <!-- <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/> -->
-                                    <core:Item key="{UOMModel>MSEHI}" text="{UOMModel>MSEHL}" />
+                                    <core:Item key="{IOUOMModel>MSEHI}" text="{IOUOMModel>MSEHL}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>

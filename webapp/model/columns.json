@@ -119,24 +119,6 @@
                 },
                 "columns": "tvh_billtocust"
             }
-        },
-        {   "ColumnName": "COSTCOMP",
-            "TextFormatMode": "ValueKey",
-            "ValueHelp": {
-                "show": true,
-                "items": {
-                    "path": "COSTCOMP_MODEL",
-                    "value": "COSTCOMPCD",
-                    "text": "COMPDESC"
-                },
-                "SuggestionItems": {
-                    "path": "COSTCOMP_MODEL>/",
-                    "text": "{COSTCOMP_MODEL>COSTCOMPCD}",
-                    "additionalText": "{COSTCOMP_MODEL>COMPDESC}",
-                    "maxSuggestionWidth": "200px"
-                },
-                "columns": "tvh_costcomp"
-            }
         }
     ],
     "costHdr": [
@@ -265,6 +247,100 @@
                     "maxSuggestionWidth": "275px"
                 },
                 "columns": "tvh_supplytyp"
+            }
+        },
+        {
+            "ColumnName": "ORDERUOM",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "UOMGMCModel",
+                    "value": "Valunit",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "UOMGMCModel>/",
+                    "text": "{UOMGMCModel>Valunit}",
+                    "additionalText": "{UOMGMCModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_uom"
+            }
+        },
+        {
+            "ColumnName": "PURGRP",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "PurchGroupModel",
+                    "value": "Purgrp",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "PurchGroupModel>/",
+                    "text": "{PurchGroupModel>Purgrp}",
+                    "additionalText": "{PurchGroupModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_purgrp"
+            }
+        },
+        {
+            "ColumnName": "VENDORCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VendorModel",
+                    "value": "Lifnr",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "VendorModel>/",
+                    "text": "{VendorModel>Lifnr}",
+                    "additionalText": "{VendorModel>Desc1}",
+                    "maxSuggestionWidth": "490px"
+                },
+                "columns": "tvh_vendorcd"
+            }
+        },
+        {
+            "ColumnName": "CURRENCYCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "CurrencyModel",
+                    "value": "Waers",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "CurrencyModel>/",
+                    "text": "{CurrencyModel>Waers}",
+                    "additionalText": "{CurrencyModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_vendorcd"
+            }
+        },
+        {   "ColumnName": "COSTCOMPCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "COSTCOMP_MODEL",
+                    "value": "COSTCOMPCD",
+                    "text": "COMPDESC"
+                },
+                "SuggestionItems": {
+                    "path": "COSTCOMP_MODEL>/",
+                    "text": "{COSTCOMP_MODEL>COSTCOMPCD}",
+                    "additionalText": "{COSTCOMP_MODEL>COMPDESC}",
+                    "maxSuggestionWidth": "200px"
+                },
+                "columns": "tvh_costcomp"
             }
         }
     ],
@@ -398,8 +474,7 @@
         {"ColumnName": "Soldtocust", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
         {"ColumnName": "Name", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
         {"ColumnName": "Custgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "KUNNR", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+        {"ColumnName": "Salesgrp", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
     ],
     "tvh_baseuom": [
         {"ColumnName": "MSEHI", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
@@ -425,7 +500,7 @@
     "tvh_costcomp": [
         {"ColumnName": "COSTCOMPCD", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
         {"ColumnName": "COMPDESC", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "MATTYP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": false, "Key": false, "Value": false}
+        {"ColumnName": "MATTYPGRP", "DataType": "STRING", "ColumnWidth": "120px", "Visible": false, "Key": false, "Value": false}
     ],
     "tvh_supplytyp": [
         {"ColumnName": "Supplytype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": true, "Value": false},

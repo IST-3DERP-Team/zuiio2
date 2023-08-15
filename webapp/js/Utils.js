@@ -221,6 +221,11 @@ sap.ui.define([
                 dispgrp: "STYINFO"
             });
 
+            var oSH2Model = that.getOwnerComponent().getModel("SearchHelps");
+            oSH2Model.setHeaders({
+                sbu: that._sbu
+            });
+
             //get Attribute Types
             var oJSONModel1 = new JSONModel();
             oSHModel.read("/AttribTypeSet", {
@@ -257,12 +262,12 @@ sap.ui.define([
             var oJSONModel4 = new JSONModel();
             oSHModel.read("/UOMSet", {
                 success: function (oData, oResponse) {
-                    oJSONModel4.setData(oData);
+                    oJSONModel4.setData(oData.results);
                     oJSONModel2.setSizeLimit(9999);
                     oView.setModel(oJSONModel4, "UOMModel");
                     oView.setModel(oJSONModel4, "UOMGMCModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOM_Model",oData.results);
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOMGMCModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOMVHModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOMGMCVHModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -318,7 +323,7 @@ sap.ui.define([
                     oJSONModel9.setData(oData.results);
                     oJSONModel9.setSizeLimit(9999);
                     oView.setModel(oJSONModel9, "SupplyTypeModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/SupplyTypeModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/SupplyTypeVHModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -327,10 +332,10 @@ sap.ui.define([
             var oJSONModel10 = new JSONModel();
             oSHModel.read("/VendorSet", {
                 success: function (oData, oResponse) {
-                    oJSONModel10.setData(oData);
+                    oJSONModel10.setData(oData.results);
                     oJSONModel10.setSizeLimit(9999);
                     oView.setModel(oJSONModel10, "VendorModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/VendorModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/VendorVHModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -339,10 +344,10 @@ sap.ui.define([
             var oJSONModel11 = new JSONModel();
             oSHModel.read("/CurrencySet", {
                 success: function (oData, oResponse) {
-                    oJSONModel11.setData(oData);
+                    oJSONModel11.setData(oData.results);
                     oJSONModel11.setSizeLimit(9999);
                     oView.setModel(oJSONModel11, "CurrencyModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/CurrencyModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/CurrencyVHModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -351,22 +356,23 @@ sap.ui.define([
             var oJSONModel12 = new JSONModel();
             oSHModel.read("/PurGrpSet", {
                 success: function (oData, oResponse) {
-                    oJSONModel12.setData(oData);
+                    oJSONModel12.setData(oData.results);
                     oJSONModel12.setSizeLimit(9999);
                     oView.setModel(oJSONModel12, "PurchGroupModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurchGroupModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurchGroupVHModel",oData.results);
                 },
                 error: function (err) { }
             });
 
             //get Purchasing Plants
             var oJSONModel13 = new JSONModel();
-            oSHModel.read("/PurPlantSet", {
+            oSH2Model.read("/PurPlantSet", {
                 success: function (oData, oResponse) {
-                    oJSONModel13.setData(oData);
+                    console.log("PurPlantSet", oData);
+                    oJSONModel13.setData(oData.results);
                     oJSONModel13.setSizeLimit(9999);
                     oView.setModel(oJSONModel13, "PurPlantModel");
-                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurPlantModel",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurPlantVHModel",oData.results);
                 },
                 error: function (err) { }
             });

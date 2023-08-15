@@ -328,7 +328,7 @@ sap.ui.define([
                 // Utils.getVersionSearchHelps(this);
                 var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();     
                 console.log("lookUpData", lookUpData);           
-                this.getView().setModel(new JSONModel(lookUpData.UOM_Model), "UOM_Model");
+                this.getView().setModel(new JSONModel(lookUpData.UOMGMCModel), "UOMGMCModel");
                 this.getView().setModel(new JSONModel(lookUpData.SupplyTypeModel), "SupplyTypeModel");
                 this.getView().setModel(new JSONModel(lookUpData.VendorModel), "VendorModel");
                 this.getView().setModel(new JSONModel(lookUpData.CurrencyModel), "CurrencyModel");
@@ -402,8 +402,8 @@ sap.ui.define([
                 this.getVHSet("/CUSTGRPvhSet", "CustGrpModel", false, false);
                 this.getVHSet("/BILLTOvhSet", "BILLTO_MODEL", false, false);
                 this.getVHSet("/SHIPTOvhSet", "SHIPTO_MODEL", false, false);
-                this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false, false);
-                // this.getVHSet("/SoldToCustSet", "SOLDTOModel", false, false);
+                // this.getVHSet("/SOLDTOvhSet", "SOLDTOModel", false, false);
+                this.getVHSet("/SoldToCustSet", "SOLDTOModel", false, false);
                 this.getVHSet("/UOMINFOSet", "UOMINFOModel", false, false);
                 this.getVHSet("/SALTERMvhSet", "SalesTermModel", false, false);
                 this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
