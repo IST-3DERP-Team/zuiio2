@@ -34,6 +34,15 @@
                     "localUri": "localService/ZGW_3DERP_COMMON_SRV/metadata.xml"
                 }
             },
+            "SearchHelps": {
+                "uri": "/sap/opu/odata/sap/ZGW_3DERP_SH_SRV/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "2.0"
+                }
+            },
             "ZVB_3DERP_IO_FILTER_CDS_Annotation": {
                 "uri": "/destinations/LTD888/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_IO_FILTER_CDS_VAN',Version='0001')/$value/",
                 "type": "ODataAnnotation",
@@ -257,6 +266,14 @@
                     "defaultCountMode": "Inline",
                     "refreshAfterChange": false
                 }
+            },
+            "SearchHelps": {
+                "dataSource": "SearchHelps",
+                "preload": true,
+                "settings": {}
+            },
+            "LOOKUP_MODEL": {
+                "type": "sap.ui.model.json.JSONModel"
             },
             "CAPTION_MSGS_MODEL": {
                 "type": "sap.ui.model.json.JSONModel"

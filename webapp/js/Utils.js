@@ -261,6 +261,8 @@ sap.ui.define([
                     oJSONModel2.setSizeLimit(9999);
                     oView.setModel(oJSONModel4, "UOMModel");
                     oView.setModel(oJSONModel4, "UOMGMCModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOM_Model",oData.results);
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/UOMGMCModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -313,9 +315,10 @@ sap.ui.define([
             var oJSONModel9 = new JSONModel();
             oSHModel.read("/SupplyTypeSet", {
                 success: function (oData, oResponse) {
-                    oJSONModel9.setData(oData);
+                    oJSONModel9.setData(oData.results);
                     oJSONModel9.setSizeLimit(9999);
                     oView.setModel(oJSONModel9, "SupplyTypeModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/SupplyTypeModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -327,6 +330,7 @@ sap.ui.define([
                     oJSONModel10.setData(oData);
                     oJSONModel10.setSizeLimit(9999);
                     oView.setModel(oJSONModel10, "VendorModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/VendorModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -338,6 +342,7 @@ sap.ui.define([
                     oJSONModel11.setData(oData);
                     oJSONModel11.setSizeLimit(9999);
                     oView.setModel(oJSONModel11, "CurrencyModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/CurrencyModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -349,6 +354,7 @@ sap.ui.define([
                     oJSONModel12.setData(oData);
                     oJSONModel12.setSizeLimit(9999);
                     oView.setModel(oJSONModel12, "PurchGroupModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurchGroupModel",oData.results);
                 },
                 error: function (err) { }
             });
@@ -360,6 +366,7 @@ sap.ui.define([
                     oJSONModel13.setData(oData);
                     oJSONModel13.setSizeLimit(9999);
                     oView.setModel(oJSONModel13, "PurPlantModel");
+                    that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/PurPlantModel",oData.results);
                 },
                 error: function (err) { }
             });

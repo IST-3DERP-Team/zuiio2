@@ -188,6 +188,9 @@ sap.ui.define([
                 }
 
                 this._tableValueHelp = TableValueHelp;
+
+                this.getOwnerComponent().getModel("LOOKUP_MODEL").setData(new JSONModel());
+                Utils.getVersionSearchHelps(this);
             },
 
             onRouteMatched: function (oEvent) {
@@ -320,11 +323,17 @@ sap.ui.define([
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
                 var me = this;
-                // console.log(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
-                // var cIconTabBar = me.getView().byId("idIconTabBarInlineMode");
-                // // console.log(cIconTabBar);
-
-                // cIconTabBar.setSelectedKey("itfIOHDR");
+                
+                //Load Search Helps
+                // Utils.getVersionSearchHelps(this);
+                var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();     
+                console.log("lookUpData", lookUpData);           
+                this.getView().setModel(new JSONModel(lookUpData.UOM_Model), "UOM_Model");
+                this.getView().setModel(new JSONModel(lookUpData.SupplyTypeModel), "SupplyTypeModel");
+                this.getView().setModel(new JSONModel(lookUpData.VendorModel), "VendorModel");
+                this.getView().setModel(new JSONModel(lookUpData.CurrencyModel), "CurrencyModel");
+                this.getView().setModel(new JSONModel(lookUpData.PurchGroupModel), "PurchGroupModel");
+                this.getView().setModel(new JSONModel(lookUpData.PurPlantModel), "PurPlantModel");
 
                 me.hasSDData = false;
 
@@ -385,7 +394,7 @@ sap.ui.define([
                 this.getVHSet("/SEASONSet", "SeasonsModel", true, false);
                 this.getVHSet("/STYLENOvhSet", "StyleNoModel", false, false);
                 // this.getVHSet("/UOMvhSet", "UOMModel", false, false);
-                this.getVHSet("/UOMINFOSet", "UOMModel", false, false);
+                this.getVHSet("/UOMINFOSet", "IOUOMModel", false, false);
                 this.getVHSet("/SALESORGvhSet", "SalesOrgModel", false, false);
                 this.getVHSet("/SALESGRPvhSet", "SalesGrpModel", false, false);
                 this.getVHSet("/PRODPLANTvhSet", "PlantModel", false, false);
@@ -2626,7 +2635,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
 
-                    console.log(sColumnDataType);
+                    // console.log(sColumnDataType);
 
                     // if(sTabId === "iodetMatTab"){
                     //     console.log(sColumnId);
@@ -12802,12 +12811,12 @@ sap.ui.define([
             },
 
             getIOMatListColumnProp: async function () {
-                // var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
 
-                // var oModelColumns = new JSONModel();
-                // await oModelColumns.loadData(sPath);
+                var oModelColumns = new JSONModel();
+                await oModelColumns.loadData(sPath);
 
-                var oColumns = []; //oModelColumns.getData();
+                var oColumns = oModelColumns.getData();
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 setTimeout(() => {
@@ -12838,7 +12847,10 @@ sap.ui.define([
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
-                                        .forEach(col => item.ValueHelp = col.ValueHelp)
+                                        .forEach(col => {
+                                            item.ValueHelp = col.ValueHelp;
+                                            item.TextFormatMode = col.TextFormatMode;
+                                        })
                                 })
                             }
 
@@ -12892,26 +12904,82 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
-                    var oTemplate;
+                    var oText = new sap.m.Text({
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
+                    })
 
-                    if (sColumnDataType !== "BOOLEAN") {
-                        oTemplate = new sap.m.Text({
-                            text: "{" + sColumnId + "}",
-                            wrapping: false,
-                            tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
-                        })
+                    var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+
+                    console.log("oColProp", oColProp);
+
+                    if (oColProp[0].ValueHelp) {
+                        console.log("oColProp.length", oColProp.length);
+                        console.log("text", oColProp[0].ValueHelp["items"].text);
+                        console.log("value", oColProp[0].ValueHelp["items"].value);
+                        console.log("TextFormatMode", oColProp[0].TextFormatMode);
+                        console.log("path", oColProp[0].ValueHelp["items"].path);
+                    }
+
+                        // console.log("oColProp.length", oColProp.length);
+                        // console.log("text", oColProp[0].ValueHelp["items"].text);
+                        // console.log("value", oColProp[0].ValueHelp["items"].value);
+                        // console.log("TextFormatMode", oColProp[0].TextFormatMode);
+                        // console.log("path", oColProp[0].ValueHelp["items"].path);
+
+                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                        oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                            console.log("oText");
+                            console.log("path getData", me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData());
+                        oText.bindText({
+                            parts: [
+                                { path: sColumnId }
+                            ],
+                            formatter: function(sKey) {
+                                var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
+                                if (oValue && oValue.length > 0) {
+                                    if (oColProp[0].TextFormatMode === "Value") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text];
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "ValueKey") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "KeyValue") {
+                                        return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
+                                    }
+                                }
+                                else return sKey;
+                            }
+                        });
                     }
                     else {
-                        oTemplate = new sap.m.CheckBox({
-                            selected: "{" + sColumnId + "}",
-                            editable: false
-                        })
+                        oText.bindText({
+                            parts: [
+                                { path: sColumnId }
+                            ]
+                        });
                     }
+
+                    // var oTemplate;
+
+                    // if (sColumnDataType !== "BOOLEAN") {
+                    //     oTemplate = new sap.m.Text({
+                    //         text: "{" + sColumnId + "}",
+                    //         wrapping: false,
+                    //         tooltip: sColumnDataType === "BOOLEAN" ? "" : "{" + sColumnId + "}"
+                    //     })
+                    // }
+                    // else {
+                    //     oTemplate = new sap.m.CheckBox({
+                    //         selected: "{" + sColumnId + "}",
+                    //         editable: false
+                    //     })
+                    // }
 
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
-                        template: oTemplate,
+                        template: oText,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
                         filterProperty: sColumnId,
@@ -15873,9 +15941,9 @@ sap.ui.define([
 
             formatValueHelp: function (sValue, sPath, sKey, sText, sFormat) {
 
-                if(sPath === "SHIPTO_MODEL") {
-                    console.log(sValue, sPath, sKey, sText, sFormat);
-                }
+                console.log(sValue, sPath, sKey, sText, sFormat);
+
+                console.log(this.getView().getModel(sPath));
                 
                 var oValue = this.getView().getModel(sPath).getData().filter(v => v[sKey] === sValue);
 
