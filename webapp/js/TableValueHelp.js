@@ -306,9 +306,25 @@ sap.ui.define([
             this._inputId = oSource.getId();
             this._inputValue = oSource.getValue();
             this._inputField = oSource.getBindingInfo("value").parts[0].path;
+            var sRowPath = oSource.oParent.getBindingContext().sPath;
 
             var oTableSource = oSource.oParent.oParent;
             var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
+
+            console.log("_inputField", this._inputField);
+            console.log("_inputId", this._inputId);
+            console.log("sTabId", sTabId);
+            console.log(sRowPath);
+
+            var aModelData;
+
+            if(sTabId === "ioMatListTab" &&  this._inputField === "COSTCOMPCD") {
+                me.getVHSet("/COSTCOMPVhSet", "COSTCOMP_MODEL", false, false);
+                var vmatgrpcd = oEvent.getSource().oParent.oParent.getModel().getProperty(sRowPath + "/MATGRPCD");
+                console.log("vmatgrpcd", vmatgrpcd);
+                aModelData = this.getView().getModel("COSTCOMP_MODEL").getData().filter(fItem => fItem.MATTYPGRP === vmatgrpcd);
+                this.getView().setModel(new JSONModel(aModelData), "COSTCOMP_MODEL");
+            }
 
             // var me = this;
             var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
@@ -318,10 +334,10 @@ sap.ui.define([
             var sTextFormatMode = vColProp[0].TextFormatMode === undefined || vColProp[0].TextFormatMode === "" ? "Key" : vColProp[0].TextFormatMode;
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = this._oModelColumns[sColumns];
-            console.log("sPath", sPath);
+            // console.log("sPath", sPath);
             var vh = this.getView().getModel(sPath).getData();
 
-            console.log("vh", vh);
+            // console.log("vh", vh);
             var aColumns = [], oDDTextParam = [];
             var oDDText = this.getView().getModel("ddtext").getData();
 
@@ -523,24 +539,24 @@ sap.ui.define([
             oTable.getModel().setProperty("/rows", vh);
             oTable.bindRows("/rows");
 
-            // if (vh.length > 5) {
-            //     this._tableValueHelpDialog.setContentHeight("505px");
-            // }
-            // else {
-            //     this._tableValueHelpDialog.setContentHeight("260px");
-            // }
+            if (vh.length > 5) {
+                this._tableValueHelpDialog.setContentHeight("505px");
+            }
+            else {
+                this._tableValueHelpDialog.setContentHeight("260px");
+            }
 
-            // if (oColumns.columns.length === 1) {
-            //     this._tableValueHelpDialog.setContentWidth("375px");
-            // }
-            // else if (oColumns.columns.length === 2) {
-            //     this._tableValueHelpDialog.setContentWidth("435px");
-            // }
-            // else {
-            //     this._tableValueHelpDialog.setContentWidth("645px");
-            // }
+            if (oColumns.columns.length === 1) {
+                this._tableValueHelpDialog.setContentWidth("375px");
+            }
+            else if (oColumns.columns.length === 2) {
+                this._tableValueHelpDialog.setContentWidth("435px");
+            }
+            else {
+                this._tableValueHelpDialog.setContentWidth("645px");
+            }
 
-            this._tableValueHelpDialog.setContentWidth("435px");
+            // this._tableValueHelpDialog.setContentWidth("435px");
 
             // sap.ui.getCore().byId("tvhSearchField").setProperty("value", "");
             this._tableValueHelpDialog.getContent()[0].getItems()[0].getExtension()[0].getContent()[3].setProperty("value", "");
@@ -548,6 +564,7 @@ sap.ui.define([
 
         handleTableValueHelpSelect: function (oEvent) {
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+            console.log("handleTableValueHelpSelect", sRowPath);
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setValueState("None");
 

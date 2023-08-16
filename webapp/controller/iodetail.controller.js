@@ -12141,7 +12141,15 @@ sap.ui.define([
                 if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
                 else {
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/' + oSource.getBindingInfo("value").parts[0].path, oSource.getSelectedKey());
-                    
+                    if (this._sTableModel === "ioMatList") {
+                        var vendorList = this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey());
+                        if (vendorList.length === 1) {
+                            this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey()).forEach(item => {
+                                console.log(this.byId("ioMatListTab").getModel());
+                                this.byId("ioMatListTab").getModel().setProperty(sRowPath + "/CURRENCYCD", item.Waers);
+                            })
+                        }
+                    } 
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
                             this._validationErrors.splice(index, 1)
@@ -12156,8 +12164,7 @@ sap.ui.define([
                 }
                 else if (this.__sTableModel === "reorder") {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
-                }
-                else {
+                } else {
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
 
