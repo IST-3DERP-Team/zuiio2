@@ -523,22 +523,24 @@ sap.ui.define([
             oTable.getModel().setProperty("/rows", vh);
             oTable.bindRows("/rows");
 
-            if (vh.length > 5) {
-                this._tableValueHelpDialog.setContentHeight("505px");
-            }
-            else {
-                this._tableValueHelpDialog.setContentHeight("260px");
-            }
+            // if (vh.length > 5) {
+            //     this._tableValueHelpDialog.setContentHeight("505px");
+            // }
+            // else {
+            //     this._tableValueHelpDialog.setContentHeight("260px");
+            // }
 
-            if (oColumns.columns.length === 1) {
-                this._tableValueHelpDialog.setContentWidth("375px");
-            }
-            else if (oColumns.columns.length === 2) {
-                this._tableValueHelpDialog.setContentWidth("435px");
-            }
-            else {
-                this._tableValueHelpDialog.setContentWidth("645px");
-            }
+            // if (oColumns.columns.length === 1) {
+            //     this._tableValueHelpDialog.setContentWidth("375px");
+            // }
+            // else if (oColumns.columns.length === 2) {
+            //     this._tableValueHelpDialog.setContentWidth("435px");
+            // }
+            // else {
+            //     this._tableValueHelpDialog.setContentWidth("645px");
+            // }
+
+            this._tableValueHelpDialog.setContentWidth("435px");
 
             // sap.ui.getCore().byId("tvhSearchField").setProperty("value", "");
             this._tableValueHelpDialog.getContent()[0].getItems()[0].getExtension()[0].getContent()[3].setProperty("value", "");

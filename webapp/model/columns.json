@@ -342,6 +342,25 @@
                 },
                 "columns": "tvh_costcomp"
             }
+        },
+        {
+            "ColumnName": "PURPLANT",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "PurPlantModel",
+                    "value": "Plant",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "PurPlantModel>/",
+                    "text": "{PurPlantModel>Plant}",
+                    "additionalText": "{PurPlantModel>Desc1}",
+                    "maxSuggestionWidth": "250px"
+                },
+                "columns": "tvh_purplant"
+            }
         }
     ],
     "tvh_cstype": [
