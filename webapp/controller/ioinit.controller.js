@@ -35,7 +35,7 @@ sap.ui.define([
                 // this._tableFilter = TableFilter;
                 // this._colFilters = {};
 
-                console.log("INITIALIZE START");
+                // console.log("INITIALIZE START");
                 that.getCaptionSet();
 
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
@@ -94,7 +94,7 @@ sap.ui.define([
 
                 // this.onSearch();
 
-                console.log("INITIALIZE END");
+                // console.log("INITIALIZE END");
             },
 
             setSmartFilterModel: function () {
@@ -1400,7 +1400,7 @@ sap.ui.define([
 
                     // console.log(context.getObject());
 
-                    console.log(sColumnId, sColumnType, sColumnDataType);
+                    // console.log(sColumnId, sColumnType, sColumnDataType);
 
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
@@ -1863,7 +1863,7 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                console.log("IOCOPYSet", oParam);
+                // console.log("IOCOPYSet", oParam);
 
                 setTimeout(() => {
                     oCopyIOModel.create("/IOCOPYSet", oParam, {

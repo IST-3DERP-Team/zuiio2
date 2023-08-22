@@ -299,7 +299,7 @@ sap.ui.define([
         },
 
         handleTableValueHelp: async function (oEvent) {
-            console.log("handleTableValueHelp");
+            // console.log("handleTableValueHelp");
             var me = this;
             var oSource = oEvent.getSource();
             this._inputSource = oSource;
@@ -311,17 +311,17 @@ sap.ui.define([
             var oTableSource = oSource.oParent.oParent;
             var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
 
-            console.log("_inputField", this._inputField);
-            console.log("_inputId", this._inputId);
-            console.log("sTabId", sTabId);
-            console.log(sRowPath);
+            // console.log("_inputField", this._inputField);
+            // console.log("_inputId", this._inputId);
+            // console.log("sTabId", sTabId);
+            // console.log(sRowPath);
 
             var aModelData;
 
             if(sTabId === "ioMatListTab" &&  this._inputField === "COSTCOMPCD") {
                 me.getVHSet("/COSTCOMPVhSet", "COSTCOMP_MODEL", false, false);
                 var vmatgrpcd = oEvent.getSource().oParent.oParent.getModel().getProperty(sRowPath + "/MATGRPCD");
-                console.log("vmatgrpcd", vmatgrpcd);
+                // console.log("vmatgrpcd", vmatgrpcd);
                 aModelData = this.getView().getModel("COSTCOMP_MODEL").getData().filter(fItem => fItem.MATTYPGRP === vmatgrpcd);
                 this.getView().setModel(new JSONModel(aModelData), "COSTCOMP_MODEL");
             }

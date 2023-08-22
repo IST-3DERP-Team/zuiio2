@@ -424,7 +424,7 @@ sap.ui.define([
                     Common.closeLoadingDialog(_thisMain);
                 },
                 error: function (err) { 
-                    console.log("onFADCReceiveDtl error", err)
+                    // console.log("onFADCReceiveDtl error", err)
                     Common.closeLoadingDialog(_thisMain);
                 }
             })
@@ -468,7 +468,7 @@ sap.ui.define([
                     Common.closeLoadingDialog(_thisMain);
                 },
                 error: function (err) { 
-                    console.log("onFADCSendDtl error", err);
+                    // console.log("onFADCSendDtl error", err);
                     Common.closeLoadingDialog(_thisMain);
                 }
             })
@@ -539,7 +539,7 @@ sap.ui.define([
             var fileName;
 
             var columns = oTable.getColumns();
-            console.log(oTable.getModel())
+            // console.log(oTable.getModel())
             for (var i = 0; i < columns.length; i++) {
                 aCols.push({
                     label: columns[i].mProperties.filterProperty,
@@ -609,11 +609,11 @@ sap.ui.define([
         },
 
         onRefreshFilter(pModel, pFilters) {
-            console.log("onRefreshFilter", pFilters)
+            // console.log("onRefreshFilter", pFilters)
             if (pFilters.length > 0) {
                 pFilters.forEach(item => {
                     var iColIdx = _this._aColumns[pModel].findIndex(x => x.ColumnName == item.sPath);
-                    console.log("pFilterspath", iColIdx, _this._aColumns[pModel], item.sPath)
+                    // console.log("pFilterspath", iColIdx, _this._aColumns[pModel], item.sPath)
                     _thisMain.getView().byId(pModel + "Tab").filter(_thisMain.getView().byId(pModel + "Tab").getColumns()[iColIdx], 
                         item.oValue1);
                 });
@@ -740,11 +740,11 @@ sap.ui.define([
             oDDTextParam.push({CODE: "EXPORTTOEXCEL"});
             oDDTextParam.push({CODE: "CLOSE"});
             oDDTextParam.push({CODE: "REFRESH"});
-            console.log("getCaption", { CaptionMsgItems: oDDTextParam  })
+            // console.log("getCaption", { CaptionMsgItems: oDDTextParam  })
             oModel.create("/CaptionMsgSet", { CaptionMsgItems: oDDTextParam  }, {
                 method: "POST",
                 success: function(oData, oResponse) {
-                    console.log("getCaption", oData.CaptionMsgItems.results)
+                    // console.log("getCaption", oData.CaptionMsgItems.results)
                     oData.CaptionMsgItems.results.forEach(item => {
                         oDDTextResult[item.CODE] = item.TEXT;
                     })
@@ -753,7 +753,7 @@ sap.ui.define([
                     _thisMain.getView().setModel(oJSONModel, "ddtextFASummary");
                 },
                 error: function(err) {
-                    console.log("getCaption error", err)
+                    // console.log("getCaption error", err)
                 }
             });
         }

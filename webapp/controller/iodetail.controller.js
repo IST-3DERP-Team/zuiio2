@@ -324,16 +324,14 @@ sap.ui.define([
                 // console.log(oEvent);
                 var me = this;
                 
-                // var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();     
-                // console.log("lookUpData", lookUpData);           
+                var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();     
+                console.log("lookUpData", lookUpData);           
                 // this.getView().setModel(new JSONModel(lookUpData.UOMGMCModel), "UOMGMCModel");
                 // this.getView().setModel(new JSONModel(lookUpData.SupplyTypeModel), "SupplyTypeModel");
                 // this.getView().setModel(new JSONModel(lookUpData.VendorModel), "VendorModel");
                 // this.getView().setModel(new JSONModel(lookUpData.CurrencyModel), "CurrencyModel");
                 // this.getView().setModel(new JSONModel(lookUpData.PurchGroupModel), "PurchGroupModel");
                 // this.getView().setModel(new JSONModel(lookUpData.PurPlantModel), "PurPlantModel");
-
-                console.log("getModel()", this.getView().getModel());
 
                 me.hasSDData = false;
 
@@ -408,6 +406,7 @@ sap.ui.define([
                 this.getVHSet("/SALTERMvhSet", "SalesTermModel", false, false);
                 this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
                 this.getVHSet("/COSTCOMPVhSet", "COSTCOMP_MODEL", false, false);
+                this.getVHSet("/PurPlantSet", "PurPlantModel", true, true);
 
                 // console.log("Sales Document Data");
                 // console.log(this.getOwnerComponent().getModel("routeModel").getProperty("/results"));
@@ -1204,7 +1203,7 @@ sap.ui.define([
                 }
 
                 Common.openLoadingDialog(this);
-                console.log("oRow.DLVSEQ", oRow.DLVSEQ);
+                // console.log("oRow.DLVSEQ", oRow.DLVSEQ);
                 this.getView().getModel("ui2").setProperty("/currDlvSeq", oRow.DLVSEQ);
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
@@ -1291,7 +1290,7 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                console.log("onfragmentImportPO", oParam);
+                // console.log("onfragmentImportPO", oParam);
                 let outputMessage = "";
 
                 _promiseResult = new Promise((resolve, reject) => {
@@ -1341,7 +1340,7 @@ sap.ui.define([
             },
 
             getImportPOData: async function () {
-                console.log("getImportPOData");
+                // console.log("getImportPOData");
                 var me = this;
                 var oView = this.getView();
                 var oJSONModel = new JSONModel();
@@ -1349,7 +1348,7 @@ sap.ui.define([
 
                 // var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
                 var currCUSTGRP = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
-                console.log("currCUSTGRP", currCUSTGRP);
+                // console.log("currCUSTGRP", currCUSTGRP);
 
                 // alert(currStyle);
                 // alert(currCustSoldTo);
@@ -2025,8 +2024,8 @@ sap.ui.define([
                             },
                             success: function (oData, response) {
 
-                                console.log("ATTRIBSet");
-                                console.log(oData.results);
+                                // console.log("ATTRIBSet");
+                                // console.log(oData.results);
 
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
@@ -2204,7 +2203,7 @@ sap.ui.define([
                 // await _promiseResult;
 
                 // FA Summary
-                console.log("FASummary", FASummary);
+                // console.log("FASummary", FASummary);
                 FASummary.onInit(this);
                 //console.log("fadcsend2", sap.ui.getCore().byId("dcSendDetailTab"), this.getView().byId("dcSendDetailTab"))
             },
@@ -2645,10 +2644,18 @@ sap.ui.define([
                     if (sColumnWidth === 0) sColumnWidth = 100;
                     // console.log(sColumnDataType);
 
-                    var oText = new sap.m.Text({
-                        wrapping: false,
-                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
-                    })
+                    var oText;
+                    if (sColumnId === "STATUSCD") {
+                        oText = new sap.tnt.InfoLabel({
+                            text: "{" + sColumnId + "}",
+                            colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 1}"
+                        })
+                    } else {
+                        var oText = new sap.m.Text({
+                            wrapping: false,
+                            tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
+                        })
+                    }
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
 
@@ -2682,7 +2689,7 @@ sap.ui.define([
                             ]
                         });
                     }
-
+                    
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                         label: new sap.m.Text({ text: sColumnLabel }),
@@ -3694,7 +3701,7 @@ sap.ui.define([
             },
 
             onHeaderChange: async function (oEvent) {
-                console.log("onHeaderChange");
+                // console.log("onHeaderChange");
                 var me = this;
                 if (oEvent === undefined)
                     return;
@@ -3706,7 +3713,7 @@ sap.ui.define([
                 this._bHeaderChanged = true;
 
                 var srcInput = oSource.getBindingInfo("value").parts[0].path;
-                console.log("part", oSource.getBindingInfo("value").parts[0]);
+                // console.log("part", oSource.getBindingInfo("value").parts[0]);
 
                 if (srcInput === "/PRODSCEN") {
                     var sProdScen = this.getView().byId("PRODSCEN").mBindingInfos.value.binding.aValues[0];
@@ -3929,15 +3936,15 @@ sap.ui.define([
             },
 
             onHeaderChangeTableFilter: async function (oEvent) {
-                console.log("onHeaderChangeTableFilter");
+                // console.log("onHeaderChangeTableFilter");
                 var me = this;
                 if (oEvent === undefined)
                     return;
 
                 var oSource = oEvent.getSource();
 
-                console.log("oSource", oSource);
-                console.log("oSource.getValue().trim()", oSource.getValue().trim());
+                // console.log("oSource", oSource);
+                // console.log("oSource.getValue().trim()", oSource.getValue().trim());
                 var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
                 oSource.setValueState(isInvalid ? "Error" : "None");
 
@@ -4203,7 +4210,7 @@ sap.ui.define([
                 var bSBUFilter = SBUFilter;
 
                 //  /SEASONSet , SeasonsModel
-                if (bSBUFilter === true && bHdrFilter === true) {
+             if (bSBUFilter === true && bHdrFilter === true) {
                     oSHModel2.setHeaders({
                         sbu: this._sbu
                     })
@@ -4212,7 +4219,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
 
                             // console.log(sModelName);
-                            // console.log(oData);
+                            // console.log(sModelName, oData);
                             oJSONModel.setData(oData.results);
                             oView.setModel(oJSONModel, sModelName);
                             // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
@@ -4238,6 +4245,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData.results);
                             oView.setModel(oJSONModel, sModelName);
+                            // that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/" + sModelName, oData.results);
                             // console.log(oView.setModel(oJSONModel, ModelName));
                             // resolve();
                         },
@@ -4513,7 +4521,7 @@ sap.ui.define([
                     oModel.read(entitySet, {
                         success: function (oData, oResponse) {
                             // console.log("/IOHDRSet('" + ioNo + "')");
-                            console.log("IOHDRSet", oData);
+                            // console.log("IOHDRSet", oData);
                             // oData.CUSTDLVDT = oData.CUSTDLVDT === "" || oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
                             // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "" || oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
                             // oData.REQEXFTYDT = oData.REQEXFTYDT === "" || oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
@@ -5342,9 +5350,9 @@ sap.ui.define([
                 evt.getSource().getBinding("items").filter([]);
             },
             onCostSheetValueHelp: function (oEvent) {
-                console.log("COSTING SHEET VALUE HELP");
+                // console.log("COSTING SHEET VALUE HELP");
                 var sInputValue = oEvent.getSource().getValue();
-                console.log("Cost Sheet Value Help", oEvent.getSource());
+                // console.log("Cost Sheet Value Help", oEvent.getSource());
 
                 that.inputId = oEvent.getSource().getId();
                 if (!that._costSheetHelpDialog) {
@@ -6220,7 +6228,7 @@ sap.ui.define([
                 var arg = source;
                 var me = this;
 
-                console.log("currDlvSeq", this.getView().getModel("ui2").getProperty("/currDlvSeq"));
+                // console.log("currDlvSeq", this.getView().getModel("ui2").getProperty("/currDlvSeq"));
 
                 if (this._dataMode === "ADD" && (arg === "IODLV" || arg === "IODET")) {
                     this.byId("btnRemoveRowDlvSched").setVisible(true);
@@ -6326,7 +6334,7 @@ sap.ui.define([
                                         sBillToCust = oFilterData[0].Billtocust;
                                     }
 
-                                    console.log("BILLTOvhSet", oFilterData);
+                                    // console.log("BILLTOvhSet", oFilterData);
                                     me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust && fItem.Custgrp === custGrp && fItem.Salesgrp === salesGrp)), "BILLTO_MODEL");
                                     resolve();
                                 },
@@ -6348,7 +6356,7 @@ sap.ui.define([
                                         me.getView().getModel("ui2").setProperty("/defShipToCust", oFilterData[0].Shiptocust);
                                         sShipToCust = oFilterData[0].Shiptocust;
                                     }
-                                    console.log("SHIPTOvhSet", oFilterData);
+                                    // console.log("SHIPTOvhSet", oFilterData);
                                     me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust)), "SHIPTO_MODEL");
                                     resolve();
                                 },
@@ -6445,7 +6453,7 @@ sap.ui.define([
                 var tabName = arg + "Tab";
                 var oTable = this.getView().byId(tabName);
                 var oData = oTable.getModel().oData;
-                console.log("oData", oData);
+                // console.log("oData", oData);
 
                 oNewRow["NEW"] = true;
 
@@ -6517,14 +6525,14 @@ sap.ui.define([
             onRemoveLine: function (arg) {
                 var tabName = arg + "Tab";
                 var oTable = this.getView().byId(tabName);
-                console.log("oTable", oTable);
+                // console.log("oTable", oTable);
                 var oData = oTable.getModel().oData.rows;
                 var oModel = oTable.getModel();
-                console.log("oData", oData);
+                // console.log("oData", oData);
                 var oNewData = oData.filter(fItem => fItem.NEW === true);
-                console.log("oNewData", oNewData);
+                // console.log("oNewData", oNewData);
                 var aSelIndices = oTable.getSelectedIndices();
-                console.log("aSelIndices", aSelIndices);
+                // console.log("aSelIndices", aSelIndices);
                 var oTmpSelectedIndices = [];
                 var bProceed = false;
 
@@ -6977,7 +6985,7 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + cIONo + "'"
                             },
                             success: function (oData, response) {
-                                console.log("sSource", oData);
+                                // console.log("sSource", oData);
                                 if (sSource === "IOSTATUSTab") {
                                     oData.results.forEach(item => {
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
@@ -7611,7 +7619,7 @@ sap.ui.define([
                     styleno: this.getView().getModel("ui2").getProperty("/currStyleNo"),
                     verno: this.getView().getModel("ui2").getProperty("/currVerNo") //"1"
                 });
-                console.log(this._styleNo, this._styleVer);
+                // console.log(this._styleNo, this._styleVer);
                 oModel.read(entitySet, {
                     success: function (oData, oResponse) {
                         me._oModelStyle.read('/MatTypeSet', {
@@ -7876,6 +7884,8 @@ sap.ui.define([
                     usgcls: usageClass
                 });
 
+                console.log(oModelUV);
+
                 var pivotArray;
                 if (usageClass === Constants.AUV) { //for AUV, pivot will be colors
                     pivotArray = me._colors;
@@ -7886,6 +7896,7 @@ sap.ui.define([
                 // console.log("get dynamic columns of BOM by UV");
                 oModelUV.read("/DynamicColumnsSet", {
                     success: function (oData, oResponse) {
+                        console.log(oData);
                         var columns = oData.results;
                         var pivotRow;
                         //find the column to pivot
@@ -7954,7 +7965,7 @@ sap.ui.define([
                 oModel.read("/StyleBOMUVSet", {
                     success: function (oData, oResponse) {
                         var rowData = oData.results;
-                        // console.log(rowData)
+                        console.log(rowData);
                         //Get unique items of BOM by UV
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
@@ -7989,6 +8000,7 @@ sap.ui.define([
                             columns: columnData
                         });
                         oTable.setModel(oJSONModel, "DataModel");
+                        console.log(oTable.setModel(oJSONModel, "DataModel"));
                         // oTable.setVisibleRowCount(unique.length);
                         oTable.attachPaste();
                         oTable.bindColumns("DataModel>/columns", function (sId, oContext) {
@@ -8012,8 +8024,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        // console.log("BOM by UV Pivot");
-                        // console.log(oTable);
+                        console.log("BOM by UV Pivot");
+                        console.log(oTable);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -9921,7 +9933,7 @@ sap.ui.define([
                 this._oModelColumns = oModelColumns.getData();
                 switch (arg) {
                     case "IODLV":
-                        console.log("refresh IO Delivery Data");
+                        // console.log("refresh IO Delivery Data");
                         _promiseResult = new Promise((resolve, reject) => {
                             setTimeout(() => {
                                 this.getIODLVData();
@@ -10115,7 +10127,7 @@ sap.ui.define([
                                         break;
     
                                     case "IODET":
-                                        console.log("IODET Save New");
+                                        // console.log("IODET Save New");
                                         //RELOAD IO DETAIL DATA PER IO & DLVSEQ
                                         await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
     
@@ -10356,9 +10368,9 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            console.log(entitySet);
-                            console.log(param);
-                            console.log(mParameters);
+                            // console.log(entitySet);
+                            // console.log(param);
+                            // console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
 
@@ -10796,7 +10808,7 @@ sap.ui.define([
                                 if (oFilterData.length === 1) {
                                     me.getView().getModel("ui2").setProperty("/defShipToCust", oFilterData[0].Shiptocust);
                                 }
-                                console.log("SHIPTOvhSet", oFilterData);
+                                // console.log("SHIPTOvhSet", oFilterData);
                                 // console.log("IODET_MODEL");
                                 me.getView().setModel(new JSONModel(oData.results.filter(fItem => fItem.Soldtocust === soldtoCust)), "SHIPTO_MODEL");
                             },
@@ -11546,7 +11558,7 @@ sap.ui.define([
 
             onInputChange: function (oEvent) {
                 var input = oEvent.getSource();
-                console.log("oEvent.getSource()", input);
+                // console.log("oEvent.getSource()", input);
 
                 var input = oEvent.getSource();
                 var newValue = input.getValue();
@@ -11572,9 +11584,9 @@ sap.ui.define([
                 let input = oEvent.getSource();
                 let inputValue = input.getValue();
 
-                console.log("inputValue", inputValue);
+                // console.log("inputValue", inputValue);
                 let isValidNumber = !isNaN(parseFloat(inputValue));
-                console.log("isValidNumber1", isValidNumber);
+                // console.log("isValidNumber1", isValidNumber);
 
                 // if(!isValidNumber) {
                 //     oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"] );
@@ -11613,7 +11625,7 @@ sap.ui.define([
 
                 let decimalIndex = oEvent.getParameters().value.indexOf(".");
                 let decVal = parseFloat(oEvent.getParameters().value.substring(decimalIndex + 1));
-                console.log(decVal);
+                // console.log(decVal);
 
                 if (oEvent.getParameters().value.split(".").length > 1 && decVal > 0) {
                     // let decimalIndex = oEvent.getParameters().value.indexOf(".");
@@ -11904,7 +11916,7 @@ sap.ui.define([
                 // console.log(oEvent.getSource());
 
                 var decPlaces = oEvent.getSource().getBindingInfo("value").constraints.scale;
-                console.log("Test");
+                // console.log("Test");
 
                 if (oEvent.getParameters().value.split(".").length > 1) {
                     if (oEvent.getParameters().value.split(".")[1].length > decPlaces) {
@@ -11965,7 +11977,7 @@ sap.ui.define([
 
                     if (oSource.getBindingInfo("value").parts[0].path === "CUSTCOLOR") {
                         let cellValue = oEvent.getParameters().value;
-                        console.log(cellValue);
+                        // console.log(cellValue);
                         
                         this.byId(this._sTableModel + "Tab").getModel("DataModel").getData().results.filter((item, index) => index != sRowPath.split('/').pop())
                         .forEach(row => {
@@ -12014,7 +12026,7 @@ sap.ui.define([
             handleValueHelp: function (oEvent) {
                 var me = this;
                 var oSource = oEvent.getSource();
-                console.log("handleValueHelp", oSource);
+                // console.log("handleValueHelp", oSource);
                 this._inputSourceCtx = oEvent.getSource().getBindingContext();
                 var sEntity = oSource.getBindingInfo("suggestionItems").path;
                 var sModel = this._sTableModel;
@@ -12145,7 +12157,7 @@ sap.ui.define([
                         var vendorList = this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey());
                         if (vendorList.length === 1) {
                             this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey()).forEach(item => {
-                                console.log(this.byId("ioMatListTab").getModel());
+                                // console.log(this.byId("ioMatListTab").getModel());
                                 this.byId("ioMatListTab").getModel().setProperty(sRowPath + "/CURRENCYCD", item.Waers);
                             })
                         }
@@ -12568,7 +12580,7 @@ sap.ui.define([
                         "IONO": vIONo,
                         "MATTYPGRP": "FAB"
                     };
-                    console.log(oParam);
+                    // console.log(oParam);
 
                     _promiseResult = new Promise((resolve, reject) => {
                         setTimeout(() => {
@@ -12937,8 +12949,8 @@ sap.ui.define([
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
                             // console.log("oText");
                             
-                            console.log("path", oColProp[0].ValueHelp["items"].path);
-                            console.log("path getData", me.getView().getModel(oColProp[0].ValueHelp["items"].path));
+                            // console.log("path", oColProp[0].ValueHelp["items"].path);
+                            // console.log("path getData", me.getView().getModel(oColProp[0].ValueHelp["items"].path));
                         oText.bindText({
                             parts: [
                                 { path: sColumnId }
@@ -15900,7 +15912,7 @@ sap.ui.define([
 
             //DISABLE OTHER TABS EXCEPT HEADER AND STYLE IF THERE IS NO VALID STYLENO ASSIGNED
             disableOtherTabsNoStyle: function () {
-                console.log("StyleNo: ", this.getView().getModel("ui2").getProperty("/currStyleNo"));
+                // console.log("StyleNo: ", this.getView().getModel("ui2").getProperty("/currStyleNo"));
                 var oIconTabBarIO = this.byId("idIconTabBarInlineMode");
                 if (this.getView().getModel("ui2").getProperty("/currStyleNo") === undefined
                     || this.getView().getModel("ui2").getProperty("/currStyleNo") === ""
