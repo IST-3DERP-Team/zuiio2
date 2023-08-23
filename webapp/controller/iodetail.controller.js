@@ -12161,7 +12161,19 @@ sap.ui.define([
                                 this.byId("ioMatListTab").getModel().setProperty(sRowPath + "/CURRENCYCD", item.Waers);
                             })
                         }
-                    } 
+                    }
+                    
+                    console.log(this._sTableModel);
+                    if(this._sTableModel === "IODLV") {
+                        console.log("CostSheetModel", this.getView().getModel("CostSheetModel").getData());
+                        var cslist = this.getView().getModel("CostSheetModel").getData().filter(fItem => fItem.Cstype === oSource.getSelectedKey());
+                        if (cslist.length === 1) {
+                            this.getView().getModel("CostSheetModel").getData().filter(fItem => fItem.Cstype === oSource.getSelectedKey()).forEach(item => {
+                                // console.log(this.byId("ioMatListTab").getModel());
+                                this.byId("IODLVTab").getModel().setProperty(sRowPath + "/VERSION", item.Version);
+                            })
+                        }
+                    }
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
                             this._validationErrors.splice(index, 1)
