@@ -433,6 +433,9 @@ sap.ui.define([
                             // item.CURRENTVER = item.CURRENTVER === "X" ? true : false;
                             // item.COMPLETED = item.CURRENTVER === "X" ? true : false;
                         })
+
+                        oData.results.sort((a, b) => (a.STYLENO > b.STYLENO ? -1 : 1));
+
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "IOSTYSELDataModel");
                         // console.log("IOSTYSELDataModel");
@@ -524,7 +527,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -646,6 +649,16 @@ sap.ui.define([
                     e.preventDefault();
                     that.setChangeStatus(false); //remove change flag
                     that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
+
+                });
+
+                var oTableStyle = this.getView().byId("IOStyleSelectTab");
+                oTableStyle.setModel(oModel);
+                oTableStyle.attachBrowserEvent('dblclick', function (e) {
+                    e.preventDefault();
+                    that.setChangeStatus(false); //remove change flag
+                    // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
+                    that.onfragmentIOSelect('IOStyleSelectTab');
 
                 });
 
@@ -875,7 +888,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                         template: me.columnTemplate(sColumnId, sColumnType),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -1405,7 +1418,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             // id: sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: me.columnTemplate(sColumnId, sColumnType),
                             // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                             width: sColumnWidth + 'px',
@@ -1419,7 +1432,7 @@ sap.ui.define([
                     } else if (sColumnDataType === "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1468,7 +1481,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -1487,7 +1500,7 @@ sap.ui.define([
                     } else if (sColumnDataType === "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1504,7 +1517,7 @@ sap.ui.define([
                     } else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -2197,7 +2210,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "COLOR" });
                 oDDTextParam.push({ CODE: "BOM" });
                 oDDTextParam.push({ CODE: "COSTING" });
-
+                oDDTextParam.push({ CODE: "SAVELAYOUT" });
+                oDDTextParam.push({ CODE: "EXPORTTOEXCEL" });
+                oDDTextParam.push({ CODE: "COPYIO" });
+                oDDTextParam.push({ CODE: "CREATEIO" });
 
                 // console.log(oDDTextParam);
 

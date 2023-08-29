@@ -151,7 +151,7 @@
                             value="" 
                             search="filterGlobally" 
                             width="15rem" />
-                            <Button text="{ddtext>/SAVE}" icon="sap-icon://grid" tooltip="{ddtetx>/SAVE}" press="onSaveSubTableLayout('IOStyleSelectTab')" visible="true"/>
+                            <Button text="{ddtext>/SAVELAYOUT}" icon="sap-icon://grid" tooltip="{ddtetx>/SAVELAYOUT}" press="onSaveSubTableLayout('IOStyleSelectTab')" visible="true"/>
                     </Toolbar>                    
                 </t:extension>
             </t:Table>

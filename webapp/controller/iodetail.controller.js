@@ -1490,7 +1490,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType),
                         // width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         width: sColumnWidth + 'px',
@@ -1705,7 +1705,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -1725,7 +1725,7 @@ sap.ui.define([
                         // console.log("BOOLEAN : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -1743,7 +1743,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
                             template: new sap.m.Text({
                                 text: "{" + sColumnId + "}",
                                 wrapping: false
@@ -2973,7 +2973,7 @@ sap.ui.define([
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + sColumnId,
                         // id: sColumnId, "Col" 
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
                         template: me.styleColumnTemplate('', column),
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -3270,7 +3270,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "DlvSched"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3397,7 +3397,7 @@ sap.ui.define([
                     // console.log(sColumnId);
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Stat"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -3531,7 +3531,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     return new sap.ui.table.Column({
                         // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel, //"{i18n>" + sColumnId + "}",
                         template: me.columnTemplate(sColumnId, sColumnType, "Attrib"),
                         width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
                         sortProperty: sColumnId,
@@ -7563,10 +7563,10 @@ sap.ui.define([
                     if (sColumnDataType !== "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
                             template: new sap.m.Text({
                                 text: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
-                                wrapping: true,
+                                wrapping: false,
                                 tooltip: sColumnDataType === "BOOLEAN" ? "" : sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}"
                             }),
                             width: sColumnWidth + "px",
@@ -7582,7 +7582,7 @@ sap.ui.define([
                     else {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
                             template: new sap.m.CheckBox({
                                 selected: sTabId === "styleFabBOMTab" || sTabId === "styleAccBOMTab" ? "{DataModel>" + sColumnId + "}" : "{" + sColumnId + "}",
                                 editable: false
@@ -8011,7 +8011,7 @@ sap.ui.define([
 
                             return new sap.ui.table.Column({
                                 id: "styleBOMUVCol" + column.ColumnName,
-                                label: new sap.m.Text({ text: me.getStyleColumnDesc("styleBOMUVTab", column), wrapping: true }),
+                                label: new sap.m.Text({ text: me.getStyleColumnDesc("styleBOMUVTab", column), wrapping: false }),
                                 template: me.styleColumnTemplate('UV', column),
                                 sortProperty: column.ColumnName,
                                 filterProperty: column.ColumnName,
@@ -8111,7 +8111,7 @@ sap.ui.define([
                 var columnName = column.ColumnName;
                 var oColumnTemplate;
 
-                oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: true, tooltip: "{DataModel>" + columnName + "}" });
+                oColumnTemplate = new sap.m.Text({ text: "{DataModel>" + columnName + "}", wrapping: false, tooltip: "{DataModel>" + columnName + "}" });
                 return oColumnTemplate;
             },
 
@@ -10926,8 +10926,9 @@ sap.ui.define([
                         error: function (err) { }
                     })
 
+                    console.log("setRowEditMode", me._prodplant);
                     this._oModelIOCosting.setHeaders({
-                        PRODPLANT: this._prodplant
+                        PRODPLANT: me._prodplant
                     })
                     this._oModelIOCosting.read('/VariantSHSet', {
                         success: function (oData) {
@@ -12163,7 +12164,7 @@ sap.ui.define([
                         }
                     }
                     
-                    console.log(this._sTableModel);
+                    // console.log(this._sTableModel);
                     if(this._sTableModel === "IODLV") {
                         console.log("CostSheetModel", this.getView().getModel("CostSheetModel").getData());
                         var cslist = this.getView().getModel("CostSheetModel").getData().filter(fItem => fItem.Cstype === oSource.getSelectedKey());
@@ -13010,7 +13011,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
                         template: oText,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -14325,11 +14326,13 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
+                console.log("initIOCosting", me._prodplant);
                 this._oModelIOCosting.setHeaders({
-                    PRODPLANT: this._prodplant
+                    PRODPLANT: me._prodplant
                 })
                 this._oModelIOCosting.read('/VariantSHSet', {
                     success: function (oData) {
+                        console.log("COSTVARIANT_MODEL", oData);
                         me.getView().setModel(new JSONModel(oData.results), "COSTVARIANT_MODEL");
 
                         // sap.ui.getCore().byId("ETEXT").setValueAndText("01","CSVCD","DESC1",me.getView().getModel("COSTVARIANT_MODEL").getData());
@@ -14494,7 +14497,7 @@ sap.ui.define([
 
                     return new sap.ui.table.Column({
                         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
                         template: oText,
                         width: sColumnWidth + "px",
                         sortProperty: sColumnId,
@@ -14579,8 +14582,9 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
+                console.log("onCreateCosting", me._prodplant);
                 this._oModelIOCosting.setHeaders({
-                    PRODPLANT: this._prodplant
+                    PRODPLANT: me._prodplant
                 })
                 this._oModelIOCosting.read('/VariantSHSet', {
                     success: function (oData) {
