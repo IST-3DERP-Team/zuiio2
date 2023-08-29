@@ -7173,7 +7173,10 @@ sap.ui.define([
                         "$filter": "IONO eq '" + vIONo + "'"
                     },
                     success: function (oData, response) {
-                        oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                        oData.results.forEach((item, index) => {
+                            item.ACTIVE = index === 0 ? "X" : "";
+                            item.HASOUTPUT = item.HASOUTPUT === "X" ? true : false;
+                        });
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
                         me._tableRendered = "processTab";

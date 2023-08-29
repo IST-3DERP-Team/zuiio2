@@ -83,9 +83,9 @@
                 "uri": "/sap/opu/odata/sap/ZGW_3DERP_IOSTYLE_SRV/",
                 "type": "OData",
                 "settings": {
-                    "odataVersion": "2.0",
                     "annotations": [],
-                    "localUri": "localService/ZGW_3DERP_IOSTYLE_SRV/metadata.xml"
+                    "localUri": "localService/ZGW_3DERP_IOSTYLE_SRV/metadata.xml",
+                    "odataVersion": "2.0"
                 }
             },
             "ZGW_3DERP_SRV": {
@@ -150,7 +150,6 @@
                     "localUri": "localService/ZGW_3DERP_IOCOSTING_SRV/metadata.xml"
                 }
             }
-            
         }
     },
     "sap.ui": {

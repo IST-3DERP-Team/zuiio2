@@ -652,15 +652,15 @@ sap.ui.define([
 
                 });
 
-                var oTableStyle = this.getView().byId("IOStyleSelectTab");
-                oTableStyle.setModel(oModel);
-                oTableStyle.attachBrowserEvent('dblclick', function (e) {
-                    e.preventDefault();
-                    that.setChangeStatus(false); //remove change flag
-                    // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
-                    that.onfragmentIOSelect('IOStyleSelectTab');
+                // var oTableStyle = this.getView().byId("IOStyleSelectTab");
+                // oTableStyle.setModel(oModel);
+                // oTableStyle.attachBrowserEvent('dblclick', function (e) {
+                //     e.preventDefault();
+                //     that.setChangeStatus(false); //remove change flag
+                //     // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
+                //     that.onfragmentIOSelect('IOStyleSelectTab');
 
-                });
+                // });
 
                 // var oModel2 = new JSONModel();
                 // var oTable2 =sap.ui.getCore().byId("IOStyleSelectTab");
