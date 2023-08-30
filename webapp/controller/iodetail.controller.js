@@ -259,7 +259,9 @@ sap.ui.define([
                 this.byId("btnEditCostHdr").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditCostDtl").setVisible(csAction === "display" ? false : true);
                 this.byId("btnReleaseCosting").setVisible(csAction === "display" ? false : true);
-                this.byId("btnEditAttach").setVisible(csAction === "display" ? false : true);
+                //this.byId("btnEditAttach").setVisible(csAction === "display" ? false : true);
+                this.byId("btnAddAttach").setVisible(csAction === "display" ? false : true);
+                this.byId("btnDelAttach").setVisible(csAction === "display" ? false : true);
             },
 
             // onExit: function() {
@@ -374,7 +376,9 @@ sap.ui.define([
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
-                this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                // this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnAddAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnDelAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
 
                 if (this.getView().getModel("ui2").getProperty("/icontabfilterkey") === '') {
                     this.getView().getModel("ui2").setProperty("/icontabfilterkey", oEvent.getParameter("arguments").icontabfilterkey);
@@ -384,6 +388,10 @@ sap.ui.define([
                 cIconTabBar.setSelectedKey(this.getView().getModel("ui2").getProperty("/icontabfilterkey"));
 
                 this.getCaptionSet();
+
+                this.bindUploadCollection();
+                this.getView().getModel("FileModel").refresh();
+                this.setFilesEditMode();
 
                 //get Value Help for fields of IO Header
                 this.getVHSet("/IOTYPSet", "IOTypeModel", false, false);
@@ -777,8 +785,8 @@ sap.ui.define([
                 oIconTabBarStyle.getItems().forEach(item => item.setProperty("enabled", true));
 
                 //Attachments
-                this.bindUploadCollection();
-                this.getView().getModel("FileModel").refresh();
+                // this.bindUploadCollection();
+                // this.getView().getModel("FileModel").refresh();
 
                 //IO Material List
 
@@ -4741,7 +4749,9 @@ sap.ui.define([
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
-                this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                // this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnAddAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("btnDelAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
 
                 // this.byId("onIOAttribEdit").setVisible(true);
                 // this.byId("onIOStatEdit").setVisible(true);
@@ -15530,7 +15540,7 @@ sap.ui.define([
                 oUploadCollection.setUploadUrl("/sap/opu/odata/sap/ZGW_3DERP_FILES_SRV/FileIOSet");
                 //attach function when an upload is completed
                 oUploadCollection.attachUploadComplete(that.onUploadComplete);
-                oUploadCollection.setMode(sap.m.ListMode.None);
+                //oUploadCollection.setMode(sap.m.ListMode.None);
             },
 
             bindUploadCollection: function () {

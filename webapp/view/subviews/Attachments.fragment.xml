@@ -1,19 +1,29 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:core="sap.ui.core" class="sapUiSizeCompact" xmlns:tnt="sap.tnt"
     xmlns:c="zuiio2.control" xmlns:t="sap.ui.table">
     <Panel expandable="false" expanded="true" width="100%" class="sapUiNoContentPadding sapUiSizeCompact">
-    
+    <VBox fitContainer="true" height="100%" class="sapUiTinyMargin ioAttachments">
         <Toolbar height="2rem" style="Clear">
             <Label text=""/>
             <ToolbarSpacer />
-            <Button id="btnDelAttach" text="{ddtext>/TXTDELSEL}" tooltip="{ddtext>/TTDELSELATT}" press="onDeleteFile" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
+            <Button id="btnAddAttach" type="Ghost" icon="sap-icon://add" text="{ddtext>/ADD}" tooltip="{ddtext>/EDITATT}" press="onAddFile" visible="true"/>
+            <Button id="btnDelAttach" icon="sap-icon://delete"  text="{ddtext>/TXTDELSEL}" tooltip="{ddtext>/TTDELSELATT}" press="onDeleteFile" visible="true"/>
+            <!-- <Button id="btnDelAttach" text="{ddtext>/TXTDELSEL}" tooltip="{ddtext>/TTDELSELATT}" press="onDeleteFile" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
             <Button id="btnEditAttach" type="Ghost" icon="sap-icon://edit" text="{ddtext>/EDIT}" tooltip="{ddtext>/EDITATT}" press="setFilesEditMode" visible="{= ${FilesEditModeModel>/editMode} === true ? false : true }"/>
-            <Button type="Ghost" icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/TTCANCELATT}" press="cancelFilesEdit" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
+            <Button type="Ghost" icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/TTCANCELATT}" press="cancelFilesEdit" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/> -->
         </Toolbar>
         
         <!-- Attachments -->
-        <VBox id="FilesBox">
+        <!-- <VBox id="FilesBox">
             <UploadCollection id="UploadCollection" instantUpload="false"></UploadCollection>
+        </VBox> -->
+        <VBox id="FilesBox" fitContainer="true" height="300px">
+            <UploadCollection id="UploadCollection" instantUpload="false">
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%" />
+                </layoutData>
+            </UploadCollection>
         </VBox>
+    </VBox>
         
     </Panel>
 </core:FragmentDefinition>

@@ -233,3 +233,6 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
     color: #c75858 !important;
 }
 
+.ioAttachments .sapUiFup {
+    display: none !important;
+}
