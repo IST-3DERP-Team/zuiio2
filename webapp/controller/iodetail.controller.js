@@ -389,6 +389,7 @@ sap.ui.define([
                 this.getVHSet("/IOTYPSet", "IOTypeModel", false, false);
                 this.getVHSet("/PRODTYPvhSet", "ProdTypeModel", true, false);
                 this.getVHSet("/PRODSCENvhSet", "ProdScenModel", false, false);
+                this.getVHSet("/CSALTERMvhSet", "CSALTERM_MODEL", false, false);
                 this.getVHSet("/SEASONSet", "SeasonsModel", true, false);
                 this.getVHSet("/STYLENOvhSet", "StyleNoModel", false, false);
                 // this.getVHSet("/UOMvhSet", "UOMModel", false, false);
@@ -5566,6 +5567,10 @@ sap.ui.define([
 
                     // console.log("this._validationErrors");
                     // console.log(me._validationErrors.length);
+
+                    var oDateFormatter = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.yyyy", strictParsing: true });
+                    // console.log("CUSTDLVDT", this.getView().byId("CUSTDLVDT").getValue());
+
                     if (me._validationErrors.length === 0) {
                         let sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
@@ -5580,7 +5585,8 @@ sap.ui.define([
                         else if (this.getView().byId("CUSTGRP").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTGRP"];
                         else if (this.getView().byId("BASEUOM").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["BASEUOM"];
                         else if (this.getView().byId("SOLDTOCUST").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["SOLDTOCUST"];
-                        else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        else if (!oDateFormatter.parse(this.getView().byId("CUSTDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        // else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
                         else if (this.getView().byId("PRODSTART").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODSTART"];
 
                         // console.log("sErrMsg.length", sErrMsg.length);
@@ -5649,7 +5655,7 @@ sap.ui.define([
                                 SEASONCD: this.getView().byId("SEASONCD").mBindingInfos.value.binding.aValues[0],
                                 CUSTGRP: this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0],
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
-                                CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
+                                CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
                                 BASEUOM: this.getView().byId("BASEUOM").mBindingInfos.value.binding.aValues[0],
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),
@@ -5690,7 +5696,7 @@ sap.ui.define([
                                 SEASONCD: this.getView().byId("SEASONCD").mBindingInfos.value.binding.aValues[0],
                                 CUSTGRP: this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0],
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
-                                CUSSALTERM: this.getView().byId("CUSSALTERM").getValue(),
+                                CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
                                 BASEUOM: this.getView().byId("BASEUOM").mBindingInfos.value.binding.aValues[0],
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),

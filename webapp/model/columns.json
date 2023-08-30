@@ -450,7 +450,21 @@
             "SuggestionItems": {"path": "IOUOMModel>/", "text": "{IOUOMModel>MSEHI}", "additionalText": "{IOUOMModel>MSEHI}", "maxSuggestionWidth": "200px" },
             "columns": "tvh_baseuom"
             }
+        },
+        {
+        "ColumnName": "CUSSALTERM", 
+        "TextFormatMode": "Key",
+        "ValueHelp": 
+            {
+            "show": true, "items": {"path": "CSALTERM_MODEL", "value": "Inco1", "text": "Inco1"},
+            "SuggestionItems": {"path": "CSALTERM_MODEL>/", "text": "{CSALTERM_MODEL>Inco1}", "additionalText": "{IOUOMModel>Inco1}", "maxSuggestionWidth": "200px" },
+            "columns": "tvh_csalterm"
+            }
         }
+    ],
+    "tvh_csalterm": [
+        {"ColumnName": "Inco1", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "Description", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false}
     ],
     "tvh_prodscen": [
         {"ColumnName": "PRODSCEN", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},

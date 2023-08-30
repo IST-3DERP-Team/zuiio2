@@ -395,18 +395,23 @@
                     <f:FormElement id="feCUSSALTERM" label="{ddtext>/CUSSALTERM}" visible="{= ${VisibleFieldsData>/CUSSALTERM} === true ? true : false }">
                         <f:fields>
                             <Input id="CUSSALTERM" 
-                                type="Text" 
+                                type="Text"
+                                value="{ parts: [{ path: 'headerData>/CUSSALTERM' }, { value: 'CSALTERM_MODEL' }, { value: 'Inco1' }, { value: 'Inco1' }, { value: 'ValueKey' }],
+                                    formatter: '.formatValueHelp'
+                                }" 
+                                textFormatMode="ValueKey"
                                 showSuggestion="true" 
                                 showValueHelp="true" 
-                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${EditableFieldsData>/CUSSALTERM} : false }" 
+                                editable="{= ${HeaderEditModeModel>/editMode} === true ? ${VisibleFieldsData>/CUSSALTERM} : false}" 
                                 valueStateText="Required"
-                                value="{headerData>/CUSSALTERM}" 
-                                change="onHeaderChange" 
+                                change="onHeaderChangeTableFilter" 
+                                liveChange="onHeaderChangeTableFilter" 
                                 autocomplete="true" 
-                                valueHelpRequest="onSalesTermValueHelp"
-                                suggestionItems="{SalesTermModel>/results}">
+                                valueHelpRequest="handleFormValueHelp"
+                                suggestionItems="{path: 'CSALTERM_MODEL>/', length: 10000, templateShareable: false}" >
                                 <suggestionItems>
-                                    <core:ListItem text="{SalesTermModel>FTYSALTERM}" additionalText="{SalesTermModel>DESCRIPTION}"/>
+                                    <!-- <core:ListItem text="{UOMModel>MSEHI}" additionalText="{UOMModel>MSEHL}"/> -->
+                                    <core:Item key="{CSALTERM_MODEL>Inco1}" text="{CSALTERM_MODEL>Inco1}" />
                                 </suggestionItems>
                             </Input>
                         </f:fields>
