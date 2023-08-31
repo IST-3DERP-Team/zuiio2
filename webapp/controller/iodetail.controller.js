@@ -5940,7 +5940,8 @@ sap.ui.define([
                         "CSTYPE": cstype,
                         "CSVCD": csvcd,
                         "VERDESC": "Initial Pre-Costing",
-                        "SALESTERM": this.getView().byId("CUSSALTERM").getValue(),
+                        // "SALESTERM": this.getView().byId("CUSSALTERM").getValue(),
+                        "SALESTERM": this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
                         "CSDATE": sapDateFormat.format(new Date()) + "T00:00:00",
                         "COSTSTATUS": csstat === true ? "REL" : "CRT"
                     }
@@ -14642,7 +14643,8 @@ sap.ui.define([
                 sap.ui.getCore().byId("CSDATE").setValue(sapDateFormat.format(today));
 
                 if (this.getView().byId("CUSSALTERM").getValue() !== "") {
-                    sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").getValue());
+                    // sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").getValue());
+                    sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0]);
                 }
                 else {
                     //set value of fields if resource has only 1 data
@@ -14706,6 +14708,7 @@ sap.ui.define([
                     "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
                 }
                 // console.log(oParam);
+                // return;
 
                 Common.openProcessingDialog(this, "Processing...");
 
