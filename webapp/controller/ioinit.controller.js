@@ -1876,7 +1876,7 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                // console.log("IOCOPYSet", oParam);
+                console.log("IOCOPYSet", oParam);
 
                 setTimeout(() => {
                     oCopyIOModel.create("/IOCOPYSet", oParam, {

@@ -12600,7 +12600,7 @@ sap.ui.define([
                 this._oModel.create("/IOUVSSet", oIOParam, {
                     method: "POST",
                     success: async function (data, oResponse) {
-                        // console.log("IOUVSSet consumed.");
+                        console.log("IOUVSSet consumed.");
                     },
                     error: function (err) {
                         // sap.m.MessageBox.error(err);
@@ -12735,7 +12735,7 @@ sap.ui.define([
                         this._oModel.create("/IOUVSSet", oIOParam, {
                             method: "POST",
                             success: async function (data, oResponse) {
-                                // console.log("IOUVSSet consumed.");
+                                console.log("IOUVSSet consumed.");
                             },
                             error: function (err) {
                                 // sap.m.MessageBox.error(err);
