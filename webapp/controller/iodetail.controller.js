@@ -159,7 +159,7 @@ sap.ui.define([
 
                 oView.addEventDelegate({
                     onBeforeHide: function (oEvent) {
-                        if (me._oLock.length > 0) {
+                        if (me._oLock !== undefined && me._oLock.length > 0) {
                             me.unLock();
                         }
                     },

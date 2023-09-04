@@ -173,11 +173,11 @@ sap.ui.define([
                     var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
                     // console.log(oTable);
                     var oSelectedIndices = oTable.getSelectedIndices();
-                    // console.log(oTable.getSelectedIndices());
+                    console.log("getSelectedIndices", oTable.getSelectedIndices());
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
 
-                    // console.log(aData);
+                    console.log(aData);
                     // console.log(oTable.getBinding("rows"));
                     var oParamData = [];
                     var oParam = {};
@@ -430,8 +430,8 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         oData.results.forEach(item => {
                             item.SOLDTOCUST = item.SOLDTOCUST;
-                            // item.CURRENTVER = item.CURRENTVER === "X" ? true : false;
-                            // item.COMPLETED = item.CURRENTVER === "X" ? true : false;
+                            item.CURRENTVER = item.CURRENTVER === "X" ? true : false;
+                            item.COMPLETED = item.COMPLETED === "X" ? true : false;
                         })
 
                         oData.results.sort((a, b) => (a.STYLENO > b.STYLENO ? -1 : 1));
@@ -652,15 +652,17 @@ sap.ui.define([
 
                 });
 
-                // var oTableStyle = this.getView().byId("IOStyleSelectTab");
-                // oTableStyle.setModel(oModel);
-                // oTableStyle.attachBrowserEvent('dblclick', function (e) {
-                //     e.preventDefault();
-                //     that.setChangeStatus(false); //remove change flag
-                //     // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
-                //     that.onfragmentIOSelect('IOStyleSelectTab');
+                var oModel2 = new JSONModel();
+                var oTableStyle = sap.ui.getCore().byId("IOStyleSelectTab");
+                console.log("oTableStyle", oTableStyle);
+                oTableStyle.setModel(oModel2);
+                oTableStyle.attachBrowserEvent('dblclick', function (e) {
+                    e.preventDefault();
+                    that.setChangeStatus(false); //remove change flag
+                    // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
+                    that.onfragmentIOSelect('IOStyleSelectTab');
 
-                // });
+                });
 
                 // var oModel2 = new JSONModel();
                 // var oTable2 =sap.ui.getCore().byId("IOStyleSelectTab");
@@ -886,18 +888,69 @@ sap.ui.define([
 
                     // console.log(context.getObject());
 
-                    return new sap.ui.table.Column({
-                        // id: sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
-                        template: me.columnTemplate(sColumnId, sColumnType),
-                        width: me.getFormatColumnSize(sColumnId, sColumnType, sColumnWidth) + 'px',
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    var sColumnDataType = context.getObject().DataType;
+
+                    if (sColumnWidth === undefined || sColumnWidth === 0) sColumnWidth = 100;
+                    // console.log(sColumnDataType);
+
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: "IODynTable" + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        // console.log("BOOLEAN : " + sColumnId);
+                        return new sap.ui.table.Column({
+                            id: "IODynTable" + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else {
+                        // console.log(sColumnDataType + " : " + sColumnId);
+                        return new sap.ui.table.Column({
+                            id: "IODynTable" + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            template: new sap.m.Text({
+                                text: "{" + sColumnId + "}",
+                                wrapping: false
+                                // , 
+                                // tooltip: "{" + sColumnId + "}"
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
                 });
 
                 oTable.bindRows("/rows");
@@ -1061,6 +1114,12 @@ sap.ui.define([
                 that.setChangeStatus(false); //remove change flag
                 // console.log(this._sbu);
                 that.navToDetail(IONOtxt, that._sbu, sStyleNo); //navigate to detail page
+            },
+
+            onSapEnterStyle(oEvent) {
+                that.setChangeStatus(false); //remove change flag
+                // console.log(this._sbu);
+                that.onfragmentIOSelect('IOStyleSelectTab');
             },
 
             goToDetail: function (oEvent) {
@@ -1371,7 +1430,7 @@ sap.ui.define([
                     },
 
                     onsapenter: function (oEvent) {
-                        that.onSapEnter(oEvent);
+                        that.onSapEnterStyle(oEvent);
                     }
                 };
 
@@ -1475,7 +1534,8 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
 
-                    if (sColumnWidth === 0) sColumnWidth = 100;
+                    console.log(sColumnLabel, sColumnDataType);
+                    if (sColumnWidth === undefined || sColumnWidth === 0) sColumnWidth = 100;
                     // console.log(sColumnDataType);
 
                     if (sColumnDataType === "STRING") {
