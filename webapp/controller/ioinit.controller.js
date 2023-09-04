@@ -1273,6 +1273,19 @@ sap.ui.define([
 
                         // sap.ui.getCore().byId("searchFieldStyle").setProperty("value", "");
                     }
+
+                    var oModel2 = new JSONModel();
+                    var oTableStyle = sap.ui.getCore().byId("IOStyleSelectTab");
+                    console.log("oTableStyle", oTableStyle);
+                    oTableStyle.setModel(oModel2);
+                    oTableStyle.attachBrowserEvent('dblclick', function (e) {
+                        e.preventDefault();
+                        that.setChangeStatus(false); //remove change flag
+                        // that.navToDetail(IONOtxt, this._sbu, sStyleNo); //navigate to detail page
+                        that.onfragmentIOSelect('IOStyleSelectTab');
+
+                    });
+
                     me._IOfromStyleDialog.open();
 
                 } else if (sSource === "SalesDoc") {
