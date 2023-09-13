@@ -20,6 +20,6 @@ builder:
           name: ZUI_IO2
           description: Internal Orders
           package: ZPK_LTH_3DERP
-          transport: LTDK916526
+          transport: LTDK916528
         exclude:
           - /test/
