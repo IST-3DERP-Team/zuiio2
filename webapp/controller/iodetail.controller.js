@@ -8602,7 +8602,7 @@ sap.ui.define([
                     else {
                         await this.lock(this);
                         if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
-                            if (arg === "ioMatList") {
+                            if (arg === "c") {
                                 if (this._aFunction[arg + "Tab"] !== undefined) {
                                     oFunction = this._aFunction[arg + "Tab"].filter(fItem => fItem.NAME === "DELETE");
 

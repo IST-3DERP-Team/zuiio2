@@ -71,17 +71,35 @@
             "ValueHelp": {
                 "show": true
                 , "items": {
+                    "path": "COSTTYPE_MODEL", 
+                    "value": "CSTYPECD", 
+                    "text": "CSTYPEDESC"
+                },
+                "SuggestionItems": {
+                    "path": "COSTTYPE_MODEL>/", 
+                    "text": "{COSTTYPE_MODEL>CSTYPECD}", 
+                    "additionalText": "{COSTTYPE_MODEL>CSTYPEDESC}", 
+                    "maxSuggestionWidth": "200px" 
+                },
+                "columns": "tvh_cstype"
+            }
+        },
+        {   "ColumnName": "VERSION", 
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true
+                , "items": {
                     "path": "CostSheetModel", 
-                    "value": "Cstype", 
+                    "value": "Version", 
                     "text": "Verdesc"
                 },
                 "SuggestionItems": {
                     "path": "CostSheetModel>/", 
-                    "text": "{CostSheetModel>Cstype}", 
+                    "text": "{CostSheetModel>Version}", 
                     "additionalText": "{CostSheetModel>Verdesc}", 
                     "maxSuggestionWidth": "200px" 
                 },
-                "columns": "tvh_cstype"
+                "columns": "tvh_csversion"
             }
         },
         {   "ColumnName": "CUSTSHIPTO", 
@@ -364,11 +382,15 @@
         }
     ],
     "tvh_cstype": [
-        {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
-        {"ColumnName": "Version", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "Verdesc", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": false, "Value": false},
-        {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false}
+        {"ColumnName": "CSTYPECD", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "CSTYPEDESC", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true}
+    ],
+    "tvh_csversion": [
+        {"ColumnName": "Version", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "Verdesc", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
     ],
     "headerData": [
         {

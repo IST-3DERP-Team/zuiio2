@@ -32,8 +32,9 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
-                // this._tableFilter = TableFilter;
-                // this._colFilters = {};
+                this._tableFilter = TableFilter;
+                console.log("this._tableFilter", this._tableFilter);
+                this._colFilters = {};
 
                 // console.log("INITIALIZE START");
                 that.getCaptionSet();
@@ -119,6 +120,25 @@ sap.ui.define([
                         // ]
                     }
                 });
+            },
+            
+            onColumnUpdated: function (oEvent) {
+                this.setActiveRowHighlight();
+            },
+
+            setActiveRowHighlight() {
+                var oTable = this.byId("IODynTable");
+                
+                setTimeout(() => {
+                    var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+
+                    oTable.getRows().forEach(row => {
+                        if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            row.addStyleClass("activeRow");
+                        }
+                        else row.removeStyleClass("activeRow");
+                    })                    
+                }, 1);
             },
 
             getAppAction: async function () {
@@ -582,6 +602,10 @@ sap.ui.define([
                     }
                 });
 
+                console.log("TableFilter.updateColumnMenu Start");
+                TableFilter.updateColumnMenu("IODynTable", this);
+                console.log("TableFilter.updateColumnMenu end");
+
                 //remove sort icon of currently sorted column
                 oTable.attachSort(function (oEvent) {
                     var sPath = oEvent.getParameter("column").getSortProperty();
@@ -739,6 +763,7 @@ sap.ui.define([
 
             getDynamicTableColumns: function () {
                 var me = this;
+                var sTabId = "IODynTable";
 
                 //get dynamic columns based on saved layout or ZERP_CHECK
                 var oJSONColumnsModel = new sap.ui.model.json.JSONModel();
@@ -769,6 +794,17 @@ sap.ui.define([
                         oJSONColumnsModel.setData(oData);
                         me.oJSONModel.setData(oData);
                         me.getView().setModel(oJSONColumnsModel, "DynColumns");  //set the view model
+
+                        // if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                        //     oData.results.forEach(item => {
+                        //         oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                        //             .forEach(col => item.ValueHelp = col.ValueHelp)
+                        //     })
+                        // }
+
+                        me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
+                        me._aColumns[sTabId.replace("Tab", "")] = oData.results;
+
                         me.getDynamicTableData(oData.results);
                     },
                     error: function (err) { }
@@ -828,7 +864,7 @@ sap.ui.define([
 
                         me.setChangeStatus(false);
 
-                        // TableFilter.applyColFilters(me);
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -897,12 +933,13 @@ sap.ui.define([
                         return new sap.ui.table.Column({
                             id: "IODynTable" + "Col" + sColumnId,
                             label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
-                            template: new sap.m.Text({
-                                text: "{" + sColumnId + "}",
-                                wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
-                            }),
+                            // template: new sap.m.Text({
+                            //     text: "{" + sColumnId + "}",
+                            //     wrapping: false
+                            //     // , 
+                            //     // tooltip: "{" + sColumnId + "}"
+                            // }),
+                            template: me.columnTemplate(sColumnId, sColumnType),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
                             filterProperty: sColumnId,
@@ -935,12 +972,13 @@ sap.ui.define([
                         return new sap.ui.table.Column({
                             id: "IODynTable" + "Col" + sColumnId,
                             label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
-                            template: new sap.m.Text({
-                                text: "{" + sColumnId + "}",
-                                wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
-                            }),
+                            // template: new sap.m.Text({
+                            //     text: "{" + sColumnId + "}",
+                            //     wrapping: false
+                            //     // , 
+                            //     // tooltip: "{" + sColumnId + "}"
+                            // }),
+                            template: me.columnTemplate(sColumnId, sColumnType),
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
                             filterProperty: sColumnId,
@@ -952,6 +990,10 @@ sap.ui.define([
                         });
                     }
                 });
+
+                console.log("TableFilter.updateColumnMenu Start");
+                TableFilter.updateColumnMenu("IODynTable", this);
+                console.log("TableFilter.updateColumnMenu end");
 
                 oTable.bindRows("/rows");
 

@@ -238,17 +238,25 @@
         </Toolbar>
 
         <!-- IO INITIAL TABLE -->
-        <t:Table id="IODynTable" 
+        <t:Table id="IODynTable"
             class="sapUiTinyMarginBottom sapUiTinyMarginBegin sapUiTinyMarginEnd"
-            visibleRowCountMode="Auto"
-            showColumnVisibilityMenu="true" 
-            enableColumnFreeze="true"
-            enableCellFilter="true"
+            alternateRowColors="true"
             selectionMode="Single" 
             selectionBehavior="RowOnly"
             rowSelectionChange="onRowChange"
-            alternateRowColors="true"
-            sort="onSorted">
+            visibleRowCountMode="Auto"
+            showColumnVisibilityMenu="true"
+            enableColumnFreeze="true"
+            enableCellFilter="true"
+            firstVisibleRowChanged="onFirstVisibleRowChanged"
+            cellClick="onCellClick"
+            sort="onSort"
+            filter="onFilter"
+            columnFreeze="onColumnUpdated"
+            columnMove="onColumnUpdated"
+            columnResize="onColumnUpdated"
+            columnSelect="onColumnUpdated"
+            columnVisibility="onColumnUpdated">
 
             <!-- TABLE LAYOUT DATA -->
             <t:layoutData>
