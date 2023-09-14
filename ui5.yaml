@@ -17,21 +17,21 @@ server:
           url: https://ui5.sap.com
         backend:
           - path: /sap/opu/odata/sap/ZGW_3DERP_IO_SRV/
-            url: http://159.138.39.203:8000
+            url: http://190.92.230.65:8000
             client: '888'
-            destination: LTD888
+            destination: LTD888_S4HANA2022
           - path: /sap/opu/odata/sap/ZVB_3DERP_IO_FILTER_CDS/
-            url: http://159.138.39.203:8000
+            url: http://190.92.230.65:8000
             client: '888'
-            destination: LTD888
+            destination: LTD888_S4HANA2022
           - path: /sap
-            url: http://159.138.39.203:8000
+            url: http://190.92.230.65:8000
             client: '888'
-            destination: LTD888
+            destination: LTD888_S4HANA2022
           - path: /sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV
-            url: http://159.138.39.203:8000
+            url: http://190.92.230.65:8000
             client: '888'
-            destination: LTD888
+            destination: LTD888_S4HANA2022
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
