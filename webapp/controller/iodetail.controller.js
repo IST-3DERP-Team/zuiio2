@@ -55,6 +55,8 @@ sap.ui.define([
                 // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
 
                 this._ccolumns;
+                this._pvtColumnData;
+                this._pvtPivotArray;
 
                 //Initialize router
                 var oComponent = this.getOwnerComponent();
@@ -1082,6 +1084,7 @@ sap.ui.define([
                     return;
                 }
 
+                Common.openLoadingDialog(this);
                 // console.log("4");
                 var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
 
@@ -1109,36 +1112,35 @@ sap.ui.define([
                 var oColumns = oModelColumns.getData();
                 this._oModelColumns = oModelColumns.getData();
 
-                //NEW ROW, LOAD BLANK
-                if (oRow.IONO === undefined) {
-                    Common.openLoadingDialog(this);
-                    this.getView().getModel("ui2").setProperty("/currDlvSeq", "999");
-                    me._tblChange = true;
-                    await this.reloadIOData("IODETTab", "/IODETSet");
+                // //NEW ROW, LOAD BLANK
+                // if (oRow.IONO === undefined) {
+                //     // Common.openLoadingDialog(this);
+                //     this.getView().getModel("ui2").setProperty("/currDlvSeq", "999");
+                //     me._tblChange = true;
+                //     await this.reloadIOData("IODETTab", "/IODETSet");
 
-                    Common.closeLoadingDialog(this);
-                    this._tblChange = false;
+                //     // Common.closeLoadingDialog(this);
+                //     this._tblChange = false;
 
-                    return;
-                }
+                //     return;
+                // }
 
                 //IF IN EDIT MODE, DO NOT CONTINUE
                 if (this._dataMode === "EDIT") {
                     return;
                 }
 
-                Common.openLoadingDialog(this);
-                // console.log("oRow.DLVSEQ", oRow.DLVSEQ);
                 this.getView().getModel("ui2").setProperty("/currDlvSeq", oRow.DLVSEQ);
 
-                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-                var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+                // var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                // var vDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                // console.log("vDlvSeq", vDlvSeq);
+                // console.log("this._pvtColumnData", this._pvtColumnData);
+                // console.log("this._pvtPivotArray", this._pvtPivotArray);
 
                 me._tblChange = true;
-                await this.reloadIOData("IODETTab", "/IODETSet");
-                // await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray);
+                // await this.reloadIOData("IODETTab", "/IODETSet");
                 Common.closeLoadingDialog(this);
 
                 this._tblChange = false;
@@ -1760,7 +1762,7 @@ sap.ui.define([
                                 item.DELETED = item.DELETED === "X" ? true : false;
                             })
 
-                            oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
+                            oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
                             if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
                                 oData.results.forEach((item, index) => {
@@ -2231,6 +2233,7 @@ sap.ui.define([
                     // console.log("me._iosizes");
                     // console.log(me._iosizes);
                     pivotArray = me._iosizes;
+                    me._pvtPivotArray = me._iosizes;
 
                     // console.log("pivotArray");
                     // console.log(pivotArray);
@@ -2464,6 +2467,8 @@ sap.ui.define([
 
                     oJSONModel.setData(pivotArray);
                     me.getView().setModel(oJSONModel, "pivotArray");
+
+                    me._pvtColumnData = columnData;
 
                     await new Promise((resolve, reject) => {
                         // setTimeout(() => {
@@ -6919,7 +6924,7 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? 1 : -1));
+                                    oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
                                     if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
                                         oData.results.forEach((item, index) => {
@@ -6948,7 +6953,7 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? 1 : -1));
+                                    oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? -1 : 1));
 
                                     if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
                                         oData.results.forEach((item, index) => {
@@ -9102,11 +9107,13 @@ sap.ui.define([
                             }).then(async function () { //REFRESH IO DELIVERY
                                 await me.reloadIOData("IODLVTab", "/IODLVSet");
                             }).then(async function () { //REFRESH IO DETAIL
-                                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-                                var oModelColumns = new JSONModel();
-                                await oModelColumns.loadData(sPath);
-                                var oColumns = oModelColumns.getData();
-                                await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                // var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                                // var oModelColumns = new JSONModel();
+                                // await oModelColumns.loadData(sPath);
+                                // var oColumns = oModelColumns.getData();
+                                // await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+
+                                me.getIODETTableData(me._pvtColumnData, me._pvtPivotArray);
                             }).then(async function() { //REFRESH HEADER DATA
                                 await me.refreshHeaderData();
                             })
@@ -9167,6 +9174,8 @@ sap.ui.define([
                                                 // }
                                                 //IF COLUMN NAME IS EQUAL WITH IOSIZE ATTRIBUTE CODE
                                             } else if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                                // console.log(col);
+                                                // console.log(item[col.columnName]);
                                                 //SET CUSTSIZE : USE ATTRIBUTE CODE
                                                 param["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                                 //SET REVORDERQTY : USE QUANTITY AT SIZE COLUMNS THAT MATCH THE IO SIZE
@@ -9242,11 +9251,13 @@ sap.ui.define([
                             batchPromise.then(async function () { //REFRESH IO DELIVERY
                                 await me.reloadIOData("IODLVTab", "/IODLVSet");
                             }).then(async function () { //REFRESH IO DETAIL
-                                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-                                var oModelColumns = new JSONModel();
-                                await oModelColumns.loadData(sPath);
-                                var oColumns = oModelColumns.getData();
-                                await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                // var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+                                // var oModelColumns = new JSONModel();
+                                // await oModelColumns.loadData(sPath);
+                                // var oColumns = oModelColumns.getData();
+                                // await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+
+                                me.getIODETTableData(me._pvtColumnData, me._pvtPivotArray);
                             }).then(async function() { //REFRESH HEADER DATA
                                 await me.refreshHeaderData();
                             }).then(function() { //RESET BUTTONS
