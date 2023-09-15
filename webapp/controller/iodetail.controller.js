@@ -11573,9 +11573,9 @@ sap.ui.define([
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE1"
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE2"
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE3"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE1"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE2"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE3") {
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE1"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE2"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE3") {
                     vDecPlaces = 4;
                 }
                 else {
@@ -11741,9 +11741,9 @@ sap.ui.define([
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE1"
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE2"
                     || oSource.getBindingInfo("value").parts[0].path === "UNITPRICE3"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE1"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE2"
-                    || oSource.getBindingInfo("value").parts[0].path === "REVUNITPRICE3") {
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE1"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE2"
+                    || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE3") {
                     vDecPlaces = 4;
                 }
                 else {
