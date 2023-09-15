@@ -8178,8 +8178,9 @@ sap.ui.define([
                                 var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
                                 var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
                                 var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
-
-                                if (vStatus === "REL") {
+                                var oDataCheck = this.getView().getModel("COSTCHECKREL_MODEL").getData()[0];
+                                
+                                if (oDataCheck.FIELD2 != "UAC" && vStatus === "REL") {
                                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_STATUS_ALREADY_REL"]);
                                 }
                                 else {
@@ -11410,7 +11411,7 @@ sap.ui.define([
                                     col.setTemplate(new sap.m.Text({
                                         text: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
                                         wrapping: false,
-                                        tooltip: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}"
+                                        //tooltip: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}"
                                     }));
                                 }
                                 else if (ci.DataType === "BOOLEAN") {
@@ -14291,6 +14292,16 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
+                this._oModelIOCosting.read('/CheckRelSet', {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + this._sbu + "'"
+                    },
+                    success: function (oData) {
+                        me.getView().setModel(new JSONModel(oData.results), "COSTCHECKREL_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
                 this.byId("costHdrTab")
                     .setModel(new JSONModel({
                         columns: [],
@@ -14378,6 +14389,7 @@ sap.ui.define([
 
                             me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                             me.setIOCostingTableColumns(sTabId, oData.results);
+                            me.setRowReadMode(sTabId.replace("Tab", ""));
                         }
                     },
                     error: function (err) {
