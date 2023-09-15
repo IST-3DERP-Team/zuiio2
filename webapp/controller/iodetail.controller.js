@@ -12525,6 +12525,7 @@ sap.ui.define([
                 };
 
                 // MCA: EXECUTE IOUVSSET - FOR ZERP_PRDUSGUV
+                console.log("IOUVSet");
                 this._oModel.create("/IOUVSSet", oIOParam, {
                     method: "POST",
                     success: async function (data, oResponse) {
@@ -12541,7 +12542,7 @@ sap.ui.define([
                         "IONO": vIONo,
                         "MATTYPGRP": "FAB"
                     };
-                    // console.log(oParam);
+                    console.log(oParam);
 
                     _promiseResult = new Promise((resolve, reject) => {
                         setTimeout(() => {
@@ -12549,7 +12550,7 @@ sap.ui.define([
                                 method: "POST",
                                 success: function (data, oResponse) {
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
-                                    // console.log("FAB - " + oMessage.message);
+                                    console.log("FAB - " + oMessage.message);
 
                                     retMsg = oMessage.message;
 
@@ -12560,7 +12561,7 @@ sap.ui.define([
                                     resolve();
                                 },
                                 error: function (err) {
-                                    // sap.m.MessageBox.error(err);
+                                    sap.m.MessageBox.error(err);
                                     resolve();
                                 }
                             });
@@ -12575,23 +12576,23 @@ sap.ui.define([
                             "IONO": vIONo,
                             "MATTYPGRP": "ACC"
                         };
-                        // console.log(oParam)
+                        console.log(oParam)
 
                         setTimeout(() => {
                             this._oModelStyle.create("/GenIOMatListSet", oParam, {
                                 method: "POST",
                                 success: function (data, oResponse) {
                                     oMessage = JSON.parse(oResponse.headers["sap-message"]);
-                                    // console.log("ACC - " + oMessage.message);
+                                    console.log("ACC - " + oMessage.message);
                                     retMsg = oMessage.message;
 
-                                    if (oMessage.message === "1")
+                                    if (oMessage.message === "1" && hasValid === false)
                                         hasValid = true;
 
                                     resolve();
                                 },
                                 error: function (err) {
-                                    // sap.m.MessageBox.error(err);
+                                    sap.m.MessageBox.error(err);
                                     resolve();
                                 }
                             });
@@ -12601,15 +12602,23 @@ sap.ui.define([
                     })
                     await _promiseResult;
 
-                    if (retMsg === "0") {
+                    // if (retMsg === "0") {
+                    //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
+                    // } else if (retMsg === "1") {
+                    //     me.onRefresh("ioMatList");
+                    //     me.getIOSTATUSData(vIONo);
+                    //     await me.refreshHeaderData();
+                    //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
+                    // }
+                    if (hasValid === false) {
                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
-                    } else if (retMsg === "1") {
+                    } else if(hasValid === true) {
                         me.onRefresh("ioMatList");
                         me.getIOSTATUSData(vIONo);
                         await me.refreshHeaderData();
                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                     }
-                    else if (retMsg === "2") {
+                    else if (retMsg === "2" && hasValid === false) {
                         // MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"]);
                         MessageBox.information(
                             me.getView().getModel("ddtext").getData()["INFO_INVALID_IOMATLIST_GENERATED"],
