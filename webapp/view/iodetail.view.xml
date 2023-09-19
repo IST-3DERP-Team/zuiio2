@@ -668,12 +668,12 @@
                                                 visible="true" />
                                             <Button id="btnEditCostHdr" 
                                                 icon="sap-icon://edit"
-                                                press="onEdit('costHdr')" 
+                                                press="onEditCosting('costHdr')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
                                             <Button id="btnSaveCostHdr" 
                                                 icon="sap-icon://save"
-                                                press="onBatchSave('costHdr')" 
+                                                press="onSaveCosting('costHdr')" 
                                                 tooltip="{ddtext>/SAVE}"
                                                 visible="false" />
                                             <Button id="btnCancelCostHdr" 
@@ -718,12 +718,12 @@
                                             <ToolbarSpacer/>
                                             <Button id="btnEditCostDtl" 
                                                 icon="sap-icon://edit"
-                                                press="onEdit('costDtls')" 
+                                                press="onEditCosting('costDtls')" 
                                                 tooltip="{ddtext>/EDIT}"
                                                 visible="true" />
                                             <Button id="btnSaveCostDtl" 
                                                 icon="sap-icon://save"
-                                                press="onBatchSave('costDtls')" 
+                                                press="onSaveCosting('costDtls')" 
                                                 tooltip="{ddtext>/SAVE}"
                                                 visible="false" />
                                             <Button id="btnCancelCostDtl" 

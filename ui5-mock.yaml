@@ -16,7 +16,11 @@ server:
         backend:
           - path: /sap
             url: http://190.92.230.65:8000
+<<<<<<< HEAD
+            client: "888"
+=======
             client: '888'
+>>>>>>> 097f3eac9fce3e62858e4b89c1be4abb17341c18
             destination: LTD888_S4HANA2022
     - name: fiori-tools-appreload
       afterMiddleware: compression

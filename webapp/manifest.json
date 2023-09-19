@@ -44,7 +44,7 @@
                 }
             },
             "ZVB_3DERP_IO_FILTER_CDS_Annotation": {
-                "uri": "/destinations/LTD888/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_IO_FILTER_CDS_VAN',Version='0001')/$value/",
+                "uri": "/destinations/LTD888_S4HANA2022/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_IO_FILTER_CDS_VAN',Version='0001')/$value/",
                 "type": "ODataAnnotation",
                 "settings": {
                     "localUri": "localService/ZVB_3DERP_IO_FILTER_CDS/ZVB_3DERP_IO_FILTER_CDS_Annotation.xml"
@@ -62,7 +62,7 @@
                 }
             },
             "ZVB_3DERP_SALDOC_FILTERS_CDS_Annotation": {
-                "uri": "/destinations/LTD888/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_SALDOC_FILTERS_CDS_VAN',Version='0001')/$value/",
+                "uri": "/destinations/LTD888_S4HANA2022/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Annotations(TechnicalName='ZVB_3DERP_SALDOC_FILTERS_CDS_VAN',Version='0001')/$value/",
                 "type": "ODataAnnotation",
                 "settings": {
                     "localUri": "localService/ZVB_3DERP_SALDOC_FILTERS_CDS/ZVB_3DERP_SALDOC_FILTERS_CDS_Annotation.xml"
@@ -145,9 +145,9 @@
                 "uri": "/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/",
                 "type": "OData",
                 "settings": {
-                    "odataVersion": "2.0",
                     "annotations": [],
-                    "localUri": "localService/ZGW_3DERP_IOCOSTING_SRV/metadata.xml"
+                    "localUri": "localService/ZGW_3DERP_IOCOSTING_SRV/metadata.xml",
+                    "odataVersion": "2.0"
                 }
             }
         }
