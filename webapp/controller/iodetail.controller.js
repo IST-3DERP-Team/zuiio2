@@ -290,9 +290,10 @@ sap.ui.define([
 
                     if (sPreviousHash !== undefined) {
                         window.history.go(-1);
-                    } else {
+                    } else {   
                         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                         oRouter.navTo("Routeioinit", {}, true);
+
                         // Remove the rest of the entries from the history
                         oHistory.aHistory.splice(0, iHistoryLength - 1);
                     }
