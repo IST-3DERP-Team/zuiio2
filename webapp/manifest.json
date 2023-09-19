@@ -419,6 +419,14 @@
         },
         "config": {
             "fullWidth": true
-        }
+        },
+        "services": {
+            "CrossApplicationNavigation": {
+                "factoryName": "sap.ushell.services.CrossApplicationNavigation",
+              "config": {
+                "sap-app-origin-hint": false
+              }
+            }
+          }
     }
 }
