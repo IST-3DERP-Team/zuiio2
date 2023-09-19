@@ -12595,11 +12595,12 @@ sap.ui.define([
                     //     "styleno": vStyle,
                     //     "sbu": "VER"
                     // }
+                    , bAsync: true
                 })) || ""; // generate the Hash to display style
 
                 oCrossAppNavigator.toExternal({
                     target: {
-                        shellHash: hash
+                        shellHash: hash.split("?")[0]
                     }
                 }); // navigate to Supplier application
 
@@ -12646,7 +12647,7 @@ sap.ui.define([
 
                 oCrossAppNavigator.toExternal({
                     target: {
-                        shellHash: hash
+                        shellHash: hash.split("?")[0]
                     }
                 }); // navigate to Supplier application
 
