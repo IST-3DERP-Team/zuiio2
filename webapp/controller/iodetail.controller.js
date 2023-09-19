@@ -6172,6 +6172,8 @@ sap.ui.define([
             },
 
             onIOTransfer: async function() {
+                Common.openProcessingDialog(this, "Processing...");
+
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel();
                 var oPlant = [];
@@ -6194,6 +6196,7 @@ sap.ui.define([
 
                 if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
                     MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
+                    Common.closeProcessingDialog(this);
                     return;
                 }
 
@@ -6201,6 +6204,7 @@ sap.ui.define([
                     method: "POST",
                     success: function (oData, oResponse) {
                         console.log(oData);
+                        Common.closeProcessingDialog(me);
                         if (oData.ISVALID === "X") {
                             oPlant = oData["N_TrxProdPlant"].results.filter(fItem => fItem.CODE !== me.getView().byId("PRODPLANT").getValue());
 
@@ -6220,7 +6224,7 @@ sap.ui.define([
                             }
 
                             me._TrxDialog.setTitle(me.getView().getModel("ddtext").getData()["TXTFULLIOXFER"]);
-                            me._TrxDialog.open();
+                            me._TrxDialog.open();                            
                         }
                         else {
                             oData["N_OpenPR"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
@@ -6240,9 +6244,8 @@ sap.ui.define([
                                 )
             
                                 me.getView().addDependent(me._TrxResultInvalidDialog);
-            
+
                                 var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
-                                console.log(oIconTabBar)
 
                                 oIconTabBar.getItems().forEach(item => {
                                     if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
@@ -6262,13 +6265,20 @@ sap.ui.define([
                             
                             me._TrxResultInvalidDialog.setTitle(me.getView().getModel("ddtext").getData()["TXTFULLIOXFER"]);
                             me._TrxResultInvalidDialog.open();
+
+                            var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
+
+                            if (oData["N_OpenMR"].results.length > 0) { oIconTabBar.setSelectedKey("openmr") }
+                            else if (oData["N_OpenDeliveries"].results.length > 0) { oIconTabBar.setSelectedKey("opendlv") }
+                            else if (oData["N_OpenPR"].results.length > 0) { oIconTabBar.setSelectedKey("openpr") }
+                            else if (oData["N_OpenVPO"].results.length > 0) { oIconTabBar.setSelectedKey("openvpo") }
+                            else if (oData["N_OpenMRP"].results.length > 0) { oIconTabBar.setSelectedKey("openmrp") }
                         }
-                        // MessageBox.information("IO# " + _newIONo + " generated.");
-                        // resolve();
                     },
                     error: function (err) {
-                        // MessageBox.error("Error encountered when saving the IO");
-                        // resolve();
+                        me.unLock();
+                        Common.closeProcessingDialog(me);
+                        MessageBox.error(me.getView().getModel("ddtext").getData()["INFO_ERROR"] + " " + err.message);
                     }
                 });
             },
@@ -6338,7 +6348,7 @@ sap.ui.define([
 
                         me.unLock();
                         me._TrxDialog.close();
-                     },
+                    },
                     error: function (err) {
                         MessageBox.error(me.getView().getModel("ddtext").getData()["INFO_ERROR"] + " " + err.message);
                         me.unLock();

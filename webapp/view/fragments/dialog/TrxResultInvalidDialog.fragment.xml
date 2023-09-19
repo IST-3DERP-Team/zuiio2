@@ -32,37 +32,37 @@
                             class="sapUiTinyMargin">
                             <uit:columns>
                                 <uit:Column width="150px">
-                                    <Label text="{ddtext>/RSVNO}" />
+                                    <Label text="{ddtext>/RSVNO}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{RSVNO}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="100px">
-                                    <Label text="{ddtext>/RSVYR}" />
-                                    <uit:template>
-                                        <Text text="{RSVYR}" wrapping="false" />
-                                    </uit:template>
-                                </uit:Column>                   
-                                <uit:Column width="100px">
-                                    <Label text="{ddtext>/RSPOS}" />
+                                <uit:Column width="80px">
+                                    <Label text="{ddtext>/RSPOS}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{RSPOS}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="100px">
-                                    <Label text="{ddtext>/BWART}" />
+                                <uit:Column width="80px">
+                                    <Label text="{ddtext>/RSVYR}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{RSVYR}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="250px">
+                                    <Label text="{ddtext>/BWART}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{BWART}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="80px" hAlign="Center">
-                                    <Label text="{ddtext>/CLOSED}" />
+                                    <Label text="{ddtext>/CLOSED}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{CLOSED}" editable="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="80px" hAlign="Center">
-                                    <Label text="{ddtext>/DELETED}" />
+                                    <Label text="{ddtext>/DELETED}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{DELETED}" editable="false" />
                                     </uit:template>
@@ -79,25 +79,25 @@
                             class="sapUiTinyMargin">
                             <uit:columns>
                                 <uit:Column width="150px">
-                                    <Label text="{ddtext>/DLVNO}" />
+                                    <Label text="{ddtext>/DLVNO}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{DLVNO}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="120px">
-                                    <Label text="{ddtext>/DLVTYP}" />
+                                <uit:Column width="250px">
+                                    <Label text="{ddtext>/DLVTYP}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{DLVTYP}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>                   
-                                <uit:Column width="150px">
-                                    <Label text="{ddtext>/STATUSCD}" />
+                                <uit:Column width="250px">
+                                    <Label text="{ddtext>/STATUSCD}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{STATUSCD}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="80px" hAlign="Center">
-                                    <Label text="{ddtext>/DELETED}" />
+                                    <Label text="{ddtext>/DELETED}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{DELETED}" editable="false" />
                                     </uit:template>
@@ -114,25 +114,25 @@
                             class="sapUiTinyMargin">
                             <uit:columns>
                                 <uit:Column width="150px">
-                                    <Label text="{ddtext>/BANFN}" />
+                                    <Label text="{ddtext>/BANFN}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{BANFN}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="100px">
-                                    <Label text="{ddtext>/BNFPO}" />
+                                    <Label text="{ddtext>/BNFPO}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{BNFPO}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>                   
-                                <uit:Column width="100px" hAlign="Center">
-                                    <Label text="{ddtext>/LOEKZ}" />
+                                <uit:Column width="200px" hAlign="Center">
+                                    <Label text="{ddtext>/LOEKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{LOEKZ}" editable="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="80px" hAlign="Center">
-                                    <Label text="{ddtext>/EBAKZ}" />
+                                <uit:Column width="200px" hAlign="Center">
+                                    <Label text="{ddtext>/EBAKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{EBAKZ}" editable="false" />
                                     </uit:template>
@@ -149,25 +149,25 @@
                             class="sapUiTinyMargin">
                             <uit:columns>
                                 <uit:Column width="150px">
-                                    <Label text="{ddtext>/EBELN}" />
+                                    <Label text="{ddtext>/EBELN}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{EBELN}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="100px">
-                                    <Label text="{ddtext>/EBELP}" />
+                                    <Label text="{ddtext>/EBELP}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{EBELP}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="100px" hAlign="Center">
-                                    <Label text="{ddtext>/LOEKZ}" />
+                                <uit:Column width="200px" hAlign="Center">
+                                    <Label text="{ddtext>/LOEKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{LOEKZ}" editable="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="80px" hAlign="Center">
-                                    <Label text="{ddtext>/ELIKZ}" />
+                                <uit:Column width="200px" hAlign="Center">
+                                    <Label text="{ddtext>/ELIKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{ELIKZ}" editable="false" />
                                     </uit:template>
@@ -184,19 +184,19 @@
                             class="sapUiTinyMargin">
                             <uit:columns>
                                 <uit:Column width="150px">
-                                    <Label text="{ddtext>/TRANSNO}" />
+                                    <Label text="{ddtext>/TRANSNO}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{TRANSNO}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                                 <uit:Column width="100px">
-                                    <Label text="{ddtext>/TRANSITM}" />
+                                    <Label text="{ddtext>/TRANSITM}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{TRANSITM}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>                   
-                                <uit:Column width="150px">
-                                    <Label text="{ddtext>/MRPTYP}" />
+                                <uit:Column width="250px">
+                                    <Label text="{ddtext>/MRPTYP}" wrapping="true" />
                                     <uit:template>
                                         <Text text="{MRPTYP}" wrapping="false" />
                                     </uit:template>
