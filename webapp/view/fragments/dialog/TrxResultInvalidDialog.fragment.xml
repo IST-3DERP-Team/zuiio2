@@ -1,0 +1,217 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+        xmlns:uit="sap.ui.table"
+        id="fragment-trxresult" 
+        fragmentName="trxresult">
+    <Dialog contentWidth="750px"
+        contentHeight="500px"
+        title="Full IO Transfer"
+        resizable="true"
+        draggable="true">
+        <subHeader>
+            <Toolbar>
+                <Label class="sapUiTinyMarginBegin" text="Cannot proceed, please see open transaction/s." />
+            </Toolbar>           
+        </subHeader>
+        <content>
+            <IconTabBar id="itbTrxResult"
+                expanded="{device>/isNoPhone}" 
+                expandable="false"
+                stretchContentHeight="true" 
+                applyContentPadding="false"
+                class="trxres">
+                <items>
+                    <IconTabFilter text="Open MR" key="openmr">
+                        <uit:Table id="openMRTab"
+                            rows="{/openMRRows}"
+                            selectionMode="None"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/RSVNO}" />
+                                    <uit:template>
+                                        <Text text="{RSVNO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/RSVYR}" />
+                                    <uit:template>
+                                        <Text text="{RSVYR}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/RSPOS}" />
+                                    <uit:template>
+                                        <Text text="{RSPOS}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/BWART}" />
+                                    <uit:template>
+                                        <Text text="{BWART}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="80px" hAlign="Center">
+                                    <Label text="{ddtext>/CLOSED}" />
+                                    <uit:template>
+                                        <CheckBox selected="{CLOSED}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="80px" hAlign="Center">
+                                    <Label text="{ddtext>/DELETED}" />
+                                    <uit:template>
+                                        <CheckBox selected="{DELETED}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open Deliveries" key="opendlv">
+                        <uit:Table id="openDLVTab"
+                            rows="{/openDLVRows}"
+                            selectionMode="None"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/DLVNO}" />
+                                    <uit:template>
+                                        <Text text="{DLVNO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="120px">
+                                    <Label text="{ddtext>/DLVTYP}" />
+                                    <uit:template>
+                                        <Text text="{DLVTYP}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/STATUSCD}" />
+                                    <uit:template>
+                                        <Text text="{STATUSCD}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="80px" hAlign="Center">
+                                    <Label text="{ddtext>/DELETED}" />
+                                    <uit:template>
+                                        <CheckBox selected="{DELETED}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open PR" key="openpr">
+                        <uit:Table id="openPRTab"
+                            rows="{/openPRRows}"
+                            selectionMode="None"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/BANFN}" />
+                                    <uit:template>
+                                        <Text text="{BANFN}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/BNFPO}" />
+                                    <uit:template>
+                                        <Text text="{BNFPO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="100px" hAlign="Center">
+                                    <Label text="{ddtext>/LOEKZ}" />
+                                    <uit:template>
+                                        <CheckBox selected="{LOEKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="80px" hAlign="Center">
+                                    <Label text="{ddtext>/EBAKZ}" />
+                                    <uit:template>
+                                        <CheckBox selected="{EBAKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open Vendor PO" key="openvpo">
+                        <uit:Table id="openVPOTab"
+                            rows="{/openVPORows}"
+                            selectionMode="None"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/EBELN}" />
+                                    <uit:template>
+                                        <Text text="{EBELN}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/EBELP}" />
+                                    <uit:template>
+                                        <Text text="{EBELP}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px" hAlign="Center">
+                                    <Label text="{ddtext>/LOEKZ}" />
+                                    <uit:template>
+                                        <CheckBox selected="{LOEKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="80px" hAlign="Center">
+                                    <Label text="{ddtext>/ELIKZ}" />
+                                    <uit:template>
+                                        <CheckBox selected="{ELIKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open MRP" key="openmrp">
+                        <uit:Table id="openMRPTab"
+                            rows="{/openMRPRows}"
+                            selectionMode="None"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/TRANSNO}" />
+                                    <uit:template>
+                                        <Text text="{TRANSNO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/TRANSITM}" />
+                                    <uit:template>
+                                        <Text text="{TRANSITM}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/MRPTYP}" />
+                                    <uit:template>
+                                        <Text text="{MRPTYP}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                </items>
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </layoutData>
+            </IconTabBar>
+        </content> 
+        <buttons>
+            <Button icon="sap-icon://decline" text="{ddtext>/CLOSE}" tooltip="{ddtext>/CLOSE}" press="onTrxResultClose" visible="true" />
+        </buttons>        
+    </Dialog>
+</core:FragmentDefinition>

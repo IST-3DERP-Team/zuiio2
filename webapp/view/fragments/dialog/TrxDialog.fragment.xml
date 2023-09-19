@@ -1,0 +1,50 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+        xmlns:f="sap.ui.layout.form"
+		xmlns:core="sap.ui.core"
+        xmlns:uit="sap.ui.table"
+        id="fragment-trx" 
+        fragmentName="trx">
+    <Dialog contentWidth="400px"
+        contentHeight="300px"
+        title="Full IO Transfer"
+        resizable="true"
+        draggable="true">
+        <content>
+            <IconTabBar id="itbTrx"
+                expanded="{device>/isNoPhone}" 
+                expandable="false"
+                stretchContentHeight="true" 
+                applyContentPadding="false"
+                class="trx">
+                <items>
+                    <IconTabFilter text="" key="plant">
+                        <uit:Table id="trxPlantTab"
+                            rows="{/rows}"
+                            selectionMode="Single"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            selectionBehavior="RowSelector"
+                            class="sapUiTinyMargin">
+                            <uit:columns>
+                                <uit:Column width="350px">
+                                    <Label text="{ddtext>/WERKS}" />
+                                    <uit:template>
+                                        <Text text="{WERKS}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                </items>
+                <layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </layoutData>
+            </IconTabBar>
+        </content> 
+        <buttons>
+            <Button icon="sap-icon://accept" text="{ddtext>/EXECUTE}" tooltip="{ddtext>/EXECUTE}" press="onTrxExecute" visible="true" />
+            <Button icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/CANCEL}" press="onTrxClose" visible="true" />
+        </buttons>        
+    </Dialog>
+</core:FragmentDefinition>
