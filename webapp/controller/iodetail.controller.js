@@ -12600,7 +12600,8 @@ sap.ui.define([
 
                 oCrossAppNavigator.toExternal({
                     target: {
-                        shellHash: hash.split("?")[0]
+                        // shellHash: hash.split("?")[0]
+                        shellHash: "ZSO_3DERP_ORD_STYLE-"+ this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                 }); // navigate to Supplier application
 
@@ -12647,7 +12648,8 @@ sap.ui.define([
 
                 oCrossAppNavigator.toExternal({
                     target: {
-                        shellHash: hash.split("?")[0]
+                        // shellHash: hash.split("?")[0]
+                        shellHash: "ZSO_3DERP_ORD_STYLE-"+ this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
                     }
                 }); // navigate to Supplier application
 
