@@ -238,6 +238,7 @@ sap.ui.define([
                 // this.byId("btnHdrDelete").setVisible(csAction === "display" ? false : true);
                 this.byId("onIOEdit").setVisible(csAction === "display" ? false : true);
                 this.byId("onIORelease").setVisible(csAction === "display" ? false : true);
+                this.byId("onIOTransfer").setVisible(csAction === "display" ? false : true);
                 this.byId("onIOAttribEdit").setVisible(csAction === "display" ? false : true);
                 this.byId("btnCreateStyle").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditColor").setVisible(csAction === "display" ? false : true);
@@ -346,6 +347,7 @@ sap.ui.define([
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("onIOTransfer").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnAddAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnDelAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
 
@@ -453,6 +455,7 @@ sap.ui.define([
 
                     this.byId("onIOEdit").setVisible(false);
                     this.byId("onIORelease").setVisible(false);
+                    this.byId("onIOTransfer").setVisible(false);
                     // this.byId("onIOAttribEdit").setVisible(false);
                     // this.byId("onIOStatEdit").setVisible(false);
                     this.byId("onIOSave").setVisible(true);
@@ -975,6 +978,34 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CCOLOREXISTS" });
                 oDDTextParam.push({ CODE: "ERR_IOMISSINGCOSTCOMP" });
 
+                oDDTextParam.push({ CODE: "TXTFULLIOXFER" });
+                oDDTextParam.push({ CODE: "RSVNO" });
+                oDDTextParam.push({ CODE: "RSVYR" });
+                oDDTextParam.push({ CODE: "RSPOS" });
+                oDDTextParam.push({ CODE: "BWART" });
+                oDDTextParam.push({ CODE: "CLOSED" });
+                oDDTextParam.push({ CODE: "DLVNO" });
+                oDDTextParam.push({ CODE: "DLVTYP" });
+                oDDTextParam.push({ CODE: "BANFN" });
+                oDDTextParam.push({ CODE: "BNFPO" });
+                oDDTextParam.push({ CODE: "LOEKZ" });
+                oDDTextParam.push({ CODE: "EBAKZ" });
+                oDDTextParam.push({ CODE: "EBELN" });
+                oDDTextParam.push({ CODE: "EBELP" });
+                oDDTextParam.push({ CODE: "ELIKZ" });
+                oDDTextParam.push({ CODE: "TRANSNO" });
+                oDDTextParam.push({ CODE: "TRANSITM" });
+                oDDTextParam.push({ CODE: "MRPTYP" });
+                oDDTextParam.push({ CODE: "WERKS" });
+                oDDTextParam.push({ CODE: "EXECUTE" });
+                oDDTextParam.push({ CODE: "INFO_SEL_PLANT" });
+                oDDTextParam.push({ CODE: "INFO_FULLIOTRX_OPENTRANS" });
+                oDDTextParam.push({ CODE: "OPENMR" });
+                oDDTextParam.push({ CODE: "OPENDLV" });
+                oDDTextParam.push({ CODE: "OPENPR" });
+                oDDTextParam.push({ CODE: "OPENVPO" });
+                oDDTextParam.push({ CODE: "OPENMRP" });
+                oDDTextParam.push({ CODE: "INFO_ERROR" });
                 // console.log(oDDTextParam);
 
                 setTimeout(() => {
@@ -4645,9 +4676,11 @@ sap.ui.define([
                 // this.getView().byId("onIORefresh").setVisible(true);
                 this.getView().byId("onIOEdit").setVisible(true);
                 this.getView().byId("onIORelease").setVisible(true);
+                this.getView().byId("onIOTransfer").setVisible(true);
 
                 this.byId("onIOEdit").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("onIORelease").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
+                this.byId("onIOTransfer").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 // this.byId("btnEditAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnAddAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
                 this.byId("btnDelAttach").setVisible(this.getView().getModel("ui").getProperty("/DisplayMode") === "display" ? false : true);
@@ -5337,6 +5370,7 @@ sap.ui.define([
                         await this.setHeaderEditMode();
                         this.getView().byId("onIOEdit").setVisible(false);
                         this.getView().byId("onIORelease").setVisible(false);
+                        this.getView().byId("onIOTransfer").setVisible(false);
                         // this.getView().byId("onIOAttribEdit").setVisible(false);
                         // this.getView().byId("onIOStatEdit").setVisible(false);
                         this.getView().byId("onIOSave").setVisible(true);
@@ -5700,6 +5734,7 @@ sap.ui.define([
                         //Set Button Visibility for Read Mode
                         this.byId("onIOEdit").setVisible(true);
                         this.byId("onIORelease").setVisible(true);
+                        this.byId("onIOTransfer").setVisible(true);
                         // this.byId("git").setVisible(true);
                         // this.byId("onIOStatEdit").setVisible(true);
                         this.byId("onIOSave").setVisible(false);
@@ -6134,6 +6169,192 @@ sap.ui.define([
                     })
                 } else
                     MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
+            },
+
+            onIOTransfer: async function() {
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var oPlant = [];
+
+                var oParam = {
+                    IONO: this.getView().getModel("ui2").getProperty("/currIONo"),
+                    PLANTCD: "",
+                    VALIDATE: "X",
+                    ISVALID: "",
+                    N_TrxProdPlant:[],
+                    N_OpenMR:[],
+                    N_OpenDeliveries:[],
+                    N_OpenPR:[],
+                    N_OpenVPO:[],
+                    N_OpenMRP:[],
+                    N_TrxReturn:[]
+                }
+
+                await this.lock(this);
+
+                if (this.getView().getModel("ui").getProperty("/LockType") === "E") {
+                    MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
+                    return;
+                }
+
+                oModel.create("/TransferSet", oParam, {
+                    method: "POST",
+                    success: function (oData, oResponse) {
+                        console.log(oData);
+                        if (oData.ISVALID === "X") {
+                            oPlant = oData["N_TrxProdPlant"].results.filter(fItem => fItem.CODE !== me.getView().byId("PRODPLANT").getValue());
+
+                            if (!me._TrxDialog) {
+                                me._TrxDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.TrxDialog", me);
+            
+                                me._TrxDialog.setModel(
+                                    new JSONModel({
+                                        rows: oPlant
+                                    })
+                                )
+            
+                                me.getView().addDependent(me._TrxDialog);
+                            }
+                            else {
+                                me._TrxDialog.getModel().setProperty("/rows", oPlant);
+                            }
+
+                            me._TrxDialog.setTitle(me.getView().getModel("ddtext").getData()["TXTFULLIOXFER"]);
+                            me._TrxDialog.open();
+                        }
+                        else {
+                            oData["N_OpenPR"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
+                            oData["N_OpenVPO"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
+
+                            if (!me._TrxResultInvalidDialog) {
+                                me._TrxResultInvalidDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.TrxResultInvalidDialog", me);
+            
+                                me._TrxResultInvalidDialog.setModel(
+                                    new JSONModel({
+                                        openMRRows: oData["N_OpenMR"].results,
+                                        openDLVRows: oData["N_OpenDeliveries"].results,
+                                        openPRRows: oData["N_OpenPR"].results,
+                                        openVPORows: oData["N_OpenVPO"].results,
+                                        openMRPRows: oData["N_OpenMRP"].results
+                                    })
+                                )
+            
+                                me.getView().addDependent(me._TrxResultInvalidDialog);
+            
+                                var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
+                                console.log(oIconTabBar)
+
+                                oIconTabBar.getItems().forEach(item => {
+                                    if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
+                                    else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
+                                    else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
+                                    else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENVPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
+                                    else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
+                                })
+                            }
+                            else {
+                                me._TrxResultInvalidDialog.getModel().setProperty("/openMRRows", oData["N_OpenMR"].results);
+                                me._TrxResultInvalidDialog.getModel().setProperty("/openDLVRows", oData["N_OpenDeliveries"].results);
+                                me._TrxResultInvalidDialog.getModel().setProperty("/openPRRows", oData["N_OpenPR"].results);
+                                me._TrxResultInvalidDialog.getModel().setProperty("/openVPORows", oData["N_OpenVPO"].results);
+                                me._TrxResultInvalidDialog.getModel().setProperty("/openMRPRows", oData["N_OpenMRP"].results);
+                            }
+                            
+                            me._TrxResultInvalidDialog.setTitle(me.getView().getModel("ddtext").getData()["TXTFULLIOXFER"]);
+                            me._TrxResultInvalidDialog.open();
+                        }
+                        // MessageBox.information("IO# " + _newIONo + " generated.");
+                        // resolve();
+                    },
+                    error: function (err) {
+                        // MessageBox.error("Error encountered when saving the IO");
+                        // resolve();
+                    }
+                });
+            },
+
+            onTrxExecute: function() {
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel();
+                var oTable = sap.ui.getCore().byId("trxPlantTab");
+
+                if (oTable.getSelectedIndices().length === 0) {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_SEL_PLANT"]);
+                    return;
+                }
+
+                Common.openProcessingDialog(this, "Processing...");
+                var vPlant = oTable.getModel().getData().rows.filter((fItem, fIndex) => fIndex === oTable.getSelectedIndices()[0])[0].CODE;
+            
+
+                var oParam = {
+                    IONO: this.getView().getModel("ui2").getProperty("/currIONo"),
+                    PLANTCD: vPlant,
+                    VALIDATE: "",
+                    ISVALID: "",
+                    N_TrxProdPlant:[],
+                    N_OpenMR:[],
+                    N_OpenDeliveries:[],
+                    N_OpenPR:[],
+                    N_OpenVPO:[],
+                    N_OpenMRP:[],
+                    N_TrxReturn:[]
+                }
+
+                oModel.create("/TransferSet", oParam, {
+                    method: "POST",
+                    success: function (oData, oResponse) {
+                        console.log(oData);
+                        Common.closeProcessingDialog(me, "Processing...");
+
+                        if (oData["N_TrxReturn"].results[0].Type === "E") {
+                            MessageBox.error(oData["N_TrxReturn"].results[0].Message);
+                        }
+                        else {
+                            MessageBox.information(oData["N_TrxReturn"].results[0].Message);
+
+                            me.getView().getModel("headerData").setProperty("/STATUSCD", "CNL");
+                            me.getView().getModel("ui2").setProperty("/iostatus", "CNL");
+                            me.setButtonAccess();
+
+                            // me.getView().getModel("ui2").setProperty("/currIONo", "");
+                            // me._ioNo = "";
+                            // me.refreshHeaderData();
+
+                            // var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+                            // var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+                            //     target: {
+                            //         semanticObject: "ZSO_3DERP_ORD_IO",
+                            //         action: "change&/RouteIODetail/" + vIONo + "/" + vSBU + "/" + vStyle + "/itfIOHDR"
+                            //     }
+                            // })) || ""; 
+
+                            // oCrossAppNavigator.toExternal({
+                            //     target: {
+                            //         shellHash: hash
+                            //     }
+                            // });
+                        }
+
+                        me.unLock();
+                        me._TrxDialog.close();
+                     },
+                    error: function (err) {
+                        MessageBox.error(me.getView().getModel("ddtext").getData()["INFO_ERROR"] + " " + err.message);
+                        me.unLock();
+                        me._TrxDialog.close();
+                    }
+                });
+            },
+
+            onTrxClose: function() {
+                this.unLock();
+                this._TrxDialog.close();
+            },
+
+            onTrxResultClose: function() {
+                this.unLock();
+                this._TrxResultInvalidDialog.close();
             },
 
             //******************************************* */
@@ -6999,6 +7220,7 @@ sap.ui.define([
                 let strIOStatus = this.getView().getModel("ui2").getProperty("/iostatus");
                 this.byId("onIOEdit").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("onIORelease").setVisible(strIOStatus === "CNL" ? false : true);
+                this.byId("onIOTransfer").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("onIOAttribEdit").setVisible(strIOStatus === "CNL" ? false : true);                
                 this.byId("btnCreateStyle").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnEditColor").setVisible(strIOStatus === "CNL" ? false : true);
@@ -8292,6 +8514,7 @@ sap.ui.define([
 
                                 this.byId("onIOEdit").setVisible(false);
                                 this.byId("onIORelease").setVisible(false);
+                                this.byId("onIOTransfer").setVisible(false);
                             }
                             else if (arg === "costHdr") {
                                 this.byId("btnNewCostHdr").setVisible(false);
@@ -8473,6 +8696,7 @@ sap.ui.define([
 
                         this.byId("onIOEdit").setVisible(true);
                         this.byId("onIORelease").setVisible(true);
+                        this.byId("onIOTransfer").setVisible(true);
                     }
                     else if (arg === "costHdr") {
                         this.byId("btnNewCostHdr").setVisible(true);
@@ -10452,6 +10676,7 @@ sap.ui.define([
 
                                 me.byId("onIOEdit").setVisible(true);
                                 me.byId("onIORelease").setVisible(true);
+                                me.byId("onIOTransfer").setVisible(true);
                             }
                             
                             me.setActiveRowHighlightByTableId(arg + "Tab");
@@ -12279,6 +12504,7 @@ sap.ui.define([
 
                             this.byId("onIOEdit").setVisible(true);
                             this.byId("onIORelease").setVisible(true);
+                            this.byId("onIOTransfer").setVisible(true);
                         }
                         else if (this._sTableModel === "costHdr") {
                             this.byId("btnNewCostHdr").setVisible(true);

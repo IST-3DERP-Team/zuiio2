@@ -236,3 +236,11 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 .ioAttachments .sapUiFup {
     display: none !important;
 }
+
+.trx .sapMITH {
+    display: none !important;
+}
+
+.trxres .sapMITBHead {
+    padding: 0 !important;
+}

@@ -15,6 +15,7 @@
         <!-- <Button id = "onIORefresh" type="Ghost"  icon="sap-icon://refresh" tooltip="Refresh" press="onIORefresh('IOHDR')" visible="true"/> -->
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="{ddtext>/TTEDITIO}" press="onIOEdit('IOHDR')" visible="true"/>
         <Button id = "onIORelease" type="Ghost"  icon="sap-icon://open-command-field" text="{ddtext>/TXTRELIO}" tooltip="{ddtext>/TXTRELIO}" press="onIORelease('IOHDR')" visible="true"/>
+        <Button id = "onIOTransfer" type="Ghost"  icon="sap-icon://journey-depart" text="{ddtext>/TXTFULLIOXFER}" tooltip="{ddtext>/TXTFULLIOXFER}" press="onIOTransfer" visible="true"/>
         <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" text="{ddtext>/SAVE}" tooltip="{ddtext>/SAVE}" press="onIOSave('IOHDR')" visible="false"/>
         <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://sys-cancel" text="{ddtext>/CANCEL}" tooltip="{ddtext>/CANCEL}" press="onIOCancel('IOHDR')" visible="false"/>
     </OverflowToolbar>
