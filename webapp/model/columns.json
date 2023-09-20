@@ -89,17 +89,17 @@
             "ValueHelp": {
                 "show": true
                 , "items": {
-                    "path": "CostSheetModel", 
+                    "path": "CostSheet2Model", 
                     "value": "Version", 
                     "text": "Verdesc"
                 },
                 "SuggestionItems": {
-                    "path": "CostSheetModel>/", 
-                    "text": "{CostSheetModel>Version}", 
-                    "additionalText": "{CostSheetModel>Verdesc}", 
+                    "path": "CostSheet2Model>/", 
+                    "text": "{CostSheet2Model>Version}", 
+                    "additionalText": "{CostSheet2Model>Verdesc}", 
                     "maxSuggestionWidth": "200px" 
                 },
-                "columns": "tvh_csversion"
+                "columns": "tvh_csversion2"
             }
         },
         {   "ColumnName": "CUSTSHIPTO", 
@@ -391,6 +391,20 @@
         {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
         {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
         {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
+    ],
+    "tvh_csversion2": [
+        {"ColumnName": "Cstypever", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "CSVCODE", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Cstypecd", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Vercode", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
+        {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "Version", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
+        {"ColumnName": "Verdesc", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "Csvcd", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "Desc1", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Field3", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
     ],
     "headerData": [
         {

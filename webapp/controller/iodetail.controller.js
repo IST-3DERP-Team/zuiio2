@@ -386,8 +386,10 @@ sap.ui.define([
                 this.getVHSet("/UOMINFOSet", "UOMINFOModel", false, false);
                 this.getVHSet("/SALTERMvhSet", "SalesTermModel", false, false);
                 this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
+                this.getVHSet("/IOCSSHSet", "CostSheet2Model", false, false);
                 this.getVHSet("/COSTCOMPVhSet", "COSTCOMP_MODEL", false, false);
                 this.getVHSet("/PurPlantSet", "PurPlantModel", true, true);
+                this.getVHSet("/DLVIODETCHKSet", "DlvIODetChkModel", false, false);
 
                 me.SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
 
@@ -1008,6 +1010,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "OPENVPO" });
                 oDDTextParam.push({ CODE: "OPENMRP" });
                 oDDTextParam.push({ CODE: "INFO_ERROR" });
+                oDDTextParam.push({ CODE: "CSVCODE" });
                 // console.log(oDDTextParam);
 
                 setTimeout(() => {
@@ -2581,6 +2584,8 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable = this.getView().byId(sTabId);
 
+                console.log(sTabId);
+
                 // console.log(sTabId);
                 // console.log("setIOTableColumns");
                 // console.log(oTable);
@@ -2591,6 +2596,11 @@ sap.ui.define([
                 oTable.bindColumns("/columns", function (index, context) {
                     var sColumnId = context.getObject().ColumnName;
                     var sColumnLabel = context.getObject().ColumnLabel;
+
+                    if(sTabId === "IODLVTab" && sColumnId === "VERSION") {
+                        sColumnLabel = "Costing Version";
+                    }
+
                     var sColumnWidth = context.getObject().ColumnWidth;
                     var sColumnVisible = context.getObject().Visible;
                     var sColumnSorted = context.getObject().Sorted;
@@ -4251,7 +4261,7 @@ sap.ui.define([
                                 // resolve();
                             }
                         });
-                    } else if (sModelName === "CostSheetModel") {
+                    } else if (sModelName === "CostSheetModel" || sModelName === "CostSheet2Model" || sModelName === "DlvIODetChkModel") {
                         var cIONo = this.getView().getModel("ui2").getProperty("/currIONo");
                         oSHModel.read(sEntitySet, {
                             urlParameters: {
@@ -4260,10 +4270,27 @@ sap.ui.define([
                             success: function (oData, oResponse) {
                                 // console.log(sModelName);
                                 // console.log("sModelName", oData);
+                                let RELStatFilter = false; 
 
-                                oJSONModel.setData(oData.results);
+                                if(sModelName === "CostSheet2Model") {
+                                    oData.results.forEach(item => {
+                                        if(item.FIELD3 === "ARCV")
+                                            RELStatFilter = true;
+                                    })
+                                }
+
+                                if(sModelName === "CostSheetModel" || sModelName === "DlvIODetChkModel")
+                                    oJSONModel.setData(oData.results);
+
+                                    if(sModelName === "CostSheet2Model") {
+                                        if(RELStatFilter)
+                                            oJSONModel.setData(oData.results.filter(item => item.COSTSTATUS === 'REL'));
+                                            else
+                                            oJSONModel.setData(oData.results);
+                                    }
+                                
                                 oView.setModel(oJSONModel, sModelName);
-                                // console.log("CostSheetModel", oView.setModel(oJSONModel, sModelName));
+                                console.log(sModelName, oView.setModel(oJSONModel, sModelName));
                             },
                             error: function (err) {
                             }
@@ -5338,7 +5365,7 @@ sap.ui.define([
                 if (key == 'itfIOHDR') {
                     // console.log("Icon Tab Bar Select Changed");
                     this.onIORefresh("IOHDR");
-                }
+                } 
             },
 
             onIORefresh: async function (source) {
@@ -10318,6 +10345,8 @@ sap.ui.define([
                                 // this._oModelColumns = oModelColumns.getData();
                                 switch (arg) {
                                     case "IODLV":
+                                        await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+
                                         await me.getIODLVData();
                                         me._bIODLVChanged = false;
                                         break;
@@ -10791,6 +10820,8 @@ sap.ui.define([
                             // this._oModelColumns = oModelColumns.getData();
                             switch (arg) {
                                 case "IODLV":
+                                    await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                                    
                                     await me.getIODLVData();
                                     me._bIODLVChanged = false;
                                     break;
@@ -12403,6 +12434,7 @@ sap.ui.define([
                 oSource.setValueState(isInvalid ? "Error" : "None");
 
                 oSource.getSuggestionItems().forEach(item => {
+                    // console.log(item);
                     if (item.getProperty("key") === oSource.getValue().trim()) {
                         isInvalid = false;
                         oSource.setValueState(isInvalid ? "Error" : "None");
@@ -12422,14 +12454,14 @@ sap.ui.define([
                         }
                     }
                     
-                    // console.log(this._sTableModel);
+                    console.log("Handle Value Help", this._sTableModel, oSource.getSelectedKey());
                     if(this._sTableModel === "IODLV") {
-                        console.log("CostSheetModel", this.getView().getModel("CostSheetModel").getData());
-                        var cslist = this.getView().getModel("CostSheetModel").getData().filter(fItem => fItem.Cstype === oSource.getSelectedKey());
+                        var cslist = this.getView().getModel("CostSheet2Model").getData().filter(fItem => fItem.Version === oSource.getSelectedKey());
                         if (cslist.length === 1) {
-                            this.getView().getModel("CostSheetModel").getData().filter(fItem => fItem.Cstype === oSource.getSelectedKey()).forEach(item => {
-                                // console.log(this.byId("ioMatListTab").getModel());
+                            this.getView().getModel("CostSheet2Model").getData().filter(fItem => fItem.Version === oSource.getSelectedKey()).forEach(item => {
+                                console.log(item);
                                 this.byId("IODLVTab").getModel().setProperty(sRowPath + "/VERSION", item.Version);
+                                this.byId("IODLVTab").getModel().setProperty(sRowPath + "/CSTYPE", item.Cstype);
                             })
                         }
                     }
@@ -12660,7 +12692,7 @@ sap.ui.define([
                 let iono = me._ioNo.length > 0 ? me._ioNo : this.getView().getModel("ui2").getProperty("/currIONo");
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
 
-                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternalAsync({
                     target: {
                         semanticObject: "ZSO_3DERP_ORD_STYLE",
                         action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
@@ -12708,7 +12740,7 @@ sap.ui.define([
                 var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
                 var pIONO = me.getView().getModel("ui2").getProperty("/currIONo");
 
-                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+                var hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternalAsync({
                     target: {
                         semanticObject: "ZSO_3DERP_ORD_STYLE",
                         action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
@@ -14998,6 +15030,9 @@ sap.ui.define([
                 else {
                     me.onBatchSave(arg);
                 }
+
+                //reload IO Costing Sheet Search Help for IO Details
+                me.getVHSet("/IOCSSHSet", "CostSheet2Model", false, false);
             },
 
             beforeOpenCreateCosting: function (oEvent) {

@@ -565,6 +565,7 @@ sap.ui.define([
         handleTableValueHelpSelect: function (oEvent) {
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
             console.log("handleTableValueHelpSelect", sRowPath);
+            console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setValueState("None");
 
