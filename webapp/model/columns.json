@@ -90,13 +90,13 @@
                 "show": true
                 , "items": {
                     "path": "CostSheet2Model", 
-                    "value": "Version", 
-                    "text": "Verdesc"
+                    "value": "VERSION", 
+                    "text": "VERDESC"
                 },
                 "SuggestionItems": {
                     "path": "CostSheet2Model>/", 
-                    "text": "{CostSheet2Model>Version}", 
-                    "additionalText": "{CostSheet2Model>Verdesc}", 
+                    "text": "{CostSheet2Model>VERSION}", 
+                    "additionalText": "{CostSheet2Model>VERDESC}", 
                     "maxSuggestionWidth": "200px" 
                 },
                 "columns": "tvh_csversion2"
@@ -393,18 +393,18 @@
         {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
     ],
     "tvh_csversion2": [
-        {"ColumnName": "Cstypever", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
-        {"ColumnName": "CSVCODE", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "Cstypecd", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "Vercode", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "Cstype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
+        {"ColumnName": "CSTYPEVER", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "CSTYPECD", "DataType": "STRING", "ColumnWidth": "175px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "CSVCODE", "DataType": "STRING", "ColumnWidth": "175px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "VERCODE", "DataType": "STRING", "ColumnWidth": "175px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "CSTYPE", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
         {"ColumnName": "Iono", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
-        {"ColumnName": "Version", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
-        {"ColumnName": "Verdesc", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
-        {"ColumnName": "Csvcd", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
-        {"ColumnName": "Desc1", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
-        {"ColumnName": "Coststatus", "DataType": "STRING", "ColumnWidth": "150px", "Visible": true, "Key": false, "Value": true},
-        {"ColumnName": "Field3", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
+        {"ColumnName": "VERSION", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": true, "Value": true},
+        {"ColumnName": "VERDESC", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "CSVCD", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true},
+        {"ColumnName": "COSTSTATUS", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "FIELD3", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": true}
     ],
     "headerData": [
         {

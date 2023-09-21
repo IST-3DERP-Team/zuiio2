@@ -2584,12 +2584,6 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable = this.getView().byId(sTabId);
 
-                console.log(sTabId);
-
-                // console.log(sTabId);
-                // console.log("setIOTableColumns");
-                // console.log(oTable);
-
                 oTable.getModel().setProperty("/columns", oColumns);
 
                 //bind the dynamic column to the table
@@ -2606,29 +2600,13 @@ sap.ui.define([
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
-
-                    // console.log(sColumnDataType);
-
-                    // if(sTabId === "iodetMatTab"){
-                    //     console.log(sColumnId);
-                    //     console.log(sColumnDataType);
-                    // }
+                    
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
-                    // console.log(sColumnDataType);
-
-                    var oText;
-                    if (sColumnId === "STATUSCD") {
-                        oText = new sap.tnt.InfoLabel({
-                            text: "{" + sColumnId + "}",
-                            colorScheme: "{= ${" + sColumnId + "} === 'CLS' ? 5 : ${" + sColumnId + "} === 'CNL' ? 3: ${" + sColumnId + "} === 'CRT' ? 8: ${" + sColumnId + "} === 'MAT' ? 1 : ${" + sColumnId + "} === 'REL' ? 7 : 1}"
-                        })
-                    } else {
-                        var oText = new sap.m.Text({
-                            wrapping: false,
-                            tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
-                        })
-                    }
+                    var oText = new sap.m.Text({
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
+                    })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
 
@@ -2662,71 +2640,68 @@ sap.ui.define([
                             ]
                         });
                     }
-                    
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel }),
-                        template: oText,
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        // filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });     
 
-                    // if (sColumnDataType === "STRING") {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                    //         template: me.columnTemplate(sColumnId, sColumnDataType, sTabId),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // } else if (sColumnDataType === "BOOLEAN") {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                    //         template: new sap.m.CheckBox({
-                    //             selected: "{" + sColumnId + "}",
-                    //             editable: false
-                    //         }),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: "Center",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // } else {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                    //         template: new sap.m.Text({
-                    //             text: "{" + sColumnId + "}",
-                    //             wrapping: true
-                    //         }),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // }
-                });
+                    // return new sap.ui.table.Column({
+                    //     id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //     label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
+                    //     template: oText,
+                    //     width: sColumnWidth + "px",
+                    //     sortProperty: sColumnId,
+                    //     filterProperty: sColumnId,
+                    //     autoResizable: true,
+                    //     visible: sColumnVisible,
+                    //     sorted: sColumnSorted,
+                    //     hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //     sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    // });
+
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
+                });                
 
                 //date/number sorting
                 oTable.attachSort(function (oEvent) {
@@ -13312,19 +13287,66 @@ sap.ui.define([
                     //     })
                     // }
 
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
-                        template: oText,
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    // return new sap.ui.table.Column({
+                    //     id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //     label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
+                    //     template: oText,
+                    //     width: sColumnWidth + "px",
+                    //     sortProperty: sColumnId,
+                    //     filterProperty: sColumnId,
+                    //     autoResizable: true,
+                    //     visible: sColumnVisible,
+                    //     sorted: sColumnSorted,
+                    //     hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //     sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    // });
+
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
                 });
             },
 
