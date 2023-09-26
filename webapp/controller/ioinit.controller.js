@@ -621,9 +621,9 @@ sap.ui.define([
 
                     if (oEvent.getParameter("sortOrder") === "Descending") {
                         bDescending = true;
-                        oEvent.getParameter("column").setSortOrder("Descending");
+                        oEvent.getParameter("column").setSortOrder("Descending");  //sort icon descending
                     } else {
-                        oEvent.getParamter("column").setSortOrder("Ascending");
+                        oEvent.getParamter("column").setSortOrder("Ascending");   //sort icon ascending
                     }
 
                     var oSorter = new sap.ui.model.Sorter(sPath, bDescending);
@@ -932,7 +932,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: "IODynTable" + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             // template: new sap.m.Text({
                             //     text: "{" + sColumnId + "}",
                             //     wrapping: false
@@ -953,7 +953,7 @@ sap.ui.define([
                         // console.log("BOOLEAN : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: "IODynTable" + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             template: new sap.m.CheckBox({
                                 selected: "{" + sColumnId + "}",
                                 editable: false
@@ -971,7 +971,7 @@ sap.ui.define([
                         // console.log(sColumnDataType + " : " + sColumnId);
                         return new sap.ui.table.Column({
                             id: "IODynTable" + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
                             // template: new sap.m.Text({
                             //     text: "{" + sColumnId + "}",
                             //     wrapping: false

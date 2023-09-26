@@ -224,13 +224,13 @@
                     </Menu>
 			    </menu>                    
 		        </MenuButton>
-                    <Button id="btnCopy" text="{ddtext>/COPYIO}" icon="sap-icon://copy" tooltip="{ddtext>/COPYIO}" press="onCopyIO" visible="true"/>
-                    <Button text="{ddtext>/EXPORTTOEXCEL}" icon="sap-icon://excel-attachment" tooltip="{ddtext>/EXPORTTOEXCEL}" press="onExport" visible="true">
+                    <Button id="btnCopy" icon="sap-icon://copy" tooltip="{ddtext>/COPYIO}" press="onCopyIO" visible="true"/>
+                    <Button icon="sap-icon://excel-attachment" tooltip="{ddtext>/EXPORTTOEXCEL}" press="onExport" visible="true">
                         <customData>
                             <core:CustomData key="TableName" value="IODynTable" />
                         </customData>
                     </Button>
-                <Button text="{ddtext>/SAVELAYOUT}" icon="sap-icon://grid" tooltip="{ddtext>/SAVELAYOUT}" press="onSaveTableLayout" visible="true"/>
+                <Button icon="sap-icon://grid" tooltip="{ddtext>/SAVELAYOUT}" press="onSaveTableLayout" visible="true"/>
 
             <layoutData>
                 <OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>

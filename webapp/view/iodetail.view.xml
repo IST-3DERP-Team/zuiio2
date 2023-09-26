@@ -61,7 +61,7 @@
                                             <ToolbarSpacer />
                                             <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
-                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
+                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
                                         </OverflowToolbar>
 
                                         <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
