@@ -1303,6 +1303,19 @@ sap.ui.define([
 
                 this.onCancelImportPO();
             },
+            
+            onfragmentSplitDlv: async function (tableName) {
+                var me = this;
+                var sTableName = tableName;                
+
+                await this.refreshHeaderData();
+                await this.reloadIOData('IODLVTab', '/IODLVSet');
+                this._bIODLVChanged = false;
+                await this.reloadIOData('IODETTab', '/IODETSet');
+                this._bIODETChanged = false;
+
+                this.onCancelImportPO();
+            },
 
             getImportPOData: async function () {
                 // console.log("getImportPOData");
@@ -1524,6 +1537,49 @@ sap.ui.define([
                         if (!me._ImportPODialog) {
                             // console.log("initialize Import PO Dialog");
                             me._ImportPODialog = sap.ui.xmlfragment("zuiio2.view.fragments.ImportPO", me);
+                            // me.getView().addDependent(me._ImportPODialog);
+
+                            var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                            var oModelColumns = new JSONModel();
+                            await oModelColumns.loadData(sPath);
+
+                            var oColumns = oModelColumns.getData();
+                            this._oModelColumns = oModelColumns.getData();
+
+                            var oTable = sap.ui.getCore().byId("ImportPOTab");
+                            oTable.setModel(new JSONModel({
+                                columns: [],
+                                rows: []
+                            }));
+
+                            this.getSearchDynamicTableColumns("IMPORTPO2", "ZDV_IMPORT_PO2", "ImportPOTab", oColumns);
+
+                            me.getView().addDependent(me._ImportPODialog);
+
+                        }
+                        me._ImportPODialog.open();
+                    } else
+                        MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
+                }
+            },
+
+            onSplitDlv: async function (source) {
+                var me = this;
+                var sSource = source;
+                var hasData = false;
+                if (sSource === "IODLVTab") {
+
+                    var currStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+                    var currCustSoldTo = this.getView().byId("SOLDTOCUST").getValue();
+                    var currIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                    var currDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+
+                    await this.lock(this);
+                    if (this.getView().getModel("ui").getProperty("/LockType") !== "E") {
+                        if (!me._ImportPODialog) {
+                            // console.log("initialize Import PO Dialog");
+                            me._ImportPODialog = sap.ui.xmlfragment("zuiio2.view.fragments.SplitDelivery", me);
                             // me.getView().addDependent(me._ImportPODialog);
 
                             var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -16454,6 +16510,14 @@ sap.ui.define([
                 this._ImportPODialog = null;
 
                 this.unLock();
+            },
+
+            onCancelSplitDlv: function () {
+                this._SplitDlvDialog.close();
+                this._SplitDlvDialog.destroy();
+                this._SplitDlvDialog = null;
+
+                // this.unLock();
             },
 
             isValidDate(value) {
