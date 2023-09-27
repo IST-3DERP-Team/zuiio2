@@ -11492,6 +11492,54 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg == "costDtls") {
+                                        // var bEnabled = true;
+                                        // console.log("edit", this, this.value)
+
+                                        var oInput = new sap.m.Input({
+                                            type: "Text",
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            // change: this.onNumberChange.bind(this),
+                                            change: this.onIODETNumberLiveChange.bind(this),
+                                            // enabled: this.test.bind(this)
+                                            enabled: {
+                                                path: "",
+                                                formatter: function () {
+                                                    var bResult = false;
+                                                    var iRow = parseInt(this.getBindingContext().sPath.replace("/rows/", ""));
+                                                    var oData = this.getBindingContext().oModel.oData.rows[iRow];
+
+                                                    if (oData.COSTCOMPCD == "CM") {
+                                                        bResult = false;
+                                                    } else {
+                                                        var aDataConfigHdr = me.getView().getModel("COSTCONFIGHDR_MODEL").getData().filter(
+                                                            x => x.COSTCOMPCD == oData.COSTCOMPCD );
+
+                                                        if (aDataConfigHdr.length > 0) {
+                                                            
+                                                            if (aDataConfigHdr[0].STATUSCDCS == "01") return true;
+                                                            else return false;
+                                                        } 
+                                                        else return false;
+                                                        
+                                                    }
+
+                                                    return bResult;
+
+                                                    
+                                                    
+                                                    console.log("DataModel", oData)
+
+                                                    if (oData.COSTCOMPCD == "NETBAL") return true;
+                                                    else return false;
+                                                    
+                                                }
+                                            }
+                                        });
+
+                                        col.setTemplate(oInput);
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: sap.m.InputType.Number,
@@ -14674,6 +14722,17 @@ sap.ui.define([
                     },
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTCHECKREL_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.read('/ConfigHdrSet', {
+                    urlParameters: {
+                        "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                    },
+                    success: function (oData) {
+                        //console.log("ConfigHdrSet", oData.results)
+                        me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
                     },
                     error: function (err) { }
                 })
