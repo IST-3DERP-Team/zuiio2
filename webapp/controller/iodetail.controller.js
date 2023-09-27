@@ -1012,6 +1012,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "OPENMRP" });
                 oDDTextParam.push({ CODE: "INFO_ERROR" });
                 oDDTextParam.push({ CODE: "CSVCODE" });
+                oDDTextParam.push({ CODE: "SPLITDLV" });
                 // console.log(oDDTextParam);
 
                 setTimeout(() => {
@@ -6390,11 +6391,13 @@ sap.ui.define([
                     console.log(vIONo, vDlvSeq);
                     this.getView().byId("IODLVTab").getModel().getData().rows.filter(fItem => fItem.IONO === vIONo && fItem.DLVSEQ === vDlvSeq)
                     .forEach(item => {
-                        bDeleted = item.DELETED === true ? true : false;
+                        bDeleted = item.DELETED;
                     })
 
-                    MessageBox.information("Delivery Sequence tagged as deleted.");
-                    return;
+                    if (bDeleted) {
+                        MessageBox.information("Delivery Sequence tagged as deleted.");
+                        return;
+                    }
                 }
 
                 if (this._dataMode === "ADD" && (arg === "IODLV" || arg === "IODET")) {
@@ -8367,11 +8370,13 @@ sap.ui.define([
                     this.getView().byId("IODLVTab").getModel().getData().rows.filter(fItem => fItem.IONO === vIONo && fItem.DLVSEQ === vDlvSeq)
                     .forEach(item => {
                         console.log(item);
-                        bDeleted = item.DELETED === true ? true : false;
+                        bDeleted = item.DELETED;
                     })
 
-                    MessageBox.information("Delivery Sequence tagged as deleted.");
-                    return;
+                    if (bDeleted) {
+                        MessageBox.information("Delivery Sequence tagged as deleted.");
+                        return;
+                    }
                 }
 
                 await this.lock(this);
