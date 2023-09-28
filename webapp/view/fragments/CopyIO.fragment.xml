@@ -53,20 +53,40 @@
                             </f:FormElement>
                             <f:FormElement label="{ddtext>/NEWSEASONCD}">
                                 <f:fields>
-                                    <Input id="newSeasonCd" type="Text" editable="true" showSuggestion="true" showValueHelp="true" suggestionItems="{SeasonsModel>/results}">
-                                        <suggestionItems>
-                                            <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
-                                        </suggestionItems>
-                                    </Input>
+                                    <Input id="newSeasonCd" 
+                                type="Text" 
+                                showSuggestion="true" 
+                                showValueHelp="true" 
+                                editable="true" 
+                                value="{headerData>/SEASONCD}" 
+                                change="onHeaderChange" 
+                                liveChange="onHeaderChange" 
+                                autocomplete="true" 
+                                valueHelpRequest="onSeasonsValueHelp"
+                                suggestionItems="{SeasonsModel>/results}">
+                                <suggestionItems>
+                                    <core:ListItem text="{SeasonsModel>SEASONCD}" additionalText="{SeasonsModel>DESC1}"/>
+                                </suggestionItems>
+                            </Input>
                                 </f:fields>
                             </f:FormElement>
                             <f:FormElement label="{ddtext>/NEWPLANTCD}">
                                 <f:fields>
-                                    <Input id="newPlant" type="Text" editable="true" showSuggestion="true" suggestionItems="{PlantModel>/results}">
-                                    <suggestionItems>
-                                            <core:ListItem text="{PlantModel>PLANTCD}"/>
-                                        </suggestionItems>
-                                    </Input>
+                                    <Input id="newPlant" 
+                                        type="Text" 
+                                        showSuggestion="true" 
+                                        showValueHelp="true" 
+                                        editable="true" 
+                                        value="{headerData>/PRODPLANT}" 
+                                        change="onHeaderChange" 
+                                        liveChange="onHeaderChange"
+                                        autocomplete="true" 
+                                        valueHelpRequest="onPlantValueHelp"
+                                        suggestionItems="{PlantModel>/results}" >
+                                        <suggestionItems>
+                                            <core:ListItem text="{PlantModel>PRODPLANT}" additionalText="{PlantModel>DESCRIPTION}"/>
+                                        </suggestionItems> 
+                                    </Input>                                    
                                 </f:fields>
                             </f:FormElement>
                             <!-- <f:FormElement label="{i18n>SourceStyleCode}">
