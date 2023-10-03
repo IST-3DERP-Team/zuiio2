@@ -19,7 +19,7 @@ sap.ui.define([
             var sModel = oSource.getBindingInfo("value").parts[0].model;
             var sTitle = oSource.getProperty("name") === undefined || oSource.getProperty("name") === "" ? me._inputField : oSource.getProperty("name");
 
-            alert("Table Value Help");
+            // alert("Table Value Help");
             console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]);
             console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]);
             console.log("me._inputId", me._inputId);
@@ -569,7 +569,7 @@ sap.ui.define([
             console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
             console.log("this._inputSource", this._inputSource);
             console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
-            alert(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
+            // alert(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             // this._inputSource.setValue(oEvent.getSource().getModel().getProperty(sRowPath + "/Name") + " (" + oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey") + ")");
             this._inputSource.setValueState("None");

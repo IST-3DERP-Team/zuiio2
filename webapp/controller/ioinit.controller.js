@@ -777,17 +777,17 @@ sap.ui.define([
                 } catch (err) { }
             },
 
-            onSearch: function () {
-                setTimeout(() => {
-                    this.getDynamicTableColumns();
-                }, 100);
+            onSearch: async function () {
+                // setTimeout(() => {
+                    await this.getDynamicTableColumns();
+                // }, 100);
 
-                setTimeout(() => {
-                    this.getStatistics("/IOSTATISTICSSet"); //style statistics
-                }, 100);
+                // setTimeout(() => {
+                    await this.getStatistics("/IOSTATISTICSSet"); //style statistics
+                // }, 100);
             },
 
-            getDynamicTableColumns: function () {
+            getDynamicTableColumns:async function () {
                 var me = this;
                 var sTabId = "IODynTable";
 
@@ -1254,7 +1254,7 @@ sap.ui.define([
             //     });
             // },
 
-            getStatistics: function (EntitySet) {
+            getStatistics:async function (EntitySet) {
                 //select the style statistics
                 var vEntitySet = EntitySet;
                 var oModel = this.getOwnerComponent().getModel();

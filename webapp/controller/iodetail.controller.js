@@ -3146,7 +3146,8 @@ sap.ui.define([
 
                 if(sTabId === "SPLITIODETTab") {
                     oTable = sap.ui.getCore().byId(sTabId);
-                } else {
+                }
+                if(sTabId === "IODETTab"){
                     oTable = this.getView().byId(sTabId);
                 }
                 
@@ -13424,15 +13425,19 @@ sap.ui.define([
                     })
                     await _promiseResult;
 
+                    // alert(retMsg);
                     // if (retMsg === "0") {
                     //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
-                    // } else if (retMsg === "1") {
+                    // } 
+                    // else if (retMsg === "1") {
                     //     me.onRefresh("ioMatList");
                     //     me.getIOSTATUSData(vIONo);
                     //     await me.refreshHeaderData();
                     //     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_IOMATLIST_GENERATED"]);
                     // }
-                    if (hasValid === false) {
+
+                    // alert (hasValid);
+                    if (hasValid === false && retMsg !== "2") {
                         MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_IOMATLIST_GENERATED"]);
                     } else if(hasValid === true) {
                         me.onRefresh("ioMatList");
@@ -13461,6 +13466,12 @@ sap.ui.define([
                 } else {
                     MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROC"]);
                 }
+                
+                //RELOAD IO DETAIL DATA PER IO & DLVSEQ
+                await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+
+                //RELOAD IO DELIVERY DATA PER IO
+                await this.getIODLVData();
             },
 
             async onGenMatList(arg) {
