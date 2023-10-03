@@ -2725,7 +2725,7 @@ sap.ui.define([
                     }
 
                     var oSorter = new sap.ui.model.Sorter(sPath, bDescending); //sorter(columnData, If Ascending(false) or Descending(True))
-                    var oColumn = oColumns.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
+                    var oColumn = pColumn.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
                     var columnType = oColumn[0].DataType;
 
                     if (columnType === "DATETIME") {
@@ -11506,33 +11506,10 @@ sap.ui.define([
                                             enabled: {
                                                 path: "",
                                                 formatter: function () {
-                                                    var bResult = false;
-                                                    var iRow = parseInt(this.getBindingContext().sPath.replace("/rows/", ""));
-                                                    var oData = this.getBindingContext().oModel.oData.rows[iRow];
-
-                                                    if (oData.COSTCOMPCD == "CM") {
-                                                        bResult = false;
-                                                    } else {
-                                                        var aDataConfigHdr = me.getView().getModel("COSTCONFIGHDR_MODEL").getData().filter(
-                                                            x => x.COSTCOMPCD == oData.COSTCOMPCD );
-
-                                                        if (aDataConfigHdr.length > 0) {
-                                                            
-                                                            if (aDataConfigHdr[0].STATUSCDCS == "01") return true;
-                                                            else return false;
-                                                        } 
-                                                        else return false;
-                                                        
-                                                    }
-
-                                                    return bResult;
+                                                    return me.onCostDtlChange(this, sColName);
+                                                    
 
                                                     
-                                                    
-                                                    console.log("DataModel", oData)
-
-                                                    if (oData.COSTCOMPCD == "NETBAL") return true;
-                                                    else return false;
                                                     
                                                 }
                                             }
@@ -11672,9 +11649,34 @@ sap.ui.define([
                             // }
                         })
                 })
+            },
 
+            onCostDtlChange(pThis, pColName) {
+                var bResult = false;
+                var iRow = parseInt(pThis.getBindingContext().sPath.replace("/rows/", ""));
+                var oData = pThis.getBindingContext().oModel.oData.rows[iRow];
 
+                if (oData.COSTCOMPCD == "CM") {
+                    bResult = false;
+                } else {
+                    var aDataConfigHdr = this.getView().getModel("COSTCONFIGHDR_MODEL").getData().filter(
+                        x => x.COSTCOMPCD == oData.COSTCOMPCD );
 
+                    if (aDataConfigHdr.length > 0) {
+                        if (aDataConfigHdr[0].VALTYP == "C" || aDataConfigHdr[0].VALTYP == "F") {
+                            if (pColName == "COST" && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                            else bResult = false;
+                        }
+                        else if (aDataConfigHdr[0].VALTYP == "U" || aDataConfigHdr[0].VALTYP == "P") {
+                            if ((pColName == "COSTPERUN" || pColName == "STDCONSUMP") && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                            else bResult = false;
+                        }
+                        else bResult = false;
+                    } 
+                    else bResult = false;            
+                }
+
+                return bResult;
             },
 
             setRowReadMode(arg) {
@@ -14731,7 +14733,7 @@ sap.ui.define([
                         "$filter": "PLANTCD eq '" + this._prodplant + "'"
                     },
                     success: function (oData) {
-                        //console.log("ConfigHdrSet", oData.results)
+                        console.log("ConfigHdrSet", oData.results)
                         me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
                     },
                     error: function (err) { }
