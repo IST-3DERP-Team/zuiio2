@@ -573,6 +573,14 @@
                                                 alternateRowColors="true"
                                                 rowSelectionChange="onRowChange"> -->
                                         <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                            <t:extension>
+                                                <Toolbar>
+                                                    <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
+                                                    <ToolbarSpacer />
+                                                        <Button id="btnFullScreenIODETMATLST" icon="sap-icon://full-screen" press="onTableResize('IODETMATLST', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                                        <Button id="btnExitFullScreenIODETMATLST" icon="sap-icon://exit-full-screen" press="onTableResize('IODETMATLST', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                                    </Toolbar>
+                                            </t:extension>
                                             <t:layoutData>
                                                 <FlexItemData growFactor="1" baseSize="0%" />
                                             </t:layoutData>

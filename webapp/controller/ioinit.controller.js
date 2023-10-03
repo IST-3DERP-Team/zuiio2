@@ -32,8 +32,8 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
-                this._tableFilter = TableFilter;
-                console.log("this._tableFilter", this._tableFilter);
+                // this._tableFilter = TableFilter;
+                // console.log("this._tableFilter", this._tableFilter);
                 this._colFilters = {};
 
                 // console.log("INITIALIZE START");
@@ -624,9 +624,9 @@ sap.ui.define([
                     }
                 });
 
-                console.log("TableFilter.updateColumnMenu Start");
-                TableFilter.updateColumnMenu("IODynTable", this);
-                console.log("TableFilter.updateColumnMenu end");
+                // console.log("TableFilter.updateColumnMenu Start");
+                // TableFilter.updateColumnMenu("IODynTable", this);
+                // console.log("TableFilter.updateColumnMenu end");
 
                 //remove sort icon of currently sorted column
                 oTable.attachSort(function (oEvent) {
@@ -890,7 +890,7 @@ sap.ui.define([
 
                         me.setChangeStatus(false);
 
-                        TableFilter.applyColFilters(me);
+                        // TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -1017,9 +1017,9 @@ sap.ui.define([
                     }
                 });
 
-                console.log("TableFilter.updateColumnMenu Start");
-                TableFilter.updateColumnMenu("IODynTable", this);
-                console.log("TableFilter.updateColumnMenu end");
+                // console.log("TableFilter.updateColumnMenu Start");
+                // TableFilter.updateColumnMenu("IODynTable", this);
+                // console.log("TableFilter.updateColumnMenu end");
 
                 oTable.bindRows("/rows");
 

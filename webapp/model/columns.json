@@ -65,6 +65,45 @@
             }
         }
     ],
+    "SPLITIODLV": [
+        {
+            "ColumnName": "NEWCUSTSHIPTO",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "SHIPTO_MODEL",
+                    "value": "Shiptocust",
+                    "text": "Name"
+                },
+                "SuggestionItems": {
+                    "path": "SHIPTO_MODEL>/",
+                    "text": "{SHIPTO_MODEL>Shiptocust}",
+                    "additionalText": "{SHIPTO_MODEL>Name}",
+                    "maxSuggestionWidth": "200px"
+                },
+                "columns": "tvh_shiptocust"
+            }
+        },
+        {   "ColumnName": "CUSTSHIPTO", 
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true
+                , "items": {
+                    "path": "SHIPTO_MODEL", 
+                    "value": "Shiptocust", 
+                    "text": "Name"
+                },
+                "SuggestionItems": {
+                    "path": "SHIPTO_MODEL>/", 
+                    "text": "{SHIPTO_MODEL>Shiptocust}", 
+                    "additionalText": "{SHIPTO_MODEL>Name}", 
+                    "maxSuggestionWidth": "200px" 
+                },
+                "columns": "tvh_shiptocust"
+                }
+        }
+    ],
     "IODLV": [        
         {   "ColumnName": "CSTYPE", 
             "TextFormatMode": "ValueKey",
