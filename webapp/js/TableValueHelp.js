@@ -571,7 +571,11 @@ sap.ui.define([
             console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             // alert(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
-            // this._inputSource.setValue(oEvent.getSource().getModel().getProperty(sRowPath + "/Name") + " (" + oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey") + ")");
+            
+            if(oEvent.getSource().getModel().getData().title === "NEWCUSTSHIPTO") {
+                this._inputSource.setValue(oEvent.getSource().getModel().getProperty(sRowPath + "/Name") + " (" + oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey") + ")");
+            }
+            
             this._inputSource.setValueState("None");
 
             // console.log("sRowPath", sRowPath);

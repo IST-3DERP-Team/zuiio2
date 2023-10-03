@@ -1,5 +1,5 @@
 <core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" class="sapUiSizeCompact" xmlns:tnt="sap.tnt" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:t2="sap.m.Table">
-    <Dialog title="Split Delivery" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="100%" contentHeight="100%"
+    <Dialog title="Split Delivery" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="100%" contentHeight="65%"
     escapeHandler=".onCancelSplitDlv" afterClose=".onCancelSplitDlv">
     <Page id="pageSPLITIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet">
     <VBox fitContainer="true">
