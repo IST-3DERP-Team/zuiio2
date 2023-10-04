@@ -61,7 +61,7 @@
                                             <ToolbarSpacer />
                                             <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
-                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://sys-cancel" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
+                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
                                         </OverflowToolbar>
 
                                         <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
@@ -505,7 +505,8 @@
                                         <Button id="btnRefreshDlvSched" type="Ghost" icon="sap-icon://refresh" press="reloadIOData('IODLVTab','/IODLVSet')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                         <Button id="btnSaveDlvSched" type="Ghost" icon="sap-icon://save" press="onBatchSave('IODLV')" tooltip="{ddtext>/SAVE}" visible="false" />
                                         <Button id="btnCancelDlvSched" type="Ghost" icon="sap-icon://sys-cancel" press="onCancel('IODLV')" tooltip="{ddtext>/CANCEL}" visible="false" />
-                                        <Button id="btnImportPODlvSched" type="Ghost" text="Import PO" press="onImportPO('IODLVTab')" tooltip="{ddtext>/IMPORTPO}" visible="true" />
+                                        <Button id="btnSplit" type="Ghost" text="{ddtext>/SPLITDLV}" press="onSplitDlv('IODLVTab')" tooltip="{ddtext>/SPLITDLV}" visible="true" />
+                                        <Button id="btnImportPODlvSched" type="Ghost" text="{ddtext>/IMPORTPO}" press="onImportPO('IODLVTab')" tooltip="{ddtext>/IMPORTPO}" visible="true" />
                                         <Button id="btnGenMatList" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onIOGenMatList" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                             <customData>
                                                 <core:CustomData key="TableName" value="IODLVTab" />
@@ -572,6 +573,14 @@
                                                 alternateRowColors="true"
                                                 rowSelectionChange="onRowChange"> -->
                                         <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                            <t:extension>
+                                                <Toolbar>
+                                                    <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
+                                                    <ToolbarSpacer />
+                                                        <Button id="btnFullScreenIODETMATLST" icon="sap-icon://full-screen" press="onTableResize('IODETMATLST', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                                        <Button id="btnExitFullScreenIODETMATLST" icon="sap-icon://exit-full-screen" press="onTableResize('IODETMATLST', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                                    </Toolbar>
+                                            </t:extension>
                                             <t:layoutData>
                                                 <FlexItemData growFactor="1" baseSize="0%" />
                                             </t:layoutData>

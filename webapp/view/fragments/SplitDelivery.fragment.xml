@@ -1,0 +1,78 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" class="sapUiSizeCompact" xmlns:tnt="sap.tnt" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:t2="sap.m.Table">
+    <Dialog title="Split Delivery" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentWidth="100%" contentHeight="65%"
+    escapeHandler=".onCancelSplitDlv" afterClose=".onCancelSplitDlv">
+    <Page id="pageSPLITIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet">
+    <VBox fitContainer="true">
+        <IconTabBar id="idIconTabBarInlineMode" select="onSelectChanged" headerMode="Inline" selectedKey="itfIOHDR" expanded="{device>/isNoPhone}" stretchContentHeight="false" applyContentPadding="false" class="sapUiNoContentPadding" expandable="false">
+                <items>
+                    <!-- DELIVERY SCHEDULE -->                    
+                    <IconTabFilter text="Order Details" key="itfSPLITDLVSCHED">
+                        <VBox height="100%">
+                        <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
+                            <t:Table id="SPLITIODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                <t:rowSettingsTemplate>
+                                    <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                </t:rowSettingsTemplate>
+                                <t:extension>
+                                    <Toolbar>
+                                        <ToolbarSpacer />
+                                        <Button text="Save" press="onfragmentSplitDlv" visible="true" tooltip="Save" />
+                                        <Button text="Cancel" press="onCancelSplitDlv" visible="true" tooltip="Cancel" />  
+                                    </Toolbar>
+                                </t:extension> 
+                                <t:layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%"/>
+                                </t:layoutData> 
+                            </t:Table>
+                        <!-- </Panel> -->
+
+                        <IconTabBar id="idIconTabBarInlineIODet" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
+                                <items>                                
+                                    <!-- ATTRIBUTES -->
+                                    <IconTabFilter text="Delivery Details" key="itfSPLITDLVDET">
+                                        <t:Table id="SPLITIODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                            <t:rowSettingsTemplate>
+                                                <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
+                                            </t:rowSettingsTemplate>                                           
+                                            <t:layoutData>
+                                                <FlexItemData growFactor="3" baseSize="0%"/>
+                                            </t:layoutData>                             
+                                        </t:Table>
+                                        
+                                    </IconTabFilter>
+                                </items>
+                                <layoutData>
+                                    <FlexItemData growFactor="1" baseSize="0%" />
+                                </layoutData>
+                            </IconTabBar>
+                        </VBox>
+                    </IconTabFilter>
+                </items>
+
+                <layoutData>
+                    <FlexItemData id="fidSplit" growFactor="1" baseSize="0%" />
+                </layoutData>
+
+        </IconTabBar>
+    </VBox>
+        <!-- <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+            <t:Table id="ImportPOTab" 
+                    rows="{IMPORTPODataModel>/results}" 
+                    class="sapUiSizeCompact" 
+                    showColumnVisibilityMenu="true" 
+                    enableColumnFreeze="true" 
+                    enableCellFilter="true" 
+                    selectionMode="MultiToggle" 
+                    selectionBehavior="RowSelector" 
+                    alternateRowColors="true">
+            </t:Table>
+        </Panel>
+        <buttons>
+            <Button text="Select" press="onfragmentSplitDlv" visible="true" tooltip="Select" />
+            <Button text="Cancel" press="onCancelSplitDlv" visible="true" tooltip="Cancel" />
+        </buttons> -->
+
+        
+        </Page>
+    </Dialog>
+</core:FragmentDefinition>
