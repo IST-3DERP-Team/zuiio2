@@ -254,6 +254,7 @@ sap.ui.define([
                 this.byId("btnDeleteDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnCopyDlvSched").setVisible(csAction === "display" ? false : true);
                 this.byId("btnImportPODlvSched").setVisible(csAction === "display" ? false : true);
+                this.byId("btnSplit").setVisible(csAction === "display" ? false : true);
                 this.byId("btnGenMatList").setVisible(csAction === "display" ? false : true);
                 this.byId("btnNewIODet").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditIODet").setVisible(csAction === "display" ? false : true);
@@ -1315,37 +1316,97 @@ sap.ui.define([
                         })
                     })
 
+                    // aDetRows.forEach(item => {
+                    //     this._iosizes.forEach( colSizes => {
+                    //         // paramItemDetail = [];
+                    //         // console.log("colSizes", colSizes);
+                    //         hasMatchingSize = false;
+                    //         this._aColumns["SPLITIODET"].forEach(col => {
+                    //             if(col.ColumnName)
+                    //             // console.log("ColumnName", col.ColumnName);
+                    //             if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
+                                    
+                    //             }
+                    //             else if (col.ColumnName === colSizes.ATTRIBCD + "NEWREVORDERQTY") {
+                    //                 paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
+                    //                 paramItemDetail["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                    //                 hasMatchingSize = true;
+                    //             } 
+                    //             else if (col.ColumnName === "IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY") {
+                    //                 console.log("IO ITEM", col.ColumnName);
+                    //                 console.log(item);
+                    //                 console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
+                    //                 // console.log(item);
+                    //                 paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]
+                    //             } 
+                    //             else if (col.ColumnName === "CUSTCOLOR") {
+                    //                 paramItemDetail["CUSTCOLOR"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                    //             }
+                    //                 // paramItemDetail[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                    //         })
+
+                    //         if (!hasMatchingSize) {
+                    //             paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD;
+                    //             paramItemDetail["REVORDERQTY"] = "0";
+                    //         }
+
+                    //         console.log(paramItemDetail);
+                    //         paramDetail.push({
+                    //             paramItemDetail
+                    //         })
+
+                    //         param["N_Items"].push()
+
+                    //         paramItemDetail = {};
+                    //     })
+                    // })
+
                     aDetRows.forEach(item => {
                         this._iosizes.forEach( colSizes => {
-                            console.log("colSizes", colSizes);
+                            // paramItemDetail = [];
+                            // console.log("colSizes", colSizes);
                             hasMatchingSize = false;
                             this._aColumns["SPLITIODET"].forEach(col => {
+                                if(col.ColumnName)
                                 // console.log("ColumnName", col.ColumnName);
                                 if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
                                     
                                 }
                                 else if (col.ColumnName === colSizes.ATTRIBCD + "NEWREVORDERQTY") {
+                                    paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
                                     paramItemDetail["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
                                     hasMatchingSize = true;
                                 } 
                                 else if (col.ColumnName === "IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY") {
                                     console.log("IO ITEM", col.ColumnName);
-                                    paramItemDetail["IOITEM"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                                } else
-                                    paramItemDetail[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
+                                    console.log(item);
+                                    console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
+                                    // console.log(item);
+                                    paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]
+                                } 
+                                else if (col.ColumnName === "CUSTCOLOR") {
+                                    paramItemDetail["CUSTCOLOR"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
+                                }
                             })
+
+                            if (!hasMatchingSize) {
+                                paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD;
+                                paramItemDetail["REVORDERQTY"] = "0";
+                            }
+
+                            paramDetail.push(paramItemDetail)
+                            paramItemDetail = {};
                         })
-                        // paramDetail = paramItemDetail;
-                        // paramDetail.splice(0, 0, paramItemDetail);
                     })
                 }
 
-                console.log(param);
-                console.log("paramItemDetail", paramItemDetail);
+                param["N_Items"] = paramDetail;
+                console.log("Entity parameter", param);
+
                 // await this.refreshHeaderData();
                 // await this.reloadIOData('IODLVTab', '/IODLVSet');
                 // this._bIODLVChanged = false;
-                // await this.reloadIOData('IODETTab', '/IODETSet');
+                // this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray, "IODETTab");
                 // this._bIODETChanged = false;
 
                 // this.onCancelSplitDlv();
@@ -6876,6 +6937,7 @@ sap.ui.define([
                         // this.byId("btnNewDlvSched").setVisible(false);
                         this.byId("btnRemoveRowDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(false);
+                        this.byId("btnSplit").setVisible(false);
                         this.byId("btnEditDlvSched").setVisible(false);
                         this.byId("btnDeleteDlvSched").setVisible(false);
                         this.byId("btnCopyDlvSched").setVisible(false);
@@ -6896,6 +6958,7 @@ sap.ui.define([
                     } else if (arg === "IODET") {
                         this.byId("btnNewDlvSched").setVisible(false);
                         this.byId("btnImportPODlvSched").setVisible(false);
+                        this.byId("btnSplit").setVisible(false);
                         this.byId("btnEditDlvSched").setVisible(false);
                         this.byId("btnDeleteDlvSched").setVisible(false);
                         this.byId("btnCopyDlvSched").setVisible(false);
@@ -7743,6 +7806,7 @@ sap.ui.define([
                 this.byId("btnDeleteDlvSched").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnCopyDlvSched").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnImportPODlvSched").setVisible(strIOStatus === "CNL" ? false : true);
+                this.byId("btnSplit").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnGenMatList").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnNewIODet").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnEditIODet").setVisible(strIOStatus === "CNL" ? false : true);
@@ -8846,6 +8910,7 @@ sap.ui.define([
 
                         this.byId("btnNewDlvSched").setVisible(false);
                         this.byId("btnImportPODlvSched").setVisible(false);
+                        this.byId("btnSplit").setVisible(false);
                         this.byId("btnEditDlvSched").setVisible(false);
                         this.byId("btnDeleteDlvSched").setVisible(false);
                         this.byId("btnCopyDlvSched").setVisible(false);
@@ -8984,6 +9049,7 @@ sap.ui.define([
                             } else if (arg === "IODLV") {
                                 this.byId("btnNewDlvSched").setVisible(false);
                                 this.byId("btnImportPODlvSched").setVisible(false);
+                                this.byId("btnSplit").setVisible(false);
                                 this.byId("btnEditDlvSched").setVisible(false);
                                 this.byId("btnDeleteDlvSched").setVisible(false);
                                 this.byId("btnCopyDlvSched").setVisible(false);
@@ -9167,6 +9233,7 @@ sap.ui.define([
                         this.byId("btnRemoveRowDlvSched").setVisible(false);
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
+                        this.byId("btnSplit").setVisible(true);
                         this.byId("btnEditDlvSched").setVisible(true);
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
@@ -9187,6 +9254,7 @@ sap.ui.define([
                     } else if (arg === "IODET") {
                         this.byId("btnNewDlvSched").setVisible(true);
                         this.byId("btnImportPODlvSched").setVisible(true);
+                        this.byId("btnSplit").setVisible(true);
                         this.byId("btnEditDlvSched").setVisible(true);
                         this.byId("btnDeleteDlvSched").setVisible(true);
                         this.byId("btnCopyDlvSched").setVisible(true);
@@ -9820,6 +9888,7 @@ sap.ui.define([
                                     if (arg === "IODET") {
                                         me.byId("btnNewDlvSched").setVisible(true);
                                         me.byId("btnImportPODlvSched").setVisible(true);
+                                        me.byId("btnSplit").setVisible(true);
                                         me.byId("btnEditDlvSched").setVisible(true);
                                         me.byId("btnDeleteDlvSched").setVisible(true);
                                         me.byId("btnCopyDlvSched").setVisible(true);
@@ -10008,6 +10077,7 @@ sap.ui.define([
                                     if (arg === "IODET") {
                                         me.byId("btnNewDlvSched").setVisible(true);
                                         me.byId("btnImportPODlvSched").setVisible(true);
+                                        me.byId("btnSplit").setVisible(true);
                                         me.byId("btnEditDlvSched").setVisible(true);
                                         me.byId("btnDeleteDlvSched").setVisible(true);
                                         me.byId("btnCopyDlvSched").setVisible(true);
@@ -10182,6 +10252,7 @@ sap.ui.define([
                                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                                     me.byId("btnNewDlvSched").setVisible(true);
                                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                                    me.byId("btnSplit").setVisible(true);
                                                     me.byId("btnEditDlvSched").setVisible(true);
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -10204,6 +10275,7 @@ sap.ui.define([
                                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                                     me.byId("btnNewDlvSched").setVisible(true);
                                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                                    me.byId("btnSplit").setVisible(true);
                                                     me.byId("btnEditDlvSched").setVisible(true);
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -10494,6 +10566,7 @@ sap.ui.define([
                                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                                     me.byId("btnNewDlvSched").setVisible(true);
                                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                                    me.byId("btnSplit").setVisible(true);
                                                     me.byId("btnEditDlvSched").setVisible(true);
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -10516,6 +10589,7 @@ sap.ui.define([
                                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                                     me.byId("btnNewDlvSched").setVisible(true);
                                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                                    me.byId("btnSplit").setVisible(true);
                                                     me.byId("btnEditDlvSched").setVisible(true);
                                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -10756,6 +10830,7 @@ sap.ui.define([
                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                     me.byId("btnNewDlvSched").setVisible(true);
                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnSplit").setVisible(true);
                                     me.byId("btnEditDlvSched").setVisible(true);
                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -10778,6 +10853,7 @@ sap.ui.define([
                                     me.byId("btnRemoveRowDlvSched").setVisible(false);
                                     me.byId("btnNewDlvSched").setVisible(true);
                                     me.byId("btnImportPODlvSched").setVisible(true);
+                                    me.byId("btnSplit").setVisible(true);
                                     me.byId("btnEditDlvSched").setVisible(true);
                                     me.byId("btnDeleteDlvSched").setVisible(true);
                                     me.byId("btnCopyDlvSched").setVisible(true);
@@ -11126,6 +11202,7 @@ sap.ui.define([
                                 me.byId("btnRemoveRowDlvSched").setVisible(false);
                                 me.byId("btnNewDlvSched").setVisible(true);
                                 me.byId("btnImportPODlvSched").setVisible(true);
+                                me.byId("btnSplit").setVisible(true);
                                 me.byId("btnEditDlvSched").setVisible(true);
                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                 me.byId("btnCopyDlvSched").setVisible(true);
@@ -11148,6 +11225,7 @@ sap.ui.define([
                                 me.byId("btnRemoveRowDlvSched").setVisible(false);
                                 me.byId("btnNewDlvSched").setVisible(true);
                                 me.byId("btnImportPODlvSched").setVisible(true);
+                                me.byId("btnSplit").setVisible(true);
                                 me.byId("btnEditDlvSched").setVisible(true);
                                 me.byId("btnDeleteDlvSched").setVisible(true);
                                 me.byId("btnCopyDlvSched").setVisible(true);
@@ -13958,6 +14036,7 @@ sap.ui.define([
                         } else if (this._sTableModel === "IODLV") {
                             this.byId("btnNewDlvSched").setVisible(true);
                             this.byId("btnImportPODlvSched").setVisible(true);
+                            this.byId("btnSplit").setVisible(true);
                             this.byId("btnEditDlvSched").setVisible(true);
                             this.byId("btnDeleteDlvSched").setVisible(true);
                             this.byId("btnCopyDlvSched").setVisible(true);
@@ -13977,6 +14056,7 @@ sap.ui.define([
                         } else if (this._sTableModel === "IODET") {
                             this.byId("btnNewDlvSched").setVisible(true);
                             this.byId("btnImportPODlvSched").setVisible(true);
+                            this.byId("btnSplit").setVisible(true);
                             this.byId("btnEditDlvSched").setVisible(true);
                             this.byId("btnDeleteDlvSched").setVisible(true);
                             this.byId("btnCopyDlvSched").setVisible(true);
@@ -17750,7 +17830,7 @@ sap.ui.define([
                 oParamUnLock["Iv_Count"] = 300;
                 oParamUnLock["IO_MSG"] = [];
 
-                // console.log(oParamUnLock);
+                console.log("oParamUnLock", oParamUnLock);
 
                 oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
                     method: "POST",
