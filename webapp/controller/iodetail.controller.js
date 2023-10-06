@@ -1286,7 +1286,7 @@ sap.ui.define([
 
             onfragmentSplitDlv: async function (tableName) {
                 var me = this;
-                var entitySet = "/IODLVSPLITTRXSet";
+                var entitySet = "/SplitIOheaderSet";
                 var oModel = me.getOwnerComponent().getModel();
                 var hasMatchingSize = false;
                 var param = {};
@@ -1400,8 +1400,39 @@ sap.ui.define([
                     })
                 }
 
-                param["N_Items"] = paramDetail;
+                param["SplitIODetailsSet"] = paramDetail;
                 console.log("Entity parameter", param);
+
+                _promiseResult = new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        this.oModel.create(entitySet, param, {
+                            method: "POST",
+                            // urlParameters: {
+                            //     "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
+                            // },
+
+                            success: function (oData, response) {
+                                // console.log("Import PO Data");
+                                // console.log(oData);
+                                oData.results.forEach(item => {
+                                    item.CPODT = dateFormat.format(new Date(item.CPODT));
+                                    // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
+                                })
+
+                                oJSONModel.setData(oData);
+                                oView.setModel(oJSONModel, "IMPORTPODataModel");
+                                // console.log(oView.setModel(oJSONModel, "IMPORTPODataModel"));
+
+                                me.setSearchTableData("ImportPOTab");
+                                resolve();
+                            },
+                            error: function (err) {
+                                resolve();
+                            }
+                        })
+                    }, 100);
+                });
+                await _promiseResult;
 
                 // await this.refreshHeaderData();
                 // await this.reloadIOData('IODLVTab', '/IODLVSet');
@@ -12079,6 +12110,7 @@ sap.ui.define([
                                             value: arg === "IODET" || arg === "SPLITIODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
                                             // change: this.onNumberChange.bind(this),
                                             change: this.onIODETNumberLiveChange.bind(this),
+                                            // liveChange: this.onIODETNumberLiveChange.bind(this),
                                             // liveChange: this.onInputChange.bind(this),
                                             enabled: {
                                                 path: "DataModel>DELETED",
@@ -12774,7 +12806,8 @@ sap.ui.define([
                                             textAlign: sap.ui.core.TextAlign.Right,
                                             value: arg === "IODET" || arg === "SPLITIODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
                                             // change: this.onNumberChange.bind(this),
-                                            change: this.onSPLITIODETNumberLiveChange.bind(this),
+                                            // change: this.onSPLITIODETNumberLiveChange.bind(this),
+                                            liveChange: this.onSPLITIODETNumberLiveChange.bind(this),
                                             // liveChange: this.onInputChange.bind(this),
                                             enabled: {
                                                 path: "DataModel>DELETED",
@@ -13354,7 +13387,10 @@ sap.ui.define([
                 let input = oEvent.getSource();
                 let inputValue = input.getValue();
 
-                let isValidNumber = !isNaN(parseFloat(inputValue));
+                // let isValidNumber = !isNaN(parseFloat(inputValue));
+                let isValidNumber = /^[0-9]+$/.test(inputValue);
+                
+                console.log("isValidNumber", inputValue, isValidNumber)
 
                 var sUOM = this.getView().getModel("headerData").getData()["BASEUOM"];
                 var iUOMDec = 0;
@@ -13410,7 +13446,7 @@ sap.ui.define([
                         }
                     }
                 }
-                else if (!isValidNumber) {
+                else if (isValidNumber === false) {
                     oEvent.getSource().setValueState("Error");
                     oEvent.getSource().setValueStateText(this.getView().getModel("ddtext").getData()["VSNOTVALIDNUM"]);
                     this._validationErrors.push(oEvent.getSource().getId());
@@ -13426,7 +13462,7 @@ sap.ui.define([
                     bError = false;
                 }
 
-                if (oEvent.getSource().getBindingInfo("value").parts[0].path.includes("NEWREVORDERQTY")) {
+                if (isValidNumber === true && oEvent.getSource().getBindingInfo("value").parts[0].path.includes("NEWREVORDERQTY")) {
                     // console.log(oEvent.getSource().getBindingInfo("value").parts);
                     // console.log(sRowPath);
                     // let srcColumn = oEvent.getSource().getBindingInfo("value").parts[0].path;
@@ -13465,46 +13501,115 @@ sap.ui.define([
                 }
 
                 // this._bDetailsChanged = false;
-                if (!bError) {
-                    if (oEvent.getSource().getBindingInfo("value").parts[0].path === "BASEPOQTY") {
-                        var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
+                if (isValidNumber === true && !bError) {
+                    oEvent.getSource().setValue(oEvent.getParameters().value);
+                    // if (oEvent.getSource().getBindingInfo("value").parts[0].path === "BASEPOQTY") {
+                    //     var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
 
-                        this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
-                            .forEach((item, idx) => {
-                                if (idx.toString() === sRowPath.replace("/", "")) {
-                                    // console.log(item.BASEPOQTY)
-                                    // console.log(oEvent.getParameters().value);
-                                    item.BASEPOQTY = oEvent.getParameters().value;
+                    //     this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
+                    //         .forEach((item, idx) => {
+                    //             if (idx.toString() === sRowPath.replace("/", "")) {
+                    //                 // console.log(item.BASEPOQTY)
+                    //                 // console.log(oEvent.getParameters().value);
+                    //                 item.BASEPOQTY = oEvent.getParameters().value;
 
-                                    var sOrderConvFactor = item.ORDERCONVFACTOR === "" || item.ORDERCONVFACTOR === "0" ? "1" : item.ORDERCONVFACTOR;
-                                    var sBaseConvFactor = item.BASECONVFACTOR === "" || item.BASECONVFACTOR === "0" ? "1" : item.BASECONVFACTOR;
-                                    var sPer = item.PER === "" ? "1" : item.PER;
-                                    var vComputedPOQty = +item.BASEPOQTY / ((+sOrderConvFactor) * (+sBaseConvFactor) * (+sPer));
-                                    var vFinalPOQty = "0";
+                    //                 var sOrderConvFactor = item.ORDERCONVFACTOR === "" || item.ORDERCONVFACTOR === "0" ? "1" : item.ORDERCONVFACTOR;
+                    //                 var sBaseConvFactor = item.BASECONVFACTOR === "" || item.BASECONVFACTOR === "0" ? "1" : item.BASECONVFACTOR;
+                    //                 var sPer = item.PER === "" ? "1" : item.PER;
+                    //                 var vComputedPOQty = +item.BASEPOQTY / ((+sOrderConvFactor) * (+sBaseConvFactor) * (+sPer));
+                    //                 var vFinalPOQty = "0";
 
-                                    if (item.ORDERUOMANDEC === 0) vFinalPOQty = Math.ceil(vComputedPOQty).toString();
-                                    else vFinalPOQty = vComputedPOQty.toFixed(item.ORDERUOMANDEC);
+                    //                 if (item.ORDERUOMANDEC === 0) vFinalPOQty = Math.ceil(vComputedPOQty).toString();
+                    //                 else vFinalPOQty = vComputedPOQty.toFixed(item.ORDERUOMANDEC);
 
-                                    item.ORDERPOQTY = vFinalPOQty;
-                                    this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/ORDERPOQTY', vFinalPOQty);
-                                    this.getPOTolerance(sRowPath, item);
+                    //                 item.ORDERPOQTY = vFinalPOQty;
+                    //                 this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/ORDERPOQTY', vFinalPOQty);
+                    //                 this.getPOTolerance(sRowPath, item);
+                    //             }
+                    //         })
+                    // }
+                    // else if (oEvent.getSource().getBindingInfo("value").parts[0].path === "GROSSPRICE") {
+                    //     var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
+                    //     var sRowPath = oEvent.getSource().getBindingInfo("value").binding.oContext.sPath
+
+                    //     this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
+                    //         .forEach((item, idx) => {
+                    //             if (idx.toString() === sRowPath.replace("/", "")) {
+                    //                 // console.log(item.GROSSPRICE)
+                    //                 item.GROSSPRICE = oEvent.getParameters().value;
+                    //                 item.NETPRICE = item.GROSSPRICE;
+                    //                 this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/NETPRICE', item.GROSSPRICE);
+                    //             }
+                    //         })
+                    // } 
+
+                    // console.log(sRowPath);
+                    // console.log(sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows);
+                    // console.log(sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getProperty("/"));
+
+                    // sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").refresh;
+                    let tblSplit = sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results;
+
+                    // setTimeout(() => {
+
+
+                        // let tblSplit = jQuery.extend(true, [], sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results);
+
+                        // Initialize an empty array to store the data
+                        var dataArray = [];
+                        // Check if the model contains data
+                        if (tblSplit) {
+                            // Iterate through the data and push each item into the dataArray
+                            for (var key in tblSplit) {
+                                if (tblSplit.hasOwnProperty(key)) {
+                                    dataArray.push(tblSplit[key]);
                                 }
-                            })
-                    }
-                    else if (oEvent.getSource().getBindingInfo("value").parts[0].path === "GROSSPRICE") {
-                        var sActiveGroup = this.getView().getModel("ui").getData().activeGroup;
-                        var sRowPath = oEvent.getSource().getBindingInfo("value").binding.oContext.sPath
+                            }
+                        }
 
-                        this.getView().getModel("detail").getData().filter(fItem => fItem.GROUP === sActiveGroup)
-                            .forEach((item, idx) => {
-                                if (idx.toString() === sRowPath.replace("/", "")) {
-                                    // console.log(item.GROSSPRICE)
-                                    item.GROSSPRICE = oEvent.getParameters().value;
-                                    item.NETPRICE = item.GROSSPRICE;
-                                    this.byId("detailTab").getModel("detail").setProperty(sRowPath + '/NETPRICE', item.GROSSPRICE);
+                        // // Now, 'dataArray' contains a plain JavaScript array with the data from 'oModel'
+                        // console.log("dataArray", dataArray);
+
+                    //    var arrayFiltered = [];
+                    //     dataArray.forEach(row => {
+                    //         var newItem = {};
+                    //         const entries = Object.entries(row);
+                    //         for (var [rowKey, rowValue] of entries) {
+                    //             if (!rowKey.includes("IOITEM") & rowKey !== "NEWREVORDERQTY") {
+                    //                 if (rowKey.includes("NEWREVORDERQTY")) {
+                    //                     newItem[rowKey] = rowValue;
+                    //                 }
+                    //             }
+                    //         }
+                        
+                    //         arrayFiltered.push(newItem);	
+                    //     });
+
+                    //     console.log("Filtered Array:", arrayFiltered);
+
+                        // Initialize the sum variable
+                        var sum = 0;
+
+                        // Iterate through the array and sum all objects with "NEWREVORDERQTY"
+                        dataArray.forEach(function (item) {
+                            for (var key in item) {
+                                if (!key.includes("IOITEM") && key !== "NEWREVORDERQTY") {
+                                    if (key.includes("NEWREVORDERQTY")) {
+                                        sum += parseFloat(item[key]);
+                                    }
                                 }
-                            })
-                    } 
+                            }
+                        });
+
+                        // Output the sum
+                        console.log("Sum of all NEWREVORDERQTY properties:", sum);
+
+
+                    // }, 100);
+
+                    // console.log(sum);
+                    // // console.log(sap.ui.getCore().byId("SPLITIODLVTab").getModel().getProperty("/"));
+                    sap.ui.getCore().byId("SPLITIODLVTab").getModel().setProperty("/rows/0" + '/NEWREVORDERQTY', sum);
                 }
 
                 // alert(oEvent.getSource().getBindingInfo("value").parts[0].path);
@@ -13522,6 +13627,8 @@ sap.ui.define([
 
                 if (this._sTableModelSplit === "SPLITIODET") this._bSPLITIODETChanged = true;
             },
+
+            
 
             onNumberLiveChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
