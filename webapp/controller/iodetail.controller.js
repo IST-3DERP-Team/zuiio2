@@ -3242,7 +3242,7 @@ sap.ui.define([
                     }
 
                     var oSorter = new sap.ui.model.Sorter(sPath, bDescending); //sorter(columnData, If Ascending(false) or Descending(True))
-                    var oColumn = oColumns.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
+                    var oColumn = pColumn.filter(fItem => fItem.ColumnName === oEvent.getParameter("column").getProperty("sortProperty"));
                     var columnType = oColumn[0].DataType;
 
                     if (columnType === "DATETIME") {
@@ -11322,6 +11322,8 @@ sap.ui.define([
                                         }
                                     })
                                 }
+
+                                me.onRefresh("costDtls");
                             }
                             else if (arg === "IOATTRIB") {
                                 me.byId("onIOAttribEdit").setVisible(true);
@@ -12105,6 +12107,31 @@ sap.ui.define([
                                             }
                                         }));
                                     }
+                                    else if (arg == "costDtls") {
+                                        // var bEnabled = true;
+                                        // console.log("edit", this, this.value)
+
+                                        var oInput = new sap.m.Input({
+                                            type: "Text",
+                                            textAlign: sap.ui.core.TextAlign.Right,
+                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                            // change: this.onNumberChange.bind(this),
+                                            change: this.onIODETNumberLiveChange.bind(this),
+                                            // enabled: this.test.bind(this)
+                                            enabled: {
+                                                path: "",
+                                                formatter: function () {
+                                                    return me.onCostDtlEnable(this, sColName);
+                                                    
+
+                                                    
+                                                    
+                                                }
+                                            }
+                                        });
+
+                                        col.setTemplate(oInput);
+                                    }
                                     else {
                                         col.setTemplate(new sap.m.Input({
                                             type: sap.m.InputType.Number,
@@ -12244,9 +12271,30 @@ sap.ui.define([
                             // }
                         })
                 })
+            },
 
+            onCostDtlEnable(pThis, pColName) {
+                var bResult = false;
+                var iRow = parseInt(pThis.getBindingContext().sPath.replace("/rows/", ""));
+                var oData = pThis.getBindingContext().oModel.oData.rows[iRow];
 
+                var aDataConfigHdr = this.getView().getModel("COSTCONFIGHDR_MODEL").getData().filter(
+                    x => x.COSTCOMPCD == oData.COSTCOMPCD );
 
+                if (aDataConfigHdr.length > 0) {
+                    if (aDataConfigHdr[0].VALTYP == "C" || aDataConfigHdr[0].VALTYP == "F") {
+                        if (pColName == "COST" && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                        else bResult = false;
+                    }
+                    else if (aDataConfigHdr[0].VALTYP == "U" || aDataConfigHdr[0].VALTYP == "P") {
+                        if ((pColName == "COSTPERUN" || pColName == "STDCONSUMP") && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                        else bResult = false;
+                    }
+                    else bResult = false;
+                } 
+                else bResult = false;
+
+                return bResult;
             },
 
             async setRowEditModeSplit(arg) {
@@ -16173,6 +16221,17 @@ sap.ui.define([
                     },
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTCHECKREL_MODEL");
+                    },
+                    error: function (err) { }
+                })
+
+                this._oModelIOCosting.read('/ConfigHdrSet', {
+                    urlParameters: {
+                        "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                    },
+                    success: function (oData) {
+                        console.log("ConfigHdrSet", oData.results)
+                        me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
                     },
                     error: function (err) { }
                 })
