@@ -1293,21 +1293,15 @@ sap.ui.define([
                 var paramDetail = [];
                 var paramItemDetail = {};
 
-                // console.log(sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows);
-                // console.log(sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results);
                 var aHdrRows = sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows;
                 var aDetRows = sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results;
 
-                // console.log("aHdrRows", aHdrRows);
-                // console.log("aDetRows", aDetRows);
                 var iNew = 0;
-                // Common.openProcessingDialog(me, "Processing...");
+
+                Common.openProcessingDialog(me, "Processing...");
                 if (this._validationErrors.length === 0) {
                     aHdrRows.forEach(item => {
-                        // console.log(this._aColumns["SPLITIODLV"]);
                         this._aColumns["SPLITIODLV"].forEach(col => {
-                            // console.log(col.ColumnName);
-                            // console.log(col.DataType);
                             if (col.DataType === "DATETIME") {
                                 param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName]));
                             } 
@@ -1320,60 +1314,11 @@ sap.ui.define([
                         })
                     })
 
-                    // aDetRows.forEach(item => {
-                    //     this._iosizes.forEach( colSizes => {
-                    //         // paramItemDetail = [];
-                    //         // console.log("colSizes", colSizes);
-                    //         hasMatchingSize = false;
-                    //         this._aColumns["SPLITIODET"].forEach(col => {
-                    //             if(col.ColumnName)
-                    //             // console.log("ColumnName", col.ColumnName);
-                    //             if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
-                                    
-                    //             }
-                    //             else if (col.ColumnName === colSizes.ATTRIBCD + "NEWREVORDERQTY") {
-                    //                 paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD === "" ? "" : colSizes.ATTRIBCD
-                    //                 paramItemDetail["REVORDERQTY"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                    //                 hasMatchingSize = true;
-                    //             } 
-                    //             else if (col.ColumnName === "IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY") {
-                    //                 console.log("IO ITEM", col.ColumnName);
-                    //                 console.log(item);
-                    //                 console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
-                    //                 // console.log(item);
-                    //                 paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]
-                    //             } 
-                    //             else if (col.ColumnName === "CUSTCOLOR") {
-                    //                 paramItemDetail["CUSTCOLOR"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
-                    //             }
-                    //                 // paramItemDetail[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
-                    //         })
-
-                    //         if (!hasMatchingSize) {
-                    //             paramItemDetail["CUSTSIZE"] = colSizes.ATTRIBCD;
-                    //             paramItemDetail["REVORDERQTY"] = "0";
-                    //         }
-
-                    //         console.log(paramItemDetail);
-                    //         paramDetail.push({
-                    //             paramItemDetail
-                    //         })
-
-                    //         param["N_Items"].push()
-
-                    //         paramItemDetail = {};
-                    //     })
-                    // })
-
                     aDetRows.forEach(item => {
-                        // console.log("item", item);
                         this._iosizes.forEach( colSizes => {
-                            // paramItemDetail = [];
-                            // console.log("colSizes", colSizes);
                             hasMatchingSize = false;
                             this._aColumns["SPLITIODET"].forEach(col => {
                                 if(col.ColumnName)
-                                // console.log("ColumnName", col.ColumnName);
                                 if (col.ColumnName === colSizes.ATTRIBCD + "REVORDERQTY") {
                                     
                                 }
@@ -1383,10 +1328,6 @@ sap.ui.define([
                                     hasMatchingSize = true;
                                 } 
                                 else if (col.ColumnName === "IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY") {
-                                    // console.log("IO ITEM", col.ColumnName);
-                                    // console.log(item);
-                                    // console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
-                                    // console.log(item);
                                     paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : String(item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"])
                                 } 
                                 else if (col.ColumnName === "CUSTCOLOR") {
@@ -1410,32 +1351,47 @@ sap.ui.define([
 
                 // return;
 
-                _promiseResult = new Promise((resolve, reject) => {
-                    setTimeout(() => {
-                        oModel.create(entitySet, param, {
-                            method: "POST",
-                            // urlParameters: {
-                            //     "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
-                            // },
+                var batchPromise = new Promise(function (resolve, reject) {
+                    oModel.attachBatchRequestCompleted(function () {
+                        resolve();
+                    });
 
-                            success: function (oData, response) {
-                                resolve();
-                            },
-                            error: function (err) {
-                                resolve();
-                            }
-                        })
-                    }, 100);
+                    oModel.attachBatchRequestFailed(function () {
+                        reject(new Error("Batch request failed"));
+                    });
                 });
-                await _promiseResult;
 
-                // await this.refreshHeaderData();
-                await this.reloadIOData('IODLVTab', '/IODLVSet');
-                this._bIODLVChanged = false;
-                this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray, "IODETTab");
-                this._bIODETChanged = false;
+                oModel.create(entitySet, param, {
+                    method: "POST",
+                    success: function (oData, response) {
+                        // resolve();
+                    },
+                    error: function (err) {
+                        // resolve();
+                    }
+                })
 
-                this.onCancelSplitDlv();
+                batchPromise.then(async function () {
+                    me.getView().getModel("ui2").setProperty("/currDlvSeq", "999");
+                    await me.getIODLVData();
+                    me._bIODLVChanged = false;
+                    me.setActiveRowHighlightByTableId("IODLVTab");
+                }).then(async function () {
+                    me.getIODETTableData(me._pvtColumnData, me._pvtPivotArray, "IODETTab");
+                    me._bIODETChanged = false;
+                    me.setActiveRowHighlightByTableId("IODETTab");
+                }).then(async function () { 
+                    Common.closeProcessingDialog(me);
+                    me.onCancelSplitDlv();
+                });
+
+                console.log("split finished");
+
+                // await this.reloadIOData('IODLVTab', '/IODLVSet');
+                // this._bIODLVChanged = false;
+                // this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray, "IODETTab");
+                // this._bIODETChanged = false;
+                // this.onCancelSplitDlv();
             },
 
             getImportPOData: async function () {
