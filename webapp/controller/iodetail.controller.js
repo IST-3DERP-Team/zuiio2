@@ -1286,20 +1286,20 @@ sap.ui.define([
 
             onfragmentSplitDlv: async function (tableName) {
                 var me = this;
-                var entitySet = "/SplitIOheaderSet";
+                var entitySet = "/SplitIOHeaderSet";
                 var oModel = me.getOwnerComponent().getModel();
                 var hasMatchingSize = false;
                 var param = {};
                 var paramDetail = [];
                 var paramItemDetail = {};
 
-                console.log(sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows);
+                // console.log(sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows);
                 // console.log(sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results);
                 var aHdrRows = sap.ui.getCore().byId("SPLITIODLVTab").getModel().getData().rows;
                 var aDetRows = sap.ui.getCore().byId("SPLITIODETTab").getModel("DataModel").getData().results;
 
-                console.log("aHdrRows", aHdrRows);
-                console.log("aDetRows", aDetRows);
+                // console.log("aHdrRows", aHdrRows);
+                // console.log("aDetRows", aDetRows);
                 var iNew = 0;
                 // Common.openProcessingDialog(me, "Processing...");
                 if (this._validationErrors.length === 0) {
@@ -1307,12 +1307,16 @@ sap.ui.define([
                         // console.log(this._aColumns["SPLITIODLV"]);
                         this._aColumns["SPLITIODLV"].forEach(col => {
                             // console.log(col.ColumnName);
+                            // console.log(col.DataType);
                             if (col.DataType === "DATETIME") {
                                 param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName]));
                             } 
                             else if (col.DataType === "STRING") {
                                 param[col.ColumnName] = item[col.ColumnName];
-                            }                            
+                            }     
+                            if(col.ColumnName === "DLVSEQ") {
+                                param[col.ColumnName] = String(item[col.ColumnName]);
+                            }                    
                         })
                     })
 
@@ -1362,6 +1366,7 @@ sap.ui.define([
                     // })
 
                     aDetRows.forEach(item => {
+                        // console.log("item", item);
                         this._iosizes.forEach( colSizes => {
                             // paramItemDetail = [];
                             // console.log("colSizes", colSizes);
@@ -1378,11 +1383,11 @@ sap.ui.define([
                                     hasMatchingSize = true;
                                 } 
                                 else if (col.ColumnName === "IOITEM" + colSizes.ATTRIBCD + "REVORDERQTY") {
-                                    console.log("IO ITEM", col.ColumnName);
-                                    console.log(item);
-                                    console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
+                                    // console.log("IO ITEM", col.ColumnName);
                                     // console.log(item);
-                                    paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]
+                                    // console.log("IO ITEM Value", item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"]);
+                                    // console.log(item);
+                                    paramItemDetail["IOITEM"] = item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"] === "" ? "0" : String(item["IOITEM" + colSizes.ATTRIBCD + "NEWREVORDERQTY"])
                                 } 
                                 else if (col.ColumnName === "CUSTCOLOR") {
                                     paramItemDetail["CUSTCOLOR"] = item[col.ColumnName] === "" ? "0" : item[col.ColumnName]
@@ -1401,29 +1406,19 @@ sap.ui.define([
                 }
 
                 param["SplitIODetailsSet"] = paramDetail;
-                console.log("Entity parameter", param);
+                // console.log("Entity parameter", param);
+
+                // return;
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
-                        this.oModel.create(entitySet, param, {
+                        oModel.create(entitySet, param, {
                             method: "POST",
                             // urlParameters: {
                             //     "$filter": "STYLENO eq '" + currStyle + "' and CUSTSOLDTO eq '" + currCustSoldTo + "'"
                             // },
 
                             success: function (oData, response) {
-                                // console.log("Import PO Data");
-                                // console.log(oData);
-                                oData.results.forEach(item => {
-                                    item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
-                                })
-
-                                oJSONModel.setData(oData);
-                                oView.setModel(oJSONModel, "IMPORTPODataModel");
-                                // console.log(oView.setModel(oJSONModel, "IMPORTPODataModel"));
-
-                                me.setSearchTableData("ImportPOTab");
                                 resolve();
                             },
                             error: function (err) {
@@ -1435,12 +1430,12 @@ sap.ui.define([
                 await _promiseResult;
 
                 // await this.refreshHeaderData();
-                // await this.reloadIOData('IODLVTab', '/IODLVSet');
-                // this._bIODLVChanged = false;
-                // this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray, "IODETTab");
-                // this._bIODETChanged = false;
+                await this.reloadIOData('IODLVTab', '/IODLVSet');
+                this._bIODLVChanged = false;
+                this.getIODETTableData(this._pvtColumnData, this._pvtPivotArray, "IODETTab");
+                this._bIODETChanged = false;
 
-                // this.onCancelSplitDlv();
+                this.onCancelSplitDlv();
             },
 
             getImportPOData: async function () {
@@ -5357,7 +5352,8 @@ sap.ui.define([
                             this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
                             this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
                             this.getView().byId("FTYSALTERM").setValue(oData[i].FTY_SALES_TERM);
-                            this.getView().byId("CUSSALTERM").setValue(oData[i].CUST_SALES_TERM);
+                            // this.getView().byId("CUSSALTERM").setValue(oData[i].CUST_SALES_TERM);
+                            this.getView().byId("CUSSALTERM").setSelectedKey(oData[i].CUST_SALES_TERM);
                             this.getView().byId("SALESORG").setValue(oData[i].SALESORG);
                         }
                     }
@@ -10555,8 +10551,8 @@ sap.ui.define([
                                 // }
                                 // _promiseResult = new Promise((resolve, reject) => {
 
-                                // console.log("entitySet", entitySet);
-                                // console.log("param", param);
+                                console.log("entitySet", entitySet);
+                                console.log("param", param);
                                 setTimeout(() => {
                                     // console.log("PUT");
                                     oModel.update(entitySet, param, {
@@ -11180,7 +11176,7 @@ sap.ui.define([
                             entitySet += ")";
 
                             // console.log(entitySet);
-                            // console.log(param);
+                            console.log(param);
                             // console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
@@ -13602,7 +13598,7 @@ sap.ui.define([
                         });
 
                         // Output the sum
-                        console.log("Sum of all NEWREVORDERQTY properties:", sum);
+                        // console.log("Sum of all NEWREVORDERQTY properties:", sum);
 
 
                     // }, 100);

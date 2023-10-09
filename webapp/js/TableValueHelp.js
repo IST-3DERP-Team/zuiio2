@@ -565,21 +565,27 @@ sap.ui.define([
 
         handleTableValueHelpSelect: function (oEvent) {
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
-            console.log("handleTableValueHelpSelect", sRowPath);
-            console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
-            console.log("this._inputSource", this._inputSource);
-            console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
+            // console.log("handleTableValueHelpSelect", sRowPath);
+            // console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
+            // console.log("this._inputSource", this._inputSource);
+            // console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             // alert(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             this._inputSource.setSelectedKey(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
             
             if(oEvent.getSource().getModel().getData().title === "NEWCUSTSHIPTO") {
+                var fTable = sap.ui.getCore().byId("SPLITIODLVTab");
+                // fTable.rerender();
+
                 this._inputSource.setValue(oEvent.getSource().getModel().getProperty(sRowPath + "/Name") + " (" + oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey") + ")");
+                // this._inputSource.setValue(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
+                sap.ui.getCore().byId("SPLITIODLVTab").getModel().setProperty("/rows/0/NEWCUSTSHIPTO", oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
+
             }
             
             this._inputSource.setValueState("None");
 
             // console.log("sRowPath", sRowPath);
-            // console.log("this._inputSource", this._inputSource);
+            console.log("this._inputSource", this._inputSource);
             
             this._tableValueHelpDialog.close(); 
         }, 
