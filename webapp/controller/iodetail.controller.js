@@ -17211,7 +17211,35 @@ sap.ui.define([
                 // console.log(arg1, arg2)
                 this._tableRendered = "";
 
-                if (arg1 === "ioMatList") {
+                if (arg1 === "ioCost") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        this.byId("btnFullScreenIOCost").setVisible(false);
+                        this.byId("btnExitFullScreenIOCost").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
+                        this.byId("btnFullScreenIOCost").setVisible(true);
+                        this.byId("btnExitFullScreenIOCost").setVisible(false);
+                    }
+
+                    this._tableRendered = "costHdrTab";
+                    this._tableRendered = "costDtlsTab";
+                }
+                else if (arg1 === "Attachment") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        this.byId("btnFullScreenAttachment").setVisible(false);
+                        this.byId("btnExitFullScreenAttachment").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
+                        this.byId("btnFullScreenAttachment").setVisible(true);
+                        this.byId("btnExitFullScreenAttachment").setVisible(false);
+                    }
+                    // this._tableRendered = "ioMatListTab";
+                }
+                else if (arg1 === "ioMatList") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
                         this.byId("btnFullScreenIOMatList").setVisible(false);
@@ -17222,7 +17250,6 @@ sap.ui.define([
                         this.byId("btnFullScreenIOMatList").setVisible(true);
                         this.byId("btnExitFullScreenIOMatList").setVisible(false);
                     }
-
                     this._tableRendered = "ioMatListTab";
                 }
                 else if (arg1 === "IODLV") {
@@ -17240,7 +17267,6 @@ sap.ui.define([
                         this.byId("btnExitFullScreenDlvSched").setVisible(false);
                         this.byId("IODETTab").setVisible(true);
                     }
-
                     this._tableRendered = "IODLVTab";
                 }
                 else if (arg1 === "IODET" || arg1 === "IODETMATLST") {
@@ -17261,7 +17287,11 @@ sap.ui.define([
                         this.byId("IODLVTab").setVisible(true);
                     }
 
-                    this._tableRendered = "IODETTab";
+                    if(arg === "IODET")
+                        this._tableRendered = "IODETTab";
+
+                    if(arg === "IODETMATLST")
+                    this._tableRendered = "iodetMatTab";
                 }
 
                 // if (arg1 === "ioDet") {
@@ -17578,6 +17608,8 @@ sap.ui.define([
             onColumnUpdatedFASummary: FASummary.onColumnUpdated,
             onFADCReceiveDetailClose: FASummary.onFADCReceiveDetailClose,
             onFADCSendDetailClose: FASummary.onFADCSendDetailClose,
+            onSetFullScreen: FASummary.onSetFullScreen,
+            onSetExitFullScreen: FASummary.onSetExitFullScreen,
 
             //******************************************* */
             // Attachments

@@ -54,13 +54,13 @@
                                 press="onRefreshFASummary"
                                 tooltip="{ddtextFASummary>/REFRESH}"
                                 visible="true"/> 
-                            <Button id="btnFullScreen" 
+                            <Button id="btnFullScreenfaSumm" 
                                 icon="sap-icon://full-screen"
-                                press="onTableResize('MatType','Max')"
-                                visible="false" />
-                            <Button id="btnExitFullScreen" 
+                                press="onSetFullScreen"
+                                visible="true" />
+                            <Button id="btnExitFullScreenfaSumm" 
                                 icon="sap-icon://exit-full-screen"
-                                press="onTableResize('MatType','Min')"
+                                press="onSetExitFullScreen"
                                 visible="false" />
                         </Toolbar>
                     </uiT:extension>    

@@ -694,7 +694,9 @@
                                                 icon="sap-icon://refresh"
                                                 press="onRefresh('costHdr')" 
                                                 tooltip="{ddtext>/REFRESH}"
-                                                visible="true" /> 
+                                                visible="true" />
+                                            <Button id="btnFullScreenIOCost" icon="sap-icon://full-screen" press="onTableResize('ioCost', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                            <Button id="btnExitFullScreenIOCost" icon="sap-icon://exit-full-screen" press="onTableResize('ioCost', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" /> 
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>

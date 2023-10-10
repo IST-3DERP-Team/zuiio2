@@ -346,6 +346,22 @@ sap.ui.define([
             }
         },
 
+        setFullScreen() {
+            _thisMain.byId("objectHeader").setVisible(false);
+            _thisMain.byId("btnFullScreenfaSumm").setVisible(false);
+            _thisMain.byId("btnExitFullScreenfaSumm").setVisible(true);
+
+            _thisMain._tableRendered = "faSummaryTab";
+        },
+
+        setExitFullScreen() {
+            _thisMain.byId("objectHeader").setVisible(true);
+            _thisMain.byId("btnFullScreenfaSumm").setVisible(true);
+            _thisMain.byId("btnExitFullScreenfaSumm").setVisible(false);
+
+            _thisMain._tableRendered = "faSummaryTab";
+        },
+
         getFASummary() {
             Common.openLoadingDialog(_thisMain);
 
@@ -606,6 +622,14 @@ sap.ui.define([
 
         onRefreshFASummary() {
             _this.getFASummary();
+        },
+
+        onSetFullScreen() {
+            _this.setFullScreen();
+        },
+
+        onSetExitFullScreen() {
+            _this.setExitFullScreen();
         },
 
         onRefreshFilter(pModel, pFilters) {

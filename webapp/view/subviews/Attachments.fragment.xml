@@ -7,6 +7,8 @@
             <ToolbarSpacer />
             <Button id="btnAddAttach" type="Ghost" icon="sap-icon://add" text="{ddtext>/ADD}" tooltip="{ddtext>/EDITATT}" press="onAddFile" visible="true"/>
             <Button id="btnDelAttach" icon="sap-icon://delete"  text="{ddtext>/TXTDELSEL}" tooltip="{ddtext>/TTDELSELATT}" press="onDeleteFile" visible="true"/>
+            <Button id="btnFullScreenAttachment" icon="sap-icon://full-screen" press="onTableResize('Attachment', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+            <Button id="btnExitFullScreenAttachment" icon="sap-icon://exit-full-screen" press="onTableResize('Attachment', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
             <!-- <Button id="btnDelAttach" text="{ddtext>/TXTDELSEL}" tooltip="{ddtext>/TTDELSELATT}" press="onDeleteFile" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/>
             <Button id="btnEditAttach" type="Ghost" icon="sap-icon://edit" text="{ddtext>/EDIT}" tooltip="{ddtext>/EDITATT}" press="setFilesEditMode" visible="{= ${FilesEditModeModel>/editMode} === true ? false : true }"/>
             <Button type="Ghost" icon="sap-icon://decline" text="{ddtext>/CANCEL}" tooltip="{ddtext>/TTCANCELATT}" press="cancelFilesEdit" visible="{= ${FilesEditModeModel>/editMode} === true ? true : false }"/> -->
