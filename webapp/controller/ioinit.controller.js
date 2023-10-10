@@ -134,6 +134,7 @@ sap.ui.define([
 
                     oTable.getRows().forEach(row => {
                         if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                            console.log("IODynTable Active Row", row);
                             row.addStyleClass("activeRow");
                         }
                         else row.removeStyleClass("activeRow");
@@ -832,6 +833,7 @@ sap.ui.define([
                         me._aColumns[sTabId.replace("Tab", "")] = oData.results;
 
                         me.getDynamicTableData(oData.results);
+                        me.setActiveRowHighlight();
                     },
                     error: function (err) { }
                 });
@@ -869,6 +871,9 @@ sap.ui.define([
                         })
 
                         oData.results.sort((a, b,) => (a.IONO > b.IONO ? -1 : 1));
+
+                        oData.results.forEach((item, index) =>
+                                    item.ACTIVE = index === 0 ? "X" : "");
 
                         var aFilters = [], aSorters = [];
                         if (me.byId("IODynTable").getBinding("rows")) {
