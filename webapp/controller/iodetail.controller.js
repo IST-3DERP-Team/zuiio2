@@ -1037,6 +1037,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CSVCODE" });
                 oDDTextParam.push({ CODE: "SPLITDLV" });
                 oDDTextParam.push({ CODE: "SPLITVALGTCURR" });
+                oDDTextParam.push({ CODE: "CUSTDLVDT_ERR_VALIDATION" });                
                 
                 // console.log(oDDTextParam);
 
@@ -4398,6 +4399,28 @@ sap.ui.define([
                     }
                 }
 
+                if (srcInput === "/CUSTDLVDT") {
+                    //VALIDATE PLANDLVDT, MUST NOT BE MORE THAN CUSTDLVDT
+                    let inputValue = this.getView().byId("CUSTDLVDT").getValue();
+                    var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
+                    var date = dateFormat.parse(inputValue);
+                    var isValid = this.isValidDate(date);
+                    if (isValid) {
+                        let dtCustDlv = dateFormat.format(new Date(inputValue));
+                        let dtPlanDlv = dateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue()));
+
+                        if (Date.parse(dtPlanDlv)) {
+                            if (dtPlanDlv > dtCustDlv) {
+                            this.getView().byId("CUSTDLVDT").setValueState("Error");
+                            this.getView().byId("CUSTDLVDT").setValueStateText(this.getView().getModel("ddtext").getData()["CUSTDLVDT_ERR_VALIDATION"]);
+                            // this.getView().byId("CUSTDLVDT").setValue("");
+                            } else {
+                                this.getView().byId("CUSTDLVDT").setValueState("None");
+                            } 
+                        }
+                    }
+                }
+
                 if (srcInput === "/STYLENO") {
                     var sStyleNo = this.getView().byId("STYLENO").getValue();
 
@@ -5040,7 +5063,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             // console.log("/IOHDRSet('" + ioNo + "')");
                             // console.log("IOHDRSet", oData);
-                            // oData.CUSTDLVDT = oData.CUSTDLVDT === "" || oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
+                            oData.CUSTDLVDT = oData.CUSTDLVDT === "" || oData.CUSTDLVDT === "0000-00-00" || oData.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUSTDLVDT));
                             // oData.REVCUSTDLVDT = oData.REVCUSTDLVDT === "" || oData.REVCUSTDLVDT === "0000-00-00" || oData.REVCUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REVCUSTDLVDT));
                             // oData.REQEXFTYDT = oData.REQEXFTYDT === "" || oData.REQEXFTYDT === "0000-00-00" || oData.REQEXFTYDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.REQEXFTYDT));
                             // oData.PRODSTART = oData.PRODSTART === "" || oData.PRODSTART === "0000-00-00" || oData.PRODSTART === "    -  -  " ? "" : dateFormat.format(new Date(oData.PRODSTART));
@@ -5048,7 +5071,7 @@ sap.ui.define([
                             // oData.MAINMATETA = oData.MAINMATETA === "" || oData.MAINMATETA === "0000-00-00" || oData.MAINMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.MAINMATETA));
                             // oData.SUBMATETA = oData.SUBMATETA === "" || oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
                             // oData.CUTMATETA = oData.CUTMATETA === "" || oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
-                            // oData.PLANDLVDT = oData.PLANDLVDT === "" || oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
+                            oData.PLANDLVDT = oData.PLANDLVDT === "" || oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
                             // oData.CREATEDDT = oData.CREATEDDT === "" || oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
                             // oData.UPDATEDDT = oData.UPDATEDDT === "" || oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
                             oData.VERNO = oData.VERNO === "" || oData.VERNO === "000" ? "" : oData.VERNO;
@@ -6072,6 +6095,10 @@ sap.ui.define([
                     var oDateFormatter = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "dd.MM.yyyy", strictParsing: true });
                     // console.log("CUSTDLVDT", this.getView().byId("CUSTDLVDT").getValue());
 
+                    // alert("CUSTDLVDT", Date.parse(this.getView().byId("CUSTDLVDT")));
+                    // alert("CUSTDLVDT", sap.ui.getCore().byId("CUSTDLVDT"));
+                    // alert("PLANDLVDT", Date.parse(this.getView().byId("PLANDLVDT").getValue()));
+
                     if (me._validationErrors.length === 0) {
                         let sErrMsg = "";
                         if (this._sbu.Length <= 0) sErrMsg = "SBU";
@@ -6086,7 +6113,10 @@ sap.ui.define([
                         else if (this.getView().byId("CUSTGRP").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTGRP"];
                         else if (this.getView().byId("BASEUOM").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["BASEUOM"];
                         else if (this.getView().byId("SOLDTOCUST").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["SOLDTOCUST"];
-                        else if (!oDateFormatter.parse(this.getView().byId("CUSTDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        // else if (!oDateFormatter.parse(this.getView().byId("CUSTDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        // else if (!oDateFormatter.parse(this.getView().byId("PLANDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["PLANDLVDT"];
+                        else if (!Date.parse(this.getView().byId("CUSTDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
+                        else if (!Date.parse(this.getView().byId("PLANDLVDT").getValue())) sErrMsg = this.getView().getModel("ddtext").getData()["PLANDLVDT"];
                         // else if (this.getView().byId("CUSTDLVDT").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["CUSTDLVDT"];
                         else if (this.getView().byId("PRODSTART").getValue() === "") sErrMsg = this.getView().getModel("ddtext").getData()["PRODSTART"];
 
@@ -6099,6 +6129,13 @@ sap.ui.define([
                         // (sErrMsg.length >= 1)
                         if (sErrMsg !== "") {
                             sErrMsg += " is required."
+                            sap.m.MessageBox.warning(sErrMsg);
+                            return;
+                        }
+
+                        if(new Date(this.getView().byId("PLANDLVDT").getValue()).getTime() < new Date(this.getView().byId("CUSTDLVDT").getValue()).getTime()) {
+                            // alert("Plan Delivery Date is less than Customer Delivery Date");
+                            sErrMsg += " Plan Delivery Date is less than Customer Delivery Date"
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
                         }
