@@ -32,12 +32,14 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
-                // this._tableFilter = TableFilter;
-                // console.log("this._tableFilter", this._tableFilter);
+                this._tableFilter = TableFilter;
+                console.log("this._tableFilter", this._tableFilter);
                 this._colFilters = {};
 
                 // console.log("INITIALIZE START");
                 that.getCaptionSet();
+
+                this.getView().byId("IOCount").setText("0")
 
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
 
@@ -70,6 +72,7 @@ sap.ui.define([
                 this.getAppAction();
                 this.setSmartFilterModel();
 
+                // alert(sap.ui.getCore().byId("backBtn"));
                 if (sap.ui.getCore().byId("backBtn") !== undefined) {
                     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
 
@@ -78,10 +81,34 @@ sap.ui.define([
                         onAfterShow: function (oEvent) {
                             // console.log("back")
                             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                            that.onRefresh();
+                            // that.onRefresh();
+                            that.onSearch();
                         }
                     }, oView);
                 }
+
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                //     var oView = this.getView();
+                //     oView.addEventDelegate({
+                //         onAfterShow: function (oEvent) {
+                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = _this._fBackButton;
+
+                //             if (_this.getOwnerComponent().getModel("UI_MODEL").getData().flag) {
+                //                 if (sessionStorage.getItem('RSVNO') !== '') {
+                //                     if (sessionStorage.getItem('MODE') === 'DISPLAY' && _this._oLock.length > 0) {
+                //                         _this.unLock();
+                //                     }
+                //                     sessionStorage.clear();
+                //                 }
+
+                //                 _this.onRefreshMain();
+                //                 _this.closeLoadingDialog();
+                //             }
+                //         }
+
+                //     }, oView);
+                // }
 
                 // window.onhashchange = function () {
                 //     _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
@@ -128,6 +155,7 @@ sap.ui.define([
 
             setActiveRowHighlight() {
                 var oTable = this.byId("IODynTable");
+                console.log("IODynTable", oTable);
                 
                 setTimeout(() => {
                     var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
@@ -625,9 +653,9 @@ sap.ui.define([
                     }
                 });
 
-                // console.log("TableFilter.updateColumnMenu Start");
-                // TableFilter.updateColumnMenu("IODynTable", this);
-                // console.log("TableFilter.updateColumnMenu end");
+                console.log("TableFilter.updateColumnMenu Start");
+                TableFilter.updateColumnMenu("IODynTable", this);
+                console.log("TableFilter.updateColumnMenu end");
 
                 //remove sort icon of currently sorted column
                 oTable.attachSort(function (oEvent) {
@@ -778,14 +806,42 @@ sap.ui.define([
                 } catch (err) { }
             },
 
-            onSearch: async function () {
-                // setTimeout(() => {
-                    await this.getDynamicTableColumns();
-                // }, 100);
+            // onSearch: async function () {
+            //     alert("On Search");
+            //     Common.openLoadingDialog(that);
+            //     console.log("On Searching");
+            //     // setTimeout(() => {
+            //         await this.getDynamicTableColumns();
+            //     // }, 100);
 
-                // setTimeout(() => {
-                    await this.getStatistics("/IOSTATISTICSSet"); //style statistics
-                // }, 100);
+            //     // setTimeout(() => {
+            //         await this.getStatistics("/IOSTATISTICSSet"); //style statistics
+            //     // }, 100);
+            //     Common.closeLoadingDialog(that);
+            // },
+
+            onSearch: async function () {
+                const that = this;
+                
+                // Open the loading dialog
+                Common.openLoadingDialog(that);
+                
+                try {
+                    console.log("On Search");
+            
+                    // Perform asynchronous operations
+                    await this.getDynamicTableColumns();
+                    await this.getStatistics("/IOSTATISTICSSet");
+            
+                    console.log("On Searching");
+            
+                    // Close the loading dialog after the operations are completed
+                    Common.closeLoadingDialog(that);
+                } catch (error) {
+                    // Handle any errors that occurred during the asynchronous operations
+                    console.error("Error:", error);
+                    Common.closeLoadingDialog(that);
+                }
             },
 
             getDynamicTableColumns:async function () {
@@ -872,8 +928,8 @@ sap.ui.define([
 
                         oData.results.sort((a, b,) => (a.IONO > b.IONO ? -1 : 1));
 
-                        oData.results.forEach((item, index) =>
-                                    item.ACTIVE = index === 0 ? "X" : "");
+                        // oData.results.forEach((item, index) =>
+                        //             item.ACTIVE = index === 0 ? "X" : "");
 
                         var aFilters = [], aSorters = [];
                         if (me.byId("IODynTable").getBinding("rows")) {
@@ -893,9 +949,12 @@ sap.ui.define([
                         if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
                         if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
 
+                        oData.results.forEach((item, index) =>
+                                    item.ACTIVE = index === 0 ? "X" : "");
+
                         me.setChangeStatus(false);
 
-                        // TableFilter.applyColFilters(me);
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -1022,10 +1081,6 @@ sap.ui.define([
                     }
                 });
 
-                // console.log("TableFilter.updateColumnMenu Start");
-                // TableFilter.updateColumnMenu("IODynTable", this);
-                // console.log("TableFilter.updateColumnMenu end");
-
                 oTable.bindRows("/rows");
 
                 //remove sort icon of currently sorted column
@@ -1086,6 +1141,9 @@ sap.ui.define([
                     oEvent.preventDefault();
                 })
 
+                console.log("TableFilter.updateColumnMenu Start");
+                TableFilter.updateColumnMenu("IODynTable", this);
+                console.log("TableFilter.updateColumnMenu end");
             },
 
             columnTemplate: function (sColumnId, sColumnType) {
@@ -1784,7 +1842,7 @@ sap.ui.define([
                     })
                 })
 
-                // TableFilter.updateColumnMenu("IODynTable", this);
+                TableFilter.updateColumnMenu("IODynTable", this);
 
                 // aSortableColumns.sort((a,b) => (a.position > b.position ? 1 : -1));
                 // this.createViewSettingsDialog("sort", 

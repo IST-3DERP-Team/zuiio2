@@ -18,6 +18,19 @@
     height="100%"
 >
     <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet">
+    <dependents>
+            <!-- <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
+            <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
+            <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
+            <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
+            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" /> -->
+            <!-- <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".onSearch" />
+            <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".onCopyIO" /> -->
+
+            <core:CommandExecution id="CEIOHDR_EDIT" command="Edit" enabled="true" execute=".onIOEdit('IOHDR')" />
+            <core:CommandExecution id="CEIOHDR_SAVE" command="Save" enabled="true" execute=".onIOSave('IOHDR')" />
+            <core:CommandExecution id="CEIOHDR_CANCEL" command="Cancel" enabled="true" execute=".onIOCancel('IOHDR')" />
+        </dependents>
         <VBox fitContainer="true">
             <!-- HEADER DATA-->
             <ObjectHeader
@@ -50,7 +63,9 @@
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="{ddtext>/ITFIOHDR}" key="itfIOHDR">
                         <VBox height="100%">
+
                             <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
+                            
                             <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
                                 <items>                                
                                     <!-- ATTRIBUTES -->
@@ -58,10 +73,14 @@
                                         <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
                                         <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
+                                        <Title id="IOATTRIBCnt"/>
+                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                             <ToolbarSpacer />
                                             <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
                                             <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
                                             <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
+                                            <Button id="btnFullScreenIOAttrib" icon="sap-icon://full-screen" press="onTableResize('ioAttrib', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                            <Button id="btnExitFullScreenIOAttrib" icon="sap-icon://exit-full-screen" press="onTableResize('ioAttrib', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
                                         </OverflowToolbar>
 
                                         <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
@@ -92,6 +111,14 @@
                                             <ToolbarSpacer />
                                             <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
                                         </OverflowToolbar> -->
+                                        <OverflowToolbar id="_ovfToolBarIOStat" design="Transparent">
+                                        <Title id="IOSTATCnt"/>
+                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
+                                            <ToolbarSpacer />
+                                            <Button id="btnFullScreenIOStat" icon="sap-icon://full-screen" press="onTableResize('ioStat', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                            <Button id="btnExitFullScreenIOStat" icon="sap-icon://exit-full-screen" press="onTableResize('ioStat', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                        </OverflowToolbar>
+
                                         <t:Table id="IOSTATUSTab" 
                                                 class="sapUiSizeCompact sidePadding" 
                                                 visibleRowCountMode="Auto" 
@@ -171,6 +198,8 @@
                                                 </t:rowSettingsTemplate>
                                                 <t:extension>
                                                     <Toolbar>
+                                                        <Title id="COLORSCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                         <ToolbarSpacer/>
                                                         <Button id="btnEditColor" 
                                                             icon="sap-icon://edit"
@@ -220,6 +249,8 @@
                                                 </t:rowSettingsTemplate>
                                                 <t:extension>
                                                     <Toolbar>
+                                                        <Title id="PROCESSCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                         <ToolbarSpacer />
                                                         <Button id="btnEditProcess" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
                                                         <Button id="btnSaveProcess" icon="sap-icon://save" press="onBatchSave('process')" tooltip="{ddtext>/SAVE}" visible="false" />
@@ -250,6 +281,8 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
+                                                        <Title id="SIZECnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                         <ToolbarSpacer />
                                                         <Button id="btnDeleteSize" icon="sap-icon://delete" press="onTagAsDeleted('size')" tooltip="{ddtext>/DELETE}" visible="true" />
                                                         <Button id="btnUndeleteSize" text="{ddtext>/UNDELETE}" icon="sap-icon://undo" press="onUndelete('size')" tooltip="{ddtext>/UNDELETE}" visible="true" />
@@ -289,7 +322,10 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin" />
+                                                        <Title id="BOMUVCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
+
+                                                        <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin" />                                                        
                                                         <ComboBox id="UsageClassCB" items="{UVModel>/results}" class="sapUiTinyMarginTopBottom" selectedKey="AUV" showSecondaryValues="true" filterSecondaryValues="true" change="getStyleBOMUV">
                                                             <core:ListItem key="{UVModel>USGCLS}" text="{UVModel>UCDESC}" additionalText="{UVModel>USGCLS}" />
                                                         </ComboBox>
@@ -329,6 +365,8 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
+                                                        <Title id="FABBOMCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                         <ToolbarSpacer />
                                                         <Button id= "btnFabGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
@@ -360,6 +398,8 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
+                                                        <Title id="ACCBOMCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                         <ToolbarSpacer />
                                                         <Button id="btnAccGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
                                                             <customData>
@@ -389,6 +429,14 @@
                                                 columnVisibility="onColumnUpdated"
                                                 alternateRowColors="true"
                                             >
+
+                                                <t:extension>
+                                                    <Toolbar>
+                                                        <Title id="MATLISTCnt"/>
+                                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
+                                                    </Toolbar>
+                                                </t:extension>
+
                                                 <!-- <uiT:extension>
                                                     <Toolbar>
                                                         <ToolbarSpacer/>
@@ -487,7 +535,7 @@
 
                     <!-- DELIVERY SCHEDULE -->                    
                     <IconTabFilter text="{ddtext>/ITFIODET}" key="itfDLVSCHED">
-                        <VBox height="100%">
+                        <VBox height="100%">                        
                         <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
                             <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
@@ -495,6 +543,8 @@
                                 </t:rowSettingsTemplate>
                                 <t:extension>
                                     <Toolbar>
+                                        <Title id="IODLVCnt"/>
+                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                         <!-- <Text text="{i18n>DeliverySchedule}" /> -->
                                         <ToolbarSpacer />
                                         <Button id="btnNewDlvSched" type="Ghost" icon="sap-icon://add" press="onAdd('IODLV')" tooltip="{ddtext>/NEW}" visible="true" />
@@ -534,6 +584,8 @@
                                             </t:rowSettingsTemplate>
                                             <t:extension>
                                                 <Toolbar>
+                                                    <Title id="IODETCnt"/>
+                                                    <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                     <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
                                                     <ToolbarSpacer />
                                                     <Button id="btnNewIODet" type="Ghost" icon="sap-icon://add" press="onAdd('IODET')" tooltip="{ddtext>/NEW}" visible="true" />
@@ -575,6 +627,8 @@
                                         <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
                                             <t:extension>
                                                 <Toolbar>
+                                                    <Title id="IODETMATCnt"/>
+                                                    <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                                     <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
                                                     <ToolbarSpacer />
                                                         <Button id="btnFullScreenIODETMATLST" icon="sap-icon://full-screen" press="onTableResize('IODETMATLST', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
@@ -618,6 +672,8 @@
                             </t:rowSettingsTemplate>
                             <t:extension>
                                 <Toolbar>
+                                    <Title id="MATLSTCnt"/>
+                                    <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                     <ToolbarSpacer />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
                                     <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onTagAsDeleted('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
@@ -669,6 +725,8 @@
                                     <t:extension>
                                         <Toolbar>
                                             <Label text="{ddtext>/ITFCOSTVER}" design="Bold" class="hdrLabel" />
+                                            <Title id="COSTHDRCnt"/>
+                                            <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                             <ToolbarSpacer/>
                                             <Button id="btnNewCostHdr" 
                                                 icon="sap-icon://add"
@@ -726,6 +784,8 @@
                                     <t:extension>
                                         <Toolbar>
                                             <Label text="{ddtext>/ITFCOSTDET}" design="Bold" class="hdrLabel" />
+                                            <Title id="COSTDETCnt"/>
+                                            <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
                                             <ToolbarSpacer/>
                                             <Button id="btnEditCostDtl" 
                                                 icon="sap-icon://edit"

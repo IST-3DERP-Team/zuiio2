@@ -13,12 +13,14 @@ sap.ui.define([
     "sap/m/MessageBox",
     "sap/ui/core/routing/History",
     "sap/m/UploadCollectionParameter",
-    "../js/TableValueHelp"
+    "../js/TableValueHelp",
+    "../js/TableFilter",
+    "sap/ui/model/FilterOperator"
 ],
     /** 
      * @param {typeof sap.ui.core.mvc.Controller} Controller 
      */
-    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History, UploadCollectionParameter, TableValueHelp) {
+    function (Controller, Filter, Common, Utils, Constants, JSONModel, jQuery, HashChanger, MessageStrip, DynamicTable, FASummary, MessageBox, History, UploadCollectionParameter, TableValueHelp, TableFilter, FilterOperator) {
         "use strict";
 
         var that;
@@ -48,6 +50,9 @@ sap.ui.define([
         var Core = sap.ui.getCore();
 
         var _seqNo = 0;
+
+        this._tableFilter = TableFilter;
+        this._colFilters = {};  
 
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
@@ -92,6 +97,12 @@ sap.ui.define([
                 this._oModelLock = this.getOwnerComponent().getModel("ZGW_3DERP_LOCK_SRV");
 
                 this._router.getRoute("RouteIODetail").attachPatternMatched(this._routePatternMatched, this);
+
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
+                //         this.onNavBack();
+                //     }
+                // }
 
                 this.getView().setModel(new JSONModel({
                     sbu: '',
@@ -196,6 +207,8 @@ sap.ui.define([
 
                 this.getOwnerComponent().getModel("LOOKUP_MODEL").setData(new JSONModel());
                 Utils.getVersionSearchHelps(this);
+
+                console.log("History after Route to Details", window.history);
             },
 
             onRouteMatched: function (oEvent) {
@@ -283,24 +296,31 @@ sap.ui.define([
             },
 
             onNavBack: function (oEvent) {
-                if (!that._routeToStyle) {
-                    this.routeTOIO(window.location.hash);
-                }
-                else {
-                    var oHistory = History.getInstance();
-                    var iHistoryLength = oHistory.aHistory.length;
-                    var sPreviousHash = oHistory.getPreviousHash();
+                // console.log("History Before", window.history);
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                oRouter.navTo("Routeioinit", {}, true);
 
-                    if (sPreviousHash !== undefined) {
-                        window.history.go(-1);
-                    } else {
-                        var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                        oRouter.navTo("Routeioinit", {}, true);
+                // console.log("History After", window.history);
 
-                        // Remove the rest of the entries from the history
-                        oHistory.aHistory.splice(0, iHistoryLength - 1);
-                    }
-                }
+                // if (!that._routeToStyle) {
+                //     this.routeTOIO(window.location.hash);
+                //     that._routeToStyle = false;
+                // }
+                // else {
+                //     var oHistory = History.getInstance();
+                //     var iHistoryLength = oHistory.aHistory.length;
+                //     var sPreviousHash = oHistory.getPreviousHash();
+
+                //     if (sPreviousHash !== undefined) {
+                //         window.history.go(-1);
+                //     } else {
+                //         var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                //         oRouter.navTo("Routeioinit", {}, true);
+
+                //         // Remove the rest of the entries from the history
+                //         oHistory.aHistory.splice(0, iHistoryLength - 1);
+                //     }
+                // }
             },
 
             routeTOIO: function (arg) {
@@ -1934,6 +1954,7 @@ sap.ui.define([
                 // var ioNo = iono;
                 var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
+                var oText = this.getView().byId("IODLVCnt");
 
                 if (ioNo === "NEW")
                     return;
@@ -1959,6 +1980,8 @@ sap.ui.define([
                             })
 
                             oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
+
+                            oText.setText(oData.results.length + "");
 
                             if (cDlvSeq === undefined || cDlvSeq === "0" || cDlvSeq === "999") {
                                 oData.results.forEach((item, index) => {
@@ -2181,6 +2204,7 @@ sap.ui.define([
                 // console.log("IO ATTRIB");
                 var me = this;
                 var ioNo = iono;
+                var oText = this.getView().byId("IOATTRIBCnt");
                 // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -2205,16 +2229,28 @@ sap.ui.define([
                                     // item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
                                 })
 
+                                oData.results.forEach((item, index) =>
+                                    item.ACTIVE = index === 0 ? "X" : "");
+
+                                var aFilters = [], aSorters = [];
+                                if (me.byId("IOATTRIBTab").getBinding("rows")) {
+                                    aFilters = me.byId("IOATTRIBTab").getBinding("rows").aFilters;
+                                    aSorters = me.byId("IOATTRIBTab").getBinding("rows").aSorters;
+                                }
+
                                 me.byId("IOATTRIBTab").getModel().setProperty("/rows", oData.results);
                                 me.byId("IOATTRIBTab").bindRows("/rows");
                                 me._tableRendered = "IOATTRIBTab";
 
-                                // me._iosizes = oData.results;
+                                if (aFilters.length > 0) { me.setColumnFilters("IOATTRIBTab", aFilters); }
+                                if (aSorters.length > 0) { me.setColumnSorters("IOATTRIBTab", aSorters); }
 
-                                // console.log("IO Sizes");
-                                // console.log(me._iosizes);
-                                // console.log("IO Sizes from get IO Attrib");
-                                // console.log(me._iosizes);
+                                oText.setText(oData.results.length + "");
+
+                                console.log("Table Filter Apply Column Filter");
+                                TableFilter.applyColFilters(me);
+                                console.log("Table Filter Apply Column Filter End");
+
                                 resolve();
                             },
                             error: function (err) {
@@ -2229,6 +2265,7 @@ sap.ui.define([
             getIOSTATUSData: async function (iono) {
                 var me = this;
                 var ioNo = iono;
+                var oText = this.getView().byId("IOSTATCnt");
                 // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -2244,6 +2281,8 @@ sap.ui.define([
                                     item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                     item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
                                 })
+
+                                oText.setText(oData.results.length + "");
 
                                 oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
                                 me.byId("IOSTATUSTab").getModel().setProperty("/rows", oData.results);
@@ -3202,6 +3241,8 @@ sap.ui.define([
                     }
                 });
 
+                // TableFilter.updateColumnMenu(sTabId, this);
+
                 //date/number sorting
                 oTable.attachSort(function (oEvent) {
                     var sPath = oEvent.getParameter("column").getSortProperty();
@@ -3260,6 +3301,8 @@ sap.ui.define([
                     // prevent internal sorting by table
                     oEvent.preventDefault();
                 });
+
+                TableFilter.updateColumnMenu(sTabId, this);
             },
 
             getIODETTableData: async function (columnData, pivot, TabId) {
@@ -3396,6 +3439,18 @@ sap.ui.define([
                     results: unique,
                     columns: columnData
                 });
+
+                var oText;
+                if(sTabId === "IODETTab"){
+                    oText = this.getView().byId("IODETCnt");
+                    
+                }
+
+                if(sTabId === "SPLITIODETTab"){
+                    oText = this.getView().byId("SPLITIODETCnt");
+                }
+
+                oText.setText(unique.length + "");
 
                 oTable.setModel(oJSONModel, "DataModel");
 
@@ -3924,6 +3979,8 @@ sap.ui.define([
                         }, 100);
 
                         me.setChangeStatus(false);
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -4177,7 +4234,7 @@ sap.ui.define([
                     }
                 }
 
-                if (srcInput === "/CUSTDLVDT") {
+                if (srcInput === "/PLANDLVDT") {
                     let cntBlank = 0;
                     let fieldList = "";
                     let oFormElement;
@@ -4207,7 +4264,7 @@ sap.ui.define([
                         fieldList += oLabel ? oLabel + ", " : "";
                     }
 
-                    let inputValue = this.getView().byId("CUSTDLVDT").getValue();
+                    let inputValue = this.getView().byId("PLANDLVDT").getValue();
                     var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" });
                     var date = dateFormat.parse(inputValue);
                     var isValid = this.isValidDate(date);
@@ -4239,8 +4296,8 @@ sap.ui.define([
 
                         let oModel = this.getOwnerComponent().getModel();
 
-                        let fldCustDlvDt = this.getView().byId("CUSTDLVDT");
-                        let CustDlvDtValue = new Date(fldCustDlvDt.getDateValue());
+                        let fldPlanDlvDt = this.getView().byId("PLANDLVDT");
+                        let PlanDlvDtValue = new Date(fldPlanDlvDt.getDateValue());
 
                         // console.log(txtWeaveTyp);
 
@@ -4253,10 +4310,10 @@ sap.ui.define([
                                     // me.getView().setModel(new JSONModel(oData), "PRDLEADTMModel");
                                     // console.log("PRDLEADTMModel");
                                     // console.log(oData);
-                                    var dtProdStart = me.getView().byId("PRODSTART");
+                                    // var dtProdStart = me.getView().byId("PRODSTART");
                                     oData.results.forEach(item => {
-                                        CustDlvDtValue.setDate(CustDlvDtValue.getDate() - item.LEADTM);
-                                        me.getView().byId("PRODSTART").setValue(sapDateFormat.format(new Date(CustDlvDtValue)));
+                                        PlanDlvDtValue.setDate(PlanDlvDtValue.getDate() - item.LEADTM);
+                                        me.getView().byId("PRODSTART").setValue(sapDateFormat.format(new Date(PlanDlvDtValue)));
                                         me.getView().byId("PRODDAYS").setValue(item.LEADTM);
                                         me.getView().getModel("ui2").setProperty("/ProdDays", item.LEADTM);
                                         // dtProdStart.setDateValue(CustDlvDtValue);
@@ -7665,6 +7722,7 @@ sap.ui.define([
                 await oModelColumns.loadData(sPath);
                 var oColumns = oModelColumns.getData();
                 this._oModelColumns = oModelColumns.getData();
+                var oText;
 
                 if (source === "IODETTab") {
                     // await this.getIODLVData(cIONo);
@@ -7683,11 +7741,19 @@ sap.ui.define([
                                         item.UPDATEDTM = timeFormat.format(new Date(item.UPDATEDTM.ms + TZOffsetMs));
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
+
+                                    oText = me.getView().byId("IOSTATCnt");
+                                    oText.setText(oData.results.length + "");
+
                                 } else if (sSource === "IOATTRIBTab") {
                                     oData.results.forEach(item => {
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                         item.BASEIND = item.BASEIND === "X" ? true : false;
                                     })
+
+                                    oText = me.getView().byId("IOATTRIBCnt");
+                                    oText.setText(oData.results.length + "");
+
                                 } else if (sSource === "IODLVTab") {
                                     // alert("IO DLV Reload");
                                     // console.log("IODLVTab", oData.results);
@@ -7699,6 +7765,9 @@ sap.ui.define([
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
+
+                                    oText = me.getView().byId("IODLVCnt");
+                                    oText.setText(oData.results.length + "");
 
                                     oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
@@ -7728,6 +7797,9 @@ sap.ui.define([
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
+
+                                    oText = me.getView().byId("IODETCnt");
+                                    oText.setText(oData.results.length + "");
 
                                     oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? -1 : 1));
 
@@ -7817,6 +7889,7 @@ sap.ui.define([
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
+                var oText;
 
                 let strStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
                 let csAction = this.getView().getModel("ui").getProperty("/DisplayMode");
@@ -7892,6 +7965,9 @@ sap.ui.define([
                         me.byId("colorTab").getModel().setProperty("/rows", oData.results);
                         me.byId("colorTab").bindRows("/rows");
                         me._tableRendered = "colorTab";
+
+                        oText = me.getView().byId("COLORSCnt");
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 })
@@ -7908,6 +7984,9 @@ sap.ui.define([
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
                         me._tableRendered = "processTab";
+
+                        oText = me.getView().byId("PROCESSCnt");
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 })
@@ -7925,6 +8004,9 @@ sap.ui.define([
                         me.byId("sizeTab").getModel().setProperty("/rows", oData.results);
                         me.byId("sizeTab").bindRows("/rows");
                         me._tableRendered = "sizeTab";
+
+                        oText = me.getView().byId("SIZECnt");
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 })
@@ -8344,6 +8426,9 @@ sap.ui.define([
                 var dataFAB = { results: rowDataFAB };
                 var dataACC = { results: rowDataACC };
                 var entitySet = "/StyleDetailedBOMSet"
+
+                var oText;
+
                 // console.log(this._styleVer)
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
@@ -8444,6 +8529,11 @@ sap.ui.define([
                                 oJSONModelFAB.setData(dataFAB);
                                 oTableFAB.setModel(oJSONModelFAB, "DataModel");
 
+                                // console.log("dataFAB", rowDataFAB, dataFAB);
+
+                                oText = me.getView().byId("FABBOMCnt");
+                                oText.setText(rowDataFAB.items.length + "");
+
                                 // console.log("oJSONModelFAB", oJSONModelFAB);
 
                                 var aDataACC = [];
@@ -8514,8 +8604,13 @@ sap.ui.define([
                                     }
                                 }
 
+                                // console.log("dataACC", rowDataACC, dataACC);
+
                                 oJSONModelACC.setData(dataACC);
                                 oTableACC.setModel(oJSONModelACC, "DataModel");
+
+                                oText = me.getView().byId("ACCBOMCnt");
+                                oText.setText(rowDataACC.items.length + "");
 
                                 // console.log("oJSONModelACC", oJSONModelACC);
                             },
@@ -8530,6 +8625,7 @@ sap.ui.define([
             getStyleMaterialList: function () {
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var me = this;
+                var oText = this.getView().byId("MATLISTCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
@@ -8553,6 +8649,8 @@ sap.ui.define([
                             aData.push(oTmpData);
                         })
 
+                        oText.setText(aData.length + "");
+
                         // me.byId("styleMatListTab").setVisibleRowCount(aData.length);
                         me.byId("styleMatListTab").getModel().setProperty("/rows", aData);
                         me.byId("styleMatListTab").bindRows("/rows");
@@ -8567,6 +8665,7 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+                var oText = this.getView().byId("COLORSCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
@@ -8577,6 +8676,8 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         me._colors = oData.results;
                         me.getStyleSizes();
+
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 });
@@ -8587,6 +8688,7 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
+                var oText = this.getView().byId("SIZECnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
@@ -8597,6 +8699,8 @@ sap.ui.define([
                     success: function (oData, oResponse) {
                         me._sizes = oData.results;
                         me.getStyleBOMUV();
+
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 });
@@ -8608,6 +8712,7 @@ sap.ui.define([
                 var columnData = [];
                 var oModelUV = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
+
                 // console.log(usageClass)
                 oModelUV.setHeaders({
                     sbu: this._sbu, //"VER",
@@ -8685,6 +8790,7 @@ sap.ui.define([
                 var oTable = this.getView().byId("styleBOMUVTab");
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
+                var oText = this.getView().byId("BOMUVCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
@@ -8731,6 +8837,8 @@ sap.ui.define([
                             columns: columnData
                         });
                         oTable.setModel(oJSONModel, "DataModel");
+                        oText.setText(unique.length + "");
+
                         // console.log(oTable.setModel(oJSONModel, "DataModel"));
                         // oTable.setVisibleRowCount(unique.length);
                         oTable.attachPaste();
@@ -14668,6 +14776,7 @@ sap.ui.define([
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
+                var oText;
                 this.getView().setModel(new JSONModel(), "matTypInfoRecChk");
 
                 this.byId("ioMatListTab")
@@ -14707,6 +14816,9 @@ sap.ui.define([
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
                         me.byId("ioMatListTab").bindRows("/rows");
                         me._tableRendered = "ioMatListTab";
+
+                        oText = me.getView().byId("MATLSTCnt");
+                        oText.setText(oData.results.length + "");
 
 
                         me._oModelIOMatList.read('/InfoRecCheckSet', {
@@ -16241,6 +16353,7 @@ sap.ui.define([
                 // this._aColumns = {};
                 // this._aDataBeforeChange = [];
                 var me = this;
+                var oText;
 
                 this._oModelIOCosting.read('/TypeSHSet', {
                     async: false,
@@ -16327,6 +16440,9 @@ sap.ui.define([
                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
                         me.byId("costHdrTab").bindRows("/rows");
                         me._tableRendered = "costHdrTab";
+
+                        oText = me.getView().byId("COSTHDRCnt");
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) { }
                 })
@@ -16469,6 +16585,7 @@ sap.ui.define([
             getIOCostDetails(arg1, arg2, arg3) {
                 var me = this;
                 var vIONo = this._ioNo
+                var oText = this.getView().byId("COSTDETCnt");
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -16495,6 +16612,9 @@ sap.ui.define([
                         me.byId("costDtlsTab").getModel().setProperty("/rows", oData.results);
                         me.byId("costDtlsTab").bindRows("/rows");
                         me._tableRendered = "costDtlsTab";
+
+                        var oText = me.getView().byId("COSTDETCnt");
+                        oText.setText(oData.results.length + "");
                     },
                     error: function (err) {
                         Common.closeProcessingDialog(me);
@@ -17037,8 +17157,9 @@ sap.ui.define([
             onRefresh(arg) {
                 var me = this;
                 var vIONo = this._ioNo
+                var oText;
 
-                // console.log(vIONo);
+                console.log(vIONo);
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -17060,7 +17181,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            // console.log(oData);
+                            console.log(arg, oData);
                             Common.closeProcessingDialog(me);
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
@@ -17080,6 +17201,9 @@ sap.ui.define([
                             me.byId(arg + "Tab").getModel().setProperty("/rows", oData.results);
                             me.byId(arg + "Tab").bindRows("/rows");
                             me._tableRendered = (arg + "Tab");
+
+                            oText = me.getView().byId("MATLSTCnt");
+                            oText.setText(oData.results.length + "");
 
                             me._oModelIOMatList.read('/InfoRecCheckSet', {
                                 success: function (oData2) {
@@ -17121,6 +17245,9 @@ sap.ui.define([
                             me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
                             me.byId("costHdrTab").bindRows("/rows");
                             me._tableRendered = "costHdrTab";
+
+                            oText = me.getView().byId("COSTHDRCnt");
+                            oText.setText(oData.results.length + "");
                         },
                         error: function (err) {
                             Common.closeProcessingDialog(me);
@@ -17161,6 +17288,9 @@ sap.ui.define([
                             me.byId("sizeTab").bindRows("/rows");
                             me._tableRendered = "sizeTab";
 
+                            oText = me.getView().byId("SIZECnt");
+                            oText.setText(oData.results.length + "");
+
                             Common.closeProcessingDialog(me)
                                 ;
                         },
@@ -17181,6 +17311,10 @@ sap.ui.define([
                             me.byId("colorTab").getModel().setProperty("/rows", oData.results);
                             me.byId("colorTab").bindRows("/rows");
                             me._tableRendered = "colorTab";
+
+                            oText = me.getView().byId("COLORSCnt");
+                            oText.setText(oData.results.length + "");
+
                             Common.closeProcessingDialog(me)
                         },
                         error: function (err) { }
@@ -17200,6 +17334,10 @@ sap.ui.define([
                             me.byId("processTab").getModel().setProperty("/rows", oData.results);
                             me.byId("processTab").bindRows("/rows");
                             me._tableRendered = "processTab";
+
+                            oText = me.getView().byId("PROCESSCnt");
+                            oText.setText(oData.results.length + "");
+
                             Common.closeProcessingDialog(me)
                         },
                         error: function (err) { }
@@ -17211,7 +17349,70 @@ sap.ui.define([
                 // console.log(arg1, arg2)
                 this._tableRendered = "";
 
-                if (arg1 === "ioCost") {
+                if (arg1 === "ioHdr") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
+                        this.byId("btnFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnFullScreenIOStat").setVisible(false);
+                        this.byId("btnExitFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnExitFullScreenIOStat").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
+                        this.byId("btnFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnFullScreenIOStat").setVisible(true);
+                        this.byId("btnFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnExitFullScreenIOStat").setVisible(false);
+                    }
+
+                    this._tableRendered = "IOATTRIBTab";
+                    this._tableRendered = "IOSTATUSTab";
+                }
+                else if (arg1 === "ioStat") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
+                        this.byId("btnFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnFullScreenIOStat").setVisible(false);
+                        this.byId("btnExitFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnExitFullScreenIOStat").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
+                        this.byId("btnFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnFullScreenIOStat").setVisible(true);
+                        this.byId("btnFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnExitFullScreenIOStat").setVisible(false);
+                    }
+
+                    this._tableRendered = "IOATTRIBTab";
+                    this._tableRendered = "IOSTATUSTab";
+                }
+                else if (arg1 === "ioAttrib") {
+                    if (arg2 === "max") {
+                        this.byId("objectHeader").setVisible(false);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
+                        this.byId("btnFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnFullScreenIOStat").setVisible(false);
+                        this.byId("btnExitFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnExitFullScreenIOStat").setVisible(true);
+                    }
+                    else if (arg2 === "min") {
+                        this.byId("objectHeader").setVisible(true);
+                        // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
+                        this.byId("btnFullScreenIOAttrib").setVisible(true);
+                        this.byId("btnFullScreenIOStat").setVisible(true);
+                        this.byId("btnExitFullScreenIOAttrib").setVisible(false);
+                        this.byId("btnExitFullScreenIOStat").setVisible(false);
+                    }
+
+                    this._tableRendered = "IOATTRIBTab";
+                    this._tableRendered = "IOSTATUSTab";
+                }
+                else if (arg1 === "ioCost") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
                         this.byId("btnFullScreenIOCost").setVisible(false);
@@ -18223,6 +18424,46 @@ sap.ui.define([
                 if (this.byId(arg + "Tab").getBinding("rows").aSorters.length > 0) {
                     this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
                 }
+            },
+            
+            //******************************************* */
+            // Column Filtering
+            //******************************************* */
+
+            onColFilterClear: function (oEvent) {
+                TableFilter.onColFilterClear(oEvent, this);
+            },
+
+            onColFilterCancel: function (oEvent) {
+                TableFilter.onColFilterCancel(oEvent, this);
+            },
+
+            onColFilterConfirm: function (oEvent) {
+                TableFilter.onColFilterConfirm(oEvent, this);
+            },
+
+            onFilterItemPress: function (oEvent) {
+                TableFilter.onFilterItemPress(oEvent, this);
+            },
+
+            onFilterValuesSelectionChange: function (oEvent) {
+                TableFilter.onFilterValuesSelectionChange(oEvent, this);
+            },
+
+            onSearchFilterValue: function (oEvent) {
+                TableFilter.onSearchFilterValue(oEvent, this);
+            },
+
+            onCustomColFilterChange: function (oEvent) {
+                TableFilter.onCustomColFilterChange(oEvent, this);
+            },
+
+            onSetUseColFilter: function (oEvent) {
+                TableFilter.onSetUseColFilter(oEvent, this);
+            },
+
+            onRemoveColFilter: function (oEvent) {
+                TableFilter.onRemoveColFilter(oEvent, this);
             },
 
             pad: function (num, size) {

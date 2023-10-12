@@ -18,6 +18,8 @@
         <Button id = "onIOTransfer" type="Ghost"  icon="sap-icon://journey-depart" text="{ddtext>/TXTFULLIOXFER}" tooltip="{ddtext>/TXTFULLIOXFER}" press="onIOTransfer" visible="true"/>
         <Button id = "onIOSave" type="Ghost"  icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onIOSave('IOHDR')" visible="false"/>
         <Button id = "onIOCancel" type="Ghost"  icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onIOCancel('IOHDR')" visible="false"/>
+        <!-- <Button id= "btnFullScreenIOHdr" icon="sap-icon://full-screen" press="onTableResize('ioHdr', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+        <Button id= "btnExitFullScreenIOHdr" icon="sap-icon://exit-full-screen" press="onTableResize('ioHdr', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" /> -->
     </OverflowToolbar>
 
     <MessageStrip id="HeaderMessageStrip" text="" showIcon="true" showCloseButton="true" class="sapUiMediumMarginBottom" type="Error" visible="false"/>

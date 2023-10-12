@@ -283,10 +283,11 @@ sap.ui.define([
 
             console.log(oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems());
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
-                console.log("getTitle", item.getTitle());
-                console.log("286", oTableColumns);
-                if (oTableColumns.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered) { item.setIcon("sap-icon://filter") }
-                else { item.setIcon("sap-icon://text-align-justified") }
+                // console.log("getTitle", item);
+                // console.log("286", oTableColumns);
+                // if (oTableColumns.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered) { item.setIcon("sap-icon://filter") }
+                // else { item.setIcon("sap-icon://text-align-justified") }
+                item.setIcon("sap-icon://filter");
             });
 
             if (vFilterType === "UDF") {
@@ -495,7 +496,7 @@ sap.ui.define([
                     item.isFiltered = true;
                 }
                 else {
-                    oColumn.setProperty("filtered", false);
+                    // oColumn.setProperty("filtered", false);
                     item.isFiltered = false;
                 }
             })
@@ -984,6 +985,8 @@ sap.ui.define([
         },
 
         applyColFilters: function(oThis) {
+            // alert("TableFilter.applyColFilters");
+            console.log("TableFilter.applyColFilters");
             var me = oThis;
             var oDialog = me._GenericFilterDialog;
 
@@ -992,6 +995,8 @@ sap.ui.define([
                 var oColumnValues = oDialog.getModel().getProperty("/values");
                 var oFilterCustom = oDialog.getModel().getProperty("/custom");
                 var sSourceTabId = oDialog.getModel().getData().sourceTabId;
+
+                console.log("oDialog.getModel()", oDialog.getModel());
     
                 var aFilter = [];
                 var oFilter = null;
@@ -1002,6 +1007,7 @@ sap.ui.define([
                     var aColFilter = [];
                     var oColFilter = null;
     
+                    console.log("aColumnItems.forEach", item);
                     if (item.filterType === "VLF" && oColumnValues[item.ColumnName].filter(fItem => fItem.Selected === false).length > 0) {
                         oColumnValues[item.ColumnName].forEach(val => {
                             if (val.Selected) {
@@ -1056,6 +1062,7 @@ sap.ui.define([
     
                 me.byId(sSourceTabId).getBinding("rows").filter(oFilter, "Application");
                 me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
+                alert(me._colFilters);
             }
         },
 
