@@ -251,6 +251,7 @@ sap.ui.define([
 
                 // this.byId("btnHdrEdit").setVisible(csAction === "display" ? false : true);
                 // this.byId("btnHdrDelete").setVisible(csAction === "display" ? false : true);
+
                 this.byId("onIOEdit").setVisible(csAction === "display" ? false : true);
                 this.byId("onIORelease").setVisible(csAction === "display" ? false : true);
                 this.byId("onIOTransfer").setVisible(csAction === "display" ? false : true);
@@ -5072,8 +5073,8 @@ sap.ui.define([
                             // oData.SUBMATETA = oData.SUBMATETA === "" || oData.SUBMATETA === "0000-00-00" || oData.SUBMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.SUBMATETA));
                             // oData.CUTMATETA = oData.CUTMATETA === "" || oData.CUTMATETA === "0000-00-00" || oData.CUTMATETA === "    -  -  " ? "" : dateFormat.format(new Date(oData.CUTMATETA));
                             oData.PLANDLVDT = oData.PLANDLVDT === "" || oData.PLANDLVDT === "0000-00-00" || oData.PLANDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.PLANDLVDT));
-                            // oData.CREATEDDT = oData.CREATEDDT === "" || oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
-                            // oData.UPDATEDDT = oData.UPDATEDDT === "" || oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
+                            oData.CREATEDDT = oData.CREATEDDT === "" || oData.CREATEDDT === "0000-00-00" || oData.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.CREATEDDT));
+                            oData.UPDATEDDT = oData.UPDATEDDT === "" || oData.UPDATEDDT === "0000-00-00" || oData.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(oData.UPDATEDDT));
                             oData.VERNO = oData.VERNO === "" || oData.VERNO === "000" ? "" : oData.VERNO;
                             me._prodplant = oData.PRODPLANT;
 
@@ -6133,9 +6134,9 @@ sap.ui.define([
                             return;
                         }
 
-                        if(new Date(this.getView().byId("PLANDLVDT").getValue()).getTime() < new Date(this.getView().byId("CUSTDLVDT").getValue()).getTime()) {
+                        if(new Date(this.getView().byId("PLANDLVDT").getValue()).getTime() > new Date(this.getView().byId("CUSTDLVDT").getValue()).getTime()) {
                             // alert("Plan Delivery Date is less than Customer Delivery Date");
-                            sErrMsg += " Plan Delivery Date is less than Customer Delivery Date"
+                            sErrMsg += " Customer Delivery Date is earlier than Plan Delivery Date"
                             sap.m.MessageBox.warning(sErrMsg);
                             return;
                         }
@@ -13297,6 +13298,8 @@ sap.ui.define([
                 let input = oEvent.getSource();
                 let inputValue = input.getValue();
 
+                // console.log("oSource", oSource);
+
                 // console.log("inputValue", inputValue);
                 let isValidNumber = !isNaN(parseFloat(inputValue));
                 // console.log("isValidNumber1", isValidNumber);
@@ -13330,6 +13333,8 @@ sap.ui.define([
                     || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE2"
                     || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE3") {
                     vDecPlaces = 4;
+                } else if(this._sTableModel === "costDtls") {
+                    vDecPlaces = 2;
                 }
                 else {
                     // console.log("Number ELSE");
@@ -17400,6 +17405,7 @@ sap.ui.define([
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(true);
                         this.byId("btnFullScreenIOStat").setVisible(true);
+                        this.byId("panelIOHDR").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
                         this.byId("btnExitFullScreenIOStat").setVisible(false);
                     }
@@ -17411,6 +17417,7 @@ sap.ui.define([
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
+                        this.byId("panelIOHDR").setVisible(false);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
                         this.byId("btnFullScreenIOStat").setVisible(false);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(true);
@@ -17419,6 +17426,7 @@ sap.ui.define([
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
+                        this.byId("panelIOHDR").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(true);
                         this.byId("btnFullScreenIOStat").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
@@ -17432,6 +17440,7 @@ sap.ui.define([
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
+                        this.byId("panelIOHDR").setVisible(false);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
                         this.byId("btnFullScreenIOStat").setVisible(false);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(true);
@@ -17440,6 +17449,7 @@ sap.ui.define([
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
+                        this.byId("panelIOHDR").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(true);
                         this.byId("btnFullScreenIOStat").setVisible(true);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(false);
@@ -17493,6 +17503,9 @@ sap.ui.define([
                 else if (arg1 === "IODLV") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
+                        this.byId("panelIODET").setVisible(false);
+                        this.getView().byId("panelIODET").setHeight("0");
+                        this.getView().byId("panelIODLV").setHeight("100%");
                         this.byId("idIconTabBarInlineIODet").setVisible(false);
                         this.byId("btnFullScreenDlvSched").setVisible(false);
                         this.byId("btnExitFullScreenDlvSched").setVisible(true);
@@ -17500,6 +17513,9 @@ sap.ui.define([
                     }
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
+                        this.byId("panelIODET").setVisible(true);
+                        this.getView().byId("panelIODET").setHeight("60%");
+                        this.getView().byId("panelIODLV").setHeight("40%");
                         this.byId("idIconTabBarInlineIODet").setVisible(true);
                         this.byId("btnFullScreenDlvSched").setVisible(true);
                         this.byId("btnExitFullScreenDlvSched").setVisible(false);
@@ -17510,6 +17526,9 @@ sap.ui.define([
                 else if (arg1 === "IODET" || arg1 === "IODETMATLST") {
                     if (arg2 === "max") {
                         this.byId("objectHeader").setVisible(false);
+                        this.byId("panelIODLV").setVisible(false);
+                        this.getView().byId("panelIODLV").setHeight("0");
+                        this.getView().byId("panelIODET").setHeight("100%");
                         this.byId("btnFullScreenIODet").setVisible(false);
                         this.byId("btnExitFullScreenIODet").setVisible(true);
                         this.byId("btnFullScreenIODETMATLST").setVisible(false);
@@ -17518,6 +17537,9 @@ sap.ui.define([
                     }
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
+                        this.byId("panelIODLV").setVisible(true);
+                        this.getView().byId("panelIODLV").setHeight("40%");
+                        this.getView().byId("panelIODET").setHeight("60%");
                         this.byId("btnFullScreenIODet").setVisible(true);
                         this.byId("btnExitFullScreenIODet").setVisible(false);
                         this.byId("btnFullScreenIODETMATLST").setVisible(true);

@@ -6,18 +6,19 @@
 	xmlns:js="zuicostcnfg.js">
     <Dialog 
 		contentWidth="375px"
-        contentHeight="260px"
+        contentHeight="100%"
         title="Select {/title}"
         resizable="true"
         draggable="true"
-        afterOpen="afterOpenCreateGMC">
+        afterOpen="afterOpenCreateGMC"
+		>
         <endButton>
 			<Button text="Cancel" />
 		</endButton>
 		<VBox fitContainer="true">
 			<table:Table 
 				enableColumnReordering="false" 
-				class="sapUiTinyMargin" 
+				class="stretchTable" 
 				visibleRowCountMode="Auto" 
 				selectionMode="Single"
 				selectionBehavior="RowOnly">

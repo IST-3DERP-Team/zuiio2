@@ -244,3 +244,56 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 .trxres .sapMITBHead {
     padding: 0 !important;
 }
+
+.stretchTable {
+    height: 100%;
+    width: 100%;
+}
+
+.iohdr_splitter .sapMITBHead {
+    margin-top: 0 !important;
+    padding: 0 !important;
+}
+
+.iohdr_splitter .sapMILI {
+    height: 1.5rem !important;
+}
+
+.iohdr_splitter .stylHdrPadding{
+    padding: 0 1rem !important;
+}
+
+.iohdr_splitter .sapMPanelContent:not(.sapMPanelBGTransparent) {
+    border-bottom: none !important;
+}
+
+.iohdr_splitter .sapMITBContent {
+    border-bottom: none !important;
+}
+
+.iohdr_splitter .hdrValBB {
+    vertical-align: middle !important;
+    float: left;
+    /* min-width: 10rem !important;
+    max-width: 20rem !important; */
+}
+
+.iohdr_splitter .sapMILILabel {
+    width: 50% !important;
+    max-width: 50% !important;
+    min-width: 50% !important;
+}
+
+.iohdr_splitter .sapMILIDiv {
+    width: 50% !important;
+}
+
+.iohdr_splitter .hideOverflow {
+    overflow: hidden !important;
+}
+
+.iohdr_splitter .hdrLabel {
+    background-color: bisque;
+    padding: 0.15rem 0.5rem;
+    border-radius: 0.5rem;
+}

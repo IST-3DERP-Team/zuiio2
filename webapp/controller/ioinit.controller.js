@@ -2101,7 +2101,12 @@ sap.ui.define([
                             }, 100);
 
                         },
-                        error: function (err) { }
+                        error: function (err) {
+                            // console.log(err);
+                            var responseText = JSON.parse(err.responseText);
+                            sap.m.MessageBox.error(responseText.error.message.value);
+                            // Common.showMessage(responseText.error.message.value);
+                         }
                     });
                 }, 100);
             },

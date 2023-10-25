@@ -62,85 +62,89 @@
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="{ddtext>/ITFIOHDR}" key="itfIOHDR">
-                        <VBox height="100%">
+                    <!-- <layout:Splitter class="iohdr_splitter" orientation="Vertical"> -->
+                    <!-- <VBox height="100%"> -->
+                        <Panel id="panelIOHDR" width="100%" height="37%" class="sapUiNoContentPadding stylHdrPadding">
+                                <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
+                        </Panel>
+                        <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+                                <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
+                                    <items>                                
+                                        <!-- ATTRIBUTES -->
+                                        <IconTabFilter text="{ddtext>/ITFATTRIB}" key="itfIOATTRIB">
+                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
 
-                            <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
-                            
-                            <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
-                                <items>                                
-                                    <!-- ATTRIBUTES -->
-                                    <IconTabFilter text="{ddtext>/ITFATTRIB}" key="itfIOATTRIB">
-                                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Attrib" type="XML"/> -->
+                                            <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
+                                            <Title id="IOATTRIBCnt"/>
+                                            <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
+                                                <ToolbarSpacer />
+                                                <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
+                                                <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
+                                                <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
+                                                <Button id="btnFullScreenIOAttrib" icon="sap-icon://full-screen" press="onTableResize('ioAttrib', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                                <Button id="btnExitFullScreenIOAttrib" icon="sap-icon://exit-full-screen" press="onTableResize('ioAttrib', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                            </OverflowToolbar>
 
-                                        <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
-                                        <Title id="IOATTRIBCnt"/>
-                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
-                                            <ToolbarSpacer />
-                                            <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
-                                            <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
-                                            <Button id="onIOAttribCancel" type="Ghost" icon="sap-icon://decline" tooltip="{ddtext>/CANCEL}" press="onCancel('IOATTRIB')" visible="false" />
-                                            <Button id="btnFullScreenIOAttrib" icon="sap-icon://full-screen" press="onTableResize('ioAttrib', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
-                                            <Button id="btnExitFullScreenIOAttrib" icon="sap-icon://exit-full-screen" press="onTableResize('ioAttrib', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
-                                        </OverflowToolbar>
+                                            <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
+                                                <t:Table id="IOATTRIBTab" 
+                                                        class="sapUiSizeCompact sidePadding" 
+                                                        visibleRowCountMode="Auto" 
+                                                        showColumnVisibilityMenu="true" 
+                                                        enableColumnFreeze="true" 
+                                                        enableCellFilter="true" 
+                                                        selectionMode="Single" 
+                                                        selectionBehavior="RowOnly" 
+                                                        cellClick="onCellClick"
+                                                        alternateRowColors="true"
+                                                        firstVisibleRowChanged="onFirstVisibleRowChanged"
+                                                        rowSelectionChange="onRowChange"
+                                                        >
+                                                    <t:layoutData>
+                                                    <FlexItemData growFactor="1" baseSize="0%" />
+                                                    </t:layoutData>
+                                                </t:Table>
+                                            <!-- </Panel> -->
+                                        </IconTabFilter>
+                                        <!-- STATUS -->
+                                        <IconTabFilter text="{ddtext>/ITFSTAT}" key="itfIOSTATUS">
+                                            <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
 
-                                        <!-- <Panel id="ioattribPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->
-                                            <t:Table id="IOATTRIBTab" 
+                                            <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
+                                                <ToolbarSpacer />
+                                                <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
+                                            </OverflowToolbar> -->
+                                            <OverflowToolbar id="_ovfToolBarIOStat" design="Transparent">
+                                            <Title id="IOSTATCnt"/>
+                                            <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
+                                                <ToolbarSpacer />
+                                                <Button id="btnFullScreenIOStat" icon="sap-icon://full-screen" press="onTableResize('ioStat', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
+                                                <Button id="btnExitFullScreenIOStat" icon="sap-icon://exit-full-screen" press="onTableResize('ioStat', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
+                                            </OverflowToolbar>
+
+                                            <t:Table id="IOSTATUSTab" 
                                                     class="sapUiSizeCompact sidePadding" 
                                                     visibleRowCountMode="Auto" 
                                                     showColumnVisibilityMenu="true" 
                                                     enableColumnFreeze="true" 
                                                     enableCellFilter="true" 
                                                     selectionMode="Single" 
-                                                    selectionBehavior="RowOnly" 
                                                     cellClick="onCellClick"
+                                                    selectionBehavior="RowSelector" 
                                                     alternateRowColors="true"
-                                                    firstVisibleRowChanged="onFirstVisibleRowChanged"
-                                                    rowSelectionChange="onRowChange"
-                                                    >
+                                                    rowSelectionChange="onRowChange">
                                                 <t:layoutData>
-                                                <FlexItemData growFactor="1" baseSize="0%" />
+                                                    <FlexItemData growFactor="1" baseSize="0%" />
                                                 </t:layoutData>
                                             </t:Table>
-                                        <!-- </Panel> -->
-                                    </IconTabFilter>
-                                    <!-- STATUS -->
-                                    <IconTabFilter text="{ddtext>/ITFSTAT}" key="itfIOSTATUS">
-                                        <!-- <core:Fragment fragmentName="zuiio2.view.subviews.Status" type="XML"/> -->
-
-                                        <!-- <OverflowToolbar id="_ovfToolBarStatus" design="Transparent">
-                                            <ToolbarSpacer />
-                                            <Button id="onIOStatEdit" type="Ghost" icon="sap-icon://edit" tooltip="Edit Status" press="onEdit('IOSTAT')" />
-                                        </OverflowToolbar> -->
-                                        <OverflowToolbar id="_ovfToolBarIOStat" design="Transparent">
-                                        <Title id="IOSTATCnt"/>
-                                        <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/>
-                                            <ToolbarSpacer />
-                                            <Button id="btnFullScreenIOStat" icon="sap-icon://full-screen" press="onTableResize('ioStat', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
-                                            <Button id="btnExitFullScreenIOStat" icon="sap-icon://exit-full-screen" press="onTableResize('ioStat', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
-                                        </OverflowToolbar>
-
-                                        <t:Table id="IOSTATUSTab" 
-                                                class="sapUiSizeCompact sidePadding" 
-                                                visibleRowCountMode="Auto" 
-                                                showColumnVisibilityMenu="true" 
-                                                enableColumnFreeze="true" 
-                                                enableCellFilter="true" 
-                                                selectionMode="Single" 
-                                                cellClick="onCellClick"
-                                                selectionBehavior="RowSelector" 
-                                                alternateRowColors="true"
-                                                rowSelectionChange="onRowChange">
-                                            <t:layoutData>
-                                                <FlexItemData growFactor="1" baseSize="0%" />
-                                            </t:layoutData>
-                                        </t:Table>
-                                    </IconTabFilter>
-                                </items>
-                                <layoutData>
-                                    <FlexItemData growFactor="1" baseSize="0%" />
-                                </layoutData>
-                            </IconTabBar>
-                        </VBox>
+                                        </IconTabFilter>
+                                    </items>
+                                    <layoutData>
+                                        <FlexItemData growFactor="1" baseSize="0%" />
+                                    </layoutData>
+                                </IconTabBar>
+                        </Panel>
+                    <!-- </VBox> -->
+                    <!-- </layout:Splitter> -->
                     </IconTabFilter>
 
                     <!-- STYLE -->
@@ -535,7 +539,9 @@
 
                     <!-- DELIVERY SCHEDULE -->                    
                     <IconTabFilter text="{ddtext>/ITFIODET}" key="itfDLVSCHED">
-                        <VBox height="100%">                        
+                        <!-- <VBox height="100%">      -->
+                        <!-- <layout:Splitter class="iohdr_splitter" orientation="Vertical"> -->
+                        <Panel id="panelIODLV" width="100%" height="40%" class="sapUiNoContentPadding stylHdrPadding">                
                         <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
                             <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
@@ -572,8 +578,10 @@
                                     <FlexItemData growFactor="1" baseSize="0%"/>
                                 </t:layoutData> 
                             </t:Table>
+                        </Panel>
                         <!-- </Panel> -->
 
+                        <Panel id="panelIODET" width="100%" height="60%" class="sapUiNoContentPadding">
                         <IconTabBar id="idIconTabBarInlineIODet" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
                                 <items>                                
                                     <!-- ATTRIBUTES -->
@@ -644,8 +652,10 @@
                                 <layoutData>
                                     <FlexItemData growFactor="1" baseSize="0%" />
                                 </layoutData>
-                            </IconTabBar>
-                        </VBox>
+                        </IconTabBar>
+                        </Panel>
+                        <!-- </layout:Splitter> -->
+                        <!-- </VBox> -->
                     </IconTabFilter>
 
                     <!-- MATERIAL LIST -->

@@ -278,12 +278,14 @@ sap.ui.define([
             oTable.getModel().setProperty("/rows", vh);
             oTable.bindRows("/rows");
 
-            if (vh.length > 5) {
-                me._tableValueHelpDialog.setContentHeight("505px");
-            }
-            else {
-                me._tableValueHelpDialog.setContentHeight("280px");
-            }
+            // if (vh.length > 5) {
+            //     me._tableValueHelpDialog.setContentHeight("505px");
+            // }
+            // else {
+            //     me._tableValueHelpDialog.setContentHeight("280px");
+            // }
+
+            me._tableValueHelpDialog.setContentHeight("380px");
 
             if (oColumns.columns.length === 1) {
                 me._tableValueHelpDialog.setContentWidth("375px");
@@ -540,12 +542,14 @@ sap.ui.define([
             oTable.getModel().setProperty("/rows", vh);
             oTable.bindRows("/rows");
 
-            if (vh.length > 5) {
-                this._tableValueHelpDialog.setContentHeight("505px");
-            }
-            else {
-                this._tableValueHelpDialog.setContentHeight("260px");
-            }
+            // if (vh.length > 5) {
+            //     this._tableValueHelpDialog.setContentHeight("505px");
+            // }
+            // else {
+            //     this._tableValueHelpDialog.setContentHeight("260px");
+            // }
+
+            this._tableValueHelpDialog.setContentHeight("360px");
 
             if (oColumns.columns.length === 1) {
                 this._tableValueHelpDialog.setContentWidth("375px");
@@ -556,8 +560,6 @@ sap.ui.define([
             else {
                 this._tableValueHelpDialog.setContentWidth("645px");
             }
-
-            // this._tableValueHelpDialog.setContentWidth("435px");
 
             // sap.ui.getCore().byId("tvhSearchField").setProperty("value", "");
             this._tableValueHelpDialog.getContent()[0].getItems()[0].getExtension()[0].getContent()[3].setProperty("value", "");
