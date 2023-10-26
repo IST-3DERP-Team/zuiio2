@@ -32,6 +32,7 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
+                this._tableRendered = "";
                 this._tableFilter = TableFilter;
                 console.log("this._tableFilter", this._tableFilter);
                 this._colFilters = {};
@@ -86,6 +87,25 @@ sap.ui.define([
                         }
                     }, oView);
                 }
+
+                var oTableEventDelegate = {
+                    onkeyup: function (oEvent) {
+                        that.onKeyUp(oEvent);
+                    },
+
+                    onAfterRendering: function (oEvent) {
+                        console.log("onAfterRendering", that._tableRendered);
+                        var oControl = oEvent.srcControl;
+                        var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
+
+                        if (sTabId.substr(sTabId.length - 3) === "Tab") that._tableRendered = sTabId;
+                        else that._tableRendered = "IODynTable";
+
+                        that.onAfterTableRendering();
+                    }
+                };
+
+                this.byId("IODynTable").addEventDelegate(oTableEventDelegate);
 
                 // if (sap.ui.getCore().byId("backBtn") !== undefined) {
                 //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
@@ -156,7 +176,7 @@ sap.ui.define([
             setActiveRowHighlight() {
                 var oTable = this.byId("IODynTable");
                 console.log("IODynTable", oTable);
-                
+                console.log(oTable.getModel().getData());
                 setTimeout(() => {
                     var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
 
@@ -169,6 +189,52 @@ sap.ui.define([
                     })                    
                 }, 1);
             },
+
+            onAfterTableRendering: function (oEvent) {
+                if (this._tableRendered !== "") {
+                    console.log("setActiveRowHighlightByTableId", this._tableRendered);
+                    this.setActiveRowHighlightByTableId(this._tableRendered);
+                    this._tableRendered = "";
+                }
+            },
+
+            setActiveRowHighlightByTableId(arg) {
+                var oTable = arg === "reorderTab" ? sap.ui.getCore().byId("reorderTab") : this.byId(arg);
+                var sTableId = oTable.getId();
+
+                setTimeout(() => {
+
+                    // if(sTableId.indexOf("styleBOMUVTab") >= 0){
+                    //     console.log("IO Attrib Data Model");
+                    //     console.log(oTable);
+                    //     return;
+                    // }
+
+                    // console.log(oTable);
+                    console.log(arg);
+
+                    console.log("Test");
+                  
+                    if (arg === "IODynTable" && sTableId.indexOf(arg) >= 0) {
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+
+                    }
+                }, 10);
+            },
+
+            // onCellClick: async function (oEvent) {
+            //     if (!oEvent.getParameters().rowBindingContext) {
+            //         return;
+            //     }
+
+
+            // },
 
             getAppAction: async function () {
                 // console.log("getAppAction");
@@ -889,7 +955,7 @@ sap.ui.define([
                         me._aColumns[sTabId.replace("Tab", "")] = oData.results;
 
                         me.getDynamicTableData(oData.results);
-                        me.setActiveRowHighlight();
+                        // me.setActiveRowHighlight();
                     },
                     error: function (err) { }
                 });
@@ -949,8 +1015,15 @@ sap.ui.define([
                         if (aFilters.length > 0) { me.setColumnFilters("IODynTable", aFilters); }
                         if (aSorters.length > 0) { me.setColumnSorters("IODynTable", aSorters); }
 
-                        oData.results.forEach((item, index) =>
-                                    item.ACTIVE = index === 0 ? "X" : "");
+                        // oData.results.forEach((item, index) =>
+                        //             item.ACTIVE = index === 0 ? "X" : "");
+                        
+                        oData.results.forEach((item, index) => {
+                            if (index === 0) {
+                                item.ACTIVE = "X"
+                            } else
+                                item.ACTIVE = ""
+                        });
 
                         me.setChangeStatus(false);
 
@@ -1082,6 +1155,7 @@ sap.ui.define([
                 });
 
                 oTable.bindRows("/rows");
+                this._tableRendered = "IODynTable";
 
                 //remove sort icon of currently sorted column
                 oTable.attachSort(function (oEvent) {
@@ -1225,20 +1299,57 @@ sap.ui.define([
             },
 
             onKeyUp(oEvent) {
-                //console.log("onKeyUp!");
+                // if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
+                //     var oTable = this.getView().byId("IODynTable");
+                //     var model = oTable.getModel();
 
-                // var _dataMode = this.getView().getModel("undefined").getData().dataMode;
-                // _dataMode = _dataMode === undefined ? "READ" : _dataMode;
+                //     var sRowPath = this.byId(oEvent.srcControl.sId).oBindingContexts["undefined"].sPath;
+                //     var index = sRowPath.split("/");
+                //     oTable.setSelectedIndex(parseInt(index[2]));
+                // }
 
-                // if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows" && _dataMode === "READ") {
-                if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
-                    var oTable = this.getView().byId("IODynTable");
-                    var model = oTable.getModel();
+                if ((oEvent.key === "ArrowUp" || oEvent.key === "ArrowDown") && oEvent.srcControl.sParentAggregationName === "rows") {
+                    var oTable = this.byId(oEvent.srcControl.sId).oParent;
+                    
+                    if (this.byId(oEvent.srcControl.sId).getBindingContext()) {
+                        var sRowPath = this.byId(oEvent.srcControl.sId).getBindingContext().sPath;
+                    
+                        oTable.clearSelection();
+                        oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                        oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X"); 
 
-                    var sRowPath = this.byId(oEvent.srcControl.sId).oBindingContexts["undefined"].sPath;
-                    var index = sRowPath.split("/");
-                    oTable.setSelectedIndex(parseInt(index[2]));
+                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                        oTable.getRows().forEach(row => {
+                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                row.addStyleClass("activeRow");
+                            }
+                            else row.removeStyleClass("activeRow");
+                        })
+
+                        // console.log("sRowPath", sRowPath);
+                        
+                        // oTable.getRows().forEach(row => {
+                        //     if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                        //         row.addStyleClass("activeRow");
+                        //     }
+                        //     else row.removeStyleClass("activeRow")
+                        // })
+                    }
                 }
+            },
+
+            onCellClick: async function (oEvent)  {
+                var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
+                var oTable = this.byId("IODynTable");
+                oTable.getModel().getData().rows.forEach(row => row.ACTIVE = "");
+                oTable.getModel().setProperty(sRowPath + "/ACTIVE", "X");
+
+                oTable.getRows().forEach(row => {
+                    if (row.getBindingContext() && row.getBindingContext().sPath.replace("/rows/", "") === sRowPath.replace("/rows/", "")) {
+                        row.addStyleClass("activeRow");
+                    }
+                    else row.removeStyleClass("activeRow")
+                })
             },
 
             onSapEnter(oEvent) {

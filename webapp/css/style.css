@@ -297,3 +297,7 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
     padding: 0.15rem 0.5rem;
     border-radius: 0.5rem;
 }
+
+.sapMTitleStyleAuto {
+    font-size: 1rem !important;
+}
