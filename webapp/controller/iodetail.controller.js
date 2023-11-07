@@ -16879,29 +16879,62 @@ sap.ui.define([
                     else { sap.ui.getCore().byId("SALESTERM").setValue(""); }
                 }
 
-                //set value of fields if resource has only 1 data
-                if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1) {
-                    sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD);
+                // Set default value
+                var oCSType = sap.ui.getCore().byId("CSTYPE");
+                oCSType.setSelectedKey("02");
+                oCSType.setEnabled(false);
 
-                    //get default value
-                    var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+                var oCSVar = sap.ui.getCore().byId("CSVCD");
+                var aCostVar = this.getView().getModel("COSTVARIANT_MODEL").getData();
+                var aCostVarDefault = aCostVar.filter(x => x.ZDEFAULT == "X");
+                var aCostVarFiltered = [];
 
-                    if (aDef.length > 0) {
-                        sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+                if (aCostVarDefault.length > 0) {
+                    if (aCostVarDefault.length > 1) {
 
-                        if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                        // 1st priority CustGrp
+                        aCostVarFiltered = aCostVarDefault.filter(x => x.CUSTGRP == this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0]);
+                        if (aCostVarFiltered.length > 0) {
+                            oCSVar.setSelectedKey(aCostVarFiltered[0].CSVCD);
+                        }
+                        else {
+                            // 2nd priority PlantCd
+                            aCostVarFiltered = aCostVarDefault.filter(x => x.PLANTCD == me._prodplant);
+                            if (aCostVarFiltered.length > 0) {
+                                oCSVar.setSelectedKey(aCostVarFiltered[0].CSVCD);
+                            }
+                            else {
+                                oCSVar.setSelectedKey(aCostVarDefault[0].CSVCD);
+                            }
+                        }
                     }
-                    // else {
-                    //     //set value of fields if resource has only 1 data
-                    //     if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
-                    //     else { sap.ui.getCore().byId("CSVCD").setValue(""); }    
-                    // }                    
+                    else {
+                        oCSVar.setSelectedKey(aCostVarDefault[0].CSVCD);
+                    }
                 }
-                else {
-                    sap.ui.getCore().byId("CSTYPE").setValue("");
-                    sap.ui.getCore().byId("CSVCD").setValue("");
-                }
-                // console.log(sapDateFormat.format("11/28/2022"))
+
+                // //set value of fields if resource has only 1 data
+                // if (this.getView().getModel("COSTTYPE_MODEL").getData().length === 1) {
+                //     sap.ui.getCore().byId("CSTYPE").setValue(this.getView().getModel("COSTTYPE_MODEL").getData()[0].CSTYPECD);
+
+                //     //get default value
+                //     var aDef = this.getView().getModel("COSTVARIANT_MODEL").getData().filter(item => item.ZDEFAULT === "X");
+
+                //     if (aDef.length > 0) {
+                //         sap.ui.getCore().byId("CSVCD").setValue(aDef[0].CSVCD);
+
+                //         if (aDef[0].AUTOAPRV === "X") sap.ui.getCore().byId("COSTSTATUS").setValue("REL");
+                //     }
+                //     // else {
+                //     //     //set value of fields if resource has only 1 data
+                //     //     if (this.getView().getModel("COSTVARIANT_MODEL").getData().length === 1) { sap.ui.getCore().byId("CSVCD").setValue(this.getView().getModel("COSTVARIANT_MODEL").getData()[0].CSVCD); }
+                //     //     else { sap.ui.getCore().byId("CSVCD").setValue(""); }    
+                //     // }                    
+                // }
+                // else {
+                //     sap.ui.getCore().byId("CSTYPE").setValue("");
+                //     sap.ui.getCore().byId("CSVCD").setValue("");
+                // }
             },
 
             afterOpenCreateCosting: function (oEvent) {
