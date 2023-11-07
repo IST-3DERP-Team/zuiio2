@@ -18,20 +18,6 @@
     height="100%"
 >
     <Page id="pageIODET" title="{i18n>title_iodet}" showHeader="false" titleLevel="H3" class="iodet">
-    <!-- <dependents> -->
-            <!-- <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
-            <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
-            <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
-            <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
-            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" /> -->
-            <!-- <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".onSearch" />
-            <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".onCopyIO" /> -->
-
-            <!-- <core:CommandExecution id="CEIOHDR_EDIT" command="Edit" enabled="true" execute=".onIOEdit('IOHDR')" />
-            <core:CommandExecution id="CEIOHDR_SAVE" command="Save" enabled="true" execute=".onIOSave('IOHDR')" />
-            <core:CommandExecution id="CEIOHDR_CANCEL" command="Cancel" enabled="true" execute=".onIOCancel('IOHDR')" />
-        </dependents>
-         -->
         <VBox fitContainer="true">
             <!-- HEADER DATA-->
             <ObjectHeader

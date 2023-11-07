@@ -25,6 +25,7 @@ sap.ui.define([
                         icon: "sap-icon://filter",
                         text: "Filter",
                         select: function(oEvent) {
+                            console.log("attachColumnMenuOpen", oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"));
                             _this.onColFilter(sTableId, oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"), me);
                         }
                     })
@@ -103,6 +104,7 @@ sap.ui.define([
 
             console.log("me._colFilters");
             console.log(me._colFilters);
+            console.log("sTableId", sTableId);
             if (me._colFilters[sTableId] !== undefined) {
                 aColumnItems = me._colFilters[sTableId].items;
                 oFilterValues = me._colFilters[sTableId].values;
@@ -991,11 +993,13 @@ sap.ui.define([
             var oDialog = me._GenericFilterDialog;
 
             if (oDialog) {
+                alert("applyColFilters");
                 var aColumnItems = oDialog.getModel().getProperty("/items");
                 var oColumnValues = oDialog.getModel().getProperty("/values");
                 var oFilterCustom = oDialog.getModel().getProperty("/custom");
                 var sSourceTabId = oDialog.getModel().getData().sourceTabId;
 
+                alert(sSourceTabId);
                 console.log("oDialog.getModel()", oDialog.getModel());
     
                 var aFilter = [];

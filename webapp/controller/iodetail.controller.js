@@ -51,8 +51,7 @@ sap.ui.define([
 
         var _seqNo = 0;
 
-        this._tableFilter = TableFilter;
-        this._colFilters = {};  
+        
 
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
@@ -63,6 +62,10 @@ sap.ui.define([
                 this._ccolumns;
                 this._pvtColumnData;
                 this._pvtPivotArray;
+
+                this._tableFilter = TableFilter;
+                console.log("this._tableFilter", this._tableFilter);
+                this._colFilters = {};  
 
                 //Initialize router
                 var oComponent = this.getOwnerComponent();
@@ -8863,7 +8866,7 @@ sap.ui.define([
                 oModel.read("/StyleBOMUVSet", {
                     success: function (oData, oResponse) {
                         var rowData = oData.results;
-                        // console.log(rowData);
+                        console.log("getBOMUVTableData", rowData);
                         //Get unique items of BOM by UV
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
@@ -8890,6 +8893,8 @@ sap.ui.define([
 
                         //set the table columns/rows
                         rowData = oData.results;
+                        console.log("set the table columns", columnData);
+                        console.log("set the table rows", rowData);
                         unique.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
 
                         var oJSONModel = new JSONModel();
@@ -8924,8 +8929,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        // console.log("BOM by UV Pivot");
-                        // console.log(oTable);
+                        console.log("BOM by UV Pivot");
+                        console.log(oTable);
 
                         Common.closeLoadingDialog(me);
                     },
