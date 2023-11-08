@@ -1921,7 +1921,7 @@ sap.ui.define([
                 // var IONo = this.getView().getModel("ui2").getProperty("/currIONo");
                 // var DlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
 
-                var oText = this.getView().byId("IODETMATCnt");
+                var oText = this.getView().byId("iodetMatTabCnt");
 
                 var IONo = iono;
                 var DlvSeq = dlvseq;
@@ -1974,7 +1974,7 @@ sap.ui.define([
                 // var ioNo = iono;
                 var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 var cDlvSeq = this.getView().getModel("ui2").getProperty("/currDlvSeq");
-                var oText = this.getView().byId("IODLVCnt");
+                var oText = this.getView().byId("IODLVTabCnt");
 
                 if (ioNo === "NEW")
                     return;
@@ -2224,7 +2224,7 @@ sap.ui.define([
                 // console.log("IO ATTRIB");
                 var me = this;
                 var ioNo = iono;
-                var oText = this.getView().byId("IOATTRIBCnt");
+                var oText = this.getView().byId("IOATTRIBTabCnt");
                 // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -2285,7 +2285,7 @@ sap.ui.define([
             getIOSTATUSData: async function (iono) {
                 var me = this;
                 var ioNo = iono;
-                var oText = this.getView().byId("IOSTATCnt");
+                var oText = this.getView().byId("IOSTATUSTabCnt");
                 // var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -3470,17 +3470,19 @@ sap.ui.define([
 
                 var oText;
                 if(sTabId === "IODETTab"){
-                    oText = this.getView().byId("IODETCnt");
+                    oText = this.getView().byId("IODETTabCnt");
                     
                 }
 
                 if(sTabId === "SPLITIODETTab"){
-                    oText = this.getView().byId("SPLITIODETCnt");
+                    oText = this.getView().byId("SPLITIODETTabCnt");
                 }
 
                 oText.setText(unique.length + " item/s");
 
                 oTable.setModel(oJSONModel, "DataModel");
+
+                TableFilter.applyColFilters(this);
 
                 oTable.bindColumns("DataModel>/columns", function (sId, oContext) {
                     var column = oContext.getObject();
@@ -3562,13 +3564,13 @@ sap.ui.define([
 
                 oTable.bindRows("DataModel>/results");
 
+                TableFilter.updateColumnMenu(sTabId, this);
+
                 // console.log("2", sTabId, oTable.getColumns());
 
                 // alert(sTabId);
                 if(sTabId === "SPLITIODETTab")
                     this.setRowEditModeSplit("SPLITIODET");
-
-
 
                 _promiseResult = new Promise((resolve, reject) => {
                     setTimeout(() => {
@@ -3851,7 +3853,7 @@ sap.ui.define([
 
                 var ioNo = this._ioNo;
 
-                var oText = this.getView().byId("StatCount");
+                var oText = this.getView().byId("IOSTATUSTabCnt");
 
                 oModel.read("/IOSTATSet", {
                     urlParameters: {
@@ -3979,7 +3981,7 @@ sap.ui.define([
 
                 var ioNo = this._ioNo;
 
-                var oText = this.getView().byId("AttribCount");
+                var oText = this.getView().byId("IOATTRIBTabCnt");
 
                 oModel.read("/IOATTRIBSet", {
                     urlParameters: {
@@ -7166,7 +7168,7 @@ sap.ui.define([
                         this.setActiveRowHighlightByTableId(arg + "Tab");
                     }
 
-                    if (arg === "IODET") {
+                    if (arg === "IODET" && this.byId(arg + "Tab").getModel("DataModel") !== undefined) {
                         this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel("DataModel").getData().results);
                         var oModel = this.getView().byId(tabName).getModel("DataModel");
                         var oData = aNewRow;
@@ -7806,7 +7808,7 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oText = me.getView().byId("IOSTATCnt");
+                                    oText = me.getView().byId("IOSTATUSTabCnt");
                                     oText.setText(oData.results.length + " item/s");
 
                                 } else if (sSource === "IOATTRIBTab") {
@@ -7815,7 +7817,7 @@ sap.ui.define([
                                         item.BASEIND = item.BASEIND === "X" ? true : false;
                                     })
 
-                                    oText = me.getView().byId("IOATTRIBCnt");
+                                    oText = me.getView().byId("IOATTRIBTabCnt");
                                     oText.setText(oData.results.length + " item/s");
 
                                 } else if (sSource === "IODLVTab") {
@@ -7830,7 +7832,7 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oText = me.getView().byId("IODLVCnt");
+                                    oText = me.getView().byId("IODLVTabCnt");
                                     oText.setText(oData.results.length + " item/s");
 
                                     oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
@@ -7862,7 +7864,7 @@ sap.ui.define([
                                         item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
-                                    oText = me.getView().byId("IODETCnt");
+                                    oText = me.getView().byId("IODETTabCnt");
                                     oText.setText(oData.results.length + " item/s");
 
                                     oData.results.sort((a, b,) => (a.CUSTCOLOR > b.CUSTCOLOR ? -1 : 1));
@@ -8030,8 +8032,10 @@ sap.ui.define([
                         me.byId("colorTab").bindRows("/rows");
                         me._tableRendered = "colorTab";
 
-                        oText = me.getView().byId("COLORSCnt");
+                        oText = me.getView().byId("colorTabCnt");
                         oText.setText(oData.results.length + " item/s");
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 })
@@ -8049,7 +8053,7 @@ sap.ui.define([
                         me.byId("processTab").bindRows("/rows");
                         me._tableRendered = "processTab";
 
-                        oText = me.getView().byId("PROCESSCnt");
+                        oText = me.getView().byId("processTabCnt");
                         oText.setText(oData.results.length + " item/s");
                     },
                     error: function (err) { }
@@ -8069,7 +8073,7 @@ sap.ui.define([
                         me.byId("sizeTab").bindRows("/rows");
                         me._tableRendered = "sizeTab";
 
-                        oText = me.getView().byId("SIZECnt");
+                        oText = me.getView().byId("sizeTabCnt");
                         oText.setText(oData.results.length + " item/s");
                     },
                     error: function (err) { }
@@ -8475,6 +8479,8 @@ sap.ui.define([
                         });
                     }
                 });
+
+                TableFilter.updateColumnMenu(sTabId, this);
             },
 
             getStyleDetailedBOM: function () {
@@ -8595,8 +8601,10 @@ sap.ui.define([
 
                                 // console.log("dataFAB", rowDataFAB, dataFAB);
 
-                                oText = me.getView().byId("FABBOMCnt");
-                                oText.setText(rowDataFAB.items.length + "");
+                                oText = me.getView().byId("styleFabBOMTabCnt");
+                                oText.setText(rowDataFAB.items.length + " item/s");
+
+                                TableFilter.applyColFilters(me);
 
                                 // console.log("oJSONModelFAB", oJSONModelFAB);
 
@@ -8673,8 +8681,10 @@ sap.ui.define([
                                 oJSONModelACC.setData(dataACC);
                                 oTableACC.setModel(oJSONModelACC, "DataModel");
 
-                                oText = me.getView().byId("ACCBOMCnt");
-                                oText.setText(rowDataACC.items.length + "");
+                                oText = me.getView().byId("styleAccBOMTabCnt");
+                                oText.setText(rowDataACC.items.length + " item/s");
+
+                                TableFilter.applyColFilters(me);
 
                                 // console.log("oJSONModelACC", oJSONModelACC);
                             },
@@ -8689,7 +8699,7 @@ sap.ui.define([
             getStyleMaterialList: function () {
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var me = this;
-                var oText = this.getView().byId("MATLISTCnt");
+                var oText = this.getView().byId("styleMatListTabCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
@@ -8719,6 +8729,8 @@ sap.ui.define([
                         me.byId("styleMatListTab").getModel().setProperty("/rows", aData);
                         me.byId("styleMatListTab").bindRows("/rows");
                         me._tableRendered = "styleMatListTab";
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 })
@@ -8729,7 +8741,7 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
-                var oText = this.getView().byId("COLORSCnt");
+                var oText = this.getView().byId("colorTabCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
@@ -8742,6 +8754,8 @@ sap.ui.define([
                         me.getStyleSizes();
 
                         oText.setText(oData.results.length + " item/s");
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -8752,7 +8766,7 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
-                var oText = this.getView().byId("SIZECnt");
+                var oText = this.getView().byId("sizeTabCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
@@ -8765,6 +8779,8 @@ sap.ui.define([
                         me.getStyleBOMUV();
 
                         oText.setText(oData.results.length + " item/s");
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 });
@@ -8854,7 +8870,7 @@ sap.ui.define([
                 var oTable = this.getView().byId("styleBOMUVTab");
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 var usageClass = this.getView().byId("UsageClassCB").getSelectedKey();
-                var oText = this.getView().byId("BOMUVCnt");
+                var oText = this.getView().byId("styleBOMUVTabCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo, //"1000000272",
@@ -8905,6 +8921,8 @@ sap.ui.define([
                         oTable.setModel(oJSONModel, "DataModel");
                         oText.setText(unique.length + "");
 
+                        // TableFilter.applyColFilters(me);
+
                         // console.log(oTable.setModel(oJSONModel, "DataModel"));
                         // oTable.setVisibleRowCount(unique.length);
                         oTable.attachPaste();
@@ -8931,6 +8949,9 @@ sap.ui.define([
                         oTable.bindRows("DataModel>/results");
                         console.log("BOM by UV Pivot");
                         console.log(oTable);
+                        TableFilter.applyColFilters(me);
+
+                        TableFilter.updateColumnMenu("styleBOMUVTab", me);
 
                         Common.closeLoadingDialog(me);
                     },
@@ -14887,9 +14908,10 @@ sap.ui.define([
                         me.byId("ioMatListTab").bindRows("/rows");
                         me._tableRendered = "ioMatListTab";
 
-                        oText = me.getView().byId("MATLSTCnt");
+                        oText = me.getView().byId("ioMatListTabCnt");
                         oText.setText(oData.results.length + " item/s");
 
+                        TableFilter.applyColFilters(me);
 
                         me._oModelIOMatList.read('/InfoRecCheckSet', {
                             success: function (oData2) {
@@ -15136,6 +15158,8 @@ sap.ui.define([
                         });
                     }
                 });
+
+                TableFilter.updateColumnMenu(sTabId, this);
             },
 
             getIOMatListFunctionConfig(arg) {
@@ -16511,8 +16535,10 @@ sap.ui.define([
                         me.byId("costHdrTab").bindRows("/rows");
                         me._tableRendered = "costHdrTab";
 
-                        oText = me.getView().byId("COSTHDRCnt");
+                        oText = me.getView().byId("costHdrTabCnt");
                         oText.setText(oData.results.length + " item/s");
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) { }
                 })
@@ -16650,12 +16676,14 @@ sap.ui.define([
                 });
 
                 // this._tableRendered = sTabId;
+
+                TableFilter.updateColumnMenu(sTabId, this);
             },
 
             getIOCostDetails(arg1, arg2, arg3) {
                 var me = this;
                 var vIONo = this._ioNo
-                var oText = this.getView().byId("COSTDETCnt");
+                var oText = this.getView().byId("costDtlsTabCnt");
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -16683,8 +16711,10 @@ sap.ui.define([
                         me.byId("costDtlsTab").bindRows("/rows");
                         me._tableRendered = "costDtlsTab";
 
-                        var oText = me.getView().byId("COSTDETCnt");
+                        var oText = me.getView().byId("costDtlsTabCnt");
                         oText.setText(oData.results.length + " item/s");
+
+                        TableFilter.applyColFilters(me);
                     },
                     error: function (err) {
                         Common.closeProcessingDialog(me);
@@ -17272,7 +17302,7 @@ sap.ui.define([
                             me.byId(arg + "Tab").bindRows("/rows");
                             me._tableRendered = (arg + "Tab");
 
-                            oText = me.getView().byId("MATLSTCnt");
+                            oText = me.getView().byId("ioMatListTabCnt");
                             oText.setText(oData.results.length + " item/s");
 
                             me._oModelIOMatList.read('/InfoRecCheckSet', {
@@ -17316,7 +17346,7 @@ sap.ui.define([
                             me.byId("costHdrTab").bindRows("/rows");
                             me._tableRendered = "costHdrTab";
 
-                            oText = me.getView().byId("COSTHDRCnt");
+                            oText = me.getView().byId("costHdrTabCnt");
                             oText.setText(oData.results.length + " item/s");
                         },
                         error: function (err) {
@@ -17358,7 +17388,7 @@ sap.ui.define([
                             me.byId("sizeTab").bindRows("/rows");
                             me._tableRendered = "sizeTab";
 
-                            oText = me.getView().byId("SIZECnt");
+                            oText = me.getView().byId("sizeTabCnt");
                             oText.setText(oData.results.length + " item/s");
 
                             Common.closeProcessingDialog(me)
@@ -17382,7 +17412,7 @@ sap.ui.define([
                             me.byId("colorTab").bindRows("/rows");
                             me._tableRendered = "colorTab";
 
-                            oText = me.getView().byId("COLORSCnt");
+                            oText = me.getView().byId("colorTabCnt");
                             oText.setText(oData.results.length + " item/s");
 
                             Common.closeProcessingDialog(me)
@@ -17405,7 +17435,7 @@ sap.ui.define([
                             me.byId("processTab").bindRows("/rows");
                             me._tableRendered = "processTab";
 
-                            oText = me.getView().byId("PROCESSCnt");
+                            oText = me.getView().byId("processTabCnt");
                             oText.setText(oData.results.length + " item/s");
 
                             Common.closeProcessingDialog(me)
@@ -17844,7 +17874,7 @@ sap.ui.define([
                         })
                     }
                     
-                    if (arg !== "IODETTab" && sTableId.indexOf(arg) >= 0) {
+                    if (arg !== "IODETTab" && arg !== "styleBOMUVTab" && arg !== "styleFabBOMTab" && arg !== "styleAccBOMTab" && sTableId.indexOf(arg) >= 0) {
                         var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
                         oTable.getRows().forEach(row => {
                             if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
@@ -17855,7 +17885,7 @@ sap.ui.define([
 
                     }
                     
-                    if (arg === "IODETTab" && sTableId.indexOf(arg) >= 0) {
+                    if ((arg === "IODETTab" || arg === "styleBOMUVTab") && sTableId.indexOf(arg) >= 0 && oTable.getModel("DataModel") !== undefined) {
                         console.log("IODET TAB ACTIVE HIGHLIGHT");
                         console.log(oTable.getModel("DataModel").getData());
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");

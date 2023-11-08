@@ -40,7 +40,7 @@ sap.ui.define([
                 // console.log("INITIALIZE START");
                 that.getCaptionSet();
 
-                this.getView().byId("IOCount").setText("0")
+                this.getView().byId("IODynTableCnt").setText("0");
 
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
 
@@ -969,7 +969,7 @@ sap.ui.define([
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
                 // console.log(aFilters);
-                var oText = this.getView().byId("IOCount");
+                var oText = this.getView().byId("IODynTableCnt");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
 

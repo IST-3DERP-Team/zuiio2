@@ -63,7 +63,7 @@
 
                                             <OverflowToolbar id="_ovfToolBarAttrib" design="Transparent">
                                             <!-- <Title id="IOATTRIBCnt"/> -->
-                                            <Title id="IOATTRIBCnt" class="sapUiTinyMarginBegin"/>
+                                            <Title id="IOATTRIBTabCnt" class="sapUiTinyMarginBegin"/>
                                                 <ToolbarSpacer />
                                                 <Button id="onIOAttribEdit" type="Ghost" icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onEdit('IOATTRIB')" visible="true" />
                                                 <Button id="onIOAttribSave" type="Ghost" icon="sap-icon://save" tooltip="{ddtext>/SAVE}" press="onBatchSave('IOATTRIB')" visible="false" />
@@ -102,7 +102,7 @@
                                             </OverflowToolbar> -->
                                             <OverflowToolbar id="_ovfToolBarIOStat" design="Transparent">
                                             <!-- <Title id="IOSTATCnt"/> -->
-                                            <Title id="IOSTATCnt" class="sapUiTinyMarginBegin"/>
+                                            <Title id="IOSTATUSTabCnt" class="sapUiTinyMarginBegin"/>
                                                 <ToolbarSpacer />
                                                 <Button id="btnFullScreenIOStat" icon="sap-icon://full-screen" press="onTableResize('ioStat', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
                                                 <Button id="btnExitFullScreenIOStat" icon="sap-icon://exit-full-screen" press="onTableResize('ioStat', 'min')" tooltip="{ddtext>/EXITFULLSCREEN}" visible="false" />
@@ -189,7 +189,7 @@
                                                 </t:rowSettingsTemplate>
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="COLORSCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="colorTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer/>
                                                         <Button id="btnEditColor" 
@@ -240,7 +240,7 @@
                                                 </t:rowSettingsTemplate>
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="PROCESSCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="processTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer />
                                                         <Button id="btnEditProcess" icon="sap-icon://edit" press="onEdit('process')" tooltip="{ddtext>/EDIT}" visible="true" />
@@ -272,7 +272,7 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="SIZECnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="sizeTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer />
                                                         <Button id="btnDeleteSize" icon="sap-icon://delete" press="onTagAsDeleted('size')" tooltip="{ddtext>/DELETE}" visible="true" />
@@ -313,7 +313,7 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="BOMUVCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="styleBOMUVTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
 
                                                         <Label text="{ddtext>/USGCLS}" class="sapUiTinyMarginBegin" />                                                        
@@ -356,7 +356,7 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="FABBOMCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="styleFabBOMTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer />
                                                         <Button id= "btnFabGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('FAB')" tooltip="{ddtext>/GENSTYLEMATLIST}">
@@ -389,7 +389,7 @@
                                             >
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="ACCBOMCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="styleAccBOMTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer />
                                                         <Button id="btnAccGenMatLst" text="{ddtext>/GENSTYLEMATLIST}" icon="sap-icon://generate-shortcut" press="onGenMatList('ACC')" tooltip="{ddtext>/GENSTYLEMATLIST}">
@@ -423,7 +423,7 @@
 
                                                 <t:extension>
                                                     <Toolbar>
-                                                        <Title id="MATLISTCnt" class="sapUiTinyMarginBegin"/>
+                                                        <Title id="styleMatListTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                     </Toolbar>
                                                 </t:extension>
@@ -536,7 +536,7 @@
                                 </t:rowSettingsTemplate>
                                 <t:extension>
                                     <Toolbar>
-                                        <Title id="IODLVCnt" class="sapUiTinyMarginBegin"/>
+                                        <Title id="IODLVTabCnt" class="sapUiTinyMarginBegin"/>
                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                         <!-- <Text text="{i18n>DeliverySchedule}" /> -->
                                         <ToolbarSpacer />
@@ -579,7 +579,7 @@
                                             </t:rowSettingsTemplate>
                                             <t:extension>
                                                 <Toolbar>
-                                                    <Title id="IODETCnt" class="sapUiTinyMarginBegin"/>
+                                                    <Title id="IODETTabCnt" class="sapUiTinyMarginBegin"/>
                                                     <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                     <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
                                                     <ToolbarSpacer />
@@ -623,7 +623,7 @@
                                             <t:extension>
                                                 <Toolbar>
                                                     <!-- <Title id="IODETMATCnt"/> -->
-                                                    <Title id="IODETMATCnt" class="sapUiTinyMarginBegin"/>
+                                                    <Title id="iodetMatTabCnt" class="sapUiTinyMarginBegin"/>
                                                     <!-- <Label text="{i18n>IODetail}" design="Bold" class="hdrLabel"/> -->
                                                     <ToolbarSpacer />
                                                         <Button id="btnFullScreenIODETMATLST" icon="sap-icon://full-screen" press="onTableResize('IODETMATLST', 'max')" tooltip="{ddtext>/FULLSCREEN}" visible="true" />
@@ -669,7 +669,7 @@
                             </t:rowSettingsTemplate>
                             <t:extension>
                                 <Toolbar>
-                                    <Title id="MATLSTCnt"  class="sapUiTinyMarginBegin"/>
+                                    <Title id="ioMatListTabCnt"  class="sapUiTinyMarginBegin"/>
                                     <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                     <ToolbarSpacer />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
@@ -722,7 +722,7 @@
                                     <t:extension>
                                         <Toolbar>
                                             <Label text="{ddtext>/ITFCOSTVER}" design="Bold" class="hdrLabel" />
-                                            <Title id="COSTHDRCnt"  class="sapUiTinyMarginBegin"/>
+                                            <Title id="costHdrTabCnt"  class="sapUiTinyMarginBegin"/>
                                             <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                             <ToolbarSpacer/>
                                             <Button id="btnNewCostHdr" 
@@ -781,7 +781,7 @@
                                     <t:extension>
                                         <Toolbar>
                                             <Label text="{ddtext>/ITFCOSTDET}" design="Bold" class="hdrLabel" />
-                                            <Title id="COSTDETCnt"  class="sapUiTinyMarginBegin"/>
+                                            <Title id="costDtlsTabCnt"  class="sapUiTinyMarginBegin"/>
                                             <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                             <ToolbarSpacer/>
                                             <Button id="btnEditCostDtl" 

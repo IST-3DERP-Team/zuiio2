@@ -221,7 +221,7 @@
 
         <!-- MENU TOOLBAR-->
         <Toolbar>
-            <Title id="IOCount"/>
+            <Title id="IODynTableCnt"/>
             <Title text="{i18n>IONo}" class="sapUiTinyMarginBegin"/>
 			<ToolbarSpacer id="_IDGenToolbarSpacer1"/>                    
             <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document" text="{ddtext>/CREATEIO}">

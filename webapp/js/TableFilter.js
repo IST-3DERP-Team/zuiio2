@@ -100,7 +100,31 @@ sap.ui.define([
                 }
             });
 
-            if (oTable.getModel() !== undefined) { aData = jQuery.extend(true, [], oTable.getModel().getData().rows) } 
+            if(sTableId === "IODETTab" || sTableId === "styleBOMUVTab") {
+                if (oTable.getModel() !== undefined) { 
+                    console.log(sTableId, oTable.getModel("DataModel"));
+                    aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().results);
+                }
+            } else if(sTableId === "styleFabBOMTab" || sTableId === "styleAccBOMTab") {
+                console.log(sTableId, oTable.getModel("DataModel"));
+                aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().results.items);
+            } else {
+                if (oTable.getModel() !== undefined) { 
+                    console.log(sTableId, oTable.getModel());
+                    aData = jQuery.extend(true, [], oTable.getModel().getData().rows)
+                }
+            }
+
+            // if (oTable.getModel() !== undefined) { 
+            //     console.log(oTable.getModel());
+            //     if(oTable.getModel().getData().rows !== undefined) {
+            //         aData = jQuery.extend(true, [], oTable.getModel().getData().rows) 
+            //     }
+                
+            //     if(oTable.getModel("DataModel").getData() !== undefined) {
+            //         aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().rows) 
+            //     }
+            // } 
 
             console.log("me._colFilters");
             console.log(me._colFilters);
@@ -138,6 +162,7 @@ sap.ui.define([
             }
 
             console.log("oTableColumns", oTableColumns);
+
             oTableColumns.forEach((col, idx) => {
                 if (col.ColumnName === "CREATEDDT" || col.ColumnName === "UPDATEDDT") { col.DataType = "DATETIME" }                   
 
@@ -175,6 +200,8 @@ sap.ui.define([
                 oColumnValues[col.ColumnName].sort((a,b) => ((col.DataType === "NUMBER" ? +a.Value : (col.DataType === "DATETIME" ? (a.Value === "(blank)" ? "" : new Date(a.Value)) : a.Value)) > (col.DataType === "NUMBER" ? +b.Value : (col.DataType === "DATETIME" ? (b.Value === "(blank)" ? "" : new Date(b.Value)) : b.Value)) ? 1 : -1));
 
                 col.selected = false;                    
+
+                console.log("col", col);
 
                 if (!bFiltered) { 
                     if (sColumnLabel === undefined) {
@@ -225,6 +252,7 @@ sap.ui.define([
                 oSearchValues[col.ColumnName] = "";
             })
 
+            console.log("vSelectedItem", vSelectedItem);
             console.log("vSelectedColumn");
             console.log(vSelectedColumn);
 
@@ -425,7 +453,8 @@ sap.ui.define([
 
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
                 console.log("oDialog.getContent()", item);
-                var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
+                // var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
+                var isFiltered = false;
                 
                 if (isFiltered) {
                     item.setIcon("sap-icon://filter");
@@ -513,6 +542,12 @@ sap.ui.define([
             // console.log(oFilter)
             me.byId(sSourceTabId).getBinding("rows").filter(oFilter, "Application");
             me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
+
+            console.log("sSourceTabId", sSourceTabId);
+            if(me.getView().byId(sSourceTabId + "Cnt") !== undefined) {
+                var oText = me.getView().byId(sSourceTabId + "Cnt");
+                oText.setText(me.byId(sSourceTabId).getBinding("rows").aIndices.length + " item/s");
+            }
         },
 
         onFilterItemPress: function(oEvent, oThis) {
@@ -993,13 +1028,13 @@ sap.ui.define([
             var oDialog = me._GenericFilterDialog;
 
             if (oDialog) {
-                alert("applyColFilters");
+                // alert("applyColFilters");
                 var aColumnItems = oDialog.getModel().getProperty("/items");
                 var oColumnValues = oDialog.getModel().getProperty("/values");
                 var oFilterCustom = oDialog.getModel().getProperty("/custom");
                 var sSourceTabId = oDialog.getModel().getData().sourceTabId;
 
-                alert(sSourceTabId);
+                // alert(sSourceTabId);
                 console.log("oDialog.getModel()", oDialog.getModel());
     
                 var aFilter = [];
