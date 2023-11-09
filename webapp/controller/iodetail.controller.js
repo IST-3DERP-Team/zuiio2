@@ -1264,7 +1264,7 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                // console.log("onfragmentImportPO", oParam);
+                console.log("onfragmentImportPO", oParam);
                 let outputMessage = "";
 
                 _promiseResult = new Promise((resolve, reject) => {
@@ -1988,7 +1988,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + ioNo + "'"
                         },
                         success: function (oData, response) {
-                            // console.log("getIODLVData", oData);
+                            console.log("getIODLVData", oData);
                             // console.log(oData);
                             oData.results.forEach(item => {
                                 item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
@@ -2000,6 +2000,8 @@ sap.ui.define([
                             })
 
                             oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
+
+                            // console.log("getIODLVData", oData);
 
                             oText.setText(oData.results.length + " item/s");
 
@@ -6217,7 +6219,7 @@ sap.ui.define([
                                 REVORDQTY: this.getView().byId("REVORDQTY").getValue() === "" ? "0" : this.getView().byId("REVORDQTY").getValue(),
                                 SHIPQTY: this.getView().byId("SHIPQTY").getValue() === "" ? "0" : this.getView().byId("SHIPQTY").getValue(),
                                 PRODWK: this.getView().byId("PRODWK").getValue() === "" || this.getView().byId("PRODWK").getValue() === "0" ? 0 : +this.getView().byId("PRODWK").getValue(),
-                                PRODDAYS: this.getView().byId("PRODDAYS").getValue() === "" || this.getView().byId("PRODDAYS").getValue() === "0" ? 0 : +this.getView().byId("PRODDAYS").getValue(),
+                                PRODDAYS: this.getView().byId("PRODDAYS").getValue() === "" || this.getView().byId("PRODDAYS").getValue() === "0" ? 0 : this.getView().byId("PRODDAYS").getValue(),
                                 IOSUFFIX: this.getView().byId("IOSUFFIX").getValue(),
                                 SEASONCD: this.getView().byId("SEASONCD").mBindingInfos.value.binding.aValues[0],
                                 CUSTGRP: this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0],
@@ -6283,7 +6285,7 @@ sap.ui.define([
 
                         // console.log(this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]);
                         // // console.log("oParamIOHeaderData");
-                        // console.log("oParamIOHeaderData", oParamIOHeaderData);
+                        console.log("oParamIOHeaderData", oParamIOHeaderData);
                         // return;
 
                         // var oModel = this.getOwnerComponent().getModel();
@@ -6581,9 +6583,9 @@ sap.ui.define([
                         "CPONO": item.CPONO,
                         "CPOREV": item.CPOREV,
                         "CPOITEM": item.CPOITEM,
-                        "CPODT": item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT)),
-                        "DLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
-                        "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
+                        "CPODT": item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : sapDateFormat.format(new Date(item.CPODT)),
+                        "DLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : sapDateFormat.format(new Date(item.DLVDT)),
+                        "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : sapDateFormat.format(new Date(item.DLVDT)),
                         "CUSTSHIPTO": item.CUSTSHIPTO,
                         "CUSTBILLTO": item.CUSTBILLTO,
                         "SHIPMODE": item.SHIPMODE,
@@ -6604,7 +6606,7 @@ sap.ui.define([
                                 "ACTUALQTY": "0",
                                 "PLANSHPQTY": "0",
                                 "SHIPQTY": "0",
-                                "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.DLVDT)),
+                                "REVDLVDT": item.DLVDT === "0000-00-00" || item.DLVDT === "    -  -  " ? "" : sapDateFormat.format(new Date(item.DLVDT)),
                                 "DLVSEQ": dlvSeq + "",
                                 "CUSTCOLOR": detitem.CUSTCOLOR,
                                 "CUSTDEST": detitem.CUSTDEST,
@@ -7701,11 +7703,29 @@ sap.ui.define([
 
                 oMarkAsDeletedModel.update(sEntitySet, oParam, {
                     method: "PUT",
-                    success: function (oData, oResponse) {
+                    success: async function (oData, oResponse) {
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "MarkAsDeletedModel");
                         if (sTableName === "IODLVTab") { sMessage = "Delivery Seq " + sDlvSeq + " marked as deleted"; }
                         else if (sTableName === "IODETTab") { sMessage = "Delivery Item " + sDlvItem + " marked as deleted"; }
+
+                        console.log("reloadIOData IODLV");
+                        await me.reloadIOData("IODLVTab", "/IODLVSet");
+                        console.log("reloadIOData IODLV");
+                        me._bIODLVChanged = false;
+
+                        var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                        var oModelColumns = new JSONModel();
+                        await oModelColumns.loadData(sPath);
+
+                        var oColumns = oModelColumns.getData();
+                        me._oModelColumns = oModelColumns.getData();
+
+                        me._tblChange = true;
+                        // setTimeout(() => {
+                        await me.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
+                        me._tblChange = false;
 
                         sap.m.MessageBox.information(sMessage);
                     },
@@ -7716,26 +7736,13 @@ sap.ui.define([
 
                 me.unLock();
 
-
-                await this.reloadIOData("IODLVTab", "/IODLVSet");
-                this._bIODLVChanged = false;
+                
 
                 // setTimeout(() => {
                 //     this.reloadIOData("IODETTab", "/IODETSet");
                 // }, 100);
 
-                var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-
-                var oModelColumns = new JSONModel();
-                await oModelColumns.loadData(sPath);
-
-                var oColumns = oModelColumns.getData();
-                this._oModelColumns = oModelColumns.getData();
-
-                me._tblChange = true;
-                // setTimeout(() => {
-                await this.getIODynamicColumns("IODET", "ZERP_IODET", "IODETTab", oColumns);
-                me._tblChange = false;
+                
             },
 
             reloadModel: async function (Entityset, IsUI2, ModelName) {
@@ -7829,7 +7836,7 @@ sap.ui.define([
                                         item.REVDLVDT = item.REVDLVDT === "0000-00-00" || item.REVDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.REVDLVDT));
                                         item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                         item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
-                                        item.DELETED = item.DELETED === "X" ? true : false;
+                                        // item.DELETED = item.DELETED === "X" ? true : false;
                                     })
 
                                     oText = me.getView().byId("IODLVTabCnt");
@@ -12211,7 +12218,7 @@ sap.ui.define([
                                     else if (arg === "IODLV") {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                            displayFormat: "short",
+                                            displayFormat: "dd/MM/yyyy",
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
                                                 path: "DELETED",
@@ -12908,7 +12915,8 @@ sap.ui.define([
                                     else if (arg === "IODLV") {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                            displayFormat: "short",
+                                            // displayFormat: "short",
+                                            valueFormat: "dd.mm.yyyy",
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
                                                 path: "DELETED",
@@ -12922,7 +12930,8 @@ sap.ui.define([
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                            displayFormat: "short",
+                                            // displayFormat: "short",
+                                            valueFormat: "dd.mm.yyyy",
                                             change: this.onInputLiveChange.bind(this)
                                         }));
                                     }
