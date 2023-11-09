@@ -216,7 +216,7 @@ sap.ui.define([
 
             onRouteMatched: function (oEvent) {
                 var sRouteName = oEvent.getParameter("name");
-                // console.log(sRouteName);
+                console.log(sRouteName);
                 if (sRouteName !== "RouteIODetail") {
                     window.history.pushState(null, null, window.location.pathname);
                     this._router.navTo("Routeioinit", {}, true);
@@ -300,7 +300,7 @@ sap.ui.define([
             },
 
             onNavBack: function (oEvent) {
-                // console.log("History Before", window.history);
+                console.log("History Before", window.history);
                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 oRouter.navTo("Routeioinit", {}, true);
 
@@ -327,33 +327,33 @@ sap.ui.define([
                 // }
             },
 
-            routeTOIO: function (arg) {
-                let currentPath = arg;
-                var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
-                let hash;
-                if ((currentPath.indexOf("ZSO_3DERP_ORD_IO-change&/RouteIODetail") > 0
-                    || currentPath.indexOf("ZSO_3DERP_ORD_IO-display&/RouteIODetail") > 0)
-                    && currentPath !== undefined) {
-                    hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
-                        target: {
-                            semanticObject: "ZSO_3DERP_ORD_IO",
-                            action: _sAction //+ "&/RouteIODetail/" + this._iono + "/" + this._sbu + "/" + this._styleNo + "/itfSTYLE"
-                        }
+            // routeTOIO: function (arg) {
+            //     let currentPath = arg;
+            //     var oCrossAppNavigator = sap.ushell.Container.getService("CrossApplicationNavigation");
+            //     let hash;
+            //     if ((currentPath.indexOf("ZSO_3DERP_ORD_IO-change&/RouteIODetail") > 0
+            //         || currentPath.indexOf("ZSO_3DERP_ORD_IO-display&/RouteIODetail") > 0)
+            //         && currentPath !== undefined) {
+            //         hash = (oCrossAppNavigator && oCrossAppNavigator.hrefForExternal({
+            //             target: {
+            //                 semanticObject: "ZSO_3DERP_ORD_IO",
+            //                 action: _sAction //+ "&/RouteIODetail/" + this._iono + "/" + this._sbu + "/" + this._styleNo + "/itfSTYLE"
+            //             }
 
-                    })) || ""; // generate the Hash to display style
+            //         })) || ""; // generate the Hash to display style
 
-                } else {
-                    hash = "#Shell-home";
-                }
+            //     } else {
+            //         hash = "#Shell-home";
+            //     }
 
-                oCrossAppNavigator.toExternal({
-                    target: {
-                        shellHash: hash
-                    }
-                });
+            //     oCrossAppNavigator.toExternal({
+            //         target: {
+            //             shellHash: hash
+            //         }
+            //     });
 
-                window.history.pushState({ shellHash: hash }, "");
-            },
+            //     window.history.pushState({ shellHash: hash }, "");
+            // },
 
             _routePatternMatched: async function (oEvent) {
                 // console.log(oEvent);
@@ -14473,17 +14473,17 @@ sap.ui.define([
                         semanticObject: "ZSO_3DERP_ORD_STYLE",
                         action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
-                    // params: {
-                    //     "styleno": vStyle,
-                    //     "sbu": "VER"
-                    // }
-                    , bAsync: true
                 })) || ""; // generate the Hash to display style
+                hash = "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                // hash = "ZSO_3DERP_ORD_STYLE-change&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+               
+                // hash = hash.split("?")[0];
+                // console.log("hash", hash);
 
                 oCrossAppNavigator.toExternal({
                     target: {
                         // shellHash: hash.split("?")[0]
-                        shellHash: "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                        shellHash: hash
                     }
                 }); // navigate to Supplier application
 
@@ -14532,6 +14532,7 @@ sap.ui.define([
                     target: {
                         // shellHash: hash.split("?")[0]
                         shellHash: "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/NEW/" + me._sbu + "/" + pIONO
+                        // shellHash : hash
                     }
                 }); // navigate to Supplier application
 

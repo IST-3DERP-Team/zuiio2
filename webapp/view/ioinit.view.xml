@@ -256,7 +256,7 @@
             visibleRowCountMode="Auto"
             showColumnVisibilityMenu="true"
             enableColumnFreeze="true"
-            enableCellFilter="true"
+            enableCellFilter="false"
             firstVisibleRowChanged="onFirstVisibleRowChanged"
             cellClick="onCellClick"
             sort="onSort"

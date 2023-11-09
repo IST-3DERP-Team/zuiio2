@@ -78,7 +78,7 @@
                                                         visibleRowCountMode="Auto" 
                                                         showColumnVisibilityMenu="true" 
                                                         enableColumnFreeze="true" 
-                                                        enableCellFilter="true" 
+                                                        enableCellFilter="false" 
                                                         selectionMode="Single" 
                                                         selectionBehavior="RowOnly" 
                                                         cellClick="onCellClick"
@@ -113,7 +113,7 @@
                                                     visibleRowCountMode="Auto" 
                                                     showColumnVisibilityMenu="true" 
                                                     enableColumnFreeze="true" 
-                                                    enableCellFilter="true" 
+                                                    enableCellFilter="false" 
                                                     selectionMode="Single" 
                                                     cellClick="onCellClick"
                                                     selectionBehavior="RowSelector" 
@@ -171,6 +171,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -222,6 +223,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -257,6 +259,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="MultiToggle"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -298,6 +301,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -341,6 +345,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -375,6 +380,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -407,6 +413,7 @@
                                                 visibleRowCountMode="Auto"
                                                 showColumnVisibilityMenu="true"
                                                 enableColumnFreeze="true"
+                                                enableCellFilter="false"
                                                 selectionMode="Single"
                                                 selectionBehavior="RowSelector"
                                                 firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -530,7 +537,7 @@
                         <!-- <layout:Splitter class="iohdr_splitter" orientation="Vertical"> -->
                         <Panel id="panelIODLV" width="100%" height="40%" class="sapUiNoContentPadding stylHdrPadding">                
                         <!-- <Panel id="headerPanel" expandable="false" expanded="true" width="auto" class="sapUiNoContentPadding"> -->                      
-                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
+                            <t:Table id="IODLVTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="false" selectionMode="Single" selectionBehavior="RowOnly" cellClick=".onIODLVCellClick">
                                 <t:rowSettingsTemplate>
                                     <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                 </t:rowSettingsTemplate>
@@ -573,7 +580,7 @@
                                 <items>                                
                                     <!-- ATTRIBUTES -->
                                     <IconTabFilter text="{ddtext>/ITFDLVDET}" key="itfDLVDET">
-                                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                        <t:Table id="IODETTab" fixedColumnCount="1" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="false" selectionMode="Single" selectionBehavior="RowOnly">
                                             <t:rowSettingsTemplate>
                                                 <t:RowSettings highlight="{= ${EDITED} === true ? 'Warning' : null}" />
                                             </t:rowSettingsTemplate>
@@ -619,7 +626,7 @@
                                                 selectionBehavior="RowSelector" 
                                                 alternateRowColors="true"
                                                 rowSelectionChange="onRowChange"> -->
-                                        <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="true" selectionMode="Single" selectionBehavior="RowOnly">
+                                        <t:Table id="iodetMatTab" class="sapUiSizeCompact sidePadding" alternateRowColors="true" visibleRowCountMode="Auto" showColumnVisibilityMenu="true" enableColumnFreeze="true" enableCellFilter="false" selectionMode="Single" selectionBehavior="RowOnly">
                                             <t:extension>
                                                 <Toolbar>
                                                     <!-- <Title id="IODETMATCnt"/> -->
@@ -652,6 +659,7 @@
                             visibleRowCountMode="Auto"
                             showColumnVisibilityMenu="true"
                             enableColumnFreeze="true"
+                            enableCellFilter="false"
                             selectionMode="MultiToggle"
                             firstVisibleRowChanged="onFirstVisibleRowChanged"
                             cellClick="onCellClick"
@@ -704,6 +712,7 @@
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true"
                                     enableColumnFreeze="true"
+                                    enableCellFilter="false"
                                     selectionMode="None" 
                                     selectionBehavior="RowSelector"
                                     firstVisibleRowChanged="onFirstVisibleRowChanged"
@@ -763,6 +772,7 @@
                                     visibleRowCountMode="Auto"
                                     showColumnVisibilityMenu="true"
                                     enableColumnFreeze="true"
+                                    enableCellFilter="false"
                                     selectionMode="None" 
                                     selectionBehavior="RowSelector"
                                     firstVisibleRowChanged="onFirstVisibleRowChanged"
