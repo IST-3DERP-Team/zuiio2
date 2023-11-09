@@ -64,7 +64,7 @@ sap.ui.define([
                 this._pvtPivotArray;
 
                 this._tableFilter = TableFilter;
-                console.log("this._tableFilter", this._tableFilter);
+                // console.log("this._tableFilter", this._tableFilter);
                 this._colFilters = {};  
 
                 //Initialize router
@@ -211,12 +211,12 @@ sap.ui.define([
                 this.getOwnerComponent().getModel("LOOKUP_MODEL").setData(new JSONModel());
                 Utils.getVersionSearchHelps(this);
 
-                console.log("History after Route to Details", window.history);
+                // console.log("History after Route to Details", window.history);
             },
 
             onRouteMatched: function (oEvent) {
                 var sRouteName = oEvent.getParameter("name");
-                console.log(sRouteName);
+                // console.log(sRouteName);
                 if (sRouteName !== "RouteIODetail") {
                     window.history.pushState(null, null, window.location.pathname);
                     this._router.navTo("Routeioinit", {}, true);
@@ -300,7 +300,7 @@ sap.ui.define([
             },
 
             onNavBack: function (oEvent) {
-                console.log("History Before", window.history);
+                // console.log("History Before", window.history);
                 var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
                 oRouter.navTo("Routeioinit", {}, true);
 
@@ -1068,6 +1068,48 @@ sap.ui.define([
                 }, 100);
             },
 
+            filterGlobally: function (oEvent) {
+                // var oTable = oEvent.getSource().oParent.oParent;
+                var oTable = oEvent.getSource().oParent.oParent;
+                var sTable = oTable.sId;
+                var sQuery = oEvent.getParameter("query");
+
+                this.exeGlobalSearch(sQuery, sTable);
+            },
+
+            exeGlobalSearch(arg1, arg2) {
+                var oFilter = null;
+                var aFilter = [];
+
+                if (arg1) {
+                    this._aFilterableColumns[arg2.replace("Tab", "")].forEach(item => {
+                        var sDataType = this._aColumns[arg2.replace("Tab", "")].filter(col => col.ColumnName === item.name)[0].DataType;
+                        // console.log(sDataType);
+
+                        if (sDataType === "BOOLEAN" || sDataType === "NUMBER") aFilter.push(new Filter(item.name, FilterOperator.EQ, arg1));
+                        else aFilter.push(new Filter(item.name, FilterOperator.Contains, arg1));
+                    })
+
+                    // console.log("aFilter", aFilter);
+
+                    oFilter = new Filter(aFilter, false);
+                }
+
+                alert(oFilter);
+
+                sap.ui.getCore().byId(arg2).getBinding("rows").filter(oFilter, "Application");
+
+                // if (arg1 && arg2 === "IOStyleSelectTab") {
+                //     var vStyleNo = this.getView().getModel("IOSTYSELDataModel").getData().results.filter((item, index) => index === sap.ui.getCore().byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
+                //     this.getView().getModel("ui").setProperty("/activeSTYLENO", vStyleNo);
+                // }
+
+                // if (arg1 && arg2 === "IOSDSelectTab") {
+                //     var vStyleNo = this.getView().getModel("IOSDSELDataModel").getData().results.filter((item, index) => index === sap.ui.getCore().byId(arg2).getBinding("rows").aIndices[0])[0].STYLENO;
+                //     this.getView().getModel("ui").setProperty("/activeSALDOCNO", vStyleNo);
+                // }
+            },
+
             setRequiredFields: function () {
                 // sap.ui.getCore().byId("STYLECD")._oLabel.addStyleClass("requiredField");
                 // sap.ui.getCore().byId("STYLECD").addStyleClass("requiredField");
@@ -1264,7 +1306,7 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                console.log("onfragmentImportPO", oParam);
+                // console.log("onfragmentImportPO", oParam);
                 let outputMessage = "";
 
                 _promiseResult = new Promise((resolve, reject) => {
@@ -1414,7 +1456,7 @@ sap.ui.define([
                     me.onCancelSplitDlv();
                 });
 
-                console.log("split finished");
+                // console.log("split finished");
 
                 // await this.reloadIOData('IODLVTab', '/IODLVSet');
                 // this._bIODLVChanged = false;
@@ -1790,7 +1832,7 @@ sap.ui.define([
                             me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                             // console.log(me._aColumns[sTabId.replace("Tab", "")]);
 
-                            //me._aFilterableColumns[sTabId.replace("Tab", "")] = aColumns["filterableColumns"];
+                            me._aFilterableColumns[sTabId.replace("Tab", "")] = aColumns["filterableColumns"];
 
                             // console.log("io style list filterable columns");
                             // console.log(me._aFilterableColumns["iostylist"]);
@@ -1854,64 +1896,83 @@ sap.ui.define([
                     if (sColumnWidth === 0) sColumnWidth = 100;
                     // console.log(sColumnDataType);
 
-                    if (sColumnDataType === "STRING") {
-                        return new sap.ui.table.Column({
-                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                            template: new sap.m.Text({
-                                text: "{" + sColumnId + "}",
-                                wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
-                            }),
-                            width: sColumnWidth + "px",
-                            sortProperty: sColumnId,
-                            filterProperty: sColumnId,
-                            autoResizable: true,
-                            visible: sColumnVisible,
-                            sorted: sColumnSorted,
-                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                        });
-                    } else if (sColumnDataType === "BOOLEAN") {
-                        // console.log("BOOLEAN : " + sColumnId);
-                        return new sap.ui.table.Column({
-                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                            template: new sap.m.CheckBox({
-                                selected: "{" + sColumnId + "}",
-                                editable: false
-                            }),
-                            width: sColumnWidth + "px",
-                            sortProperty: sColumnId,
-                            filterProperty: sColumnId,
-                            autoResizable: true,
-                            visible: sColumnVisible,
-                            sorted: sColumnSorted,
-                            hAlign: "Center",
-                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                        });
-                    } else {
-                        // console.log(sColumnDataType + " : " + sColumnId);
-                        return new sap.ui.table.Column({
-                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                            template: new sap.m.Text({
-                                text: "{" + sColumnId + "}",
-                                wrapping: false
-                                // , 
-                                // tooltip: "{" + sColumnId + "}"
-                            }),
-                            width: sColumnWidth + "px",
-                            sortProperty: sColumnId,
-                            filterProperty: sColumnId,
-                            autoResizable: true,
-                            visible: sColumnVisible,
-                            sorted: sColumnSorted,
-                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                        });
-                    }
+                    return new sap.ui.table.Column({
+                        id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                        template: new sap.m.Text({
+                            text: "{" + sColumnId + "}",
+                            wrapping: false
+                            // , 
+                            // tooltip: "{" + sColumnId + "}"
+                        }),
+                        width: sColumnWidth + "px",
+                        sortProperty: sColumnId,
+                        filterProperty: sColumnId,
+                        autoResizable: true,
+                        visible: sColumnVisible,
+                        sorted: sColumnSorted,
+                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    });
+
+                    // if (sColumnDataType === "STRING") {
+                    //     return new sap.ui.table.Column({
+                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                    //         template: new sap.m.Text({
+                    //             text: "{" + sColumnId + "}",
+                    //             wrapping: false
+                    //             // , 
+                    //             // tooltip: "{" + sColumnId + "}"
+                    //         }),
+                    //         width: sColumnWidth + "px",
+                    //         sortProperty: sColumnId,
+                    //         filterProperty: sColumnId,
+                    //         autoResizable: true,
+                    //         visible: sColumnVisible,
+                    //         sorted: sColumnSorted,
+                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    //     });
+                    // } else if (sColumnDataType === "BOOLEAN") {
+                    //     // console.log("BOOLEAN : " + sColumnId);
+                    //     return new sap.ui.table.Column({
+                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                    //         template: new sap.m.CheckBox({
+                    //             selected: "{" + sColumnId + "}",
+                    //             editable: false
+                    //         }),
+                    //         width: sColumnWidth + "px",
+                    //         sortProperty: sColumnId,
+                    //         filterProperty: sColumnId,
+                    //         autoResizable: true,
+                    //         visible: sColumnVisible,
+                    //         sorted: sColumnSorted,
+                    //         hAlign: "Center",
+                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    //     });
+                    // } else {
+                    //     // console.log(sColumnDataType + " : " + sColumnId);
+                    //     return new sap.ui.table.Column({
+                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                    //         label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                    //         template: new sap.m.Text({
+                    //             text: "{" + sColumnId + "}",
+                    //             wrapping: false
+                    //             // , 
+                    //             // tooltip: "{" + sColumnId + "}"
+                    //         }),
+                    //         width: sColumnWidth + "px",
+                    //         sortProperty: sColumnId,
+                    //         filterProperty: sColumnId,
+                    //         autoResizable: true,
+                    //         visible: sColumnVisible,
+                    //         sorted: sColumnSorted,
+                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    //     });
+                    // }
                 });
             },
 
@@ -1988,7 +2049,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + ioNo + "'"
                         },
                         success: function (oData, response) {
-                            console.log("getIODLVData", oData);
+                            // console.log("getIODLVData", oData);
                             // console.log(oData);
                             oData.results.forEach(item => {
                                 item.CPODT = item.CPODT === "0000-00-00" || item.CPODT === "    -  -  " ? "" : dateFormat.format(new Date(item.CPODT));
@@ -2269,9 +2330,9 @@ sap.ui.define([
 
                                 oText.setText(oData.results.length + " item/s");
 
-                                console.log("Table Filter Apply Column Filter");
+                                // console.log("Table Filter Apply Column Filter");
                                 TableFilter.applyColFilters(me);
-                                console.log("Table Filter Apply Column Filter End");
+                                // console.log("Table Filter Apply Column Filter End");
 
                                 resolve();
                             },
@@ -4253,7 +4314,7 @@ sap.ui.define([
                     var oData = this.getView().getModel("ProdScenModel").oData;
                     for (var i = 0; i < oData.length; i++) {
                         if (oData[i].PRODSCEN === sProdScen) {
-                            console.log("PRODSCEN", oData.results[i]);
+                            // console.log("PRODSCEN", oData.results[i]);
                             this.getView().byId("PRODPLANT").setValue(oData[i].PRODPLANT);
                             this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
                             this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
@@ -4539,7 +4600,7 @@ sap.ui.define([
                     var oData = this.getView().getModel("ProdScenModel").oData;
                     for (var i = 0; i < oData.length; i++) {
                         if (oData[i].PRODSCEN === sProdScen) {
-                            console.log("PRODSCEN Header Change", oData[i]);
+                            // console.log("PRODSCEN Header Change", oData[i]);
                             this.getView().byId("PRODPLANT").setValue(oData[i].PRODPLANT);
                             this.getView().byId("TRADPLANT").setValue(oData[i].TRADPLANT);
                             this.getView().byId("PLANPLANT").setValue(oData[i].PLANPLANT);
@@ -6285,7 +6346,7 @@ sap.ui.define([
 
                         // console.log(this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]);
                         // // console.log("oParamIOHeaderData");
-                        console.log("oParamIOHeaderData", oParamIOHeaderData);
+                        // console.log("oParamIOHeaderData", oParamIOHeaderData);
                         // return;
 
                         // var oModel = this.getOwnerComponent().getModel();
@@ -6829,7 +6890,7 @@ sap.ui.define([
                 oModel.create("/TransferSet", oParam, {
                     method: "POST",
                     success: function (oData, oResponse) {
-                        console.log(oData);
+                        // console.log(oData);
                         Common.closeProcessingDialog(me);
                         if (oData.ISVALID === "X") {
                             oPlant = oData["N_TrxProdPlant"].results.filter(fItem => fItem.CODE !== me.getView().byId("PRODPLANT").getValue());
@@ -6940,7 +7001,7 @@ sap.ui.define([
                 oModel.create("/TransferSet", oParam, {
                     method: "POST",
                     success: function (oData, oResponse) {
-                        console.log(oData);
+                        // console.log(oData);
                         Common.closeProcessingDialog(me, "Processing...");
 
                         if (oData["N_TrxReturn"].results[0].Type === "E") {
@@ -7709,9 +7770,9 @@ sap.ui.define([
                         if (sTableName === "IODLVTab") { sMessage = "Delivery Seq " + sDlvSeq + " marked as deleted"; }
                         else if (sTableName === "IODETTab") { sMessage = "Delivery Item " + sDlvItem + " marked as deleted"; }
 
-                        console.log("reloadIOData IODLV");
+                        // console.log("reloadIOData IODLV");
                         await me.reloadIOData("IODLVTab", "/IODLVSet");
-                        console.log("reloadIOData IODLV");
+                        // console.log("reloadIOData IODLV");
                         me._bIODLVChanged = false;
 
                         var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
@@ -8889,7 +8950,7 @@ sap.ui.define([
                 oModel.read("/StyleBOMUVSet", {
                     success: function (oData, oResponse) {
                         var rowData = oData.results;
-                        console.log("getBOMUVTableData", rowData);
+                        // console.log("getBOMUVTableData", rowData);
                         //Get unique items of BOM by UV
                         var unique = rowData.filter((rowData, index, self) =>
                             index === self.findIndex((t) => (t.GMC === rowData.GMC && t.PARTCD === rowData.PARTCD && t.MATTYPCLS === rowData.MATTYPCLS)));
@@ -8916,8 +8977,8 @@ sap.ui.define([
 
                         //set the table columns/rows
                         rowData = oData.results;
-                        console.log("set the table columns", columnData);
-                        console.log("set the table rows", rowData);
+                        // console.log("set the table columns", columnData);
+                        // console.log("set the table rows", rowData);
                         unique.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
 
                         var oJSONModel = new JSONModel();
@@ -8954,8 +9015,8 @@ sap.ui.define([
                             });
                         });
                         oTable.bindRows("DataModel>/results");
-                        console.log("BOM by UV Pivot");
-                        console.log(oTable);
+                        // console.log("BOM by UV Pivot");
+                        // console.log(oTable);
                         TableFilter.applyColFilters(me);
 
                         TableFilter.updateColumnMenu("styleBOMUVTab", me);
@@ -10709,8 +10770,8 @@ sap.ui.define([
                                 // }
                                 // _promiseResult = new Promise((resolve, reject) => {
 
-                                console.log("entitySet", entitySet);
-                                console.log("param", param);
+                                // console.log("entitySet", entitySet);
+                                // console.log("param", param);
                                 setTimeout(() => {
                                     // console.log("PUT");
                                     oModel.update(entitySet, param, {
@@ -11334,7 +11395,7 @@ sap.ui.define([
                             entitySet += ")";
 
                             // console.log(entitySet);
-                            console.log(param);
+                            // console.log(param);
                             // console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
@@ -11793,8 +11854,8 @@ sap.ui.define([
                 if (arg === "SPLITIODLV" || arg === "SPLITIODET") {
                     // console.log(sap.ui.getCore().byId("SPLITIODETTab"));
                     oTable = sap.ui.getCore().byId(arg + "Tab");
-                    console.log("3", sap.ui.getCore().byId(arg + "Tab"));
-                    console.log("3", sap.ui.getCore().byId(arg + "Tab").getColumns());
+                    // console.log("3", sap.ui.getCore().byId(arg + "Tab"));
+                    // console.log("3", sap.ui.getCore().byId(arg + "Tab").getColumns());
                 } else {
                     oTable = this.byId(arg + "Tab");
                 }
@@ -12490,8 +12551,8 @@ sap.ui.define([
                 if (arg === "SPLITIODLV" || arg === "SPLITIODET") {
                     // console.log(sap.ui.getCore().byId("SPLITIODETTab"));
                     oTable = sap.ui.getCore().byId(arg + "Tab");
-                    console.log("3", sap.ui.getCore().byId(arg + "Tab"));
-                    console.log("3", sap.ui.getCore().byId(arg + "Tab").getColumns());
+                    // console.log("3", sap.ui.getCore().byId(arg + "Tab"));
+                    // console.log("3", sap.ui.getCore().byId(arg + "Tab").getColumns());
                 } else {
                     oTable = this.byId(arg + "Tab");
                 }
@@ -13506,7 +13567,7 @@ sap.ui.define([
                 var oSource = oEvent.getSource();
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
 
-                console.log(this._sTableModel);
+                // console.log(this._sTableModel);
                 if (this._sTableModel === "IODET") {
                     this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
                 }
@@ -13550,7 +13611,7 @@ sap.ui.define([
                 // let isValidNumber = !isNaN(parseFloat(inputValue));
                 let isValidNumber = /^[0-9]+$/.test(inputValue);
                 
-                console.log("isValidNumber", inputValue, isValidNumber)
+                // console.log("isValidNumber", inputValue, isValidNumber)
 
                 var sUOM = this.getView().getModel("headerData").getData()["BASEUOM"];
                 var iUOMDec = 0;
@@ -13777,7 +13838,7 @@ sap.ui.define([
                 var oSource = oEvent.getSource();
                 var sRowPath = oSource.getBindingInfo("value").binding.oContext.sPath;
 
-                console.log(this._sTableModelSplit);
+                // console.log(this._sTableModelSplit);
                  if (this._sTableModelSplit === "SPLITIODET") {
                     sap.ui.getCore().byId(this._sTableModelSplit + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
                 }
@@ -14483,7 +14544,8 @@ sap.ui.define([
                         action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                 })) || ""; // generate the Hash to display style
-                hash = "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                // hash = "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                hash = "ZSO_3DERP_ORD_STYLE-display&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                 // hash = "ZSO_3DERP_ORD_STYLE-change&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                
                 // hash = hash.split("?")[0];
@@ -16506,7 +16568,7 @@ sap.ui.define([
                         "$filter": "PLANTCD eq '" + this._prodplant + "'"
                     },
                     success: function (oData) {
-                        console.log("ConfigHdrSet", oData.results)
+                        // console.log("ConfigHdrSet", oData.results)
                         me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
                     },
                     error: function (err) { }
@@ -17269,7 +17331,7 @@ sap.ui.define([
                 var vIONo = this._ioNo
                 var oText;
 
-                console.log(vIONo);
+                // console.log(vIONo);
 
                 if (this._ioNo === "NEW") vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -17291,7 +17353,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            console.log(arg, oData);
+                            // console.log(arg, oData);
                             Common.closeProcessingDialog(me);
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
@@ -17730,7 +17792,7 @@ sap.ui.define([
                         })
 
                         if (oTable.getId().indexOf("IODLVTab") >= 0) {
-                            console.log("onCellClick");
+                            // console.log("onCellClick");
                             // if (!oEvent.getParameters().rowBindingContext) {
                             //     return;
                             // }
@@ -17784,7 +17846,7 @@ sap.ui.define([
 
             onAfterTableRendering: function (oEvent) {
                 if (this._tableRendered !== "") {
-                    console.log("setActiveRowHighlightByTableId", this._tableRendered);
+                    // console.log("setActiveRowHighlightByTableId", this._tableRendered);
                     this.setActiveRowHighlightByTableId(this._tableRendered);
                     this._tableRendered = "";
                 }
@@ -17847,9 +17909,9 @@ sap.ui.define([
                     // }
 
                     // console.log(oTable);
-                    console.log(arg);
+                    // console.log(arg);
 
-                    console.log("Test");
+                    // console.log("Test");
 
                     if (arg === "styleBOMUVTab" && sTableId.indexOf(arg) >= 0) {
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
@@ -17896,8 +17958,8 @@ sap.ui.define([
                     }
                     
                     if ((arg === "IODETTab" || arg === "styleBOMUVTab") && sTableId.indexOf(arg) >= 0 && oTable.getModel("DataModel") !== undefined) {
-                        console.log("IODET TAB ACTIVE HIGHLIGHT");
-                        console.log(oTable.getModel("DataModel").getData());
+                        // console.log("IODET TAB ACTIVE HIGHLIGHT");
+                        // console.log(oTable.getModel("DataModel").getData());
                         var iActiveRowIndex = oTable.getModel("DataModel").getData().results.findIndex(item => item.ACTIVE === "X");
 
                         oTable.getRows().forEach(row => {
@@ -18364,7 +18426,7 @@ sap.ui.define([
                 oParamUnLock["Iv_Count"] = 300;
                 oParamUnLock["IO_MSG"] = [];
 
-                console.log("oParamUnLock", oParamUnLock);
+                // console.log("oParamUnLock", oParamUnLock);
 
                 oModelLock.create("/ZERP_IOHDR", oParamUnLock, {
                     method: "POST",
