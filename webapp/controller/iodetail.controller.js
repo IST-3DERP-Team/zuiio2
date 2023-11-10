@@ -17529,15 +17529,15 @@ sap.ui.define([
                         this.byId("btnFullScreenIOStat").setVisible(false);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(true);
                         this.byId("btnExitFullScreenIOStat").setVisible(true);
+
                     }
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(true);
-                        this.byId("btnFullScreenIOStat").setVisible(true);
-                        this.byId("panelIOHDR").setVisible(true);
+                        this.byId("btnFullScreenIOStat").setVisible(true);                        
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
-                        this.byId("btnExitFullScreenIOStat").setVisible(false);
+                        this.byId("btnExitFullScreenIOStat").setVisible(false);                        
                     }
 
                     this._tableRendered = "IOATTRIBTab";
@@ -17568,22 +17568,50 @@ sap.ui.define([
                 }
                 else if (arg1 === "ioAttrib") {
                     if (arg2 === "max") {
-                        this.byId("objectHeader").setVisible(false);
+                         this.byId("objectHeader").setVisible(false);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(false);
-                        this.byId("panelIOHDR").setVisible(false);
+                        // this.byId("panelIOHDR").setVisible(false);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
                         this.byId("btnFullScreenIOStat").setVisible(false);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(true);
                         this.byId("btnExitFullScreenIOStat").setVisible(true);
+
+                        var oSplitter = this.byId("IOHDRSplitter");
+                        var panelHDR = oSplitter.getContentAreas()[0].getLayoutData();
+                        var panelDET = oSplitter.getContentAreas()[1].getLayoutData();
+                        
+                        panelHDR.setSize("0%");
+                        panelDET.setSize("100%");     
+                        
+                        panelHDR.setResizable(false);
+                        panelDET.setResizable(false);
+
+                        panelHDR.setVisible(false);
+                        panelDET.setVisible(false);
+
+                        oSplitter.rerender();
                     }
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
                         // this.byId("idIconTabBarInlineIOHdr").setVisible(true);
-                        this.byId("panelIOHDR").setVisible(true);
+                        // this.byId("panelIOHDR").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(true);
                         this.byId("btnFullScreenIOStat").setVisible(true);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(false);
                         this.byId("btnExitFullScreenIOStat").setVisible(false);
+                        // this.byId('idIconTabBarInlineMode').setVisible(false);
+
+                        var oSplitter = this.byId("IOHDRSplitter");
+                        var panelHDR = oSplitter.getContentAreas()[0]; 
+                        var panelDET = oSplitter.getContentAreas()[1]; 
+                        
+                        panelHDR.getLayoutData().setSize("38%");
+                        panelHDR.getLayoutData().setVisible(true);
+                        
+                        oSplitter.setSplitterBar("Default");
+                        panelDET.getLayoutData().setSize("100%");
+
+                        oSplitter.rerender();
                     }
 
                     this._tableRendered = "IOATTRIBTab";

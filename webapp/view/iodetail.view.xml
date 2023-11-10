@@ -49,13 +49,15 @@
                 <items>
                     <!-- IO HEADER DETAILS ICON TAB BAR -->
                     <IconTabFilter text="{ddtext>/ITFIOHDR}" key="itfIOHDR">
-                    <!-- <layout:Splitter class="iohdr_splitter" orientation="Vertical"> -->
+                    <layout:Splitter id="IOHDRSplitter" class="iohdr_splitter" orientation="Vertical">
                     <!-- <VBox height="100%"> -->
-                        <Panel id="panelIOHDR" width="100%" height="37%" class="sapUiNoContentPadding stylHdrPadding">
+                        <Panel id="panelIOHDR" width="100%" height="100%" class="sapUiNoContentPadding stylHdrPadding">
                                 <core:Fragment fragmentName="zuiio2.view.subviews.Header" type="XML" />
+                                <layoutData><layout:SplitterLayoutData size="38%" /></layoutData> 
                         </Panel>
-                        <Panel width="100%" height="100%" class="sapUiNoContentPadding">
+                        <Panel id="panelIOAttrib" width="100%" height="100%" class="sapUiNoContentPadding">
                                 <IconTabBar id="idIconTabBarInlineIOHdr" headerMode="Inline" expandable="false" expanded="{device>/isNoPhone}" stretchContentHeight="true" applyContentPadding="false">
+                                    
                                     <items>                                
                                         <!-- ATTRIBUTES -->
                                         <IconTabFilter text="{ddtext>/ITFATTRIB}" key="itfIOATTRIB">
@@ -126,12 +128,13 @@
                                         </IconTabFilter>
                                     </items>
                                     <layoutData>
-                                        <FlexItemData growFactor="1" baseSize="0%" />
+                                        <!-- <FlexItemData growFactor="1" baseSize="0%" /> -->
+                                        <layout:SplitterLayoutData size="auto" />
                                     </layoutData>
                                 </IconTabBar>
                         </Panel>
                     <!-- </VBox> -->
-                    <!-- </layout:Splitter> -->
+                    </layout:Splitter>
                     </IconTabFilter>
 
                     <!-- STYLE -->
