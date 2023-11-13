@@ -267,7 +267,6 @@
             columnSelect="onColumnUpdated"
             columnVisibility="onColumnUpdated">
 
-            <!-- TABLE LAYOUT DATA -->
             <t:layoutData>
                 <FlexItemData growFactor="1" baseSize="0%"/>
             </t:layoutData>  
