@@ -1292,6 +1292,7 @@ sap.ui.define([
                             CPONO: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
                             CPOREV: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
                             CPODT: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
+                            DLVDT: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
                             CUSTSTYLE: aData.at(item).CUSTSTYLE === undefined ? "" : aData.at(item).CUSTSTYLE
                         })
                     })
@@ -1307,6 +1308,8 @@ sap.ui.define([
                 // return;
 
                 // console.log("onfragmentImportPO", oParam);
+                // return;
+
                 let outputMessage = "";
 
                 _promiseResult = new Promise((resolve, reject) => {
@@ -1490,11 +1493,11 @@ sap.ui.define([
                             // },
 
                             success: function (oData, response) {
-                                // console.log("Import PO Data");
-                                // console.log(oData);
+                                console.log("Import PO Data");
+                                console.log(oData);
                                 oData.results.forEach(item => {
                                     item.CPODT = dateFormat.format(new Date(item.CPODT));
-                                    // item.DLVDT = dateFormat.format(new Date(item.DLVDT));
+                                    item.DLVDT = dateFormat.format(new Date(item.DLVDT));
                                 })
 
                                 oJSONModel.setData(oData);
@@ -2297,8 +2300,8 @@ sap.ui.define([
                             },
                             success: function (oData, response) {
 
-                                // console.log("ATTRIBSet");
-                                // console.log(oData.results);
+                                console.log("ATTRIBSet");
+                                console.log(oData.results);
 
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
@@ -2580,6 +2583,7 @@ sap.ui.define([
                 var vSBU = this._sbu;
 
                 // console.log("COlumns Set " + arg1);
+                console.log("sTabName", sTabName);
 
                 if (arg1 === "IODET") {
                     var oJSONCommonDataModel = new sap.ui.model.json.JSONModel();
@@ -3583,13 +3587,19 @@ sap.ui.define([
                     if (sColumnWidth === 0 || sColumnWidth === undefined) sColumnWidth = 100;                     
 
                     var oText = new sap.m.Text({
-                        text: "{DataModel>" + sColumnId + "}",
+                        // text: sColumnId,
                         wrapping: false,
-                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "DataModel>{" + sColumnId + "}"
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
                     })
 
-                    // var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
-                    // console.log("oColProp", sTabId, oColProp);
+                    // var oText = new sap.m.Text({
+                    //     text: "{DataModel>" + sColumnId + "}",
+                    //     wrapping: false,
+                    //     tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "DataModel>{" + sColumnId + "}"
+                    // })
+
+                    var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+                    console.log("oColProp", sTabId, oColProp);
 
                     // if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                     //     oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
