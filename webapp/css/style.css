@@ -301,3 +301,7 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 .sapMTitleStyleAuto {
     font-size: 1rem !important;
 }
+
+.sapMDialogScroll {
+    height: 98%;
+}

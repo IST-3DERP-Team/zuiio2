@@ -32,7 +32,7 @@
 
         <!-- SMART FILTER BAR-->                
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
-        useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
+        enableBasicSearch="false" useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
             <smartfilterbar:controlConfiguration>
                 <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{ddtext>/SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>

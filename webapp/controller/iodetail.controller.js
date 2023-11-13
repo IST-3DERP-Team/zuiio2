@@ -2628,6 +2628,20 @@ sap.ui.define([
                         oModel.read("/ColumnsSet", {
                             success: function (oData, oResponse) {
                                 if (oData.results.length > 0) {
+                                    // if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
+                                    //     oData.results.forEach(item => {
+                                    //         oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
+                                    //             .forEach(col => {
+                                    //                 item.ValueHelp = col.ValueHelp;
+                                    //                 item.TextFormatMode = col.TextFormatMode;
+                                    //             })
+                                    //     })
+                                    // }
+
+                                    // console.log(oLocColProp[sTabId.replace("Tab", "")]);
+
+                                    // me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
+                                    // me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                                     // console.log("IO DET Columns Set");
                                     // console.log("ColumnsSet", oData);
                                     oJSONCommonDataModel.setData(oData);
@@ -2821,7 +2835,10 @@ sap.ui.define([
                     if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                         columnData.forEach(item => {
                             oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
-                                .forEach(col => item.ValueHelp = col.ValueHelp)
+                                .forEach(col => {
+                                    item.ValueHelp = col.ValueHelp;
+                                    item.TextFormatMode = col.TextFormatMode;
+                                })
                         })
                     }
 
@@ -3230,6 +3247,7 @@ sap.ui.define([
                     })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+                    console.log("oColProp", sTabId, oColProp);
 
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
@@ -3450,7 +3468,7 @@ sap.ui.define([
                                 // console.log(me.getView().setModel(oJSONModel, "IODETrowData"));
                                 // rowData = oData.results;
                                 // console.log("sTabId", sTabId, oData.results);
-                                // console.log(oData.results);
+                                console.log("IODET Data", oData.results);
                                 resolve();
                             },
                             error: function (err) {
@@ -3476,8 +3494,8 @@ sap.ui.define([
 
                 rowData = me.getView().getModel("IODETrowData").getProperty("/results");
 
-                // console.log("rowData");
-                // console.log(rowData);
+                console.log("rowData");
+                console.log(rowData);
 
                 var unique = rowData.filter((rowData, index, self) =>
                     index === self.findIndex((t) => (t.CUSTCOLOR === rowData.CUSTCOLOR && t.IONO === rowData.IONO && t.DLVSEQ === rowData.DLVSEQ)));
@@ -3531,19 +3549,23 @@ sap.ui.define([
                     columns: columnData
                 });
 
-                var oText;
+                var oTextTitle;
                 if(sTabId === "IODETTab"){
-                    oText = this.getView().byId("IODETTabCnt");
+                    oTextTitle = this.getView().byId("IODETTabCnt");
                     
                 }
 
                 if(sTabId === "SPLITIODETTab"){
-                    oText = this.getView().byId("SPLITIODETTabCnt");
+                    oTextTitle = this.getView().byId("SPLITIODETTabCnt");
                 }
 
-                oText.setText(unique.length + " item/s");
+                oTextTitle.setText(unique.length + " item/s");
 
                 oTable.setModel(oJSONModel, "DataModel");
+                
+                this.byId("IODETTab").getModel().setProperty("DataModel>/results", unique);
+                this.byId("IODETTab").bindRows("DataModel>/results");
+                this._tableRendered = "IODETTab";
 
                 TableFilter.applyColFilters(this);
 
@@ -3557,7 +3579,60 @@ sap.ui.define([
                     var sColumnSortOrder = column.SortOrder;
                     var sColumnDataType = column.DataType;
 
-                    if (sColumnWidth === 0 || sColumnWidth === undefined) sColumnWidth = 100;
+                    console.log("sColumnDataType", sColumnDataType);
+                    if (sColumnWidth === 0 || sColumnWidth === undefined) sColumnWidth = 100;                     
+
+                    var oText = new sap.m.Text({
+                        text: "{DataModel>" + sColumnId + "}",
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "DataModel>{" + sColumnId + "}"
+                    })
+
+                    // var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+                    // console.log("oColProp", sTabId, oColProp);
+
+                    // if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                    //     oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                    //     // console.log("oText");
+
+                    //     console.log("path", oColProp[0].ValueHelp["items"].path.getData());
+                    //     // console.log("path getData", me.getView().getModel(oColProp[0].ValueHelp["items"].path));
+
+                    //     oText.bindText({
+                    //         parts: [
+                    //             { 
+                    //                 path: sColumnId 
+                    //             }
+                    //         ],
+                    //         formatter: function (sKey) {
+                    //             var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
+                    //             console.log("oValue", oValue);
+                    //             console.log("sKey", sKey);
+                    //             if (oValue && oValue.length > 0) {
+                    //                 if (oColProp[0].TextFormatMode === "Value") {
+                    //                     return oValue[0][oColProp[0].ValueHelp["items"].text];
+                    //                 }
+                    //                 else if (oColProp[0].TextFormatMode === "ValueKey") {
+                    //                     return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
+                    //                 }
+                    //                 else if (oColProp[0].TextFormatMode === "KeyValue") {
+                    //                     return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
+                    //                 }
+                    //             }
+                    //             else return sKey;
+                    //         }
+                    //     });
+                    // }
+                    // else {
+                    //     oText.bindText({
+                    //         parts: [
+                    //             { path: sColumnId }
+                    //             // { path: "{DataModel>" + sColumnId + "}" }                                
+                    //         ]
+                    //     });
+                    // }
+
+                    console.log("oText", oText);
 
                     // console.log(sColumnId);
                     return new sap.ui.table.Column({
@@ -3575,57 +3650,56 @@ sap.ui.define([
                         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
                     });
 
-                    // if (sColumnDataType === "STRING") {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: sColumnLabel,
-                    //         template: me.styleColumnTemplate('', column),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // } else if (sColumnDataType === "BOOLEAN") {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: sColumnLabel,
-                    //         template: new sap.m.CheckBox({ selected: true, editable: false }),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: "Center",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // } else {
-                    //     return new sap.ui.table.Column({
-                    //         id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                    //         label: sColumnLabel,
-                    //         template: new sap.m.Text({
-                    //             text: "{" + sColumnId + "}",
-                    //             wrapping: false
-                    //             // , 
-                    //             // tooltip: "{" + sColumnId + "}"
-                    //         }),
-                    //         width: sColumnWidth + "px",
-                    //         sortProperty: sColumnId,
-                    //         filterProperty: sColumnId,
-                    //         autoResizable: true,
-                    //         visible: sColumnVisible,
-                    //         sorted: sColumnSorted,
-                    //         hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                    //         sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    //     });
-                    // }
+                    if (sColumnDataType === "STRING") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else if (sColumnDataType === "BOOLEAN") {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            template: new sap.m.CheckBox({
+                                selected: "{" + sColumnId + "}",
+                                editable: false
+                            }),
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: "Center",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    } else {
+                        return new sap.ui.table.Column({
+                            id: sTabId.replace("Tab", "") + "Col" + sColumnId,
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
+                            template: oText,
+                            width: sColumnWidth + "px",
+                            sortProperty: sColumnId,
+                            filterProperty: sColumnId,
+                            autoResizable: true,
+                            visible: sColumnVisible,
+                            sorted: sColumnSorted,
+                            hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                            sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                        });
+                    }
+
                 });
 
-                oTable.bindRows("DataModel>/results");
+                // oTable.bindRows("DataModel>/results");
 
                 TableFilter.updateColumnMenu(sTabId, this);
 
@@ -17552,6 +17626,21 @@ sap.ui.define([
                         this.byId("btnFullScreenIOStat").setVisible(false);
                         this.byId("btnExitFullScreenIOAttrib").setVisible(true);
                         this.byId("btnExitFullScreenIOStat").setVisible(true);
+
+                        var oSplitter = this.byId("IOHDRSplitter");
+                        var panelHDR = oSplitter.getContentAreas()[0].getLayoutData();
+                        var panelDET = oSplitter.getContentAreas()[1].getLayoutData();
+                        
+                        panelHDR.setSize("0%");
+                        panelDET.setSize("100%");     
+                        
+                        panelHDR.setResizable(false);
+                        panelDET.setResizable(false);
+
+                        panelHDR.setVisible(false);
+                        panelDET.setVisible(false);
+
+                        oSplitter.rerender();
                     }
                     else if (arg2 === "min") {
                         this.byId("objectHeader").setVisible(true);
@@ -17561,6 +17650,18 @@ sap.ui.define([
                         this.byId("btnFullScreenIOStat").setVisible(true);
                         this.byId("btnFullScreenIOAttrib").setVisible(false);
                         this.byId("btnExitFullScreenIOStat").setVisible(false);
+
+                        var oSplitter = this.byId("IOHDRSplitter");
+                        var panelHDR = oSplitter.getContentAreas()[0]; 
+                        var panelDET = oSplitter.getContentAreas()[1]; 
+                        
+                        panelHDR.getLayoutData().setSize("38%");
+                        panelHDR.getLayoutData().setVisible(true);
+                        
+                        oSplitter.setSplitterBar("Default");
+                        panelDET.getLayoutData().setSize("100%");
+
+                        oSplitter.rerender();
                     }
 
                     this._tableRendered = "IOATTRIBTab";

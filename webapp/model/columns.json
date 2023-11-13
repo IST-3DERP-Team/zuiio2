@@ -104,6 +104,44 @@
                 }
         }
     ],
+    "IODET": [
+        {   "ColumnName": "CSTYPE", 
+        "TextFormatMode": "ValueKey",
+        "ValueHelp": {
+            "show": true
+            , "items": {
+                "path": "COSTTYPE_MODEL", 
+                "value": "CSTYPECD", 
+                "text": "CSTYPEDESC"
+            },
+            "SuggestionItems": {
+                "path": "COSTTYPE_MODEL>/", 
+                "text": "{COSTTYPE_MODEL>CSTYPECD}", 
+                "additionalText": "{COSTTYPE_MODEL>CSTYPEDESC}", 
+                "maxSuggestionWidth": "200px" 
+            },
+            "columns": "tvh_cstype"
+        }
+    },
+    {   "ColumnName": "VERSION", 
+        "TextFormatMode": "ValueKey",
+        "ValueHelp": {
+            "show": true
+            , "items": {
+                "path": "CostSheet2Model", 
+                "value": "VERSION", 
+                "text": "VERDESC"
+            },
+            "SuggestionItems": {
+                "path": "CostSheet2Model>/", 
+                "text": "{CostSheet2Model>VERSION}", 
+                "additionalText": "{CostSheet2Model>VERDESC}", 
+                "maxSuggestionWidth": "200px" 
+            },
+            "columns": "tvh_csversion2"
+        }
+    }
+    ],
     "IODLV": [        
         {   "ColumnName": "CSTYPE", 
             "TextFormatMode": "ValueKey",

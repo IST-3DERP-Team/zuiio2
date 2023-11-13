@@ -33,7 +33,7 @@ server:
           - path: /sap
             url: http://190.92.230.65:8000
             client: '888'
-            destination: LTD888_S4HANA2022          
+            destination: LTD888_S4HANA2022
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
