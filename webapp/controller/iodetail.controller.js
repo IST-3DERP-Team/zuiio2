@@ -3284,6 +3284,9 @@ sap.ui.define([
                         });
                     }
 
+                    console.log(sColumnId);
+                    console.log(oText);
+
                     // return new sap.ui.table.Column({
                     //     id: sTabId.replace("Tab", "") + "Col" + sColumnId,
                     //     label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),
@@ -3589,7 +3592,7 @@ sap.ui.define([
                     var oText = new sap.m.Text({
                         // text: sColumnId,
                         wrapping: false,
-                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{DataModel>" + sColumnId + "}"
                     })
 
                     // var oText = new sap.m.Text({
@@ -3601,64 +3604,64 @@ sap.ui.define([
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
                     console.log("oColProp", sTabId, oColProp);
 
-                    // if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
-                    //     oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
-                    //     // console.log("oText");
+                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                        oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                        // console.log("oText");
 
-                    //     console.log("path", oColProp[0].ValueHelp["items"].path.getData());
-                    //     // console.log("path getData", me.getView().getModel(oColProp[0].ValueHelp["items"].path));
+                        console.log("path", oColProp[0].ValueHelp["items"].path);
 
-                    //     oText.bindText({
-                    //         parts: [
-                    //             { 
-                    //                 path: sColumnId 
-                    //             }
-                    //         ],
-                    //         formatter: function (sKey) {
-                    //             var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
-                    //             console.log("oValue", oValue);
-                    //             console.log("sKey", sKey);
-                    //             if (oValue && oValue.length > 0) {
-                    //                 if (oColProp[0].TextFormatMode === "Value") {
-                    //                     return oValue[0][oColProp[0].ValueHelp["items"].text];
-                    //                 }
-                    //                 else if (oColProp[0].TextFormatMode === "ValueKey") {
-                    //                     return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
-                    //                 }
-                    //                 else if (oColProp[0].TextFormatMode === "KeyValue") {
-                    //                     return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
-                    //                 }
-                    //             }
-                    //             else return sKey;
-                    //         }
-                    //     });
-                    // }
-                    // else {
-                    //     oText.bindText({
-                    //         parts: [
-                    //             { path: sColumnId }
-                    //             // { path: "{DataModel>" + sColumnId + "}" }                                
-                    //         ]
-                    //     });
-                    // }
+                        oText.bindText({
+                            parts: [
+                                { 
+                                    path: "DataModel>" + sColumnId
+                                }
+                            ],
+                            formatter: function (sKey) {
+                                var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
+                                console.log("oValue", oValue);
+                                console.log("sKey", sKey);
+                                if (oValue && oValue.length > 0) {
+                                    if (oColProp[0].TextFormatMode === "Value") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text];
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "ValueKey") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "KeyValue") {
+                                        return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
+                                    }
+                                }
+                                else return sKey;
+                            }
+                        });
+                    }
+                    else {
+                        oText.bindText({
+                            parts: [
+                                // { path: sColumnId }
+                                { path: "DataModel>" + sColumnId }                                
+                            ]
+                        });
+                    }
 
+                    console.log(sColumnId);
                     console.log("oText", oText);
 
-                    // console.log(sColumnId);
-                    return new sap.ui.table.Column({
-                        id: sTabId.replace("Tab", "") + sColumnId,
-                        // id: sColumnId, "Col" 
-                        label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
-                        template: me.styleColumnTemplate('', column),
-                        width: sColumnWidth + "px",
-                        sortProperty: sColumnId,
-                        filterProperty: sColumnId,
-                        autoResizable: true,
-                        visible: sColumnVisible,
-                        sorted: sColumnSorted,
-                        hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
-                        sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
-                    });
+                    // // console.log(sColumnId);
+                    // return new sap.ui.table.Column({
+                    //     id: sTabId.replace("Tab", "") + sColumnId,
+                    //     // id: sColumnId, "Col" 
+                    //     label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel,
+                    //     template: me.styleColumnTemplate('', column),
+                    //     width: sColumnWidth + "px",
+                    //     sortProperty: sColumnId,
+                    //     filterProperty: sColumnId,
+                    //     autoResizable: true,
+                    //     visible: sColumnVisible,
+                    //     sorted: sColumnSorted,
+                    //     hAlign: sColumnDataType === "NUMBER" ? "End" : sColumnDataType === "BOOLEAN" ? "Center" : "Begin",
+                    //     sortOrder: ((sColumnSorted === true) ? sColumnSortOrder : "Ascending")
+                    // });
 
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
@@ -12264,11 +12267,27 @@ sap.ui.define([
                                     //     }));
                                     // }
                                     else if (arg === "IODET") {
-                                        col.setTemplate(new sap.m.Input({
+                                        var bValueFormatter = false;
+                                        var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
+                                        var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';
+                                        var sTextFormatMode = "Key";
+
+                                        if (ci.TextFormatMode && ci.TextFormatMode !== "" && ci.TextFormatMode !== "Key" && ci.ValueHelp["items"].value !== ci.ValueHelp["items"].text) {
+                                            sTextFormatMode = ci.TextFormatMode;
+                                            bValueFormatter = true;
+
+                                            if (ci.ValueHelp["SuggestionItems"].additionalText && ci.ValueHelp["SuggestionItems"].text !== ci.ValueHelp["SuggestionItems"].additionalText) {
+                                                if (sTextFormatMode === "ValueKey" || sTextFormatMode === "Value") {
+                                                    sSuggestItemText = ci.ValueHelp["SuggestionItems"].additionalText;
+                                                    sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].text;
+                                                }
+                                            }
+                                        }
+
+                                        var oInput = new sap.m.Input({
                                             type: "Text",
-                                            value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
                                             showValueHelp: true,
-                                            valueHelpRequest: this.handleValueHelp.bind(this),
+                                            valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
                                             showSuggestion: true,
                                             maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
                                             suggestionItems: {
@@ -12276,21 +12295,66 @@ sap.ui.define([
                                                 length: 10000,
                                                 template: new sap.ui.core.ListItem({
                                                     key: ci.ValueHelp["SuggestionItems"].text,
-                                                    text: ci.ValueHelp["SuggestionItems"].text,
-                                                    additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                                    text: sSuggestItemText,
+                                                    additionalText: sSuggestItemAddtlText,
                                                 }),
                                                 templateShareable: false
                                             },
                                             // suggest: this.handleSuggestion.bind(this),
                                             change: this.handleValueHelpChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>NEW",
-                                                formatter: function (NEW) {
-                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
-                                                    else { return false }
+                                                path: "DataModel>DELETED",
+                                                formatter: function (DELETED) {
+                                                    if (DELETED) { return false }
+                                                    else { return true }
                                                 }
                                             }
-                                        }));
+                                        })
+
+                                        if (bValueFormatter) {
+                                            oInput.setProperty("textFormatMode", sTextFormatMode);
+                                            oInput.bindValue({
+                                                parts: [{ path: "DataModel>" + sColName }, { value: ci.ValueHelp["items"].path }, { value: ci.ValueHelp["items"].value }, { value: ci.ValueHelp["items"].text }, { value: sTextFormatMode }],
+                                                formatter: this.formatValueHelp.bind(this)
+                                            });
+                                        }
+                                        else {
+                                            oInput.bindValue({
+                                                parts: [
+                                                    { path: "DataModel>" + sColName }
+                                                ]
+                                            });
+                                        }
+
+                                        col.setTemplate(oInput);
+
+                                        // col.setTemplate(new sap.m.Input({
+                                        //     type: "Text",
+                                        //     value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
+                                        //     showValueHelp: true,
+                                        //     valueHelpRequest: this.handleValueHelp.bind(this),
+                                        //     showSuggestion: true,
+                                        //     maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                        //     suggestionItems: {
+                                        //         path: ci.ValueHelp["SuggestionItems"].path,
+                                        //         length: 10000,
+                                        //         template: new sap.ui.core.ListItem({
+                                        //             key: ci.ValueHelp["SuggestionItems"].text,
+                                        //             text: ci.ValueHelp["SuggestionItems"].text,
+                                        //             additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
+                                        //         }),
+                                        //         templateShareable: false
+                                        //     },
+                                        //     // suggest: this.handleSuggestion.bind(this),
+                                        //     change: this.handleValueHelpChange.bind(this),
+                                        //     enabled: {
+                                        //         path: "DataModel>NEW",
+                                        //         formatter: function (NEW) {
+                                        //             if (NEW === true || me._dataMode === "EDIT") { return true }
+                                        //             else { return false }
+                                        //         }
+                                        //     }
+                                        // }));
                                     }
                                     else {
                                         col.setTemplate(new sap.m.Input({
@@ -14344,7 +14408,19 @@ sap.ui.define([
 
             handleValueHelpChange: function (oEvent) {
                 var oSource = oEvent.getSource();
-                var sRowPath = oSource.oParent.getBindingContext().sPath;
+                var oTableSource = oSource.oParent.oParent;
+                var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
+
+                console.log("handleValueHelpChange", sTabId);
+
+                if(sTabId === "IODETTab") {
+                    var sRowPath = oSource.oParent.getBindingContext("DataModel").sPath;
+                } else {
+                    var sRowPath = oSource.oParent.getBindingContext().sPath;
+                }
+
+                // var sRowPath = oSource.oParent.getBindingContext().sPath;
+
                 var isInvalid = !oSource.getSelectedKey() && oSource.getValue().trim();
                 oSource.setValueState(isInvalid ? "Error" : "None");
 
@@ -14628,8 +14704,8 @@ sap.ui.define([
                         action: this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                     }
                 })) || ""; // generate the Hash to display style
-                // hash = "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
-                hash = "ZSO_3DERP_ORD_STYLE-display&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                hash = "ZSO_3DERP_ORD_STYLE-" + this.getView().getModel("ui").getProperty("/DisplayMode") + "&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
+                // hash = "ZSO_3DERP_ORD_STYLE-display&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                 // hash = "ZSO_3DERP_ORD_STYLE-change&/RouteStyleDetail/" + vStyle + "/" + me._sbu + "/" + me._ioNo
                
                 // hash = hash.split("?")[0];
@@ -15237,6 +15313,8 @@ sap.ui.define([
                         });
                     }
 
+                    console.log(sColumnId);
+                    console.log(oText);
                     // var oTemplate;
 
                     // if (sColumnDataType !== "BOOLEAN") {

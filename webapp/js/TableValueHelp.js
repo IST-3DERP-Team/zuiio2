@@ -309,10 +309,16 @@ sap.ui.define([
             this._inputId = oSource.getId();
             this._inputValue = oSource.getValue();
             this._inputField = oSource.getBindingInfo("value").parts[0].path;
-            var sRowPath = oSource.oParent.getBindingContext().sPath;
+            // var sRowPath = oSource.oParent.getBindingContext().sPath;
 
             var oTableSource = oSource.oParent.oParent;
             var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
+
+            if(sTabId === "IODETTab") {
+                var sRowPath = oSource.oParent.getBindingContext("DataModel").sPath;
+            } else {
+                var sRowPath = oSource.oParent.getBindingContext().sPath;
+            }
 
             // console.log("_inputField", this._inputField);
             // console.log("_inputId", this._inputId);
@@ -567,7 +573,7 @@ sap.ui.define([
 
         handleTableValueHelpSelect: function (oEvent) {
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
-            // console.log("handleTableValueHelpSelect", sRowPath);
+            console.log("handleTableValueHelpSelect", sRowPath);
             // console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
             // console.log("this._inputSource", this._inputSource);
             // console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
