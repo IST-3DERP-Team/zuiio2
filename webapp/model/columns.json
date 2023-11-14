@@ -699,15 +699,15 @@
             "ValueHelp": {
                 "show": true,
                 "items": {
-                    "path": "AttribCodeModel",
+                    "path": "AttribCodesModel",
                     "value": "Attribcd",
                     "text": "Desc1"
                 },
                 "SuggestionItems": {
-                    "path": "AttribCodeModel>/",
-                    "text": "{AttribCodeModel>Attribcd}",
-                    "additionalText": "{AttribCodeModel>Desc1}",
-                    "maxSuggestionWidth": "275px"
+                    "path": "AttribCodesModel>/",
+                    "text": "{AttribCodesModel>Attribcd}",
+                    "additionalText": "{AttribCodesModel>Desc1}",
+                    "maxSuggestionWidth": "500px"
                 },
                 "filters": [
                     { "field": "Attribtyp", "valueType": "rowValue", "value": "ATTRIBTYP" }
