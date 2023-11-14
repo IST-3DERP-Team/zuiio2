@@ -345,10 +345,27 @@ sap.ui.define([
             var vhColumns = this._oModelColumns[sColumns];
             // console.log("sPath", sPath);
             var vh = this.getView().getModel(sPath).getData();
+            var aFilters = vColProp[0].ValueHelp.filters;
+            console.log(aFilters)
 
             // console.log("vh", vh);
             var aColumns = [], oDDTextParam = [];
             var oDDText = this.getView().getModel("ddtext").getData();
+
+            if (aFilters !== undefined) {
+                aFilters.forEach(item => {
+                    var vValue = "";
+
+                    if (item.valueType === "rowValue") {
+                        vValue = oEvent.getSource().oParent.oParent.getModel().getProperty(sRowPath + "/" + item.value);
+                    }
+                    else if (item.valueType === "actualValue") {
+                        vValue = item.value;
+                    }
+
+                    vh = vh.filter(fItem => fItem[item.field] === vValue);
+                })
+            }
 
             if (vhColumns !== undefined) {
                 vhColumns.forEach(item => {

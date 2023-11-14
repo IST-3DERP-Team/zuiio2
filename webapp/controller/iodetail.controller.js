@@ -417,6 +417,8 @@ sap.ui.define([
                 this.getVHSet("/COSTCOMPVhSet", "COSTCOMP_MODEL", false, false);
                 this.getVHSet("/PurPlantSet", "PurPlantModel", true, true);
                 this.getVHSet("/DLVIODETCHKSet", "DlvIODetChkModel", false, false);
+                this.getVHSet("/ATTRIBTYPvhSet", "AttribTypModel", false, false);
+                this.getVHSet("/ATTRIBCODEvhSet", "AttribCodeModel", false, false);
 
                 me.SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
 
@@ -12145,7 +12147,7 @@ sap.ui.define([
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
 
                                 if (oValueHelp) {
-                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "ioMatList") {
+                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "ioMatList" || arg === "IOATTRIB") {
                                         var bValueFormatter = false;
                                         var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
                                         var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';
@@ -12163,32 +12165,64 @@ sap.ui.define([
                                             }
                                         }
 
-                                        var oInput = new sap.m.Input({
-                                            type: "Text",
-                                            showValueHelp: true,
-                                            valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
-                                            showSuggestion: true,
-                                            maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
-                                            suggestionItems: {
-                                                path: ci.ValueHelp["SuggestionItems"].path,
-                                                length: 10000,
-                                                template: new sap.ui.core.ListItem({
-                                                    key: ci.ValueHelp["SuggestionItems"].text,
-                                                    text: sSuggestItemText,
-                                                    additionalText: sSuggestItemAddtlText,
-                                                }),
-                                                templateShareable: false
-                                            },
-                                            // suggest: this.handleSuggestion.bind(this),
-                                            change: this.handleValueHelpChange.bind(this),
-                                            enabled: {
-                                                path: "DELETED",
-                                                formatter: function (DELETED) {
-                                                    if (DELETED) { return false }
-                                                    else { return true }
+                                        var oInput;
+
+                                        if (arg === "IOATTRIB" && sColName === "ATTRIBCD") {
+                                            oInput = new sap.m.Input({
+                                                type: "Text",
+                                                showValueHelp: true,
+                                                valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
+                                                showSuggestion: true,
+                                                maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                                suggestionItems: {
+                                                    path: ci.ValueHelp["SuggestionItems"].path,
+                                                    length: 10000,
+                                                    template: new sap.ui.core.ListItem({
+                                                        key: ci.ValueHelp["SuggestionItems"].text,
+                                                        text: sSuggestItemText,
+                                                        additionalText: sSuggestItemAddtlText,
+                                                    }),
+                                                    templateShareable: false
+                                                },
+                                                // suggest: this.handleSuggestion.bind(this),
+                                                change: this.handleValueHelpChange.bind(this),
+                                                enabled: {
+                                                    path: "ATTRIBTYP",
+                                                    formatter: function (ATTRIBTYP) {
+                                                        if (ATTRIBTYP === "") { return false }
+                                                        else { return true }
+                                                    }
                                                 }
-                                            }
-                                        })
+                                            })
+                                        }
+                                        else {
+                                            oInput = new sap.m.Input({
+                                                type: "Text",
+                                                showValueHelp: true,
+                                                valueHelpRequest: TableValueHelp.handleTableValueHelp.bind(this),
+                                                showSuggestion: true,
+                                                maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
+                                                suggestionItems: {
+                                                    path: ci.ValueHelp["SuggestionItems"].path,
+                                                    length: 10000,
+                                                    template: new sap.ui.core.ListItem({
+                                                        key: ci.ValueHelp["SuggestionItems"].text,
+                                                        text: sSuggestItemText,
+                                                        additionalText: sSuggestItemAddtlText,
+                                                    }),
+                                                    templateShareable: false
+                                                },
+                                                // suggest: this.handleSuggestion.bind(this),
+                                                change: this.handleValueHelpChange.bind(this),
+                                                enabled: {
+                                                    path: "DELETED",
+                                                    formatter: function (DELETED) {
+                                                        if (DELETED) { return false }
+                                                        else { return true }
+                                                    }
+                                                }
+                                            })
+                                        }
 
                                         if (bValueFormatter) {
                                             oInput.setProperty("textFormatMode", sTextFormatMode);
@@ -12378,6 +12412,22 @@ sap.ui.define([
                                             change: this.handleValueHelpChange.bind(this)
                                         }));
                                     }
+                                } 
+                                else if (arg === "IOATTRIB" && sColName.toUpperCase() === "ATTRIBVAL") {
+                                    col.setTemplate(new sap.m.Input({
+                                        type: "Text",
+                                        value: "{" + sColName + "}",
+                                        change: this.onInputLiveChange.bind(this),
+                                        editable: "{= ${VALUETYP} === 'NumValue' || ${VALUETYP} === 'STRVAL' ? true : false }"
+                                    }));
+                                }
+                                else if (arg === "IOATTRIB" && sColName.toUpperCase() === "VALUNIT") {
+                                    col.setTemplate(new sap.m.Input({
+                                        type: "Text",
+                                        value: "{" + sColName + "}",
+                                        change: this.onInputLiveChange.bind(this),
+                                        editable: "{= ${VALUETYP} === 'NumValue' ? true : false }"
+                                    }));
                                 }
                                 else if (ci.DataType === "DATETIME") {
                                     if (arg === "costHdr" && sColName === "CSDATE") {
@@ -14437,6 +14487,7 @@ sap.ui.define([
                 if (isInvalid) this._validationErrors.push(oEvent.getSource().getId());
                 else {
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/' + oSource.getBindingInfo("value").parts[0].path, oSource.getSelectedKey());
+                    
                     if (this._sTableModel === "ioMatList") {
                         var vendorList = this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey());
                         if (vendorList.length === 1) {
@@ -14469,6 +14520,38 @@ sap.ui.define([
                         // console.log("HandleValueHelp SPLITIODLV");
                         sap.ui.getCore().byId("SPLITIODLVTab").getModel().setProperty(sRowPath + "/NEWCUSTSHIPTIO", oSource.getSelectedKey());
                     }
+
+                    if (this._sTableModel === "IOATTRIB") {
+                        console.log(oSource.getSelectedKey())
+                        if (oSource.getBindingInfo("value").parts[0].path === 'ATTRIBCD') {
+                            var attribCodeList = this.getView().getModel("AttribCodeModel").getData().filter(fItem => fItem.Attribcd === oSource.getSelectedKey());
+                            console.log(attribCodeList)
+                            if (attribCodeList.length > 0) {
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/DESC1", attribCodeList[0].Desc1);
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/ATTRIBGRP", attribCodeList[0].Attribgrp);
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/VALUETYP", attribCodeList[0].Valuetyp);
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/VALUNIT", attribCodeList[0].Valunit);
+                            }
+                        }
+                        else if (oSource.getBindingInfo("value").parts[0].path === 'ATTRIBTYP') {
+                            var vAttribCode = this.byId("IOATTRIBTab").getModel().getProperty(sRowPath + "/ATTRIBCD");
+                            var attribCodeList = this.getView().getModel("AttribCodeModel").getData().filter(fItem => fItem.Attribcd === vAttribCode);
+                            var vAttribTyp = "";
+
+                            if (attribCodeList.length > 0) {
+                                vAttribTyp = attribCodeList[0].Attribtyp;
+                            }
+
+                            if (oSource.getSelectedKey() !== vAttribTyp) {
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/ATTRIBCD", "");
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/DESC1", "");
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/ATTRIBGRP", "");
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/VALUETYP", "");
+                                this.byId("IOATTRIBTab").getModel().setProperty(sRowPath + "/VALUNIT", ""); 
+                            }                      
+                        }
+                    }
+
                     this._validationErrors.forEach((item, index) => {
                         if (item === oEvent.getSource().getId()) {
                             this._validationErrors.splice(index, 1)

@@ -672,5 +672,62 @@
     "tvh_uom": [
         {"ColumnName": "Valunit", "DataType": "STRING", "ColumnWidth": "130px", "Visible": true, "Key": true, "Value": false},
         {"ColumnName": "Desc1", "DataType": "STRING", "ColumnWidth": "270px", "Visible": true, "Key": false, "Value": true}
+    ],
+    "IOATTRIB": [
+        {
+            "ColumnName": "ATTRIBTYP",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "AttribTypModel",
+                    "value": "Attribtyp",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "AttribTypModel>/",
+                    "text": "{AttribTypModel>Attribtyp}",
+                    "additionalText": "{AttribTypModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_attribtyp"
+            }
+        },
+        {
+            "ColumnName": "ATTRIBCD",
+            "TextFormatMode": "Key",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "AttribCodeModel",
+                    "value": "Attribcd",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "AttribCodeModel>/",
+                    "text": "{AttribCodeModel>Attribcd}",
+                    "additionalText": "{AttribCodeModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "filters": [
+                    { "field": "Attribtyp", "valueType": "rowValue", "value": "ATTRIBTYP" }
+                ],
+                "columns": "tvh_attribcd"
+            }
+        }
+    ],
+    "tvh_attribtyp": [
+        {"ColumnName": "Attribtyp", "DataType": "STRING", "ColumnWidth": "125px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "Desc1", "DataType": "STRING", "ColumnWidth": "275px", "Visible": true, "Key": false, "Value": true},
+        {"ColumnName": "Dispgrp", "DataType": "STRING", "ColumnWidth": "300px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Valuetype", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": false}
+    ],
+    "tvh_attribcd": [
+        {"ColumnName": "Attribtyp", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Attribcd", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": true, "Value": true},
+        {"ColumnName": "Desc1", "DataType": "STRING", "ColumnWidth": "300px", "Visible": true, "Key": false, "Value": false},
+        {"ColumnName": "Attribgrp", "DataType": "STRING", "ColumnWidth": "100px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Valuetyp", "DataType": "STRING", "ColumnWidth": "150px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "Valunit", "DataType": "STRING", "ColumnWidth": "100px", "Visible": true, "Key": false, "Value": false}
     ]
 }
