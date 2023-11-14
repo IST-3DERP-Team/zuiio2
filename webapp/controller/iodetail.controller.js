@@ -11365,7 +11365,7 @@ sap.ui.define([
                 else if (aEditedRows.length > 0) {
                     if (this._validationErrors.length === 0) {
                         var entitySet = "/";
-                        var oModel;
+                        var oModel; 
 
                         switch (arg) {
                             case "color":
