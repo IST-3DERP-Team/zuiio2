@@ -1041,7 +1041,9 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CSVCODE" });
                 oDDTextParam.push({ CODE: "SPLITDLV" });
                 oDDTextParam.push({ CODE: "SPLITVALGTCURR" });
-                oDDTextParam.push({ CODE: "CUSTDLVDT_ERR_VALIDATION" });                
+                oDDTextParam.push({ CODE: "CUSTDLVDT_ERR_VALIDATION" });    
+                oDDTextParam.push({ CODE: "ERR_IOMISSINGMATNO" });   
+                oDDTextParam.push({ CODE: "ERR_IODETMISSINGCSTYPE" });                    
                 
                 // console.log(oDDTextParam);
 
@@ -1095,7 +1097,7 @@ sap.ui.define([
                     oFilter = new Filter(aFilter, false);
                 }
 
-                alert(oFilter);
+                // alert(oFilter);
 
                 sap.ui.getCore().byId(arg2).getBinding("rows").filter(oFilter, "Application");
 
@@ -1291,9 +1293,10 @@ sap.ui.define([
 
                             CPONO: aData.at(item).CPONO === undefined ? "" : aData.at(item).CPONO,
                             CPOREV: aData.at(item).CPOREV === undefined ? "" : aData.at(item).CPOREV,
-                            CPODT: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
-                            DLVDT: aData.at(item).CPODT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).CPODT)),
-                            CUSTSTYLE: aData.at(item).CUSTSTYLE === undefined ? "" : aData.at(item).CUSTSTYLE
+                            CPODT: aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),                            
+                            CUSTSTYLE: aData.at(item).CUSTSTYLE === undefined ? "" : aData.at(item).CUSTSTYLE,
+                            DLVDT: aData.at(item).DLVDT === undefined ? "" : sapDateFormat.format(new Date(aData.at(item).DLVDT)),
+                            CUSTDEST: aData.at(item).CUSTDEST === undefined ? "" : aData.at(item).CUSTDEST
                         })
                     })
 
@@ -1307,7 +1310,7 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                // console.log("onfragmentImportPO", oParam);
+                console.log("onfragmentImportPO", oParam);
                 // return;
 
                 let outputMessage = "";
@@ -1316,7 +1319,7 @@ sap.ui.define([
                     oModel.create("/IMPORTSALDOC2Set", oParam, {
                         method: "POST",
                         success: function (oData, oResponse) {
-                            // console.log(oData);
+                            console.log(oData);
 
                             oData.N_EXPORT_MSG.results.forEach(item => {
                                 if (item.SUBRC === "E") {
@@ -1709,6 +1712,7 @@ sap.ui.define([
                             me.getView().addDependent(me._ImportPODialog);
 
                         }
+                        me.getImportPOData();
                         me._ImportPODialog.open();
                     } else
                         MessageBox.error(this.getView().getModel("ui").getProperty("/LockMessage"));
@@ -1810,8 +1814,8 @@ sap.ui.define([
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            // console.log("Import PO");
-                            // console.log(oData);
+                            console.log("Import PO");
+                            console.log(oData);
 
                             var aColumns;
 
@@ -2300,8 +2304,8 @@ sap.ui.define([
                             },
                             success: function (oData, response) {
 
-                                console.log("ATTRIBSet");
-                                console.log(oData.results);
+                                // console.log("ATTRIBSet");
+                                // console.log(oData.results);
 
                                 oData.results.forEach((item, index) =>
                                     item.ACTIVE = index === 0 ? "X" : "");
@@ -2583,7 +2587,7 @@ sap.ui.define([
                 var vSBU = this._sbu;
 
                 // console.log("COlumns Set " + arg1);
-                console.log("sTabName", sTabName);
+                // console.log("sTabName", sTabName);
 
                 if (arg1 === "IODET") {
                     var oJSONCommonDataModel = new sap.ui.model.json.JSONModel();
@@ -3251,7 +3255,7 @@ sap.ui.define([
                     })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
-                    console.log("oColProp", sTabId, oColProp);
+                    // console.log("oColProp", sTabId, oColProp);
 
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
@@ -3284,8 +3288,8 @@ sap.ui.define([
                         });
                     }
 
-                    console.log(sColumnId);
-                    console.log(oText);
+                    // console.log(sColumnId);
+                    // console.log(oText);
 
                     // return new sap.ui.table.Column({
                     //     id: sTabId.replace("Tab", "") + "Col" + sColumnId,
@@ -3475,7 +3479,7 @@ sap.ui.define([
                                 // console.log(me.getView().setModel(oJSONModel, "IODETrowData"));
                                 // rowData = oData.results;
                                 // console.log("sTabId", sTabId, oData.results);
-                                console.log("IODET Data", oData.results);
+                                // console.log("IODET Data", oData.results);
                                 resolve();
                             },
                             error: function (err) {
@@ -3501,8 +3505,8 @@ sap.ui.define([
 
                 rowData = me.getView().getModel("IODETrowData").getProperty("/results");
 
-                console.log("rowData");
-                console.log(rowData);
+                // console.log("rowData");
+                // console.log(rowData);
 
                 var unique = rowData.filter((rowData, index, self) =>
                     index === self.findIndex((t) => (t.CUSTCOLOR === rowData.CUSTCOLOR && t.IONO === rowData.IONO && t.DLVSEQ === rowData.DLVSEQ)));
@@ -3586,7 +3590,7 @@ sap.ui.define([
                     var sColumnSortOrder = column.SortOrder;
                     var sColumnDataType = column.DataType;
 
-                    console.log("sColumnDataType", sColumnDataType);
+                    // console.log("sColumnDataType", sColumnDataType);
                     if (sColumnWidth === 0 || sColumnWidth === undefined) sColumnWidth = 100;                     
 
                     var oText = new sap.m.Text({
@@ -3602,13 +3606,13 @@ sap.ui.define([
                     // })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
-                    console.log("oColProp", sTabId, oColProp);
+                    // console.log("oColProp", sTabId, oColProp);
 
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
                         // console.log("oText");
 
-                        console.log("path", oColProp[0].ValueHelp["items"].path);
+                        // console.log("path", oColProp[0].ValueHelp["items"].path);
 
                         oText.bindText({
                             parts: [
@@ -3618,8 +3622,8 @@ sap.ui.define([
                             ],
                             formatter: function (sKey) {
                                 var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
-                                console.log("oValue", oValue);
-                                console.log("sKey", sKey);
+                                // console.log("oValue", oValue);
+                                // console.log("sKey", sKey);
                                 if (oValue && oValue.length > 0) {
                                     if (oColProp[0].TextFormatMode === "Value") {
                                         return oValue[0][oColProp[0].ValueHelp["items"].text];
@@ -3644,8 +3648,8 @@ sap.ui.define([
                         });
                     }
 
-                    console.log(sColumnId);
-                    console.log("oText", oText);
+                    // console.log(sColumnId);
+                    // console.log("oText", oText);
 
                     // // console.log(sColumnId);
                     // return new sap.ui.table.Column({
@@ -5387,6 +5391,10 @@ sap.ui.define([
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "HeaderEditModeModel");
 
+                this._aColumns["IOHDRTab"].forEach(ci => {
+                    console.log(ci);
+                })
+
                 var isRequiredText = this.getView().getModel("ddtext").getData()["PLACEHOLDER_REQ"];
                 await new Promise((resolve, reject) => {
                     var feCName = "";
@@ -5395,6 +5403,10 @@ sap.ui.define([
                             feCName = "fe" + ci.ColumnName;
                             this.getView().byId(feCName)._oLabel.addStyleClass("sapMLabelRequired");
                             this.byId(ci.ColumnName).setPlaceholder(ci.ColumnLabel + " " + isRequiredText);
+
+                            if(ci.ColumnName === "CUSSALTERM") {
+                                this.byId(ci.ColumnName).Editable(ci.Editable);
+                            }                            
                         }
                     })
                     resolve();
@@ -6853,19 +6865,39 @@ sap.ui.define([
                 var sIONo = this.getView().byId("IONO").getValue();
                 var sStatusCd = this.getView().byId("STATUSCD").getValue();
                 var errMessage = "";
+                var bCOSTCOMP = true;
+                var bMATNO = true;
 
-                var oDataMatList = this.byId("ioMatListTab").getModel().getData().rows;
-                oDataMatList.forEach(item => {
-                    if (item.COSTCOMPCD === "" || item.COSTCOMPCD === undefined && errMessage === "") {
+                //CHECK UNASSIGNED COSTCOMPCD AT IO MATERIAL LIST
+                if((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.COSTCOMPCD === "" || fItem.COSTCOMPCD === undefined).length > 0) {
+                    if (errMessage.length > 0) {
+                        errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOMISSINGCOSTCOMP"];
+                    }else
                         errMessage = this.getView().getModel("ddtext").getData()["ERR_IOMISSINGCOSTCOMP"];
-                    }
-                });
+                }
+
+                //CHECK UNASSIGNED MATNO AT IO MATERIAL LIST
+                if((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.MATNO === "" || fItem.MATNO === undefined).length > 0) {
+                    if (errMessage.length > 0) {
+                        errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOMISSINGMATNO"];
+                    }else
+                        errMessage = this.getView().getModel("ddtext").getData()["ERR_IOMISSINGMATNO"];
+                }
+
+                console.log((this.byId("IODETTab").getModel("DataModel").getData().results).filter(fItem => fItem.CSTYPE === "" || fItem.CSTYPE === undefined).length );
+                //CHECK UNASSIGNED CSTYPE AT IO DELIVERY DETAILS
+                if((this.byId("IODETTab").getModel("DataModel").getData().results).filter(fItem => fItem.CSTYPE === "" || fItem.CSTYPE === undefined).length > 0) {
+                    if (errMessage.length > 0) {
+                        errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IODETMISSINGCSTYPE"];
+                    }else
+                        errMessage = this.getView().getModel("ddtext").getData()["ERR_IODETMISSINGCSTYPE"];
+                }
 
                 await this.reloadModel("/IOCSCHECKSet", true, "hasCSData");
 
                 if (sStatusCd === "REL") {
                     if (errMessage.length > 0) {
-                        errMessage = erMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"];
+                        errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"];
                     } else
                         errMessage = this.getView().getModel("ddtext").getData()["ERR_IOALREADYRELEASE"];
                 }
@@ -6881,6 +6913,8 @@ sap.ui.define([
                     MessageBox.information(errMessage);
                     return;
                 }
+
+                return;
 
                 if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
                     await this.lock(this);
@@ -11937,7 +11971,7 @@ sap.ui.define([
             async setRowEditMode(arg) {
 
                 var oTable;
-                // console.log("setRowEditMode arg", arg);
+                // console.log("2 arg", arg);
                 if (arg === "SPLITIODLV" || arg === "SPLITIODET") {
                     // console.log(sap.ui.getCore().byId("SPLITIODETTab"));
                     oTable = sap.ui.getCore().byId(arg + "Tab");
@@ -14411,7 +14445,7 @@ sap.ui.define([
                 var oTableSource = oSource.oParent.oParent;
                 var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
 
-                console.log("handleValueHelpChange", sTabId);
+                // console.log("handleValueHelpChange", sTabId);
 
                 if(sTabId === "IODETTab") {
                     var sRowPath = oSource.oParent.getBindingContext("DataModel").sPath;
@@ -14459,6 +14493,22 @@ sap.ui.define([
                                 this.byId("IODLVTab").getModel().setProperty(sRowPath + "/VERSION", item.VERSION);
                                 this.byId("IODLVTab").getModel().setProperty(sRowPath + "/CSTYPE", item.CSTYPE);
 
+                                // console.log(this.byId("IODLVTab").getModel().getProperty(sRowPath + "/VERSION"));
+                                // console.log(this.byId("IODLVTab").getModel().getProperty(sRowPath + "/CSTYPE"));
+                            })
+                        }
+                    }
+
+                    if (this._sTableModel === "IODET") {
+                        var cslist = this.getView().getModel("CostSheet2Model").getData().filter(fItem => fItem.VERSION === oSource.getSelectedKey());
+                        // console.log("cslist", cslist);
+                        if (cslist.length === 1) {
+                            this.getView().getModel("CostSheet2Model").getData().filter(fItem => fItem.VERSION === oSource.getSelectedKey()).forEach(item => {
+                                // console.log("item", item);
+                                this.byId("IODETTab").getModel("DataModel").setProperty(sRowPath + "/VERSION", item.VERSION);
+                                this.byId("IODETTab").getModel("DataModel").setProperty(sRowPath + "/CSTYPE", item.CSTYPE);
+                                this.byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
+                                
                                 // console.log(this.byId("IODLVTab").getModel().getProperty(sRowPath + "/VERSION"));
                                 // console.log(this.byId("IODLVTab").getModel().getProperty(sRowPath + "/CSTYPE"));
                             })
@@ -15313,8 +15363,8 @@ sap.ui.define([
                         });
                     }
 
-                    console.log(sColumnId);
-                    console.log(oText);
+                    // console.log(sColumnId);
+                    // console.log(oText);
                     // var oTemplate;
 
                     // if (sColumnDataType !== "BOOLEAN") {
