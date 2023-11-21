@@ -11470,7 +11470,7 @@ sap.ui.define([
                             var itemValue;
                             // console.log(this._aColumns[arg])
                             this._aColumns[arg].forEach(col => {
-                                console.log(col);
+                                // console.log(col);
                                 if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
                                 //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
                                 else if (col.DataType === "DATETIME") {
@@ -11497,7 +11497,7 @@ sap.ui.define([
                                 }
 
                                 if (iKeyCount === 1) {
-                                    console.log("iKeyCount === 1");
+                                    // console.log("iKeyCount === 1");
                                     if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X")
                                             if (col.DictType.indexOf("INT") !== -1)
@@ -11508,7 +11508,7 @@ sap.ui.define([
                                         entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
-                                    console.log("iKeyCount > 1", arg);
+                                    // console.log("iKeyCount > 1", arg);
                                     if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X") {
                                             if (col.DictType.indexOf("INT") !== -1)
@@ -11520,7 +11520,7 @@ sap.ui.define([
                                         if (col.Key === "X") {
                                             entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                         } else {
-                                            console.log(arg, col.ColumnName);
+                                            // console.log(arg, col.ColumnName);
                                             if(arg === "color" && col.ColumnName === "ATTRIBCD") {
                                                 entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                         }
