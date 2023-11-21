@@ -653,6 +653,8 @@ sap.ui.define([
 
                 var ioNo = this._ioNo;
 
+                this.getVHSet("/IOEDINOEDITSet", "IOEDINOEDITModel", true, false);
+
                 // var me = this;
 
                 this.oJSONModel = new sap.ui.model.json.JSONModel();
@@ -1189,7 +1191,11 @@ sap.ui.define([
                     return;
                 }
 
-                if (this.byId("btnSaveDlvSched").Visible === true) {
+                if (this.byId("btnSaveDlvSched").getVisible()) {
+                    return;
+                }
+
+                if (this.byId("btnSaveIODet").getVisible()) {
                     return;
                 }
                 
@@ -2065,6 +2071,7 @@ sap.ui.define([
                                 item.CREATEDDT = item.CREATEDDT === "0000-00-00" || item.CREATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CREATEDDT));
                                 item.UPDATEDDT = item.UPDATEDDT === "0000-00-00" || item.UPDATEDDT === "    -  -  " ? "" : dateFormat.format(new Date(item.UPDATEDDT));
                                 // item.DELETED = item.DELETED === "X" ? true : false;
+                                item.EDISOURCE = item.EDISOURCE === "X" ? true : false;
                             })
 
                             oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
@@ -4945,8 +4952,9 @@ sap.ui.define([
 
                 if (bSBUFilter === true && bHdrFilter === false) {
                     // await new Promise((resolve, reject) => {
-                    if(sModelName === "IOEDINOEDIT") {
-                        var CUSTGRP = this.getView().byId("CUSTGRP").getValue();
+                    if(sModelName === "IOEDINOEDITModel") {
+                        // var CUSTGRP = this.getView().byId("CUSTGRP").getValue();
+                        var CUSTGRP = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
                         var filter = "SBU eq '" + this._sbu + "' and CUSTGRP eq '" + CUSTGRP + "'"
                     } else{
                         var filter = "SBU eq '" + this._sbu + "'"
@@ -4962,6 +4970,11 @@ sap.ui.define([
                             // that.getOwnerComponent().getModel("LOOKUP_MODEL").setProperty("/" + sModelName, oData.results);
                             // console.log(oView.setModel(oJSONModel, ModelName));
                             // resolve();
+
+                            if(sModelName === "IOEDINOEDITModel") {
+                                console.log(filter);
+                                console.log(oData);
+                            }
                         },
                         error: function (err) {
                             // resolve();
@@ -6591,6 +6604,8 @@ sap.ui.define([
                         return;
                     }
                 }
+
+                this.getVHSet("/IOEDINOEDITSet", "IOEDINOEDITModel", true, false);
             },
 
             isNumeric: function (value) {
@@ -11998,6 +12013,28 @@ sap.ui.define([
                 }
                 var me = this;
 
+                // if (arg === "IODET" || arg === "IODLV") {
+                //     var oJSONModel = new JSONModel();
+                //     var oView = this.getView();
+                //     var CUSTGRP = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
+                //     var filter = "SBU eq '" + this._sbu + "' and CUSTGRP eq '" + CUSTGRP + "'"
+
+                //         this._oModel.read('/IOEDINOEDITSet', {
+                //             urlParameters: {
+                //                 "$filter": filter
+                //             },
+                //             success: function (oData, response) {           
+                //                 // console.log("IOEDINOEDITModel", oDatka.results);     
+                //                 me.getView().setModel(new JSONModel(oData.results), "IOEDINOEDITModel");
+
+                //                 // console.log("IOEDINOEDITModel",me.getView().getModel("IOEDINOEDITModel").getData());
+                //             },
+                //             error: function (err) { }
+                //         });
+                // }
+
+                
+
                 if (arg === "IODLV" || arg === "SPLITIODLV") {
                     let soldtoCust = this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]; //get Sold-To Customer value
                     let custGrp = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0]; //get customer group value
@@ -12233,9 +12270,9 @@ sap.ui.define([
                                             change: this.handleValueHelpChange.bind(this),
                                             enabled: {
                                                 path: "DELETED",
-                                                formatter: function (DELETED) {
+                                                formatter: function (DELETED) {                                                    
                                                     if (DELETED) { return false }
-                                                    else { return true }
+                                                    else { return true }                                                    
                                                 }
                                             }
                                         })
@@ -12287,35 +12324,6 @@ sap.ui.define([
                                             }));
                                         }
                                     }
-                                    // else if (arg === "ioMatList") {
-                                    //     col.setTemplate(new sap.m.Input({
-                                    //         type: "Text",
-                                    //         value: arg === "IODET" ? "{DataModel>" + sColName + "}" : "{" + sColName + "}",
-                                    //         showValueHelp: true,
-                                    //         valueHelpRequest: this.handleValueHelp.bind(this),
-                                    //         showSuggestion: true,
-                                    //         maxSuggestionWidth: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].maxSuggestionWidth : "1px",
-                                    //         suggestionItems: {
-                                    //             path: ci.ValueHelp["SuggestionItems"].path,
-                                    //             length: 10000,
-                                    //             template: new sap.ui.core.ListItem({
-                                    //                 key: ci.ValueHelp["SuggestionItems"].text,
-                                    //                 text: ci.ValueHelp["SuggestionItems"].text,
-                                    //                 additionalText: ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '',
-                                    //             }),
-                                    //             templateShareable: false
-                                    //         },
-                                    //         // suggest: this.handleSuggestion.bind(this),
-                                    //         change: this.handleValueHelpChange.bind(this),
-                                    //         enabled: {
-                                    //             path: "DELETED",
-                                    //             formatter: function (DELETED) {
-                                    //                 if (DELETED) { return false }
-                                    //                 else { return true }
-                                    //             }
-                                    //         }
-                                    //     }));
-                                    // }
                                     else if (arg === "IODET") {
                                         var bValueFormatter = false;
                                         var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
@@ -12480,10 +12488,28 @@ sap.ui.define([
                                             displayFormat: "dd/MM/yyyy",
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
-                                                path: "DELETED",
-                                                formatter: function (DELETED) {
-                                                    if (DELETED) { return false }
-                                                    else { return true }
+                                                // path: "DELETED",
+                                                // formatter: function (DELETED) {
+                                                //     if (DELETED) { return false }
+                                                //     else { return true }
+                                                // }
+                                                parts: ["DELETED","EDISOURCE"],
+                                                formatter: function (DELETED, EDISOURCE) {
+                                                    if (DELETED) {
+                                                        return false;
+                                                    } else if (EDISOURCE)
+                                                        var ioedinoeditModel = me.getView().getModel("IOEDINOEDITModel");
+                                                        if(ioedinoeditModel !== undefined) {
+                                                            console.log(ci.ColumnName, ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg));
+                                                            if(ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg).length > 0) {
+                                                                    return false;
+                                                                }
+                                                       
+                                                    } else {
+                                                        return true; // If both DELETED and EDISOURCE are false, enable the input
+                                                    }
                                                 }
                                             }
                                         }));
@@ -12528,8 +12554,24 @@ sap.ui.define([
                                             enabled: {
                                                 path: "DataModel>DELETED",
                                                 formatter: function (DELETED) {
+                                                    console.log(ci.ColumnName);
                                                     if (DELETED) { return false }
-                                                    else { return true }
+                                                    else { 
+                                                        // return true 
+                                                        var ioedinoeditModel = me.getView().getModel("IOEDINOEDITModel");
+                                                        if(ioedinoeditModel !== undefined) {
+                                                            console.log(ci.ColumnName, ioedinoeditModel.getData().filter(
+                                                                x => ci.ColumnName.includes(x.COLUMNNAME) && x.TABLENAME === arg));
+                                                            if(ioedinoeditModel.getData().filter(
+                                                                x => ci.ColumnName.includes(x.COLUMNNAME) && x.TABLENAME === arg).length > 0) {
+                                                                    return false;
+                                                                } else
+                                                                    return true;
+                                                       
+                                                    } else
+                                                        return true;
+                                                        
+                                                    }
                                                 }
                                             }
                                         }));
@@ -12544,10 +12586,27 @@ sap.ui.define([
                                             change: this.onIODETNumberLiveChange.bind(this),
                                             // liveChange: this.onInputChange.bind(this),
                                             enabled: {
-                                                path: "DELETED",
-                                                formatter: function (DELETED) {
-                                                    if (DELETED) { return false }
-                                                    else { return true }
+                                                parts: ["DELETED","EDISOURCE"],
+                                                // formatter: function (DELETED) {
+                                                //     if (DELETED) { return false }
+                                                //     else { return true }
+                                                // }
+                                                formatter: function (DELETED, EDISOURCE) {
+                                                    if (DELETED) {
+                                                        return false;
+                                                    } else if (EDISOURCE)
+                                                        var ioedinoeditModel = me.getView().getModel("IOEDINOEDITModel");
+                                                        if(ioedinoeditModel !== undefined) {
+                                                            console.log(ci.ColumnName, ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg));
+                                                            if(ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg).length > 0) {
+                                                                    return false;
+                                                                }
+                                                       
+                                                    } else {
+                                                        return true; // If both DELETED and EDISOURCE are false, enable the input
+                                                    }
                                                 }
                                             }
                                         }));
@@ -12688,10 +12747,23 @@ sap.ui.define([
                                             maxLength: ci.Length,
                                             change: this.onInputLiveChange.bind(this),
                                             enabled: {
-                                                path: "DELETED",
-                                                formatter: function (DELETED) {
-                                                    if (DELETED) { return false }
-                                                    else { return true }
+                                                parts: ["DELETED", "EDISOURCE"],
+                                                formatter: function (DELETED, EDISOURCE) {
+                                                    if (DELETED) {
+                                                        return false;
+                                                    } else if (EDISOURCE)
+                                                        var ioedinoeditModel = me.getView().getModel("IOEDINOEDITModel");
+                                                        if(ioedinoeditModel !== undefined) {
+                                                            console.log(ci.ColumnName, ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg));
+                                                            if(ioedinoeditModel.getData().filter(
+                                                                x => x.COLUMNNAME === ci.ColumnName && x.TABLENAME === arg).length > 0) {
+                                                                    return false;
+                                                                }
+                                                       
+                                                    } else {
+                                                        return true; // If both DELETED and EDISOURCE are false, enable the input
+                                                    }
                                                 }
                                             }
                                         }));
