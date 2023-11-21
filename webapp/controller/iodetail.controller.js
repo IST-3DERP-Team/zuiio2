@@ -2069,7 +2069,7 @@ sap.ui.define([
 
                             oData.results.sort((a, b,) => (a.DLVSEQ > b.DLVSEQ ? -1 : 1));
 
-                            // console.log("getIODLVData", oData);
+                            console.log("getIODLVData", oData);
 
                             oText.setText(oData.results.length + " item/s");
 
@@ -4945,9 +4945,16 @@ sap.ui.define([
 
                 if (bSBUFilter === true && bHdrFilter === false) {
                     // await new Promise((resolve, reject) => {
+                    if(sModelName === "IOEDINOEDIT") {
+                        var CUSTGRP = this.getView().byId("CUSTGRP").getValue();
+                        var filter = "SBU eq '" + this._sbu + "' and CUSTGRP eq '" + CUSTGRP + "'"
+                    } else{
+                        var filter = "SBU eq '" + this._sbu + "'"
+                    }
+                    
                     oSHModel.read(sEntitySet, {
                         urlParameters: {
-                            "$filter": "SBU eq '" + this._sbu + "'"
+                            "$filter": filter
                         },
                         success: function (oData, oResponse) {
                             oJSONModel.setData(oData.results);
@@ -5391,9 +5398,9 @@ sap.ui.define([
                 oJSONModel.setData(data);
                 this.getView().setModel(oJSONModel, "HeaderEditModeModel");
 
-                this._aColumns["IOHDRTab"].forEach(ci => {
-                    console.log(ci);
-                })
+                // this._aColumns["IOHDRTab"].forEach(ci => {
+                //     console.log(ci);
+                // })
 
                 var isRequiredText = this.getView().getModel("ddtext").getData()["PLACEHOLDER_REQ"];
                 await new Promise((resolve, reject) => {
@@ -5402,12 +5409,13 @@ sap.ui.define([
                         if (ci.Mandatory === true && ci.Editable === true) {
                             feCName = "fe" + ci.ColumnName;
                             this.getView().byId(feCName)._oLabel.addStyleClass("sapMLabelRequired");
-                            this.byId(ci.ColumnName).setPlaceholder(ci.ColumnLabel + " " + isRequiredText);
-
-                            if(ci.ColumnName === "CUSSALTERM") {
-                                this.byId(ci.ColumnName).Editable(ci.Editable);
-                            }                            
+                            this.byId(ci.ColumnName).setPlaceholder(ci.ColumnLabel + " " + isRequiredText);                                                      
                         }
+
+                        if(ci.ColumnName === "CUSSALTERM") {
+                            var oInput = this.byId(ci.ColumnName);
+                            oInput.setEditable(ci.Editable);
+                        }  
                     })
                     resolve();
                 });
@@ -11462,6 +11470,7 @@ sap.ui.define([
                             var itemValue;
                             // console.log(this._aColumns[arg])
                             this._aColumns[arg].forEach(col => {
+                                console.log(col);
                                 if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
                                 //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
                                 else if (col.DataType === "DATETIME") {
@@ -11488,6 +11497,7 @@ sap.ui.define([
                                 }
 
                                 if (iKeyCount === 1) {
+                                    console.log("iKeyCount === 1");
                                     if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X")
                                             if (col.DictType.indexOf("INT") !== -1)
@@ -11498,16 +11508,22 @@ sap.ui.define([
                                         entitySet += "'" + item[col.ColumnName] + "'"
                                 }
                                 else if (iKeyCount > 1) {
+                                    console.log("iKeyCount > 1", arg);
                                     if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
                                         if (col.Key === "X") {
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
                                             else
                                                 entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                        }
+                                        }                                        
                                     } else
                                         if (col.Key === "X") {
                                             entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        } else {
+                                            console.log(arg, col.ColumnName);
+                                            if(arg === "color" && col.ColumnName === "ATTRIBCD") {
+                                                entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                        }
                                         }
                                 }
                             })
@@ -11515,9 +11531,9 @@ sap.ui.define([
                             if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                             entitySet += ")";
 
-                            // console.log(entitySet);
-                            // console.log(param);
-                            // console.log(mParameters);
+                            console.log(entitySet);
+                            console.log(param);
+                            console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
 
