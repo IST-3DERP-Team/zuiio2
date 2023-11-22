@@ -71,26 +71,27 @@ sap.ui.define([
                 var oComponent = this.getOwnerComponent();
                 this._router = oComponent.getRouter();
 
-                //get current userid
-                var oModel = new sap.ui.model.json.JSONModel();
-                oModel.loadData("/sap/bc/ui2/start_up").then(() => {
-                    this._userid = oModel.oData.id;
-                })
+                // //get current userid
+                // //MCA CrossAppNav 11/22/2023
+                // var oModel = new sap.ui.model.json.JSONModel();
+                // oModel.loadData("/sap/bc/ui2/start_up").then(() => {
+                //     this._userid = oModel.oData.id;
+                // })
 
-                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                //     // this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
 
-                //     // var oView = this.getView();
-                //     // oView.addEventDelegate({
-                //     //     onAfterShow: function (oEvent) {
-                //     //         // console.log("back")
-                //     //         sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                //     //         that.onRefresh();
-                //     //     }
-                //     // }, oView);
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: function (oEvent) {
+                            // console.log("back")
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                            that.onRefresh();
+                        }
+                    }, oView);
 
-                //     this._router.attachRouteMatched(this.onRouteMatched, this);
-                // }
+                    this._router.attachRouteMatched(this.onRouteMatched, this);
+                }
 
                 this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
@@ -128,7 +129,8 @@ sap.ui.define([
                     defSoldToCust: '',
                     defBillToCust: '',
                     defShipToCust: '',
-                    iostatus: ''
+                    iostatus: '',
+                    currEDISOURCE: false
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -199,12 +201,12 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                // console.log("backBtn", sap.ui.getCore().byId("backBtn"));
-                if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
-                        that.onNavBack();
-                    }
-                }
+                // //MCA CrossAppNav 11/22/2023
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
+                //         that.onNavBack();
+                //     }
+                // }
 
                 this._tableValueHelp = TableValueHelp;
 
@@ -293,11 +295,11 @@ sap.ui.define([
             //     // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             // },
 
-            onExit: function () {
-                if (this._oLock.length > 0) {
-                    this.unLock();
-                }
-            },
+            // onExit: function () {
+            //     if (this._oLock.length > 0) {
+            //         this.unLock();
+            //     }
+            // },
 
             onNavBack: function (oEvent) {
                 // console.log("History Before", window.history);
@@ -731,7 +733,7 @@ sap.ui.define([
                 await this.getReloadIOColumnProp();
 
                 // FA Summary
-                // console.log("FASummary", FASummary);
+                //MCA CrossAppNav 11/22/2023
                 FASummary.onInit(this);
 
                 var oIconTabBarStyle = this.byId("itbStyleDetail");
@@ -2086,6 +2088,7 @@ sap.ui.define([
                                         item.ACTIVE = "X"
                                         // me.getView().getModel("ui2").setProperty("/currIONo", item.IONO === undefined ? "" : item.IONO);
                                         me.getView().getModel("ui2").setProperty("/currDlvSeq", item.DLVSEQ === undefined ? "999" : item.DLVSEQ);
+                                        me.getView().getModel("ui2").setProperty("/currEDISOURCE", item.EDISOURCE === undefined ? "" : item.EDISOURCE);
                                     } else
                                         item.ACTIVE = ""
                                 });
@@ -2504,9 +2507,10 @@ sap.ui.define([
                 // });
                 // await _promiseResult;
 
-                // FA Summary
-                // console.log("FASummary", FASummary);
-                FASummary.onInit(this);
+                // // FA Summary
+                // //MCA CrossAppNav 11/22/2023
+                // FASummary.onInit(this);
+
                 //console.log("fadcsend2", sap.ui.getCore().byId("dcSendDetailTab"), this.getView().byId("dcSendDetailTab"))
             },
 
@@ -12554,7 +12558,7 @@ sap.ui.define([
                                             enabled: {
                                                 path: "DataModel>DELETED",
                                                 formatter: function (DELETED) {
-                                                    console.log(ci.ColumnName);
+                                                    // console.log(ci.ColumnName);
                                                     if (DELETED) { return false }
                                                     else { 
                                                         // return true 
@@ -12562,8 +12566,10 @@ sap.ui.define([
                                                         if(ioedinoeditModel !== undefined) {
                                                             console.log(ci.ColumnName, ioedinoeditModel.getData().filter(
                                                                 x => ci.ColumnName.includes(x.COLUMNNAME) && x.TABLENAME === arg));
+                                                                let bEDISOURCE = me.getView().getModel("ui2").getProperty("/currEDISOURCE");
+                                                                console.log(bEDISOURCE);
                                                             if(ioedinoeditModel.getData().filter(
-                                                                x => ci.ColumnName.includes(x.COLUMNNAME) && x.TABLENAME === arg).length > 0) {
+                                                                x => ci.ColumnName.includes(x.COLUMNNAME) && x.TABLENAME === arg).length > 0 && bEDISOURCE) {
                                                                     return false;
                                                                 } else
                                                                     return true;
@@ -18302,14 +18308,16 @@ sap.ui.define([
                     }
                     
                     if (arg !== "IODETTab" && arg !== "styleBOMUVTab" && arg !== "styleFabBOMTab" && arg !== "styleAccBOMTab" && sTableId.indexOf(arg) >= 0) {
-                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                        oTable.getRows().forEach(row => {
-                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                                row.addStyleClass("activeRow");
-                            }
-                            else row.removeStyleClass("activeRow");
-                        })
-
+                        console.log(oTable.getModel().getData());
+                        if (oTable.getModel().getData() !== undefined && oTable.getModel().getData() !== null) {
+                            var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                            oTable.getRows().forEach(row => {
+                                if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                    row.addStyleClass("activeRow");
+                                }
+                                else row.removeStyleClass("activeRow");
+                            })
+                        }
                     }
                     
                     if ((arg === "IODETTab" || arg === "styleBOMUVTab") && sTableId.indexOf(arg) >= 0 && oTable.getModel("DataModel") !== undefined) {

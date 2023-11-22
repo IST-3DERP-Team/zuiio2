@@ -29,7 +29,13 @@ sap.ui.define([
 
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
-            }
+            },
+
+            destroy: function() {
+                // this._oErrorHandler.destroy(); //only if you have one
+                // // call the base component's destroy function
+                UIComponent.prototype.destroy.apply(this, arguments);
+              }
         });
     }
 );
