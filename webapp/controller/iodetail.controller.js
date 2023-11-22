@@ -9153,6 +9153,13 @@ sap.ui.define([
                                     this.byId("btnEditCostHdr").setEnabled(false);
                                     this.byId("btnRefreshCostHdr").setEnabled(false);
 
+                                    if (this.byId("btnFullScreenIOCost").getVisible()) {
+                                        this.byId("btnFullScreenIOCost").setEnabled(false);
+                                    }
+                                    else {
+                                        this.byId("btnExitFullScreenIOCost").setEnabled(false);
+                                    }
+
                                     this.getColumnFilterSorter(arg);
                                     this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
                                     this.setRowEditMode(arg);
@@ -9272,6 +9279,13 @@ sap.ui.define([
                                 this.byId("btnNewCostHdr").setEnabled(false);
                                 this.byId("btnEditCostHdr").setEnabled(false);
                                 this.byId("btnRefreshCostHdr").setEnabled(false);
+
+                                if (this.byId("btnFullScreenIOCost").getVisible()) {
+                                    this.byId("btnFullScreenIOCost").setEnabled(false);
+                                }
+                                else {
+                                    this.byId("btnExitFullScreenIOCost").setEnabled(false);
+                                }
                             }
 
                             if (arg === "IODLV") {
@@ -9456,6 +9470,13 @@ sap.ui.define([
                         this.byId("btnNewCostHdr").setEnabled(true);
                         this.byId("btnEditCostHdr").setEnabled(true);
                         this.byId("btnRefreshCostHdr").setEnabled(true);
+
+                        if (this.byId("btnFullScreenIOCost").getVisible()) {
+                            this.byId("btnFullScreenIOCost").setEnabled(true);
+                        }
+                        else {
+                            this.byId("btnExitFullScreenIOCost").setEnabled(true);
+                        }
                     }
 
                     this.setRowReadMode(arg);
@@ -11301,7 +11322,7 @@ sap.ui.define([
                             entitySet += ")";
 
                             // console.log(entitySet);
-                            console.log(param);
+                            console.log("onsave", entitySet, param, mParameters);
                             // console.log(mParameters);
                             oModel.update(entitySet, param, mParameters);
                         })
@@ -12274,7 +12295,7 @@ sap.ui.define([
                                             enabled: {
                                                 path: "",
                                                 formatter: function () {
-                                                    return me.onCostDtlEnable(this, sColName);
+                                                    return me.onCostDtlEnabled(this, sColName);
                                                     
 
                                                     
@@ -12426,7 +12447,7 @@ sap.ui.define([
                 })
             },
 
-            onCostDtlEnable(pThis, pColName) {
+            onCostDtlEnabled(pThis, pColName) {
                 var bResult = false;
                 var iRow = parseInt(pThis.getBindingContext().sPath.replace("/rows/", ""));
                 var oData = pThis.getBindingContext().oModel.oData.rows[iRow];
@@ -12435,17 +12456,34 @@ sap.ui.define([
                     x => x.COSTCOMPCD == oData.COSTCOMPCD );
 
                 if (aDataConfigHdr.length > 0) {
-                    if (aDataConfigHdr[0].VALTYP == "C" || aDataConfigHdr[0].VALTYP == "F") {
-                        if (pColName == "COST" && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
-                        else bResult = false;
+
+                    // Custom for UPCPRINT
+                    if (aDataConfigHdr[0].COSTCOMPCD == "UPCPRINT") {
+                        if (pColName == "COST") {
+                            if (parseFloat(oData.COSTPERUN) == 3) bResult = true;
+                            else bResult = false;
+                        }
+                        else bResult = true;
                     }
-                    else if (aDataConfigHdr[0].VALTYP == "U" || aDataConfigHdr[0].VALTYP == "P") {
-                        if ((pColName == "COSTPERUN" || pColName == "STDCONSUMP") && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
-                        else bResult = false;
-                    }
+                    else if (aDataConfigHdr[0].STATUSCDCS == "01" && pColName == "COST") bResult = true;
+                    else if (aDataConfigHdr[0].STATUSCDCS == "02" && (pColName == "COSTPERUN" || pColName == "STDCONSUMP")) bResult = true;
+                    else if (aDataConfigHdr[0].STATUSCDCS == "03") bResult = false;
                     else bResult = false;
                 } 
                 else bResult = false;
+
+                // if (aDataConfigHdr.length > 0) {
+                //     if (aDataConfigHdr[0].VALTYP == "C" || aDataConfigHdr[0].VALTYP == "F") {
+                //         if (pColName == "COST" && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                //         else bResult = false;
+                //     }
+                //     else if (aDataConfigHdr[0].VALTYP == "U" || aDataConfigHdr[0].VALTYP == "P") {
+                //         if ((pColName == "COSTPERUN" || pColName == "STDCONSUMP") && aDataConfigHdr[0].STATUSCDCS == "01") bResult = true;
+                //         else bResult = false;
+                //     }
+                //     else bResult = false;
+                // } 
+                // else bResult = false;
 
                 return bResult;
             },
@@ -14385,6 +14423,13 @@ sap.ui.define([
                             this.byId("btnNewCostHdr").setEnabled(true);
                             this.byId("btnEditCostHdr").setEnabled(true);
                             this.byId("btnRefreshCostHdr").setEnabled(true);
+
+                            if (this.byId("btnFullScreenIOCost").getVisible()) {
+                                this.byId("btnFullScreenIOCost").setEnabled(true);
+                            }
+                            else {
+                                this.byId("btnExitFullScreenIOCost").setEnabled(true);
+                            }
                         }
 
                         this.setRowReadMode(this._sTableModel);
@@ -16462,17 +16507,6 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
-                this._oModelIOCosting.read('/ConfigHdrSet', {
-                    urlParameters: {
-                        "$filter": "PLANTCD eq '" + this._prodplant + "'"
-                    },
-                    success: function (oData) {
-                        console.log("ConfigHdrSet", oData.results)
-                        me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
-                    },
-                    error: function (err) { }
-                })
-
                 this.byId("costHdrTab")
                     .setModel(new JSONModel({
                         columns: [],
@@ -16661,13 +16695,15 @@ sap.ui.define([
                     success: function (oData) {
                         if (arg3) { Common.closeProcessingDialog(me); }
 
-                        oData.results.forEach(item => {
-                            if (item.COSTCOMPCD === "NETBAL") { item.TOPSEQ = 1; }
-                            else if (item.COSTCOMPCD === "% TO FOB") { item.TOPSEQ = 2; }
-                            else { item.TOPSEQ = 100 + (+item.SEQNO) }
-                        })
+                        // sort by column SortSeq
+                        // oData.results.forEach(item => {
+                        //     if (item.COSTCOMPCD === "NETBAL") { item.TOPSEQ = 1; }
+                        //     else if (item.COSTCOMPCD === "% TO FOB") { item.TOPSEQ = 2; }
+                        //     else { item.TOPSEQ = 100 + (+item.SEQNO) }
+                        // })
 
-                        oData.results.sort((a, b) => (a.TOPSEQ > b.TOPSEQ ? 1 : -1));
+                        //oData.results.sort((a, b) => (a.SORTSEQ > b.SORTSEQ ? 1 : -1));
+                        //oData.results.sort((a, b) => (a.TOPSEQ > b.TOPSEQ ? 1 : -1));
                         // oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
 
                         oData.results.forEach((row, index) => {
@@ -16751,6 +16787,8 @@ sap.ui.define([
             },
 
             async onEditCosting(arg) {
+                var me = this;
+
                 if (arg === "costHdr") this._bCostHdrChanged = false;
                 else if (arg === "costDtls") this._bCostDtlsChanged = false;
 
@@ -16789,6 +16827,25 @@ sap.ui.define([
                     else {
                         var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
                         var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
+
+                        var oPromiseResult = new Promise((resolve, reject) => { 
+                            me._oModelIOCosting.read('/ConfigHdrSet', {
+                                urlParameters: {
+                                    "$filter": "COMPREF eq '" + this._ioNo + vType +  vVersion.padStart(3, "0") + "' and PLANTCD eq '" + this._prodplant + "'"
+                                },
+                                success: function (oData) {
+                                    console.log("ConfigHdrSet", oData.results)
+                                    me.getView().setModel(new JSONModel(oData.results), "COSTCONFIGHDR_MODEL");
+                                    resolve();
+                                },
+                                error: function (err) { 
+                                    resolve();
+                                }
+                            })
+                        });
+
+                        await oPromiseResult;
+
                         var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
                         var oDataCheck = this.getView().getModel("COSTCHECKREL_MODEL").getData()[0];
 
@@ -16806,6 +16863,13 @@ sap.ui.define([
                             this.byId("btnNewCostHdr").setEnabled(false);
                             this.byId("btnEditCostHdr").setEnabled(false);
                             this.byId("btnRefreshCostHdr").setEnabled(false);
+
+                            if (this.byId("btnFullScreenIOCost").getVisible()) {
+                                this.byId("btnFullScreenIOCost").setEnabled(false);
+                            }
+                            else {
+                                this.byId("btnExitFullScreenIOCost").setEnabled(false);
+                            }
 
                             this.getColumnFilterSorter(arg);
                             this._aDataBeforeChange = jQuery.extend(true, [], this.byId(arg + "Tab").getModel().getData().rows);
@@ -16967,7 +17031,7 @@ sap.ui.define([
                     "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
                     "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
                 }
-                // console.log(oParam);
+                console.log("onSaveCreateCosting", oParam);
                 // return;
 
                 Common.openProcessingDialog(this, "Processing...");
