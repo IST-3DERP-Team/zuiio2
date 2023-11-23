@@ -13735,7 +13735,8 @@ sap.ui.define([
                     || oSource.getBindingInfo("value").parts[0].path === "REVUPRICE3") {
                     vDecPlaces = 4;
                 } else if(this._sTableModel === "costDtls") {
-                    vDecPlaces = 2;
+                    //vDecPlaces = 2;
+                    vDecPlaces = oSource.getBindingInfo("value").constraints.scale;
                 }
                 else {
                     // console.log("Number ELSE");
