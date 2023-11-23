@@ -34,7 +34,7 @@ sap.ui.define([
 
                 this._tableRendered = "";
                 this._tableFilter = TableFilter;
-                console.log("this._tableFilter", this._tableFilter);
+                // console.log("this._tableFilter", this._tableFilter);
                 this._colFilters = {};
 
                 // console.log("INITIALIZE START");
@@ -51,11 +51,12 @@ sap.ui.define([
                     sbu: ""
                 }), "ui");
 
-                //get current userid
-                var oModel = new sap.ui.model.json.JSONModel();
-                oModel.loadData("/sap/bc/ui2/start_up").then(() => {
-                    this._userid = oModel.oData.id;
-                })
+                // //get current userid
+                // //MCA CrossAppNav 11/22/2023
+                // var oModel = new sap.ui.model.json.JSONModel();
+                // oModel.loadData("/sap/bc/ui2/start_up").then(() => {
+                //     this._userid = oModel.oData.id;
+                // })               
 
                 var oComponent = this.getOwnerComponent();
                 this._router = oComponent.getRouter();
@@ -71,22 +72,7 @@ sap.ui.define([
                 this._aFilterableColumns = {};
 
                 this.getAppAction();
-                this.setSmartFilterModel();
-
-                // alert(sap.ui.getCore().byId("backBtn"));
-                if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-
-                    var oView = this.getView();
-                    oView.addEventDelegate({
-                        onAfterShow: function (oEvent) {
-                            // console.log("back")
-                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                            // that.onRefresh();
-                            that.onSearch();
-                        }
-                    }, oView);
-                }
+                // this.setSmartFilterModel();                
 
                 var oTableEventDelegate = {
                     onkeyup: function (oEvent) {
@@ -105,26 +91,46 @@ sap.ui.define([
                     }
                 };
 
+                // this.getOwnerComponent().getService("ShellUIService").then(function(oShellService) {
+                //     oShellService.setBackNavigation(function() {
+                //         //either do nothing to disable it, or add your own nav back logic for having the navigation
+                //     });
+                // });
+
                 this.byId("IODynTable").addEventDelegate(oTableEventDelegate);
+
+
+                // //MCA CrossAppNav 11/22/2023
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+
+                //     var oView = this.getView();
+                //     oView.addEventDelegate({
+                //         onAfterShow: function (oEvent) {
+                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                //             that.onSearch();
+                //         }
+                //     }, oView);
+                // }
 
                 // if (sap.ui.getCore().byId("backBtn") !== undefined) {
                 //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
                 //     var oView = this.getView();
                 //     oView.addEventDelegate({
                 //         onAfterShow: function (oEvent) {
-                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = _this._fBackButton;
+                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
 
-                //             if (_this.getOwnerComponent().getModel("UI_MODEL").getData().flag) {
-                //                 if (sessionStorage.getItem('RSVNO') !== '') {
-                //                     if (sessionStorage.getItem('MODE') === 'DISPLAY' && _this._oLock.length > 0) {
-                //                         _this.unLock();
-                //                     }
-                //                     sessionStorage.clear();
-                //                 }
+                //             // if (_this.getOwnerComponent().getModel("UI_MODEL").getData().flag) {
+                //             //     if (sessionStorage.getItem('RSVNO') !== '') {
+                //             //         if (sessionStorage.getItem('MODE') === 'DISPLAY' && this._oLock.length > 0) {
+                //             //             this.unLock();
+                //             //         }
+                //             //         sessionStorage.clear();
+                //             //     }
 
-                //                 _this.onRefreshMain();
-                //                 _this.closeLoadingDialog();
-                //             }
+                //             //     this.onRefreshMain();
+                //             //     this.closeLoadingDialog();
+                //             // }
                 //         }
 
                 //     }, oView);
@@ -143,6 +149,10 @@ sap.ui.define([
                 // this.onSearch();
 
                 // console.log("INITIALIZE END");
+            },
+
+            onExit: function() {
+                sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
             },
 
             setSmartFilterModel: function () {
@@ -213,17 +223,19 @@ sap.ui.define([
                     // console.log(oTable);
                     console.log(arg);
 
-                    console.log("Test");
+                    console.log("Test", oTable);
                   
                     if (arg === "IODynTable" && sTableId.indexOf(arg) >= 0) {
-                        var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
-                        oTable.getRows().forEach(row => {
-                            if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                                row.addStyleClass("activeRow");
-                            }
-                            else row.removeStyleClass("activeRow");
-                        })
-
+                        console.log(oTable.getModel().getData());
+                        if (oTable.getModel().getData().length > 0) {
+                            var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
+                            oTable.getRows().forEach(row => {
+                                if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
+                                    row.addStyleClass("activeRow");
+                                }
+                                else row.removeStyleClass("activeRow");
+                            })
+                        }
                     }
                 }, 10);
             },

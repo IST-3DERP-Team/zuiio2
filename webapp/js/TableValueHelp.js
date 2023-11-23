@@ -20,11 +20,11 @@ sap.ui.define([
             var sTitle = oSource.getProperty("name") === undefined || oSource.getProperty("name") === "" ? me._inputField : oSource.getProperty("name");
 
             // alert("Table Value Help");
-            console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]);
-            console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]);
-            console.log("me._inputId", me._inputId);
-            console.log("me._inputValue", me._inputValue);
-            console.log("me._inputField", me._inputField);
+            // console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]);
+            // console.log("me._inputSource", me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]);
+            // console.log("me._inputId", me._inputId);
+            // console.log("me._inputValue", me._inputValue);
+            // console.log("me._inputField", me._inputField);
 
             var oTableSource = oSource.oParent.oParent;
             // var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
@@ -35,18 +35,18 @@ sap.ui.define([
             var sTextFormatMode = vColProp[0].TextFormatMode === undefined || vColProp[0].TextFormatMode === "" ? "Key" : vColProp[0].TextFormatMode;
             var sColumns = vColProp[0].ValueHelp.columns;
             var vhColumns = me._oModelColumns[sColumns];
-            console.log("sPath", sPath);
+            // console.log("sPath", sPath);
             var vh;
             // var vh = me.getView().getModel(sPath).getData();       
             
-            console.log(me.getView().getModel(sPath).getData());
+            // console.log(me.getView().getModel(sPath).getData());
             if(sPath === "SOLDTOModel" && me._inputField === "SOLDTOCUST") {
-                console.log("with Filter");
+                // console.log("with Filter");
 
                 var custGrp = me._inputSource.oPropagatedProperties.oModels.headerData.oData["CUSTGRP"]; //get customer group value
                 var salesGrp = me._inputSource.oPropagatedProperties.oModels.headerData.oData["SALESGRP"]; //get sales group value
 
-                console.log("custGrp", custGrp, "salesGrp", salesGrp);
+                // console.log("custGrp", custGrp, "salesGrp", salesGrp);
 
                 vh = me.getView().getModel(sPath).getData().filter(item => item.Custgrp === custGrp && item.Salesgrp === salesGrp); 
 
@@ -54,7 +54,7 @@ sap.ui.define([
                 vh = me.getView().getModel(sPath).getData(); 
             }
 
-            console.log("vh", vh);            
+            // console.log("vh", vh);            
             var aColumns = [], oDDTextParam = [];
             var oDDText = me.getView().getModel("ddtext").getData();
 
@@ -514,7 +514,7 @@ sap.ui.define([
 
             this._tableValueHelpDialog.open();
             var oTable = this._tableValueHelpDialog.getContent()[0].getAggregation("items")[0];
-            console.log("oTable", oTable);
+            // console.log("oTable", oTable);
             oTable.attachCellClick(this._tableValueHelp.handleTableValueHelpSelect.bind(this));
             // sap.ui.getCore().byId("tvhSearchField").attachSearch(this._tableValueHelp.handleTableValueHelpFilter);           
             // sap.ui.getCore().byId("btnTVHCancel").attachPress(me._tableValueHelp.handleTableValueHelpCancel.bind(me));
@@ -590,7 +590,7 @@ sap.ui.define([
 
         handleTableValueHelpSelect: function (oEvent) {
             var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
-            console.log("handleTableValueHelpSelect", sRowPath);
+            // console.log("handleTableValueHelpSelect", sRowPath);
             // console.log("handleTableValueHelpSelect2", oEvent.getSource().getModel().getData());
             // console.log("this._inputSource", this._inputSource);
             // console.log(oEvent.getSource().getModel().getProperty(sRowPath + "/VHKey"));
@@ -610,7 +610,7 @@ sap.ui.define([
             this._inputSource.setValueState("None");
 
             // console.log("sRowPath", sRowPath);
-            console.log("this._inputSource", this._inputSource);
+            // console.log("this._inputSource", this._inputSource);
             
             this._tableValueHelpDialog.close(); 
         }, 
