@@ -32,8 +32,6 @@ sap.ui.define([
             },
 
             destroy: function() {
-                // this._oErrorHandler.destroy(); //only if you have one
-                // // call the base component's destroy function
                 UIComponent.prototype.destroy.apply(this, arguments);
               }
         });

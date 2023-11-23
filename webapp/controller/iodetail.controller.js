@@ -657,7 +657,7 @@ sap.ui.define([
 
                 var ioNo = this._ioNo;
 
-                this.getVHSet("/IOEDINOEDITSet", "IOEDINOEDITModel", true, false);
+                // this.getVHSet("/IOEDINOEDITSet", "IOEDINOEDITModel", true, false);
 
                 // var me = this;
 
@@ -1320,7 +1320,8 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                console.log("onfragmentImportPO", oParam);
+                // console.log("onfragmentImportPO", oParam);
+                // Common.closeLoadingDialog(that);
                 // return;
 
                 let outputMessage = "";

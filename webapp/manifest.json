@@ -12,7 +12,7 @@
         "resources": "resources.json",
         "sourceTemplate": {
             "id": "@sap/generator-fiori:basic",
-            "version": "1.7.4",
+            "version": "1.8.2",
             "toolsId": "9df941b8-4a04-4ccd-a979-9a0382df51fe"
         },
         "dataSources": {
@@ -365,7 +365,7 @@
             "routes": [
                 {
                     "name": "Routeioinit",
-                    "pattern": ":?query:",
+                    "pattern": "",
                     "target": [
                         "Targetioinit"
                     ]

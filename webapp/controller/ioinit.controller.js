@@ -72,7 +72,7 @@ sap.ui.define([
                 this._aFilterableColumns = {};
 
                 this.getAppAction();
-                this.setSmartFilterModel();                
+                // this.setSmartFilterModel();                
 
                 var oTableEventDelegate = {
                     onkeyup: function (oEvent) {
