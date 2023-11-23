@@ -28,7 +28,7 @@
                                         value="{ 
                                             parts: [{ path: 'data>/CSTYPE' }, { value: 'COSTTYPE_MODEL' }, { value: 'CSTYPECD' }, { value: 'CSTYPEDESC' }, { value: 'ValueKey' }],
                                             formatter: '.formatValueHelp'
-                                        }" 
+                                        }"
                                         textFormatMode="ValueKey"	
                                         required="true"
                                         change="handleValueHelpChangeCosting"
