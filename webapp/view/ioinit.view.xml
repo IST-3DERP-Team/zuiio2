@@ -32,7 +32,7 @@
 
         <!-- SMART FILTER BAR-->                
         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
-        useToolbar="true" useDateRangeType="true" showClearButton="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
+        enableBasicSearch="false" useToolbar="true" useDateRangeType="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
             <smartfilterbar:controlConfiguration>
                 <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{ddtext>/SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                     <!-- <smartfilterbar:customControl>
@@ -221,7 +221,7 @@
 
         <!-- MENU TOOLBAR-->
         <Toolbar>
-            <Title id="IOCount"/>
+            <Title id="IODynTableCnt"/>
             <Title text="{i18n>IONo}" class="sapUiTinyMarginBegin"/>
 			<ToolbarSpacer id="_IDGenToolbarSpacer1"/>                    
             <MenuButton id="_IDGenMenuButton1" icon="sap-icon://add-document" text="{ddtext>/CREATEIO}">
@@ -256,7 +256,7 @@
             visibleRowCountMode="Auto"
             showColumnVisibilityMenu="true"
             enableColumnFreeze="true"
-            enableCellFilter="true"
+            enableCellFilter="false"
             firstVisibleRowChanged="onFirstVisibleRowChanged"
             cellClick="onCellClick"
             sort="onSort"
@@ -267,7 +267,6 @@
             columnSelect="onColumnUpdated"
             columnVisibility="onColumnUpdated">
 
-            <!-- TABLE LAYOUT DATA -->
             <t:layoutData>
                 <FlexItemData growFactor="1" baseSize="0%"/>
             </t:layoutData>  

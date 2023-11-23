@@ -12,8 +12,8 @@ sap.ui.define([
             var me = oThis;
             var oTable = me.byId(sTableId);
 
-            console.log("updateColumnMenu");
-            console.log(oTable);
+            // console.log("updateColumnMenu");
+            // console.log(oTable);
 
             oTable.getColumns().forEach(col => {
                 // console.log(col);
@@ -25,6 +25,7 @@ sap.ui.define([
                         icon: "sap-icon://filter",
                         text: "Filter",
                         select: function(oEvent) {
+                            // console.log("attachColumnMenuOpen", oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"));
                             _this.onColFilter(sTableId, oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"), me);
                         }
                     })
@@ -54,8 +55,8 @@ sap.ui.define([
 
         onColFilter: function(oEvent, sColumnLabel, oThis) {
 
-            console.log("onColFilter");
-            console.log(sColumnLabel);
+            // console.log("onColFilter");
+            // console.log(sColumnLabel);
             var me = oThis;
             // var oDDText = me.getView().getModel("ddtext").getData();
             var sTableId = "";
@@ -89,20 +90,45 @@ sap.ui.define([
             var vFilterType = "VLF";
 
             var oTableColumns = [];
-            console.log("sTableId", sTableId);
-            console.log("me._aColumns[sTableId.replace", me._aColumns[sTableId.replace("Tab","")]);
+            // console.log("sTableId", sTableId);
+            // console.log("me._aColumns[sTableId.replace", me._aColumns[sTableId.replace("Tab","")]);
             var aTableColumns = jQuery.extend(true, [], me._aColumns[sTableId.replace("Tab","")]);
             aTableColumns.forEach((col, idx) => {
                 if (!(col.ColumnName === "MANDT" || col.ColumnName === "DOCTYPE" || col.ColumnName === "SHORTTEXT" || col.ColumnName === "INFORECORD" || col.ColumnName === "COMPANY" || col.ColumnName === "CUSTGRP" || col.ColumnName === "PLANMONTH")) {
-                    console.log("col", col);
+                    // console.log("col", col);
                     oTableColumns.push(col);
                 }
             });
 
-            if (oTable.getModel() !== undefined) { aData = jQuery.extend(true, [], oTable.getModel().getData().rows) } 
+            if(sTableId === "IODETTab" || sTableId === "styleBOMUVTab") {
+                if (oTable.getModel() !== undefined) { 
+                    // console.log(sTableId, oTable.getModel("DataModel"));
+                    aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().results);
+                }
+            } else if(sTableId === "styleFabBOMTab" || sTableId === "styleAccBOMTab") {
+                // console.log(sTableId, oTable.getModel("DataModel"));
+                aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().results.items);
+            } else {
+                if (oTable.getModel() !== undefined) { 
+                    // console.log(sTableId, oTable.getModel());
+                    aData = jQuery.extend(true, [], oTable.getModel().getData().rows)
+                }
+            }
 
-            console.log("me._colFilters");
-            console.log(me._colFilters);
+            // if (oTable.getModel() !== undefined) { 
+            //     console.log(oTable.getModel());
+            //     if(oTable.getModel().getData().rows !== undefined) {
+            //         aData = jQuery.extend(true, [], oTable.getModel().getData().rows) 
+            //     }
+                
+            //     if(oTable.getModel("DataModel").getData() !== undefined) {
+            //         aData = jQuery.extend(true, [], oTable.getModel("DataModel").getData().rows) 
+            //     }
+            // } 
+
+            // console.log("me._colFilters");
+            // console.log(me._colFilters);
+            // console.log("sTableId", sTableId);
             if (me._colFilters[sTableId] !== undefined) {
                 aColumnItems = me._colFilters[sTableId].items;
                 oFilterValues = me._colFilters[sTableId].values;
@@ -135,7 +161,8 @@ sap.ui.define([
                 oDialog.getModel().setProperty("/btnRemoveFilterEnable", true);
             }
 
-            console.log("oTableColumns", oTableColumns);
+            // console.log("oTableColumns", oTableColumns);
+
             oTableColumns.forEach((col, idx) => {
                 if (col.ColumnName === "CREATEDDT" || col.ColumnName === "UPDATEDDT") { col.DataType = "DATETIME" }                   
 
@@ -173,6 +200,8 @@ sap.ui.define([
                 oColumnValues[col.ColumnName].sort((a,b) => ((col.DataType === "NUMBER" ? +a.Value : (col.DataType === "DATETIME" ? (a.Value === "(blank)" ? "" : new Date(a.Value)) : a.Value)) > (col.DataType === "NUMBER" ? +b.Value : (col.DataType === "DATETIME" ? (b.Value === "(blank)" ? "" : new Date(b.Value)) : b.Value)) ? 1 : -1));
 
                 col.selected = false;                    
+
+                // console.log("col", col);
 
                 if (!bFiltered) { 
                     if (sColumnLabel === undefined) {
@@ -223,11 +252,12 @@ sap.ui.define([
                 oSearchValues[col.ColumnName] = "";
             })
 
-            console.log("vSelectedColumn");
-            console.log(vSelectedColumn);
+            // console.log("vSelectedItem", vSelectedItem);
+            // console.log("vSelectedColumn");
+            // console.log(vSelectedColumn);
 
-            console.log("oColumnValues");
-            console.log(oColumnValues);
+            // console.log("oColumnValues");
+            // console.log(oColumnValues);
             oDialog.getModel().setProperty("/sourceTabId", sTableId);
             oDialog.getModel().setProperty("/items", oTableColumns);
             oDialog.getModel().setProperty("/values", oColumnValues);
@@ -281,7 +311,7 @@ sap.ui.define([
             if (bFiltered) { oBtnClear.setEnabled(true); }
             else { oBtnClear.setEnabled(false); }
 
-            console.log(oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems());
+            // console.log(oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems());
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
                 // console.log("getTitle", item);
                 // console.log("286", oTableColumns);
@@ -411,7 +441,7 @@ sap.ui.define([
         },
 
         onColFilterCancel: function(oEvent, oThis) {
-            console.log("onColFilterCancel");
+            // console.log("onColFilterCancel");
             var me = oThis;
             var oDialogModel = me._GenericFilterDialogModel;
             var oDialog = me._GenericFilterDialog;
@@ -422,8 +452,9 @@ sap.ui.define([
             oDialog.getModel().setProperty("/custom", oDialogModel.getData().custom);
 
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
-                console.log("oDialog.getContent()", item);
-                var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
+                // console.log("oDialog.getContent()", item);
+                // var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
+                var isFiltered = false;
                 
                 if (isFiltered) {
                     item.setIcon("sap-icon://filter");
@@ -437,7 +468,7 @@ sap.ui.define([
         },
 
         onColFilterConfirm: function(oEvent, oThis) {
-            console.log("onColFilterConfirm");
+            // console.log("onColFilterConfirm");
             var me = oThis;
             var oDialog = me._GenericFilterDialog;
             var aColumnItems = oDialog.getModel().getProperty("/items");
@@ -451,7 +482,7 @@ sap.ui.define([
             var oSourceTableColumns = me.byId(sSourceTabId).getColumns();
             
             aColumnItems.forEach(item => {
-                console.log("aColumnItems", item);
+                // console.log("aColumnItems", item);
                 var oColumn = oSourceTableColumns.filter(fItem => fItem.getAggregation("label").getProperty("text") === item.ColumnLabel)[0];                    
                 var aColFilter = [];
                 var oColFilter = null;
@@ -511,6 +542,12 @@ sap.ui.define([
             // console.log(oFilter)
             me.byId(sSourceTabId).getBinding("rows").filter(oFilter, "Application");
             me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
+
+            // console.log("sSourceTabId", sSourceTabId);
+            if(me.getView().byId(sSourceTabId + "Cnt") !== undefined) {
+                var oText = me.getView().byId(sSourceTabId + "Cnt");
+                oText.setText(me.byId(sSourceTabId).getBinding("rows").aIndices.length + " item/s");
+            }
         },
 
         onFilterItemPress: function(oEvent, oThis) {
@@ -986,17 +1023,19 @@ sap.ui.define([
 
         applyColFilters: function(oThis) {
             // alert("TableFilter.applyColFilters");
-            console.log("TableFilter.applyColFilters");
+            // console.log("TableFilter.applyColFilters");
             var me = oThis;
             var oDialog = me._GenericFilterDialog;
 
             if (oDialog) {
+                // alert("applyColFilters");
                 var aColumnItems = oDialog.getModel().getProperty("/items");
                 var oColumnValues = oDialog.getModel().getProperty("/values");
                 var oFilterCustom = oDialog.getModel().getProperty("/custom");
                 var sSourceTabId = oDialog.getModel().getData().sourceTabId;
 
-                console.log("oDialog.getModel()", oDialog.getModel());
+                // alert(sSourceTabId);
+                // console.log("oDialog.getModel()", oDialog.getModel());
     
                 var aFilter = [];
                 var oFilter = null;
@@ -1007,7 +1046,7 @@ sap.ui.define([
                     var aColFilter = [];
                     var oColFilter = null;
     
-                    console.log("aColumnItems.forEach", item);
+                    // console.log("aColumnItems.forEach", item);
                     if (item.filterType === "VLF" && oColumnValues[item.ColumnName].filter(fItem => fItem.Selected === false).length > 0) {
                         oColumnValues[item.ColumnName].forEach(val => {
                             if (val.Selected) {

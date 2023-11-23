@@ -11,6 +11,20 @@
 
     <!-- IO HEADER BUTTONS -->
     <OverflowToolbar id="_ovfToolBarIO" design="Transparent" >
+        <dependents>
+            <!-- <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
+            <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
+            <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
+            <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
+            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" /> -->
+            <!-- <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".onSearch" />
+            <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".onCopyIO" /> -->
+
+            <core:CommandExecution id="CEIOHDR_EDIT" command="Edit" enabled="true" execute=".onIOEdit('IOHDR')" />
+            <core:CommandExecution id="CEIOHDR_SAVE" command="Save" enabled="true" execute=".onIOSave('IOHDR')" />
+            <core:CommandExecution id="CEIOHDR_CANCEL" command="Cancel" enabled="true" execute=".onIOCancel('IOHDR')" />
+        </dependents>
+        
     <ToolbarSpacer />
         <!-- <Button id = "onIORefresh" type="Ghost"  icon="sap-icon://refresh" tooltip="Refresh" press="onIORefresh('IOHDR')" visible="true"/> -->
         <Button id = "onIOEdit" type="Ghost"  icon="sap-icon://edit" tooltip="{ddtext>/EDIT}" press="onIOEdit('IOHDR')" visible="true"/>

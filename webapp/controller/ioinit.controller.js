@@ -40,7 +40,7 @@ sap.ui.define([
                 // console.log("INITIALIZE START");
                 that.getCaptionSet();
 
-                this.getView().byId("IOCount").setText("0")
+                this.getView().byId("IODynTableCnt").setText("0");
 
                 this._oSmartFilterBar = this.getView().byId("smartFilterBar");
 
@@ -94,7 +94,7 @@ sap.ui.define([
                     },
 
                     onAfterRendering: function (oEvent) {
-                        console.log("onAfterRendering", that._tableRendered);
+                        // console.log("onAfterRendering", that._tableRendered);
                         var oControl = oEvent.srcControl;
                         var sTabId = oControl.sId.split("--")[oControl.sId.split("--").length - 1];
 
@@ -182,7 +182,7 @@ sap.ui.define([
 
                     oTable.getRows().forEach(row => {
                         if (row.getBindingContext() && +row.getBindingContext().sPath.replace("/rows/", "") === iActiveRowIndex) {
-                            console.log("IODynTable Active Row", row);
+                            // console.log("IODynTable Active Row", row);
                             row.addStyleClass("activeRow");
                         }
                         else row.removeStyleClass("activeRow");
@@ -969,7 +969,7 @@ sap.ui.define([
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
                 var aFilters = this.getView().byId("smartFilterBar").getFilters();
                 // console.log(aFilters);
-                var oText = this.getView().byId("IOCount");
+                var oText = this.getView().byId("IODynTableCnt");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
 
@@ -2541,7 +2541,7 @@ sap.ui.define([
                         "$filter": "SBU eq '" + this._sbu + "'"
                     },
                     success: function (oData, oResponse) {
-                        console.log("SeasonsModel", oData);
+                        // console.log("SeasonsModel", oData);
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "SeasonsModel");
                         // console.log(oView.setModel(oJSONModel, "SeasonsModel"));
@@ -2562,7 +2562,7 @@ sap.ui.define([
                         // "$filter": "SBU eq '" + this._sbu + "'"
                     },
                     success: function (oData, oResponse) {
-                        console.log("PlantModel", oData);
+                        // console.log("PlantModel", oData);
                         oJSONModel.setData(oData);
                         oView.setModel(oJSONModel, "PlantModel");
                         // console.log(oView.setModel(oJSONModel, "PlantModel"));

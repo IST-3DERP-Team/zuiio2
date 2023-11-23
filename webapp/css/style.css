@@ -107,7 +107,7 @@
     padding-right: 0.5rem !important;
     padding-bottom: 0.5rem !important;  
     vertical-align: top;
-    font-size: 0.25rem;
+    /* font-size: 0.25rem; */
 }
 
 .sapMITH {
@@ -300,4 +300,8 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 
 .sapMTitleStyleAuto {
     font-size: 1rem !important;
+}
+
+.sapMDialogScroll {
+    height: 98%;
 }
