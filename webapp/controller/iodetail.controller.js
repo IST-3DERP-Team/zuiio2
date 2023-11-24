@@ -78,20 +78,21 @@ sap.ui.define([
                 //     this._userid = oModel.oData.id;
                 // })
 
-                if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                // // [MCA]
+                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
 
-                    var oView = this.getView();
-                    oView.addEventDelegate({
-                        onAfterShow: function (oEvent) {
-                            // console.log("back")
-                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                            that.onRefresh();
-                        }
-                    }, oView);
+                //     var oView = this.getView();
+                //     oView.addEventDelegate({
+                //         onAfterShow: function (oEvent) {
+                //             // console.log("back")
+                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
+                //             that.onRefresh();
+                //         }
+                //     }, oView);
 
-                    this._router.attachRouteMatched(this.onRouteMatched, this);
-                }
+                //     this._router.attachRouteMatched(this.onRouteMatched, this);
+                // }
 
                 this._oModel = this.getOwnerComponent().getModel();
                 this._Model = this.getOwnerComponent().getModel();
@@ -201,12 +202,12 @@ sap.ui.define([
                 this.byId("IODLVTab").addEventDelegate(oTableEventDelegate);
                 this.byId("IODETTab").addEventDelegate(oTableEventDelegate);
 
-                // //MCA CrossAppNav 11/22/2023
-                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
-                //         that.onNavBack();
-                //     }
-                // }
+                //MCA CrossAppNav 11/22/2023
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = function (oEvent) {
+                        that.onNavBack();
+                    }
+                }
 
                 this._tableValueHelp = TableValueHelp;
 
@@ -302,17 +303,48 @@ sap.ui.define([
             // },
 
             onNavBack: function (oEvent) {
-                // console.log("History Before", window.history);
-                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
-                oRouter.navTo("Routeioinit", {}, true);
+                console.log("History Before", window.history);
+                var oHistory = History.getInstance();
+                var iHistoryLength = oHistory.aHistory.length;                
+                var sPreviousHash = oHistory.getPreviousHash();
+                console.log(oHistory);
+                console.log(sPreviousHash);                
+
+                // console.log(sPreviousHash, oHistory.aHistory.length);
+                console.log(oHistory.aHistory.at(oHistory.aHistory.length -1));
+                if(oHistory.aHistory.at(oHistory.aHistory.length -1).includes("RouteIODetail") && oHistory.aHistory.length > 3) {
+                    // console.log("splice");                    
+                    if (sPreviousHash !== undefined) {
+                        console.log("splice");
+                        window.history.go((iHistoryLength - 2) * -1);
+                        oHistory.aHistory.splice(2, iHistoryLength - 2);        
+                    } 
+                } else {
+                    console.log(oHistory);
+                    if (oHistory.aHistory.length > 0) {
+                        console.log("History less 1");
+                        window.history.go(-1);
+                    } 
+                }
+
+                // var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                // oRouter.navTo("Routeioinit", {}, true);
 
                 // console.log("History After", window.history);
 
                 // if (!that._routeToStyle) {
-                //     this.routeTOIO(window.location.hash);
+                //     // this.routeTOIO(window.location.hash);
                 //     that._routeToStyle = false;
                 // }
                 // else {
+                //     var sRouteName = oEvent.getParameter("name");
+                //     console.log(sRouteName);
+                //     // if (sRouteName !== "RouteIODetail") {
+                //     //     window.history.pushState(null, null, window.location.pathname);
+                //     //     this._router.navTo("Routeioinit", {}, true);
+                //     //     return;
+                //     // }
+
                 //     var oHistory = History.getInstance();
                 //     var iHistoryLength = oHistory.aHistory.length;
                 //     var sPreviousHash = oHistory.getPreviousHash();
@@ -324,7 +356,11 @@ sap.ui.define([
                 //         oRouter.navTo("Routeioinit", {}, true);
 
                 //         // Remove the rest of the entries from the history
+                //         if(iHistoryLength > 2) {
+                //             oHistory.aHistory.splice(0, iHistoryLength - 2);
+                //         } else
                 //         oHistory.aHistory.splice(0, iHistoryLength - 1);
+                        
                 //     }
                 // }
             },

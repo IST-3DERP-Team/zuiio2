@@ -18,15 +18,15 @@
     xmlns:fb="sap.ui.comp.filterbar" 
     displayBlock="true"> 
     <Page id="page" title="{i18n>title}" showHeader="false">
-    <dependents>
-            <!-- <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
+    <!-- <dependents>
+            <core:CommandExecution id="CE_NEW" command="New" enabled="true" execute=".createData" />
             <core:CommandExecution id="CE_EDIT" command="Edit" enabled="true" execute=".editData" />
             <core:CommandExecution id="CE_DELETE" command="Delete" enabled="true" execute=".deleteData" />
             <core:CommandExecution id="CE_SAVE" command="Save" enabled="true" execute=".batchSaveData" />
-            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" /> -->
+            <core:CommandExecution id="CE_CANCEL" command="Cancel" enabled="true" execute=".cancelData" />
             <core:CommandExecution id="CE_REFRESH" command="Refresh" enabled="true" execute=".onSearch" />
             <core:CommandExecution id="CE_COPY" command="Copy" enabled="true" execute=".onCopyIO" />
-        </dependents>
+        </dependents> -->
         <content>
         <VBox fitContainer="true">
 

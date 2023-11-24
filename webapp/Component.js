@@ -29,11 +29,22 @@ sap.ui.define([
 
                 // set the device model
                 this.setModel(models.createDeviceModel(), "device");
-            },
+            }
+            // ,
 
-            destroy: function() {
-                UIComponent.prototype.destroy.apply(this, arguments);
-              }
+            // destroy: function() {
+            //     // var parent = this.getParent();
+            //     // if (parent) {
+            //     //     var commandInfo = this._getCommandInfo();
+            //     //     if (commandInfo && commandInfo.shortcut !== null) {
+            //     //         r.unregister(parent, commandInfo.shortcut);                        
+            //     //     }
+            //     //     this._cleanupContext(parent);
+            //     // }
+            //     // n.prototype.destroy.apply(this, arguments);
+
+            //     UIComponent.prototype.destroy.apply(this, arguments);
+            //   }
         });
     }
 );

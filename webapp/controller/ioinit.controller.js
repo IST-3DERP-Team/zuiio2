@@ -91,50 +91,38 @@ sap.ui.define([
                     }
                 };
 
+                this.byId("IODynTable").addEventDelegate(oTableEventDelegate);
+
                 // this.getOwnerComponent().getService("ShellUIService").then(function(oShellService) {
                 //     oShellService.setBackNavigation(function() {
                 //         //either do nothing to disable it, or add your own nav back logic for having the navigation
                 //     });
                 // });
 
-                this.byId("IODynTable").addEventDelegate(oTableEventDelegate);
+                //MCA CrossAppNav 11/22/2023
+                if (sap.ui.getCore().byId("backBtn") !== undefined) {
+                    this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
 
+                    var oView = this.getView();
+                    oView.addEventDelegate({
+                        onAfterShow: async function (oEvent) {
+                            sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
 
-                // //MCA CrossAppNav 11/22/2023
-                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
+                            // if (that.getOwnerComponent().getModel("UI_MODEL").getData().flag) {
+                            //     that.refresh();
+                            // }
 
-                //     var oView = this.getView();
-                //     oView.addEventDelegate({
-                //         onAfterShow: function (oEvent) {
-                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = that._fBackButton;
-                //             that.onSearch();
-                //         }
-                //     }, oView);
-                // }
-
-                // if (sap.ui.getCore().byId("backBtn") !== undefined) {
-                //     this._fBackButton = sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction;
-                //     var oView = this.getView();
-                //     oView.addEventDelegate({
-                //         onAfterShow: function (oEvent) {
-                //             sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
-
-                //             // if (_this.getOwnerComponent().getModel("UI_MODEL").getData().flag) {
-                //             //     if (sessionStorage.getItem('RSVNO') !== '') {
-                //             //         if (sessionStorage.getItem('MODE') === 'DISPLAY' && this._oLock.length > 0) {
-                //             //             this.unLock();
-                //             //         }
-                //             //         sessionStorage.clear();
-                //             //     }
-
-                //             //     this.onRefreshMain();
-                //             //     this.closeLoadingDialog();
-                //             // }
-                //         }
-
-                //     }, oView);
-                // }
+                            // if (that.getView().getModel("ui").getProperty("/LockType") === "S") {
+                            //     that.unLock();
+                            // }
+                            if(that._sbu !== "" && that._sbu !== null && that._sbu !== undefined){
+                                // Common.openLoadingDialog(that);
+                                this.onSearch();
+                                // Common.closeLoadingDialog(that);
+                            }
+                        }
+                    }, oView);
+                }
 
                 // window.onhashchange = function () {
                 //     _shellHome = window.history.state.sap.history[window.history.state.sap.history.length - 1];
@@ -151,9 +139,10 @@ sap.ui.define([
                 // console.log("INITIALIZE END");
             },
 
-            onExit: function() {
-                sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
-            },
+            // // [MCA]
+            // onExit: function() {
+            //     sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
+            // },
 
             setSmartFilterModel: function () {
                 //Model StyleHeaderFilters is for the smartfilterbar
