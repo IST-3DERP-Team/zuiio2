@@ -11574,13 +11574,8 @@ sap.ui.define([
                                         if (col.Key === "X") {
                                             if (col.DictType.indexOf("INT") !== -1)
                                                 entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
-                                            else {
-                                                console.log(arg, col.ColumnName);
-                                                if(arg === "color" && col.ColumnName === "ATTRIBCD") {
-                                                    entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                                } else 
-                                                    entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
-                                            }
+                                            else
+                                                entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                         }
                                     }
                                 })
@@ -11648,7 +11643,12 @@ sap.ui.define([
                                         } else
                                             if (col.Key === "X") {
                                                 entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                            } else {
+                                                console.log(arg, col.ColumnName);
+                                                if(arg === "color" && col.ColumnName === "ATTRIBCD") {
+                                                    entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
                                             }
+                                        }
                                     }
                                 })
     
