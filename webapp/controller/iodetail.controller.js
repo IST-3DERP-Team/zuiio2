@@ -6999,7 +6999,7 @@ sap.ui.define([
                     var resultType;
                     var resultDescription;
 
-                    var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");s
+                    var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
 
                     var batchPromise = new Promise(function (resolve, reject) {
                         oModelRelease.attachBatchRequestCompleted(function () {
@@ -9569,7 +9569,7 @@ sap.ui.define([
                                 }
                             }
 
-                            if (arg === "IODLV") {
+                            if (arg === "IODLV" || arg === "IODET") {
                                 this.getVHSet("/IOCSCHECKSet", "CostSheetModel", false, false);
                             }
 
