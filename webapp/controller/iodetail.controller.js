@@ -1356,8 +1356,8 @@ sap.ui.define([
                 // Common.closeLoadingDialog(that);
                 // return;
 
-                // console.log("onfragmentImportPO", oParam);
-                // Common.closeLoadingDialog(that);
+                console.log("onfragmentImportPO", oParam);
+                Common.closeLoadingDialog(that);
                 // return;
 
                 let outputMessage = "";
