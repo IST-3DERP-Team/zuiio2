@@ -6950,7 +6950,7 @@ sap.ui.define([
                         errMessage = this.getView().getModel("ddtext").getData()["ERR_IOMISSINGMATNO"];
                 }
 
-                console.log((this.byId("IODETTab").getModel("DataModel").getData().results).filter(fItem => fItem.CSTYPE === "" || fItem.CSTYPE === undefined).length );
+                // console.log((this.byId("IODETTab").getModel("DataModel").getData().results).filter(fItem => fItem.CSTYPE === "" || fItem.CSTYPE === undefined).length );
                 //CHECK UNASSIGNED CSTYPE AT IO DELIVERY DETAILS
                 if((this.byId("IODETTab").getModel("DataModel").getData().results).filter(fItem => fItem.CSTYPE === "" || fItem.CSTYPE === undefined).length > 0) {
                     if (errMessage.length > 0) {
@@ -6980,7 +6980,7 @@ sap.ui.define([
                     return;
                 }
 
-                return;
+                // return;
 
                 if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
                     await this.lock(this);
