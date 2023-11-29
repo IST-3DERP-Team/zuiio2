@@ -6448,7 +6448,9 @@ sap.ui.define([
                                 SEASONCD: this.getView().byId("SEASONCD").mBindingInfos.value.binding.aValues[0],
                                 CUSTGRP: this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0],
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
-                                CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
+                                // CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
+                                CUSSALTERM: this.getView().byId("CUSSALTERM").getSelectedKey(),
+                                // CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0] === "" ? this.getView().byId("CUSSALTERM").getValue() : this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
                                 BASEUOM: this.getView().byId("BASEUOM").mBindingInfos.value.binding.aValues[0],
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),
@@ -6489,7 +6491,8 @@ sap.ui.define([
                                 SEASONCD: this.getView().byId("SEASONCD").mBindingInfos.value.binding.aValues[0],
                                 CUSTGRP: this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0],
                                 TRADPLANT: this.getView().byId("TRADPLANT").getValue(),
-                                CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0] === "" ? this.getView().byId("CUSSALTERM").getValue() : this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
+                                CUSSALTERM: this.getView().byId("CUSSALTERM").getSelectedKey(),
+                                // CUSSALTERM: this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0] === "" ? this.getView().byId("CUSSALTERM").getValue() : this.getView().byId("CUSSALTERM").mBindingInfos.value.binding.aValues[0],
                                 BASEUOM: this.getView().byId("BASEUOM").mBindingInfos.value.binding.aValues[0],
                                 PLANDLVDT: this.getView().byId("PLANDLVDT").getValue() === undefined || this.getView().byId("PLANDLVDT").getValue() === "" || this.getView().byId("PLANDLVDT").getValue() === null ? "" : sapDateFormat.format(new Date(this.getView().byId("PLANDLVDT").getValue())),
                                 REFIONO: this.getView().byId("REFIONO").getValue(),
@@ -6508,6 +6511,7 @@ sap.ui.define([
                         }
 
                         // console.log(this.getView().byId("SOLDTOCUST").mBindingInfos.value.binding.aValues[0]);
+                        // console.log(this.getView().byId("CUSSALTERM"));
                         // // console.log("oParamIOHeaderData");
                         // console.log("oParamIOHeaderData", oParamIOHeaderData);
                         // return;
