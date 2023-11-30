@@ -7263,7 +7263,7 @@ sap.ui.define([
                 var oParamProp = oEvent.getSource().data("EntityParamProp");
                 var aSelIndices = oTable.getSelectedIndices();
                 var oTmpSelectedIndices = [];
-                var aData = this._TrxResultInvalidDialog.getModel().getData()[oEvent.getSource().data("TableId").replace("Tab","Rows")];
+                var aData = jQuery.extend(true, [], this._TrxResultInvalidDialog.getModel().getData()[oEvent.getSource().data("TableId").replace("Tab","Rows")]);
                 var oParam = {
                     IONO: me.getView().getModel("ui2").getProperty("/currIONo"),
                     PLANTCD: "",
@@ -7315,20 +7315,20 @@ sap.ui.define([
                                         oData["N_OpenPR"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
                                         oData["N_OpenVPO"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
 
-                                        me._TrxResultInvalidDialog.getModel().setProperty("/openMRRows", oData["N_OpenMR"].results);
-                                        me._TrxResultInvalidDialog.getModel().setProperty("/openDLVRows", oData["N_OpenDeliveries"].results);
-                                        me._TrxResultInvalidDialog.getModel().setProperty("/openPRRows", oData["N_OpenPR"].results);
-                                        me._TrxResultInvalidDialog.getModel().setProperty("/openVPORows", oData["N_OpenVPO"].results);
-                                        me._TrxResultInvalidDialog.getModel().setProperty("/openMRPRows", oData["N_OpenMRP"].results);
-
                                         var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
-                                            oIconTabBar.getItems().forEach(item => {
+                                        oIconTabBar.getItems().forEach(item => {
                                             if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
                                             else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
                                             else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
                                             else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["UNRELPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
                                             else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["PENDINGMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
                                         })
+
+                                        me._TrxResultInvalidDialog.getModel().setProperty("/openMRRows", oData["N_OpenMR"].results);
+                                        me._TrxResultInvalidDialog.getModel().setProperty("/openDLVRows", oData["N_OpenDeliveries"].results);
+                                        me._TrxResultInvalidDialog.getModel().setProperty("/openPRRows", oData["N_OpenPR"].results);
+                                        me._TrxResultInvalidDialog.getModel().setProperty("/openVPORows", oData["N_OpenVPO"].results);
+                                        me._TrxResultInvalidDialog.getModel().setProperty("/openMRPRows", oData["N_OpenMRP"].results);
 
                                         if (oData.ISVALID === "X") { 
                                             me._isTrxValid = true; 
@@ -7431,13 +7431,13 @@ sap.ui.define([
                             oData["N_OpenVPO"].results.forEach(item => item.LOEKZ = item.LOEKZ === "" ? false : true);
 
                             var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
-                                oIconTabBar.getItems().forEach(item => {
-                                    if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
-                                    else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["UNRELPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["PENDINGMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
-                                })
+                            oIconTabBar.getItems().forEach(item => {
+                                if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
+                                else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
+                                else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
+                                else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["UNRELPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
+                                else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["PENDINGMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
+                            })
 
                             me._TrxResultInvalidDialog.getModel().setProperty("/openMRRows", oData["N_OpenMR"].results);
                             me._TrxResultInvalidDialog.getModel().setProperty("/openDLVRows", oData["N_OpenDeliveries"].results);
