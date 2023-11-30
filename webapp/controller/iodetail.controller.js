@@ -7249,7 +7249,7 @@ sap.ui.define([
                 this._TrxResultInvalidDialog.close();
                 
                 if (this._isTrxValid) {
-                    me._TrxDialog.open();
+                    this._TrxDialog.open();
                 }
                 else {
                     this.unLock();
@@ -7333,7 +7333,7 @@ sap.ui.define([
                                         if (oData.ISVALID === "X") { 
                                             me._isTrxValid = true; 
                                         
-                                            oPlant = oData["N_TrxProdPlant"].results.filter(fItem => fItem.CODE !== me.getView().byId("PRODPLANT").getValue());
+                                            var oPlant = oData["N_TrxProdPlant"].results.filter(fItem => fItem.CODE !== me.getView().byId("PRODPLANT").getValue());
 
                                             if (!me._TrxDialog) {
                                                 me._TrxDialog = sap.ui.xmlfragment("zuiio2.view.fragments.dialog.TrxDialog", me);
