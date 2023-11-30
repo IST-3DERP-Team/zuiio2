@@ -7129,15 +7129,6 @@ sap.ui.define([
                                 )
 
                                 me.getView().addDependent(me._TrxResultInvalidDialog);
-
-                                var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
-                                oIconTabBar.getItems().forEach(item => {
-                                    if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
-                                    else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["UNRELPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
-                                    else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["PENDINGMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
-                                })
                             }
                             else {
                                 me._TrxResultInvalidDialog.getModel().setProperty("/openMRRows", oData["N_OpenMR"].results);
@@ -7151,6 +7142,13 @@ sap.ui.define([
                             me._TrxResultInvalidDialog.open();
 
                             var oIconTabBar = sap.ui.getCore().byId("itbTrxResult");
+                            oIconTabBar.getItems().forEach(item => {
+                                if (item.getProperty("key") === "openmr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENMR"] + " (" + oData["N_OpenMR"].results.length + ")") }
+                                else if (item.getProperty("key") === "opendlv") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENDLV"] + " (" + oData["N_OpenDeliveries"].results.length + ")") }
+                                else if (item.getProperty("key") === "openpr") { item.setProperty("text", me.getView().getModel("ddtext").getData()["OPENPR"] + " (" + oData["N_OpenPR"].results.length + ")") }
+                                else if (item.getProperty("key") === "openvpo") { item.setProperty("text", me.getView().getModel("ddtext").getData()["UNRELPO"] + " (" + oData["N_OpenVPO"].results.length + ")") }
+                                else if (item.getProperty("key") === "openmrp") { item.setProperty("text", me.getView().getModel("ddtext").getData()["PENDINGMRP"] + " (" + oData["N_OpenMRP"].results.length + ")") }
+                            })
 
                             if (oData["N_OpenMR"].results.length > 0) { oIconTabBar.setSelectedKey("openmr") }
                             else if (oData["N_OpenDeliveries"].results.length > 0) { oIconTabBar.setSelectedKey("opendlv") }
