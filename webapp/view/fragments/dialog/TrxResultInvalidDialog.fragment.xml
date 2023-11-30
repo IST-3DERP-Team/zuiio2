@@ -5,7 +5,7 @@
         xmlns:uit="sap.ui.table"
         id="fragment-trxresult" 
         fragmentName="trxresult">
-    <Dialog contentWidth="750px"
+    <Dialog contentWidth="800px"
         contentHeight="500px"
         title="Full IO Transfer"
         resizable="true"
@@ -26,10 +26,31 @@
                     <IconTabFilter text="Open MR" key="openmr">
                         <uit:Table id="openMRTab"
                             rows="{/openMRRows}"
-                            selectionMode="None"
+                            selectionMode="MultiToggle"
                             visibleRowCountMode="Auto"
                             minAutoRowCount="1"
-                            class="sapUiTinyMargin">
+                            class="sapUiTinyMargin"> 
+                            <uit:extension>
+                                <Toolbar>
+                                    <!-- <Title level="H3" text="{ddtext>/ASSIGNSAPMAT}" class="sapUiTinyMarginBegin title" /> -->
+                                    <ToolbarSpacer/>
+                                    <Button id="btnDeleteMR" 
+                                        icon="sap-icon://delete"
+                                        press="onDeleteOpenTrx"
+                                        tooltip="{ddtext>/DELETE}"
+                                        visible="true" >
+                                        <customData>
+                                            <core:CustomData key="TableId" value="openMRTab" />
+                                            <core:CustomData key="EntityParamProp" value="N_OpenMR" />
+                                        </customData>
+                                    </Button>
+                                    <Button id="btnRefreshMR" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefreshOpenTrx"
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true"/>
+                                </Toolbar>  
+                            </uit:extension>
                             <uit:columns>
                                 <uit:Column width="150px">
                                     <Label text="{ddtext>/RSVNO}" wrapping="true" />
@@ -70,13 +91,140 @@
                             </uit:columns>
                         </uit:Table>
                     </IconTabFilter>
-                    <IconTabFilter text="Open Deliveries" key="opendlv">
-                        <uit:Table id="openDLVTab"
-                            rows="{/openDLVRows}"
-                            selectionMode="None"
+                    <IconTabFilter text="Pending MRP" key="openmrp">
+                        <uit:Table id="openMRPTab"
+                            rows="{/openMRPRows}"
+                            selectionMode="MultiToggle"
                             visibleRowCountMode="Auto"
                             minAutoRowCount="1"
                             class="sapUiTinyMargin">
+                            <uit:extension>
+                                <Toolbar>
+                                    <!-- <Title level="H3" text="{ddtext>/ASSIGNSAPMAT}" class="sapUiTinyMarginBegin title" /> -->
+                                    <ToolbarSpacer/>
+                                    <Button id="btnCancelMRP" 
+                                        icon="sap-icon://delete"
+                                        press="onDeleteOpenTrx"
+                                        tooltip="{ddtext>/DELETE}"
+                                        visible="true" >
+                                        <customData>
+                                            <core:CustomData key="TableId" value="openMRPTab" />
+                                            <core:CustomData key="EntityParamProp" value="N_OpenMRP" />
+                                        </customData>
+                                    </Button>
+                                    <Button id="btnRefreshMRP" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefreshOpenTrx"
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true"/>
+                                </Toolbar>  
+                            </uit:extension>
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/TRANSNO}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{TRANSNO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/TRANSITM}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{TRANSITM}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="250px">
+                                    <Label text="{ddtext>/MRPTYP}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{MRPTYP}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open PR" key="openpr">
+                        <uit:Table id="openPRTab"
+                            rows="{/openPRRows}"
+                            selectionMode="MultiToggle"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:extension>
+                                <Toolbar>
+                                    <!-- <Title level="H3" text="{ddtext>/ASSIGNSAPMAT}" class="sapUiTinyMarginBegin title" /> -->
+                                    <ToolbarSpacer/>
+                                    <Button id="btnDeletePR" 
+                                        icon="sap-icon://delete"
+                                        press="onDeleteOpenTrx"
+                                        tooltip="{ddtext>/DELETE}"
+                                        visible="true" >
+                                        <customData>
+                                            <core:CustomData key="TableId" value="openPRTab" />
+                                            <core:CustomData key="EntityParamProp" value="N_OpenPR" />
+                                        </customData>
+                                    </Button>
+                                    <Button id="btnRefreshPR" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefreshOpenTrx"
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true"/>
+                                </Toolbar>  
+                            </uit:extension>
+                            <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/BANFN}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{BANFN}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px">
+                                    <Label text="{ddtext>/BNFPO}" wrapping="true" />
+                                    <uit:template>
+                                        <Text text="{BNFPO}" wrapping="false" />
+                                    </uit:template>
+                                </uit:Column>                   
+                                <uit:Column width="100px" hAlign="Center">
+                                    <Label text="{ddtext>/LOEKZ}" wrapping="true" />
+                                    <uit:template>
+                                        <CheckBox selected="{LOEKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                                <uit:Column width="100px" hAlign="Center">
+                                    <Label text="{ddtext>/EBAKZ}" wrapping="true" />
+                                    <uit:template>
+                                        <CheckBox selected="{EBAKZ}" editable="false" />
+                                    </uit:template>
+                                </uit:Column>
+                            </uit:columns>
+                        </uit:Table>
+                    </IconTabFilter>
+                    <IconTabFilter text="Open Outbound Delivery" key="opendlv">
+                        <uit:Table id="openDLVTab"
+                            rows="{/openDLVRows}"
+                            selectionMode="MultiToggle"
+                            visibleRowCountMode="Auto"
+                            minAutoRowCount="1"
+                            class="sapUiTinyMargin">
+                            <uit:extension>
+                                <Toolbar>
+                                    <!-- <Title level="H3" text="{ddtext>/ASSIGNSAPMAT}" class="sapUiTinyMarginBegin title" /> -->
+                                    <ToolbarSpacer/>
+                                    <Button id="btnDeleteDLV" 
+                                        icon="sap-icon://delete"
+                                        press="onDeleteOpenTrx"
+                                        tooltip="{ddtext>/DELETE}"
+                                        visible="true" >
+                                        <customData>
+                                            <core:CustomData key="TableId" value="openDLVTab" />
+                                            <core:CustomData key="EntityParamProp" value="N_OpenDeliveries" />
+                                        </customData>
+                                    </Button>
+                                    <Button id="btnRefreshDLV" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefreshOpenTrx"
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true"/>
+                                </Toolbar>  
+                            </uit:extension>
                             <uit:columns>
                                 <uit:Column width="150px">
                                     <Label text="{ddtext>/DLVNO}" wrapping="true" />
@@ -105,49 +253,31 @@
                             </uit:columns>
                         </uit:Table>
                     </IconTabFilter>
-                    <IconTabFilter text="Open PR" key="openpr">
-                        <uit:Table id="openPRTab"
-                            rows="{/openPRRows}"
-                            selectionMode="None"
-                            visibleRowCountMode="Auto"
-                            minAutoRowCount="1"
-                            class="sapUiTinyMargin">
-                            <uit:columns>
-                                <uit:Column width="150px">
-                                    <Label text="{ddtext>/BANFN}" wrapping="true" />
-                                    <uit:template>
-                                        <Text text="{BANFN}" wrapping="false" />
-                                    </uit:template>
-                                </uit:Column>
-                                <uit:Column width="100px">
-                                    <Label text="{ddtext>/BNFPO}" wrapping="true" />
-                                    <uit:template>
-                                        <Text text="{BNFPO}" wrapping="false" />
-                                    </uit:template>
-                                </uit:Column>                   
-                                <uit:Column width="200px" hAlign="Center">
-                                    <Label text="{ddtext>/LOEKZ}" wrapping="true" />
-                                    <uit:template>
-                                        <CheckBox selected="{LOEKZ}" editable="false" />
-                                    </uit:template>
-                                </uit:Column>
-                                <uit:Column width="200px" hAlign="Center">
-                                    <Label text="{ddtext>/EBAKZ}" wrapping="true" />
-                                    <uit:template>
-                                        <CheckBox selected="{EBAKZ}" editable="false" />
-                                    </uit:template>
-                                </uit:Column>
-                            </uit:columns>
-                        </uit:Table>
-                    </IconTabFilter>
-                    <IconTabFilter text="Open Vendor PO" key="openvpo">
+                    <IconTabFilter text="Unreleased PO" key="openvpo">
                         <uit:Table id="openVPOTab"
                             rows="{/openVPORows}"
-                            selectionMode="None"
+                            selectionMode="MultiToggle"
                             visibleRowCountMode="Auto"
                             minAutoRowCount="1"
                             class="sapUiTinyMargin">
+                            <uit:extension>
+                                <Toolbar>
+                                    <!-- <Title level="H3" text="{ddtext>/ASSIGNSAPMAT}" class="sapUiTinyMarginBegin title" /> -->
+                                    <ToolbarSpacer/>
+                                    <Button id="btnRefreshVPO" 
+                                        icon="sap-icon://refresh"
+                                        press="onRefreshOpenTrx"
+                                        tooltip="{ddtext>/REFRESH}"
+                                        visible="true"/>
+                                </Toolbar>  
+                            </uit:extension>
                             <uit:columns>
+                                <uit:Column width="150px">
+                                    <Label text="{ddtext>/EBELN}" wrapping="true" />
+                                    <uit:template>
+                                        <Link text="{EBELN}" wrapping="false" press="onReleasePO" />
+                                    </uit:template>
+                                </uit:Column>
                                 <uit:Column width="150px">
                                     <Label text="{ddtext>/EBELN}" wrapping="true" />
                                     <uit:template>
@@ -160,45 +290,16 @@
                                         <Text text="{EBELP}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="200px" hAlign="Center">
+                                <uit:Column width="100px" hAlign="Center">
                                     <Label text="{ddtext>/LOEKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{LOEKZ}" editable="false" />
                                     </uit:template>
                                 </uit:Column>
-                                <uit:Column width="200px" hAlign="Center">
+                                <uit:Column width="100px" hAlign="Center">
                                     <Label text="{ddtext>/ELIKZ}" wrapping="true" />
                                     <uit:template>
                                         <CheckBox selected="{ELIKZ}" editable="false" />
-                                    </uit:template>
-                                </uit:Column>
-                            </uit:columns>
-                        </uit:Table>
-                    </IconTabFilter>
-                    <IconTabFilter text="Open MRP" key="openmrp">
-                        <uit:Table id="openMRPTab"
-                            rows="{/openMRPRows}"
-                            selectionMode="None"
-                            visibleRowCountMode="Auto"
-                            minAutoRowCount="1"
-                            class="sapUiTinyMargin">
-                            <uit:columns>
-                                <uit:Column width="150px">
-                                    <Label text="{ddtext>/TRANSNO}" wrapping="true" />
-                                    <uit:template>
-                                        <Text text="{TRANSNO}" wrapping="false" />
-                                    </uit:template>
-                                </uit:Column>
-                                <uit:Column width="100px">
-                                    <Label text="{ddtext>/TRANSITM}" wrapping="true" />
-                                    <uit:template>
-                                        <Text text="{TRANSITM}" wrapping="false" />
-                                    </uit:template>
-                                </uit:Column>                   
-                                <uit:Column width="250px">
-                                    <Label text="{ddtext>/MRPTYP}" wrapping="true" />
-                                    <uit:template>
-                                        <Text text="{MRPTYP}" wrapping="false" />
                                     </uit:template>
                                 </uit:Column>
                             </uit:columns>
