@@ -7373,7 +7373,7 @@ sap.ui.define([
                 var vPONo =  oEvent.oSource.mProperties.text;
                 
                 console.log(window.location)
-                window.open(window.origin + window.pathname + window.search + "#ZSO_3DERP_PUR_PO-change&/VPODet/" + vPONo + "/" + vSBU);
+                window.open(window.location.origin + window.location.pathname + window.location.search + "#ZSO_3DERP_PUR_PO-change&/VPODet/" + vPONo + "/" + vSBU);
             },
 
             onRefreshOpenTrx: function(oEvent) {
