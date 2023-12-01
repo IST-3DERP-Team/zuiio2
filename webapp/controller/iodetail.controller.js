@@ -6988,7 +6988,7 @@ sap.ui.define([
                     return;
                 }
 
-                return;
+                // return;
 
                 if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
                     await this.lock(this);
