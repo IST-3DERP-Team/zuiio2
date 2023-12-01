@@ -6941,15 +6941,16 @@ sap.ui.define([
                 var bMATNO = true;
 
                 //CHECK UNASSIGNED COSTCOMPCD AT IO MATERIAL LIST
-                if ((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.COSTCOMPCD === "" || fItem.COSTCOMPCD === undefined).length > 0) {
+                if ((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.DELETED === false && fItem.COSTCOMPCD === "" || fItem.COSTCOMPCD === undefined).length > 0) {
                     if (errMessage.length > 0) {
                         errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOMISSINGCOSTCOMP"];
                     } else
                         errMessage = this.getView().getModel("ddtext").getData()["ERR_IOMISSINGCOSTCOMP"];
                 }
 
+                console.log(this.byId("ioMatListTab").getModel().getData().rows);
                 //CHECK UNASSIGNED MATNO AT IO MATERIAL LIST
-                if ((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.MATNO === "" || fItem.MATNO === undefined).length > 0) {
+                if ((this.byId("ioMatListTab").getModel().getData().rows).filter(fItem => fItem.DELETED === false && fItem.MATNO === "" || fItem.MATNO === undefined).length > 0) {
                     if (errMessage.length > 0) {
                         errMessage = errMessage + "\n" + this.getView().getModel("ddtext").getData()["ERR_IOMISSINGMATNO"];
                     } else
@@ -6986,7 +6987,7 @@ sap.ui.define([
                     return;
                 }
 
-                // return;
+                return;
 
                 if (this.getView().getModel("ui").getProperty("/DisplayMode") === "change") {
                     await this.lock(this);
@@ -18059,8 +18060,11 @@ sap.ui.define([
 
                 if (arg === "ioMatList") {
                     Common.openProcessingDialog(this, "Processing...");
-                    this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
-                    this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+                    me._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
+                    me._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
+
+                    console.log(me._aColFilters);
+                    console.log(this.byId(arg + "Tab").getBinding("rows")   );
 
                     this._oModelIOMatList.setHeaders({
                         SBU: this._sbu,
@@ -18092,6 +18096,9 @@ sap.ui.define([
                             me.byId(arg + "Tab").getModel().setProperty("/rows", oData.results);
                             me.byId(arg + "Tab").bindRows("/rows");
                             me._tableRendered = (arg + "Tab");
+
+                            if (me._aColFilters.length > 0) { me.setColumnFilters(arg + "Tab", aFilters); }
+                            if (me._aColSorters.length > 0) { me.setColumnSorters(arg + "Tab", aSorters); }
 
                             oText = me.getView().byId("ioMatListTabCnt");
                             oText.setText(oData.results.length + " item/s");

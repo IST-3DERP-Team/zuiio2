@@ -1101,7 +1101,7 @@ sap.ui.define([
     
                 me.byId(sSourceTabId).getBinding("rows").filter(oFilter, "Application");
                 me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
-                alert(me._colFilters);
+                // alert(me._colFilters);
             }
         },
 
