@@ -30,6 +30,7 @@ sap.ui.define([
         var _shellHash;
         var _shellHome;
         var _splitColumns;
+        var _startUpInfo;
 
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
@@ -69,14 +70,7 @@ sap.ui.define([
 
                 //Initialize router
                 var oComponent = this.getOwnerComponent();
-                this._router = oComponent.getRouter();
-
-                // //get current userid
-                // //MCA CrossAppNav 11/22/2023
-                // var oModel = new sap.ui.model.json.JSONModel();
-                // oModel.loadData("/sap/bc/ui2/start_up").then(() => {
-                //     this._userid = oModel.oData.id;
-                // })
+                this._router = oComponent.getRouter();                
 
                 // // [MCA]
                 // if (sap.ui.getCore().byId("backBtn") !== undefined) {
@@ -131,7 +125,8 @@ sap.ui.define([
                     defBillToCust: '',
                     defShipToCust: '',
                     iostatus: '',
-                    currEDISOURCE: false
+                    currEDISOURCE: false,
+                    RoleAuthINFNR: false
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -803,6 +798,12 @@ sap.ui.define([
 
                 this._aColFilters = [];
                 this._aColSorters = [];
+
+                var oModelStartUp = new sap.ui.model.json.JSONModel();
+                await oModelStartUp.loadData("/sap/bc/ui2/start_up").then(() => {
+                    this._startUpInfo = oModelStartUp.oData
+                    //console.log(oModelStartUp, oModelStartUp.oData);
+                });
             },
 
             getCaptionSet: function () {
@@ -1088,7 +1089,9 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "ERR_IOMISSINGMATNO" });
                 oDDTextParam.push({ CODE: "ERR_IODETMISSINGCSTYPE" });
                 oDDTextParam.push({ CODE: "INFO_REORDER_VARIANCECHECK" });
-                oDDTextParam.push({ CODE: "INFO_REORDER_NODATA" });                
+                oDDTextParam.push({ CODE: "INFO_REORDER_NODATA" });       
+                oDDTextParam.push({ CODE: "CRTINFOREC" });  
+                
 
                 // console.log(oDDTextParam);
 
@@ -15799,6 +15802,49 @@ sap.ui.define([
                         me.getView().setModel(new JSONModel(oData.results), "UOMConfig");
                     },
                     error: function (err) { }
+                })
+
+                this.getRoleAuth();
+            },
+
+            //get the authorization, this will hide the create material button if user is not authorized
+            getRoleAuth: function () {
+
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var oJSONModel = new JSONModel();
+                var id = null;
+                console.log("_startUpInfo", this._startUpInfo);
+                if(this._startUpInfo !== undefined) {
+                    var id = this._startUpInfo.id; //"NCJOAQUIN" 
+                }
+
+                if(id === null) {
+                    that.byId("btnCrtInfoRec").setVisible(true);
+                    return;
+                }
+
+                oModel.read("/CreateMatRoleSet", {
+                    urlParameters: {
+                        "$filter": "Bname eq '" + id + "' and Roleid eq '" + this._sbu + "IOMATLST_INFNR'"
+                    },
+                    success: function (oData, oResponse) {
+                        var result = oData.results;
+                        result = result.filter(a => a.Zresult === "0");
+
+                        oJSONModel.setData(result);
+                        that.getView().setModel(oJSONModel, "RoleAuthModel");
+                        if (result.length == 0) {
+                            that.byId("btnCrtInfoRec").setVisible(false);
+                            that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", false);
+                        }
+                        else {
+                            that.byId("btnCrtInfoRec").setVisible(true);
+                            that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", true);
+                        }
+                    },
+                    error: function () {
+                        Common.closeLoadingDialog(that);
+                    }
                 })
             },
 
