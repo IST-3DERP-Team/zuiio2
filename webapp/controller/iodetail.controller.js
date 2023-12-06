@@ -1091,7 +1091,8 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "INFO_REORDER_VARIANCECHECK" });
                 oDDTextParam.push({ CODE: "INFO_REORDER_NODATA" });       
                 oDDTextParam.push({ CODE: "CRTINFOREC" });  
-                
+
+                oDDTextParam.push({ CODE: "WARN_NOT_SAME_SALESTERM_GRP" });  
 
                 // console.log(oDDTextParam);
 
@@ -12519,7 +12520,10 @@ sap.ui.define([
                         error: function (err) { }
                     })
 
-                    this._oModelIOCosting.read('/SalesTermSet', {
+                    this._oModelIOCosting.read('/PlantSalesTermSet', {
+                        urlParameters: {
+                            "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                        },
                         success: function (oData) {
                             me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
                         },
@@ -13379,7 +13383,10 @@ sap.ui.define([
                         error: function (err) { }
                     })
 
-                    this._oModelIOCosting.read('/SalesTermSet', {
+                    this._oModelIOCosting.read('/PlantSalesTermSet', {
+                        urlParameters: {
+                            "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                        },
                         success: function (oData) {
                             me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
                         },
@@ -17440,7 +17447,10 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
-                this._oModelIOCosting.read('/SalesTermSet', {
+                this._oModelIOCosting.read('/PlantSalesTermSet', {
+                    urlParameters: {
+                        "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                    },
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
                     },
@@ -17567,7 +17577,7 @@ sap.ui.define([
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            // console.log(oData)
+                            console.log("ColumnsSet", oData)
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
@@ -17733,7 +17743,10 @@ sap.ui.define([
                     error: function (err) { }
                 })
 
-                this._oModelIOCosting.read('/SalesTermSet', {
+                this._oModelIOCosting.read('/PlantSalesTermSet', {
+                    urlParameters: {
+                        "$filter": "PLANTCD eq '" + this._prodplant + "'"
+                    },
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTTERMS_MODEL");
                     },
@@ -17883,6 +17896,31 @@ sap.ui.define([
                     return;
                 }
 
+                // Validation Sales Term
+                var aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
+                var bProceed = true;
+
+                var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
+                var sGroupCd = "";
+
+                for (var i = 0; i < aCostHdr.length; i++) {
+                    var oCostHdr = aCostHdr[i];
+                    var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
+
+                    if (sGroupCd == "") sGroupCd = oSalesTermHdr.GROUPCD;
+                    else {
+                        if (sGroupCd != oSalesTermHdr.GROUPCD) {
+                            bProceed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!bProceed) {
+                    MessageBox.information(me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"]);
+                    return;
+                }
+
                 var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
                 var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
                 var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
@@ -18017,6 +18055,31 @@ sap.ui.define([
                 }
                 // console.log("onSaveCreateCosting", oParam);
                 // return;
+
+                // Validation
+                var aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
+                var bProceed = true;
+
+                if (aCostHdr.length > 0) {
+                    var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
+                    var oSalesTermNew = aSalesTerm.filter(
+                        x => x.SALESTERM == sap.ui.getCore().byId("SALESTERM").getValue())[0];
+
+                    for (var i = 0; i < aCostHdr.length; i++) {
+                        var oCostHdr = aCostHdr[i];
+                        var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
+
+                        if (oSalesTermHdr.GROUPCD != oSalesTermNew.GROUPCD) {
+                            bProceed = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!bProceed) {
+                    MessageBox.information(me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"]);
+                    return;
+                }
 
                 Common.openProcessingDialog(this, "Processing...");
 

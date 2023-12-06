@@ -84,7 +84,7 @@
                                         showSuggestion="true" 
                                         suggestionItems="{path:'COSTTERMS_MODEL>/', templateShareable:false}">
                                         <suggestionItems>
-                                            <core:ListItem key="{COSTTERMS_MODEL>INCO1}" text="{COSTTERMS_MODEL>INCO1}" />
+                                            <core:ListItem key="{COSTTERMS_MODEL>SALESTERM}" text="{COSTTERMS_MODEL>SALESTERM}" />
                                         </suggestionItems>
                                     </Input>
                                 </form:fields>

@@ -10,6 +10,7 @@
                     <PropertyRef Name="VERSION"/>
                 </Key>
                 <Property Name="CSVCD" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Costing Variant CD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="INDCDT" Type="Edm.DateTime" Nullable="false" Precision="7" sap:unicode="false" sap:label="Date" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="IONO" Type="Edm.String" Nullable="false" MaxLength="8" sap:unicode="false" sap:label="IO Number" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="CSTYPE" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="Costing Sheets Type" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VERSION" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="Version" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
@@ -130,6 +131,15 @@
                 <Property Name="VAR" Type="Edm.String" Nullable="false" MaxLength="20" sap:unicode="false" sap:label="Variable" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
                 <Property Name="VAL" Type="Edm.Decimal" Nullable="false" Precision="18" Scale="5" sap:unicode="false" sap:label="Value" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
             </EntityType>
+            <EntityType Name="PlantSalesTerm" sap:content-version="1">
+                <Key>
+                    <PropertyRef Name="SALESTERM"/>
+                </Key>
+                <Property Name="PLANTCD" Type="Edm.String" Nullable="false" MaxLength="4" sap:unicode="false" sap:label="PLANTCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="SALESTERM" Type="Edm.String" Nullable="false" MaxLength="3" sap:unicode="false" sap:label="SALESTERM" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="GROUPCD" Type="Edm.String" Nullable="false" MaxLength="2" sap:unicode="false" sap:label="GROUPCD" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+                <Property Name="REQINDCDT" Type="Edm.Boolean" Nullable="false" sap:unicode="false" sap:label="REQINDCDT" sap:creatable="false" sap:updatable="false" sap:sortable="false" sap:filterable="false"/>
+            </EntityType>
             <EntityContainer Name="ZGW_3DERP_IOCOSTING_SRV_Entities" m:IsDefaultEntityContainer="true" sap:supported-formats="atom json xlsx">
                 <EntitySet Name="VersionsSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.Versions" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="DetailsSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.Details" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
@@ -141,6 +151,7 @@
                 <EntitySet Name="IODetSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.IODet" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="ConfigHdrSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.ConfigHdr" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
                 <EntitySet Name="ConfigDtlSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.ConfigDtl" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
+                <EntitySet Name="PlantSalesTermSet" EntityType="ZGW_3DERP_IOCOSTING_SRV.PlantSalesTerm" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:pageable="false" sap:content-version="1"/>
             </EntityContainer>
             <atom:link rel="self" href="http://190.92.230.65:8000/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
             <atom:link rel="latest-version" href="http://190.92.230.65:8000/sap/opu/odata/sap/ZGW_3DERP_IOCOSTING_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
