@@ -320,10 +320,10 @@ sap.ui.define([
                 var sRowPath = oSource.oParent.getBindingContext().sPath;
             }
 
-            // console.log("_inputField", this._inputField);
-            // console.log("_inputId", this._inputId);
-            // console.log("sTabId", sTabId);
-            // console.log(sRowPath);
+            console.log("_inputField", this._inputField);
+            console.log("_inputId", this._inputId);
+            console.log("sTabId", sTabId);
+            console.log(sRowPath);
 
             var aModelData;
 

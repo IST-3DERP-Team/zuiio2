@@ -30,7 +30,7 @@ sap.ui.define([
         var _shellHash;
         var _shellHome;
         var _splitColumns;
-        var _startUpInfo;
+        var _startUpInfo = {};
 
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
@@ -804,6 +804,10 @@ sap.ui.define([
                     this._startUpInfo = oModelStartUp.oData
                     //console.log(oModelStartUp, oModelStartUp.oData);
                 });
+
+                if(this._startUpInfo === undefined) {
+                    this._startUpInfo = "BAS_CONN";
+                }
             },
 
             getCaptionSet: function () {
@@ -8520,8 +8524,13 @@ sap.ui.define([
                     success: function (oData, response) {
                         oData.results.forEach((item, index) => {
                             item.ACTIVE = index === 0 ? "X" : "";
-                            item.HASOUTPUT = item.HASOUTPUT === "X" ? true : false;
+                            // item.HASOUTPUT = item.HASOUTPUT === "" ? false : true;
+                            // item.DELETED = item.DELETED === "" ? false : true;
                         });
+
+                        oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+                        console.log("ProcessSet", oData.results);
+
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
                         me._tableRendered = "processTab";
@@ -8878,10 +8887,16 @@ sap.ui.define([
                         // console.log(sTabId, oData)
                         if (oData.results.length > 0) {
 
+                            // if(sType === "IOPROCESS")
+                            //     console.log(oData.results);
+
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
-                                        .forEach(col => item.ValueHelp = col.ValueHelp)
+                                        .forEach(col => {
+                                            item.ValueHelp = col.ValueHelp;
+                                            item.TextFormatMode = col.TextFormatMode;
+                                        })
                                 })
                             }
 
@@ -8914,6 +8929,44 @@ sap.ui.define([
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
+                    var oText = new sap.m.Text({
+                        wrapping: false,
+                        tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "{" + sColumnId + "}"
+                    })
+
+                    var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
+
+                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                        oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                        oText.bindText({
+                            parts: [
+                                { path: sColumnId }
+                            ],
+                            formatter: function (sKey) {
+                                var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
+                                if (oValue && oValue.length > 0) {
+                                    if (oColProp[0].TextFormatMode === "Value") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text];
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "ValueKey") {
+                                        return oValue[0][oColProp[0].ValueHelp["items"].text] + " (" + sKey + ")";
+                                    }
+                                    else if (oColProp[0].TextFormatMode === "KeyValue") {
+                                        return sKey + " (" + oValue[0][oColProp[0].ValueHelp["items"].text] + ")";
+                                    }
+                                }
+                                else return sKey;
+                            }
+                        });
+                    }
+                    else {
+                        oText.bindText({
+                            parts: [
+                                { path: sColumnId }
+                            ]
+                        });
+                    }
+                    
                     if (sColumnDataType !== "BOOLEAN") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
@@ -9703,6 +9756,7 @@ sap.ui.define([
                                 this.byId("btnReorderIOMatList").setVisible(false);
                                 this.byId("btnDeleteIOMatList").setVisible(false);
                                 this.byId("btnTabLayoutIOMatList").setVisible(false);
+                                this.byId("btnCrtInfoRec").setVisible(false);
                                 this.getColumnFilterSorter(arg);
                             } else if (arg === "IODLV") {
                                 this.byId("btnNewDlvSched").setVisible(false);
@@ -9894,6 +9948,13 @@ sap.ui.define([
                         this.byId("btnReorderIOMatList").setVisible(true);
                         this.byId("btnDeleteIOMatList").setVisible(true);
                         this.byId("btnTabLayoutIOMatList").setVisible(true);
+
+                        console.log(this.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
+                        if(this.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
+                            this.byId("btnCrtInfoRec").setVisible(true);
+                        else
+                            this.byId("btnCrtInfoRec").setVisible(false);
+
                     } else if (arg === "IODLV") {
                         this.byId("btnRemoveRowDlvSched").setVisible(false);
                         this.byId("btnNewDlvSched").setVisible(true);
@@ -11460,6 +11521,8 @@ sap.ui.define([
                                 if (col.Key !== "X" && item[col.ColumnName] !== undefined) {
                                     if (col.DataType === "DATETIME") {
                                         param[col.ColumnName] = sapDateFormat.format(new Date(item[col.ColumnName])) //+ "T00:00:00" //DlvDt
+                                    } else if (col.DataType === "BOOLEAN") {
+                                        param[col.ColumnName] = item[col.ColumnName] === true ? "X" : ""
                                     } else {
                                         param[col.ColumnName] = item[col.ColumnName] === "" ? "" : item[col.ColumnName]
                                     }
@@ -11819,6 +11882,8 @@ sap.ui.define([
                                     //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
                                     else if (col.DataType === "DATETIME") {
                                         itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
+                                    // } else if(col.DataType === "BOOLEAN") {
+                                    //     itemValue = item[col.ColumnName] === true ? "X" : "";
                                     } else {
                                         itemValue = item[col.ColumnName];
                                     }
@@ -11837,7 +11902,7 @@ sap.ui.define([
                                     else {
                                         if (col.Editable) {
                                             param[col.ColumnName] = itemValue;
-                                        }
+                                        }                                         
                                     }
 
                                     if (iKeyCount === 1) {
@@ -11923,6 +11988,12 @@ sap.ui.define([
                                 me.byId("btnReorderIOMatList").setVisible(true);
                                 me.byId("btnDeleteIOMatList").setVisible(true);
                                 me.byId("btnTabLayoutIOMatList").setVisible(true);
+
+                                if(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
+                                    me.byId("btnCrtInfoRec").setVisible(true);
+                                else
+                                    me.byId("btnCrtInfoRec").setVisible(false);
+
                             }
                             else if (arg === "IODLV") {
                                 me.byId("btnRemoveRowDlvSched").setVisible(false);
@@ -12330,7 +12401,7 @@ sap.ui.define([
             async setRowEditMode(arg) {
 
                 var oTable;
-                // console.log("2 arg", arg);
+                console.log("2 arg", arg);
                 if (arg === "SPLITIODLV" || arg === "SPLITIODET") {
                     // console.log(sap.ui.getCore().byId("SPLITIODETTab"));
                     oTable = sap.ui.getCore().byId(arg + "Tab");
@@ -12480,11 +12551,15 @@ sap.ui.define([
                                 "$filter": "PROCESSCD eq '" + item.PROCESSCD + "'"
                             },
                             success: function (oData, response) {
+                                
                                 iCounter1++;
                                 mVASTypeData[item.PROCESSCD] = oData.results;
 
+                                console.log("mVASTypeData", mVASTypeData);
+
                                 if (iCounter1 === oTabData.length) {
                                     me.getView().setModel(new JSONModel(mVASTypeData), "VASTYPE_MODEL");
+                                    // console.log("VASTYPE_MODEL", this.getView().getModel("VASTYPE_MODEL"));
                                 }
                             },
                             error: function (err) {
@@ -12508,7 +12583,7 @@ sap.ui.define([
                                 iCounter2++;
                             }
                         })
-                    })
+                    })                    
                 }
 
                 if (arg === "costHdr") {
@@ -12557,10 +12632,12 @@ sap.ui.define([
                                 // console.log(ci);
                             }
                             if (ci.Editable || ci.Creatable) {
+
+                                console.log(sColName, ci.DataType);
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
 
                                 if (oValueHelp) {
-                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "ioMatList" || arg === "IOATTRIB") {
+                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "ioMatList" || arg === "IOATTRIB" || (arg === "process" && ci.ColumnName !== "VASTYP" && ci.ColumnName !== "ATTRIBCD")) {
                                         var bValueFormatter = false;
                                         var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
                                         var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';
@@ -13023,28 +13100,42 @@ sap.ui.define([
                                         }));
                                     }
                                 }
-                                else if (ci.DataType === "BOOLEAN") {
-                                    if (arg === "IODET" || arg === "IODLV") {
-                                        col.setTemplate(new sap.m.Input({
-                                            type: sap.m.Checkbox,
+                                else if (ci.DataType === "BOOLEAN") {                                    
+                                    if (arg === "IODET" || arg === "SPLITIODET") {
+                                        col.setTemplate(new sap.m.CheckBox({
+                                            // type: sap.m.Checkbox,
                                             textAlign: sap.ui.core.TextAlign.Right,
-                                            value: arg === "IODET" || arg === "SPLITIODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
-                                            change: this.onNumberChange.bind(this),
+                                            selected: arg === "IODET" || arg === "SPLITIODET" ? "{DataModel>" + sColName + "'}": "{'" + sColName + "'}",
+                                            change: this.onChkSelectChange.bind(this),
                                             enabled: {
-                                                path: "DataModel>NEW",
-                                                formatter: function (NEW) {
-                                                    if (NEW === true || me._dataMode === "EDIT") { return true }
+                                                parts: [
+                                                    { path: 'DataModel>NEW' },
+                                                    { path: 'DataModel>DELETED' }
+                                                ],
+                                                formatter: function (NEW, DELETED) {
+                                                    if (NEW === true || me._dataMode === "EDIT" && DELETED === false) { return true }
                                                     else { return false }
                                                 }
                                             }
                                         }));
                                     }
                                     else {
-                                        col.setTemplate(new sap.m.Input({
-                                            type: sap.m.Checkbox,
+                                        console.log(sColName);
+                                        col.setTemplate(new sap.m.CheckBox({
+                                            // type: sap.m.Checkbox,
                                             textAlign: sap.ui.core.TextAlign.Right,
-                                            value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
-                                            change: this.onNumberChange.bind(this)
+                                            selected: "{" + sColName + "}",
+                                            select: this.onChkSelectChange.bind(this)
+                                            // ,
+                                            // enabled: {
+                                            //     parts: [
+                                            //         { path: 'NEW' }
+                                            //     ],
+                                            //     formatter: function (NEW) {
+                                            //         if (NEW === true || me._dataMode === "EDIT") { return true }
+                                            //         else { return false }
+                                            //     }
+                                            // }
                                         }));
                                     }
                                 }
@@ -14684,6 +14775,27 @@ sap.ui.define([
                 // console.log("Table Model : " + this._sTableModel);
             },
 
+            onChkSelectChange: function(oEvent) {
+                if (this._validationErrors === undefined) this._validationErrors = [];
+
+                var oSource = oEvent.getSource();
+                console.log(oSource);
+                var sRowPath = oSource.getBindingInfo("selected").binding.oContext.sPath;
+
+                var hasChange = false;
+                //ADD VALIDATION FOR PROCESS OUTPUT QUANTITY:
+                    //DO NOT ALLOW SETTING TO FALSE IF PROCESS HAS OUTPUT QUANTITY ALREADY
+                    //DO NOT ALLOW SETTING TO TRUE IF NEXT PROCESS HAS OUTPUT QUANTITY
+                
+                hasChange = true;
+                if(hasChange) {
+                    console.log("has Change");
+                    this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                    console.log(this.byId(this._sTableModel + "Tab").getModel());
+                }
+
+            },
+
             onNumberChange: function (oEvent) {
                 if (this._validationErrors === undefined) this._validationErrors = [];
                 // console.log(oEvent.getSource());
@@ -14732,6 +14844,7 @@ sap.ui.define([
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                 }
                 else {
+                    // alert(this._sTableModel, sRowPath);
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
 
@@ -15819,16 +15932,19 @@ sap.ui.define([
                 }
 
                 if(id === null) {
-                    that.byId("btnCrtInfoRec").setVisible(true);
-                    return;
+                    // that.byId("btnCrtInfoRec").setVisible(true);
+                    // return;
+
+                    id = "BAS_CONN";
                 }
 
-                oModel.read("/CreateMatRoleSet", {
+                oModel.read("/s", {
                     urlParameters: {
                         "$filter": "Bname eq '" + id + "' and Roleid eq '" + this._sbu + "IOMATLST_INFNR'"
                     },
                     success: function (oData, oResponse) {
                         var result = oData.results;
+                        console.log("result", result);
                         result = result.filter(a => a.Zresult === "0");
 
                         oJSONModel.setData(result);
@@ -18482,7 +18598,15 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            oData.results.forEach((item, index) => item.ACTIVE = index === 0 ? "X" : "");
+                            oData.results.forEach((item, index) => {
+                                item.ACTIVE = index === 0 ? "X" : "";
+                                // item.HASOUTPUT = item.HASOUTPUT === "" ? false : true;
+                                // item.DELETED = item.DELETED === "" ? false : true;
+                            });
+    
+                            oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
+                            console.log("ProcessSet", oData.results);
+
                             me.byId("processTab").getModel().setProperty("/rows", oData.results);
                             me.byId("processTab").bindRows("/rows");
                             me._tableRendered = "processTab";
