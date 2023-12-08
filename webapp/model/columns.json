@@ -18,6 +18,25 @@
     ],
     "process": [
         {
+            "ColumnName": "PROCESSCD",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VASPROCSH_MODEL",
+                    "value": "VASPROC",
+                    "text": "VASPROC"
+                },
+                "SuggestionItems": {
+                    "path": "VASPROCSH_MODEL>/",
+                    "text": "{VASPROCSH_MODEL>VASPROC}",
+                    "additionalText": "{VASPROCSH_MODEL>VASPROC}",
+                    "maxSuggestionWidth": "200px"
+                },
+                "columns": "tvh_vasproc"
+            }
+        },
+
+        {
             "ColumnName": "VASTYP",
             "ValueHelp": {
                 "show": true,
@@ -600,6 +619,9 @@
             "columns": "tvh_csalterm"
             }
         }
+    ],
+    "tvh_vasproc": [
+        {"ColumnName": "VASPROC", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true}
     ],
     "tvh_csalterm": [
         {"ColumnName": "Inco1", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
