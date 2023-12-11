@@ -951,11 +951,14 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "VERDESC" });
                 oDDTextParam.push({ CODE: "SALESTERM" });
                 oDDTextParam.push({ CODE: "CSDATE" });
+                oDDTextParam.push({ CODE: "INDCDT" });
                 oDDTextParam.push({ CODE: "CREATECOSTING" });
                 oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_REFRESH" });
                 oDDTextParam.push({ CODE: "INFO_COSTING_RELEASE" });
                 oDDTextParam.push({ CODE: "INFO_STATUS_ALREADY_REL" });
                 oDDTextParam.push({ CODE: "INFO_COST_RESET_STATUS" });
+                oDDTextParam.push({ CODE: "INFO_IS_REQUIRED" });
+                oDDTextParam.push({ CODE: "INFO_GREATER_CURRENT_DATE" });
 
                 oDDTextParam.push({ CODE: "IOITEM" });
                 oDDTextParam.push({ CODE: "SALDOCNO" });
@@ -12119,6 +12122,7 @@ sap.ui.define([
 
                                                         oData.results.forEach((row, index) => {
                                                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                                            if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
                                                         });
 
                                                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -17869,6 +17873,7 @@ sap.ui.define([
                             else row.ACTIVE = "";
 
                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                            if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
                         });
 
                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -18245,7 +18250,7 @@ sap.ui.define([
 
                 // Validation Sales Term
                 var aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
-                var bProceed = true;
+                var sErrMsg = "";
 
                 var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
                 var sGroupCd = "";
@@ -18257,14 +18262,21 @@ sap.ui.define([
                     if (sGroupCd == "") sGroupCd = oSalesTermHdr.GROUPCD;
                     else {
                         if (sGroupCd != oSalesTermHdr.GROUPCD) {
-                            bProceed = false;
+                            sErrMsg = me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"];
                             break;
                         }
                     }
+
+                    if (oSalesTermHdr.REQINDCDT == true && oCostHdr.INDCDT == null) {
+                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + 
+                            me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"];
+                        break;
+                    }
+                    //else if (oCostHdr.INDCDT != null && Date.parse(oCostHdr.INDCDT) == )
                 }
 
-                if (!bProceed) {
-                    MessageBox.information(me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"]);
+                if (sErrMsg.length > 0) {
+                    MessageBox.information(me.getView().getModel("ddtext").getData()[sErrMsg]);
                     return;
                 }
 
@@ -18682,6 +18694,7 @@ sap.ui.define([
 
                                         oData.results.forEach((row, index) => {
                                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                            if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
                                         });
 
                                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -18800,6 +18813,7 @@ sap.ui.define([
                                 else row.ACTIVE = "";
 
                                 row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
                             });
 
                             // console.log("Costing oData.results", oData.results);
