@@ -18,18 +18,38 @@
     ],
     "process": [
         {
+            "ColumnName": "PROCESSCD",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VASPROCSH_MODEL",
+                    "value": "VASPROC",
+                    "text": "VASPROC"
+                },
+                "SuggestionItems": {
+                    "path": "VASPROCSH_MODEL>/",
+                    "text": "{VASPROCSH_MODEL>VASPROC}",
+                    "additionalText": "{VASPROCSH_MODEL>VASPROC}",
+                    "maxSuggestionWidth": "200px"
+                },
+                "columns": "tvh_vasproc"
+            }
+        },
+
+        {
             "ColumnName": "VASTYP",
             "ValueHelp": {
                 "show": true,
                 "items": {
                     "path": "VASTYPE_MODEL",
                     "value": "PROCESSCD",
-                    "text": "PROCESSCD"
+                    "text": "DESC1"
                 },
                 "SuggestionItems": {
                     "path": "VASTYPE_MODEL>/",
                     "text": "{VASTYPE_MODEL>PROCESSCD}",
-                    "additionalText": "{VASTYPE_MODEL>DESC1}"
+                    "additionalText": "{VASTYPE_MODEL>DESC1}",
+                    "maxSuggestionWidth": "200px"
                 }
             }
         },
@@ -62,6 +82,25 @@
                     "text": "{ATTRIBCODE_MODEL>ATTRIBCD}",
                     "additionalText": "{ATTRIBCODE_MODEL>DESC1}"
                 }
+            }
+        },
+        {
+            "ColumnName": "VENDORCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VendorModel",
+                    "value": "Lifnr",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "VendorModel>/",
+                    "text": "{VendorModel>Lifnr}",
+                    "additionalText": "{VendorModel>Desc1}",
+                    "maxSuggestionWidth": "490px"
+                },
+                "columns": "tvh_vendorcd"
             }
         }
     ],
@@ -458,6 +497,12 @@
             }
         }
     ],
+    "tvh_vastyp": [
+        {"ColumnName": "PROCTYP", "DataType": "STRING", "ColumnWidth": "200px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "VASPROC", "DataType": "STRING", "ColumnWidth": "250px", "Visible": false, "Key": false, "Value": false},
+        {"ColumnName": "PROCESSCD", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": true, "Value": false},
+        {"ColumnName": "DESC1", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true}
+    ],
     "tvh_cstype": [
         {"ColumnName": "CSTYPECD", "DataType": "STRING", "ColumnWidth": "200px", "Visible": true, "Key": true, "Value": false},
         {"ColumnName": "CSTYPEDESC", "DataType": "STRING", "ColumnWidth": "250px", "Visible": true, "Key": false, "Value": true}
@@ -574,6 +619,9 @@
             "columns": "tvh_csalterm"
             }
         }
+    ],
+    "tvh_vasproc": [
+        {"ColumnName": "VASPROC", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true}
     ],
     "tvh_csalterm": [
         {"ColumnName": "Inco1", "DataType": "STRING", "ColumnWidth": "120px", "Visible": true, "Key": true, "Value": true},
