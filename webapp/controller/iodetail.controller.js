@@ -11907,7 +11907,10 @@ sap.ui.define([
                                 var itemValue;
                                 // console.log(this._aColumns[arg])
                                 this._aColumns[arg].forEach(col => {
-                                    if (arg === "costHdr" && col.DataType === "DATETIME") itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
+                                    if (arg === "costHdr" && col.DataType === "DATETIME") {
+                                        if (item[col.ColumnName] == null || item[col.ColumnName] == "") itemValue = null;
+                                        else itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
+                                    }
                                     //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
                                     else if (col.DataType === "DATETIME") {
                                         itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
@@ -11967,7 +11970,6 @@ sap.ui.define([
                                 if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
                                 entitySet += ")";
 
-                                // console.log("onsave", entitySet, param, mParameters);
                                 // console.log(param);
                                 // console.log(mParameters);
                                 oModel.update(entitySet, param, mParameters);
@@ -18080,7 +18082,8 @@ sap.ui.define([
                         VERDESC: "",
                         SALESTERM: "",
                         CSDATE: "",
-                        COSTSTATUS: ""
+                        COSTSTATUS: "",
+                        INDCDT: ""
                     },
                     ddtext: this.getView().getModel("ddtext").getData()
                 }
@@ -18254,7 +18257,7 @@ sap.ui.define([
 
                 var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
                 var sGroupCd = "";
-
+            
                 for (var i = 0; i < aCostHdr.length; i++) {
                     var oCostHdr = aCostHdr[i];
                     var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
@@ -18267,16 +18270,21 @@ sap.ui.define([
                         }
                     }
 
-                    if (oSalesTermHdr.REQINDCDT == true && oCostHdr.INDCDT == null) {
-                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + 
-                            me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"];
+                    if (oSalesTermHdr.REQINDCDT == true && (oCostHdr.INDCDT == null || oCostHdr.INDCDT == "")) {
+                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " +
+                            me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"] + " for " + 
+                            me.getView().getModel("ddtext").getData()["SALESTERM"] + " " + oSalesTermHdr.SALESTERM + ".";
                         break;
                     }
-                    //else if (oCostHdr.INDCDT != null && Date.parse(oCostHdr.INDCDT) == )
+                    else if (Date.parse(oCostHdr.INDCDT) <= Date.parse(new Date())) {
+                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " + 
+                            me.getView().getModel("ddtext").getData()["INFO_GREATER_CURRENT_DATE"];
+                        break;
+                    }
                 }
 
                 if (sErrMsg.length > 0) {
-                    MessageBox.information(me.getView().getModel("ddtext").getData()[sErrMsg]);
+                    MessageBox.information(sErrMsg);
                     return;
                 }
 
@@ -18313,6 +18321,7 @@ sap.ui.define([
                 //set CS DATE value to today's date
                 var today = new Date();
                 sap.ui.getCore().byId("CSDATE").setValue(sapDateFormat.format(today));
+                sap.ui.getCore().byId("INDCDT").setValue(null);
 
                 if (this.getView().byId("CUSSALTERM").getValue() !== "") {
                     // sap.ui.getCore().byId("SALESTERM").setValue(this.getView().byId("CUSSALTERM").getValue());
@@ -18410,7 +18419,9 @@ sap.ui.define([
                     "VERDESC": sap.ui.getCore().byId("VERDESC").getValue(),
                     "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
                     "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
-                    "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue()
+                    "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue(),
+                    "INDCDT": (sap.ui.getCore().byId("COSTSTATUS").getValue() == null ? null : 
+                        sap.ui.getCore().byId("COSTSTATUS").getValue().toString() + "T00:00:00")
                 }
                 // console.log("onSaveCreateCosting", oParam);
                 // return;

@@ -114,7 +114,7 @@
                                         displayFormat="MM/dd/yyyy"
                                         valueFormat="yyyy-MM-dd"
                                         value="data>/INDCDT"
-                                        required="true"
+                                        required="false"
                                     />
                                 </form:fields>
                             </form:FormElement>                             
