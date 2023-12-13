@@ -11972,6 +11972,7 @@ sap.ui.define([
 
                                 // console.log(param);
                                 // console.log(mParameters);
+                                console.log(entitySet, param, mParameters)
                                 oModel.update(entitySet, param, mParameters);
                             })
                         }
@@ -12084,6 +12085,54 @@ sap.ui.define([
                                 me.byId("btnPrintCosting").setEnabled(true);
                                 me.byId("btnReleaseCosting").setEnabled(true);
                                 me.byId("btnRefreshCostDtl").setEnabled(true);
+
+                                //console.log("_aCostHdr", me._aCostHdr, me.byId("costDtlsTab").getModel().getData().rows)
+                                me._aCostHdr.forEach(item => {
+                                    if (item.SALESTERM != item.SALESTERMOLD && item.SALESTERM != "DDP") {
+                                        me._oModelIOCosting.read('/ConfigHdrSet', {
+                                            urlParameters: {
+                                                "$filter": "COMPREF eq '" + item.IONO + item.CSTYPE + item.VERSION.padStart(3, "0") + "' and PLANTCD eq '" + me._prodplant + "'"
+                                            },
+                                            success: function (oData) {
+                                                console.log("ConfigHdrSet3", oData.results);
+
+                                                oData.results.forEach((itemConfig, idxConfig) => {
+                                                    if (itemConfig.VALTYP == "F" && itemConfig.STATUSCDCS == "03" && itemConfig.CUSTGRP == "") {
+                                                        var oCostDtl = me.byId("costDtlsTab").getModel().getData().rows.filter(x => x.COSTCOMPCD == itemConfig.COSTCOMPCD)[0];
+                                                        var sEntitySet = "/DetailsSet(IONO='" + item.IONO + "',CSTYPE='" + item.CSTYPE +
+                                                            "',VERSION='" + item.VERSION + "',SEQNO='" + oCostDtl.SEQNO + "')";
+                                                        var oParamDtl = {
+                                                            COSTPERUN: itemConfig.FIXCOSTVAL,
+                                                            STDCONSUMP: "1",
+                                                            COST: itemConfig.FIXCOSTVAL
+                                                        }
+
+                                                        //console.log("update dtl", sEntitySet ,oParamDtl)
+                                                        setTimeout(() => {
+                                                            me._oModelIOCosting.update(sEntitySet, oParamDtl, {
+                                                                method: "PUT",
+                                                                success: function (oData2) {
+                                                                    //console.log("ConfigHdrSet3", oData.results)
+                                                                    if (idxConfig == oData.results.length - 1) {
+                                                                        me.onRefresh("costDtls");
+                                                                    }
+                                                                },
+                                                                error: function (err) {}
+                                                            })
+                                                        }, 100);
+                                                    }
+                                                })
+                                            },
+                                            error: function (err) {}
+                                        })
+                                    }
+                                })
+
+                                setTimeout(() => {
+                                    me._aCostHdr.forEach(item => {
+                                        item.SALESTERMOLD = item.SALESTERM;
+                                    });
+                                }, 1000);
                             }
                             else if (arg === "costDtls") {
                                 me.byId("btnEditCostDtl").setVisible(true);
@@ -12125,6 +12174,7 @@ sap.ui.define([
                                                         oData.results.forEach((row, index) => {
                                                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                                                             if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
+                                                            row.SALESTERMOLD = row.SALESTERM.toString();
                                                         });
 
                                                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -17876,6 +17926,7 @@ sap.ui.define([
 
                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                             if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
+                            row.SALESTERMOLD = row.SALESTERM.toString();
                         });
 
                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -18251,43 +18302,47 @@ sap.ui.define([
                     return;
                 }
 
-                // Validation Sales Term
-                var aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
-                var sErrMsg = "";
+                if (arg == "costHdr") {
+                    // Validation Sales Term
+                    var aCostHdr = aEditedRows; //me.byId("costHdrTab").getModel().getProperty("/rows");
+                    var sErrMsg = "";
 
-                var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
-                var sGroupCd = "";
-            
-                for (var i = 0; i < aCostHdr.length; i++) {
-                    var oCostHdr = aCostHdr[i];
-                    var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
+                    var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
+                    var sGroupCd = "";
+                
+                    for (var i = 0; i < aCostHdr.length; i++) {
+                        var oCostHdr = aCostHdr[i];
+                        var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
 
-                    if (sGroupCd == "") sGroupCd = oSalesTermHdr.GROUPCD;
-                    else {
-                        if (sGroupCd != oSalesTermHdr.GROUPCD) {
-                            sErrMsg = me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"];
+                        if (sGroupCd == "") sGroupCd = oSalesTermHdr.GROUPCD;
+                        else {
+                            if (sGroupCd != oSalesTermHdr.GROUPCD) {
+                                sErrMsg = me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"];
+                                break;
+                            }
+                        }
+
+                        if (oSalesTermHdr.REQINDCDT == true && (oCostHdr.INDCDT == null || oCostHdr.INDCDT == "")) {
+                            sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " +
+                                me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"] + " for " + 
+                                me.getView().getModel("ddtext").getData()["SALESTERM"] + " " + oSalesTermHdr.SALESTERM + ".";
+                            break;
+                        }
+                        else if (Date.parse(oCostHdr.INDCDT) <= Date.parse(new Date())) {
+                            sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " + 
+                                me.getView().getModel("ddtext").getData()["INFO_GREATER_CURRENT_DATE"];
                             break;
                         }
                     }
 
-                    if (oSalesTermHdr.REQINDCDT == true && (oCostHdr.INDCDT == null || oCostHdr.INDCDT == "")) {
-                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " +
-                            me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"] + " for " + 
-                            me.getView().getModel("ddtext").getData()["SALESTERM"] + " " + oSalesTermHdr.SALESTERM + ".";
-                        break;
+                    if (sErrMsg.length > 0) {
+                        MessageBox.information(sErrMsg);
+                        return;
                     }
-                    else if (Date.parse(oCostHdr.INDCDT) <= Date.parse(new Date())) {
-                        sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " + 
-                            me.getView().getModel("ddtext").getData()["INFO_GREATER_CURRENT_DATE"];
-                        break;
-                    }
-                }
 
-                if (sErrMsg.length > 0) {
-                    MessageBox.information(sErrMsg);
-                    return;
+                    me._aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
                 }
-
+                
                 var vType = this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE;
                 var vVersion = this.byId(arg + "Tab").getModel().getData().rows[0].VERSION;
                 var vStatus = this.byId("costHdrTab").getModel().getData().rows.filter(fi => fi.CSTYPE === vType && fi.VERSION === vVersion)[0].COSTSTATUS;
@@ -18420,34 +18475,43 @@ sap.ui.define([
                     "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
                     "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
                     "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue(),
-                    "INDCDT": (sap.ui.getCore().byId("COSTSTATUS").getValue() == null ? null : 
-                        sap.ui.getCore().byId("COSTSTATUS").getValue().toString() + "T00:00:00")
+                    "INDCDT": (sap.ui.getCore().byId("INDCDT").getValue() == null ? null : 
+                        sap.ui.getCore().byId("INDCDT").getValue().toString() + "T00:00:00")
                 }
                 // console.log("onSaveCreateCosting", oParam);
                 // return;
 
                 // Validation
                 var aCostHdr = me.byId("costHdrTab").getModel().getProperty("/rows");
-                var bProceed = true;
+                var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
+                var oSalesTermNew = aSalesTerm.filter(
+                    x => x.SALESTERM == sap.ui.getCore().byId("SALESTERM").getValue())[0];
+                var sErrMsg = "";
 
                 if (aCostHdr.length > 0) {
-                    var aSalesTerm = me.getView().getModel("COSTTERMS_MODEL").getData();
-                    var oSalesTermNew = aSalesTerm.filter(
-                        x => x.SALESTERM == sap.ui.getCore().byId("SALESTERM").getValue())[0];
-
                     for (var i = 0; i < aCostHdr.length; i++) {
                         var oCostHdr = aCostHdr[i];
                         var oSalesTermHdr = aSalesTerm.filter(x => x.SALESTERM == oCostHdr.SALESTERM)[0];
 
                         if (oSalesTermHdr.GROUPCD != oSalesTermNew.GROUPCD) {
-                            bProceed = false;
+                            sErrMsg = me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"];
                             break;
                         }
                     }
                 }
 
-                if (!bProceed) {
-                    MessageBox.information(me.getView().getModel("ddtext").getData()["WARN_NOT_SAME_SALESTERM_GRP"]);
+                if (oSalesTermNew.REQINDCDT == true && oParam.INDCDT == null) {
+                    sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " +
+                            me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"] + " for " + 
+                            me.getView().getModel("ddtext").getData()["SALESTERM"] + " " + oSalesTermNew.SALESTERM + ".";
+                }
+                else if (oParam.INDCDT != null && Date.parse(oParam.INDCDT) <= Date.parse(new Date())) {
+                    sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " + 
+                            me.getView().getModel("ddtext").getData()["INFO_GREATER_CURRENT_DATE"];
+                }
+
+                if (sErrMsg.length > 0) {
+                    MessageBox.information(sErrMsg);
                     return;
                 }
 
@@ -18469,6 +18533,10 @@ sap.ui.define([
                                         me.getIOCostDetails(row.CSTYPE, row.VERSION, true);
                                     }
                                     else row.ACTIVE = "";
+
+                                    row.CSDATE = dateFormat.format(new Date(row.CSDATE));
+                                    if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
+                                    row.SALESTERMOLD = row.SALESTERM.toString();
                                 });
 
                                 me.byId("costHdrTab").getModel().setProperty("/rows", oReadData.results);
@@ -18706,6 +18774,7 @@ sap.ui.define([
                                         oData.results.forEach((row, index) => {
                                             row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                                             if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
+                                            row.SALESTERMOLD = row.SALESTERM.toString();
                                         });
 
                                         me.byId("costHdrTab").getModel().setProperty("/rows", oData.results);
@@ -18825,6 +18894,7 @@ sap.ui.define([
 
                                 row.CSDATE = dateFormat.format(new Date(row.CSDATE));
                                 if (row.INDCDT) row.INDCDT = dateFormat.format(new Date(row.INDCDT));
+                                row.SALESTERMOLD = row.SALESTERM.toString();
                             });
 
                             // console.log("Costing oData.results", oData.results);
