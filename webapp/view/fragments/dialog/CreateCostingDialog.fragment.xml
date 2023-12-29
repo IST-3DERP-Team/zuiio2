@@ -84,7 +84,7 @@
                                         showSuggestion="true" 
                                         suggestionItems="{path:'COSTTERMS_MODEL>/', templateShareable:false}">
                                         <suggestionItems>
-                                            <core:ListItem key="{COSTTERMS_MODEL>INCO1}" text="{COSTTERMS_MODEL>INCO1}" />
+                                            <core:ListItem key="{COSTTERMS_MODEL>SALESTERM}" text="{COSTTERMS_MODEL>SALESTERM}" />
                                         </suggestionItems>
                                     </Input>
                                 </form:fields>
@@ -105,7 +105,19 @@
                                 <form:fields>
                                     <Input id="COSTSTATUS" value="" maxLength="3" visible="false" />
                                 </form:fields>
-                            </form:FormElement>                               
+                            </form:FormElement>
+                            <form:FormElement label="{ddtext>/INDCDT}">
+                                <form:fields>
+                                    <DatePicker
+                                        id="INDCDT"
+                                        placeholder="Enter Date"
+                                        displayFormat="MM/dd/yyyy"
+                                        valueFormat="yyyy-MM-dd"
+                                        value="data>/INDCDT"
+                                        required="false"
+                                    />
+                                </form:fields>
+                            </form:FormElement>                             
                         </form:formElements>
                     </form:FormContainer>
                 </form:formContainers>

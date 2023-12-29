@@ -296,12 +296,12 @@
                 "show": true,
                 "items": {
                     "path": "COSTTERMS_MODEL",
-                    "value": "INCO1",
-                    "text": "INCO1"
+                    "value": "SALESTERM",
+                    "text": "SALESTERM"
                 },
                 "SuggestionItems": {
                     "path": "COSTTERMS_MODEL>/",
-                    "text": "{COSTTERMS_MODEL>INCO1}"
+                    "text": "{COSTTERMS_MODEL>SALESTERM}"
                 }
             }
         }

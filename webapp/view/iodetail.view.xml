@@ -769,7 +769,7 @@
                                         </Toolbar>
                                     </t:extension>
                                 </t:Table>
-                                <layoutData><layout:SplitterLayoutData size="775px" /></layoutData> 
+                                <layoutData><layout:SplitterLayoutData size="910px" /></layoutData> 
                             </Panel>
                             <Panel width="100%" height="100%" class="sapUiNoContentPadding">
                                 <t:Table
