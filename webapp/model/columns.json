@@ -363,6 +363,25 @@
             }
         }
     ],
+    "inforeclist": [
+        {
+            "name": "INFNR",
+            "position": 0,
+            "type": "Edm.String",
+            "visible": true,
+            "required": false,
+            "width": "100px",
+            "hideOnChange": false,
+            "showable": true,
+            "sort": "Ascending",
+            "valueHelp": {
+                "show": false,
+                "source": "",
+                "value": "",
+                "desc": ""
+            }
+        }
+    ],
     "ioMatList": [
         {
             "ColumnName": "SUPPLYTYP",
@@ -494,6 +513,84 @@
                     "maxSuggestionWidth": "250px"
                 },
                 "columns": "tvh_purplant"
+            }
+        }
+    ],
+    "IOINFOREC": [
+        {
+            "ColumnName": "ORDERUOM",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "UOMGMCModel",
+                    "value": "Valunit",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "UOMGMCModel>/",
+                    "text": "{UOMGMCModel>Valunit}",
+                    "additionalText": "{UOMGMCModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_uom"
+            }
+        },
+        {
+            "ColumnName": "PURGRP",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "PurchGroupModel",
+                    "value": "Purgrp",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "PurchGroupModel>/",
+                    "text": "{PurchGroupModel>Purgrp}",
+                    "additionalText": "{PurchGroupModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_purgrp"
+            }
+        },
+        {
+            "ColumnName": "VENDORCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "VendorModel",
+                    "value": "Lifnr",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "VendorModel>/",
+                    "text": "{VendorModel>Lifnr}",
+                    "additionalText": "{VendorModel>Desc1}",
+                    "maxSuggestionWidth": "490px"
+                },
+                "columns": "tvh_vendorcd"
+            }
+        },
+        {
+            "ColumnName": "CURRENCYCD",
+            "TextFormatMode": "ValueKey",
+            "ValueHelp": {
+                "show": true,
+                "items": {
+                    "path": "CurrencyModel",
+                    "value": "Waers",
+                    "text": "Desc1"
+                },
+                "SuggestionItems": {
+                    "path": "CurrencyModel>/",
+                    "text": "{CurrencyModel>Waers}",
+                    "additionalText": "{CurrencyModel>Desc1}",
+                    "maxSuggestionWidth": "275px"
+                },
+                "columns": "tvh_vendorcd"
             }
         }
     ],

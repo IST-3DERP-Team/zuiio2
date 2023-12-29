@@ -12,8 +12,13 @@ sap.ui.define([
             var me = oThis;
             var oTable = me.byId(sTableId);
 
+            if(sTableId === "SPLITIODETTab" || sTableId === "SPLITIODLVTab") {
+                oTable = sap.ui.getCore().byId(sTableId);
+            } else
+                oTable = me.byId(sTableId);
+
             // console.log("updateColumnMenu");
-            // console.log(oTable);
+            // console.log(sTableId, oTable);
 
             oTable.getColumns().forEach(col => {
                 // console.log(col);
