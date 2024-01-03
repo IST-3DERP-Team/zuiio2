@@ -12839,7 +12839,7 @@ sap.ui.define([
                     // console.log("this._aColumns[arg]", arg, this._aColumns[arg]);
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
-                            // console.log(ci);
+                            console.log(ci);
 
                             if (arg === "SPLITIODET") {
                                 // console.log(ci);
