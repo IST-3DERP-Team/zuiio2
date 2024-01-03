@@ -1101,6 +1101,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CRTINFOREC" });  
 
                 oDDTextParam.push({ CODE: "WARN_NOT_SAME_SALESTERM_GRP" });  
+                oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_PROCESS" });                  
 
                 // console.log(oDDTextParam);
 
@@ -1296,130 +1297,6 @@ sap.ui.define([
                 Common.closeLoadingDialog(this);
 
                 this._tblChange = false;
-            },
-
-            // onCrtInfoRec: async function () {
-            //     var me = this;
-            //     var currIONo = this.getView().getModel("ui2").getProperty("/currIONo");
-
-            //     var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-
-            //     var oModelColumns = new JSONModel();
-            //     await oModelColumns.loadData(sPath);
-
-            //     var oColumns = oModelColumns.getData();
-            //     this._oModelColumns = oModelColumns.getData();
-
-            //     // sap.ui.getCore().byId("IOINFORECTab")
-            //     //     .setModel(new JSONModel({
-            //     //         columns: [],
-            //     //         rows: []
-            //     //     }));
-
-            //     // await this.getIODynamicColumns("INFRECLIST", "ZDV_IOINFREC", "IOINFORECTab", oColumns);
-            //     me.getIOINFORECData();
-
-            // },
-
-            onCrtInfoRec: async function () { 
-                var me = this;
-                var aSelectedItems = [];
-                var oView = this.getView();
-                var oJSONModel = new JSONModel();
-                // var ioNo = iono;
-                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
-
-                _promiseResult = new Promise((resolve, reject) => {
-                    // setTimeout(() => {
-                    this._oModel.read('/INFORECSet', {
-                        urlParameters: {
-                            "$filter": "IONO eq '" + ioNo + "'"
-                        },
-                        success: function (oData, response) {
-                            // console.log("getSPLITIODLVData", oData);
-
-                            oData.results.forEach(item => {
-                                item.DATAB = item.DATAB === "0000-00-00" || item.DATAB === "    -  -  " ? "" : dateFormat.format(new Date(item.DATAB));
-                                item.DATBI = item.DATBI === "0000-00-00" || item.DATBI === "    -  -  " ? "" : dateFormat.format(new Date(item.DATBI));
-                                // item.DELETED = item.DELETED === "X" ? true : false;
-                            })
-
-                            console.log("INFORECSet", oData.results);
-                            var replicatedData = Object.assign([], oData.results);
-                            console.log("replicatedData", replicatedData);
-                            oJSONModel.setData(oData.results);
-                            oView.setModel(oJSONModel, "INFORECDataModel");
-
-                            console.log("ioMatListTab", me.byId("ioMatListTab").getModel().getData());
-                            var oTable = me.byId("ioMatListTab");
-                            var oSelectedIndices = oTable.getSelectedIndices();
-
-                            // console.log(oSelectedIndices);                            
-                            var oTmpSelectedIndices = [];
-                            if (oSelectedIndices.length > 0) {
-                                oSelectedIndices.forEach(item => {
-                                    console.log(oTable.getModel().getData().rows.at(item).MATNO);
-                                    console.log(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]);
-
-                                    if(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0])
-                                        aSelectedItems.push(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]);
-
-                                    // oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])                                    
-                                })
-                                // oSelectedIndices = oTmpSelectedIndices;
-                            }
-
-                            // console.log(aSelectedItems);   
-                            resolve();
-                        },
-                        error: function (err) {
-                            resolve();
-                        }
-                    })
-                    // }, 100);
-                });
-                await _promiseResult;
-
-                console.log("aSelectedItems", aSelectedItems);
-
-                if(aSelectedItems.length > 0) {
-
-                    oJSONModel.setData(aSelectedItems);
-                    oView.setModel(oJSONModel, "selINFORECDataModel");
-
-                    if (!me._INFORECDialog) {
-                        // console.log("initialize Create Info Record Dialog");
-                        me._INFORECDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CrtInfoRec", me);
-
-                        var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
-
-                        var oModelColumns = new JSONModel();
-                        await oModelColumns.loadData(sPath);
-
-                        var oColumns = oModelColumns.getData();
-                        this._oModelColumns = oModelColumns.getData();
-
-                        var oTable = sap.ui.getCore().byId("IOINFORECTab");
-                        oTable.setModel(new JSONModel({
-                            columns: [],
-                            rows: []
-                        }));
-
-                        this.getSearchDynamicTableColumns("INFRECLIST", "ZDV_IOINFREC", "IOINFORECTab", oColumns);
-
-                        me.getView().addDependent(me._INFORECDialog);
-
-                        // console.log(me.getView().getModel("INFORECDataModel"));
-                        console.log(me.getView().getModel("selINFORECDataModel"));
-                        // sap.ui.getCore().byId("IOINFORECTab").getModel().setProperty("/rows", aSelectedItems);
-                        sap.ui.getCore().byId("IOINFORECTab").getModel().setProperty("/rows", me.getView().getModel("selINFORECDataModel").getData());
-                        sap.ui.getCore().byId("IOINFORECTab").bindRows("/rows");
-                        me._tableRendered = "IOINFORECTab";
-
-                    }
-                    // me.getImportPOData();
-                    me._INFORECDialog.open();
-                }
             },
 
             onfragmentImportPO: async function (tableName) {
@@ -2014,7 +1891,7 @@ sap.ui.define([
                             if (sTabId === "ImportPOTab")
                                 aColumns = me.setTableColumns(oLocColProp["importpolist"], oData.results);
 
-                            if (sTabId === "IOINFORECTab")
+                            if (sTabId === "GENINFORECTab")
                                 aColumns = me.setTableColumns(oLocColProp["inforeclist"], oData.results);
 
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
@@ -2062,7 +1939,7 @@ sap.ui.define([
                                 me.getImportPOData();
                             }
 
-                            if (sTabId === "IOINFORECTab") {
+                            if (sTabId === "GENINFORECTab") {
                                 // console.log(oJSONColumnsModel);
                                 me.getView().setModel(oJSONColumnsModel, "IINFORECColumns");  //set the view model
                                 // me.getImportPOData();
@@ -2138,7 +2015,7 @@ sap.ui.define([
                         });
                     }
 
-                    console.log("oText", oText);
+                    // console.log("oText", oText);
 
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
@@ -3445,6 +3322,11 @@ sap.ui.define([
                                         // console.log(oData);
                                     }
 
+                                    if (arg3 === "GENINFORECTab") {
+                                        // console.log("IO Status Data");
+                                        console.log("Column Data - GENINFOREC", oData.results);
+                                    }
+
                                     me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
                                     me._aColumns[sTabId.replace("Tab", "")] = oData.results;
                                     // console.log(me._aColumns[sTabId.replace("Tab", "")]);
@@ -3470,7 +3352,7 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable;
 
-                if (sTabId === "SPLITIODLVTab" || sTabId === "SPLITIODETTab") {
+                if (sTabId === "SPLITIODLVTab" || sTabId === "SPLITIODETTab" || sTabId === "GENINFORECTab") {
                     oTable = sap.ui.getCore().byId(sTabId);
                 } else {
                     oTable = this.getView().byId(sTabId);
@@ -12239,6 +12121,7 @@ sap.ui.define([
                                 me.byId("btnDeleteIOMatList").setVisible(true);
                                 me.byId("btnTabLayoutIOMatList").setVisible(true);
 
+                                console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
                                 if (me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
                                     me.byId("btnCrtInfoRec").setVisible(true);
                                 else
@@ -12701,36 +12584,16 @@ sap.ui.define([
             async setRowEditMode(arg) {
 
                 var oTable;
-                console.log("2 arg", arg);
-                if (arg === "SPLITIODLV" || arg === "SPLITIODET") {
+                // console.log("2 arg", arg);
+                if (arg === "SPLITIODLV" || arg === "SPLITIODET" || arg === "GENINFOREC") {
                     // console.log(sap.ui.getCore().byId("SPLITIODETTab"));
                     oTable = sap.ui.getCore().byId(arg + "Tab");
                     // console.log("3", sap.ui.getCore().byId(arg + "Tab"));
-                    // console.log("3", sap.ui.getCore().byId(arg + "Tab").getColumns());
+                    // console.log("3", oTable.getColumns());
                 } else {
                     oTable = this.byId(arg + "Tab");
                 }
                 var me = this;
-
-                // if (arg === "IODET" || arg === "IODLV") {
-                //     var oJSONModel = new JSONModel();
-                //     var oView = this.getView();
-                //     var CUSTGRP = this.getView().byId("CUSTGRP").mBindingInfos.value.binding.aValues[0];
-                //     var filter = "SBU eq '" + this._sbu + "' and CUSTGRP eq '" + CUSTGRP + "'"
-
-                //         this._oModel.read('/IOEDINOEDITSet', {
-                //             urlParameters: {
-                //                 "$filter": filter
-                //             },
-                //             success: function (oData, response) {           
-                //                 // console.log("IOEDINOEDITModel", oDatka.results);     
-                //                 me.getView().setModel(new JSONModel(oData.results), "IOEDINOEDITModel");
-
-                //                 // console.log("IOEDINOEDITModel",me.getView().getModel("IOEDINOEDITModel").getData());
-                //             },
-                //             error: function (err) { }
-                //         });
-                // }
 
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
@@ -12958,9 +12821,13 @@ sap.ui.define([
                     })
                 }
 
+                // console.log(arg, oTable);
+
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
                     var oValueHelp = false;
+
+                    // console.log("col", col);
 
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
@@ -12972,6 +12839,7 @@ sap.ui.define([
                     // console.log("this._aColumns[arg]", arg, this._aColumns[arg]);
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
+                            // console.log(ci);
 
                             if (arg === "SPLITIODET") {
                                 // console.log(ci);
@@ -12983,7 +12851,7 @@ sap.ui.define([
 
                                 if (oValueHelp) {
                                     console.log("ColumnName", ci.ColumnName);
-                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "ioMatList" || arg === "IOATTRIB" || (arg === "process" && ci.ColumnName !== "VASTYP" && ci.ColumnName !== "ATTRIBCD")) {
+                                    if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "GENINFOREC" || arg === "ioMatList" || arg === "IOATTRIB" || (arg === "process" && ci.ColumnName !== "VASTYP" && ci.ColumnName !== "ATTRIBCD")) {
                                         var bValueFormatter = false;
                                         var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
                                         var sSuggestItemAddtlText = ci.ValueHelp["SuggestionItems"].additionalText !== undefined ? ci.ValueHelp["SuggestionItems"].additionalText : '';
@@ -13398,7 +13266,7 @@ sap.ui.define([
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
-                                            displayFormat: "short",
+                                            displayFormat: "dd/MM/yyyy",
                                             change: this.onInputLiveChange.bind(this)
                                         }));
                                     }
@@ -14423,7 +14291,14 @@ sap.ui.define([
 
             setRowReadMode(arg) {
                 var me = this;
-                var oTable = this.byId(arg + "Tab");
+                var oTable; 
+
+                if(arg === "GENINFOREC") {
+                    oTable = sap.ui.getCore().byId(arg + "Tab");
+                } else {
+                    oTable = this.byId(arg + "Tab");
+                }
+
                 var sColName = "";
 
                 // this._validationErrors = [];
@@ -14799,6 +14674,9 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODET") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
                 }
+                else if (this._sTableModel === "GENINFOREC") {
+                    sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
                 else if (this._sTableModel === "reorder") {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                 }
@@ -14811,6 +14689,7 @@ sap.ui.define([
                 else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
                 else if (this._sTableModel === "IODLV") this._bIODLVChanged = true;
                 else if (this._sTableModel === "SPLITIODLV") this._bSPLITIODLVChanged = true;
+                else if (this._sTableModel === "GENINFOREC") this._bGENINFORECChanged = true;
                 else if (this._sTableModel === "IODET") this._bIODETChanged = true;
                 else if (this._sTableModel === "SPLITIODET") this._bSPLITIODETChanged = true;
                 else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
@@ -15221,7 +15100,10 @@ sap.ui.define([
                 }
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
-                }
+                } 
+                else if (this._sTableModel === "GENINFOREC") {
+                    sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                } 
                 else if (this._sTableModel === "reorder") {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                 }
@@ -15234,6 +15116,7 @@ sap.ui.define([
                 else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
                 else if (this._sTableModel === "IODLV") this._bIODLVChanged = true;
                 else if (this._sTableModel === "SPLITIODLV") this._bSPLITIODLVChanged = true;
+                else if (this._sTableModel === "GENINFOREC") this._bGENINFORECChanged = true;
                 else if (this._sTableModel === "IODET") this._bIODETChanged = true;
                 else if (this._sTableModel === "SPLITIODET") this._bSPLITIODETChanged = true;
                 else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
@@ -15308,6 +15191,9 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
+                else if (this._sTableModel === "GENINFOREC") {
+                    sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
                 else if (this._sTableModel === "reorder") {
                     this._ReorderDialog.getModel().setProperty(sRowPath + '/EDITED', true);
                 }
@@ -15323,6 +15209,7 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODET") this._bSPLITIODETChanged = true;
                 else if (this._sTableModel === "IODLV") this._bIODLVChanged = true;
                 else if (this._sTableModel === "SPLITIODLV") this._bSPLITIODLVChanged = true;
+                else if (this._sTableModel === "GENINFOREC") this._bGENINFORECChanged = true;
                 else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
                 else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
                 else if (this._sTableModel === "reorder") this._bReorderChanged = true;
@@ -15371,6 +15258,9 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
+                else if (this._sTableModel === "GENINFOREC") {
+                    sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
+                }
                 else {
                     this.byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
@@ -15384,6 +15274,7 @@ sap.ui.define([
                 else if (this._sTableModel === "ioMatList") this._bIOMatListChanged = true;
                 else if (this._sTableModel === "IODLV") this._bIODLVChanged = true;
                 else if (this._sTableModel === "IODET") this._bIODETChanged = true;
+                else if (this._sTableModel === "GENINFOREC") this._bGENINFORECChanged = true;
                 else if (this._sTableModel === "costHdr") this._bCostHdrChanged = true;
                 else if (this._sTableModel === "costDtls") this._bCostDtlsChanged = true;
                 else if (this._sTableModel === "reorder") this._bReorderChanged = true;
@@ -20120,6 +20011,209 @@ sap.ui.define([
                 oUploadCollection.removeAllItems();
 
                 this.enableOtherTabs();
+            },
+
+            //******************************************* */
+            // GENERATE INFO RECORD - C_INFNR
+            //******************************************* */
+
+            onCrtInfoRec: async function () { 
+                var me = this;
+                var aSelectedItems = [];
+                var oView = this.getView();
+                var oJSONModel = new JSONModel();
+
+                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                var currentDate = new Date();
+
+                // Formatting the date (if needed)
+                var dateFormat = sap.ui.core.format.DateFormat.getDateInstance({ pattern: "yyyy-MM-dd" }); // Change the pattern as required
+                var formattedDate = dateFormat.format(currentDate);
+
+                //GET RECORDS THAT CAN BE CREATE WITH INFO RECORD
+                //WILL VARY BASED ON MODULE E.G. STYLE / A&P / PR
+                _promiseResult = new Promise((resolve, reject) => {
+                    this._oModel.read('/INFORECSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + ioNo + "'"
+                        },
+                        success: function (oData, response) {
+                            oData.results.forEach(item => {
+                                //SET DATAB (VALID FROM) AS CURRENT DATE
+                                item.DATAB = item.DATAB === "0000-00-00" || item.DATAB === "    -  -  " ? "" : dateFormat.format(new Date(currentDate));
+                                //SET DATBI (VALID TO) AS '9999-12-31'
+                                item.DATBI = item.DATBI === "0000-00-00" || item.DATBI === "    -  -  " ? "" : dateFormat.format(new Date('9999-12-31'));
+                            })
+
+                            oJSONModel.setData(oData.results);
+                            oView.setModel(oJSONModel, "INFORECDataModel");
+
+                            var oTable = me.byId("ioMatListTab");
+                            var oSelectedIndices = oTable.getSelectedIndices();
+
+                            //BUILD DATA BASED ON SELECTED INDICES WHERE MATERIAL NO EXISTS AT INFORECDataModel
+                            if (oSelectedIndices.length > 0) {
+                                oSelectedIndices.forEach(item => {
+                                    if((oTable.getModel().getData().rows.at(item).VARIANCE)[0] > 0 &&oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]) {
+                                        //PUSH THE ROW TO BE CREATED WITH INFO RECORD
+                                        aSelectedItems.push(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]);
+                                    }
+                                })
+                            }
+                            resolve();
+                        },
+                        error: function (err) {
+                            resolve();
+                        }
+                    })
+                });
+                await _promiseResult;
+
+                // console.log("aSelectedItems", aSelectedItems);
+
+                //USED aSelectedItems as value of table at XML view
+                if(aSelectedItems.length > 0) {
+
+                    oJSONModel.setData(aSelectedItems);
+                    oView.setModel(oJSONModel, "GENINFORECModel");
+
+                    if (!me._INFORECDialog) {
+                        me._INFORECDialog = sap.ui.xmlfragment("zuiio2.view.fragments.CrtInfoRec", me);
+
+                        var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                        var oModelColumns = new JSONModel();
+                        await oModelColumns.loadData(sPath);
+
+                        var oColumns = oModelColumns.getData();
+                        this._oModelColumns = oModelColumns.getData();
+
+                        var oTable = sap.ui.getCore().byId("GENINFORECTab");
+                        oTable.setModel(new JSONModel({
+                            columns: [],
+                            rows: []
+                        }));
+
+                        await this.getIODynamicColumns("INFRECLIST", "ZDV_IOINFREC", "GENINFORECTab", oColumns);                        
+
+                        console.log(me.getView().getModel("GENINFORECModel"));
+                        sap.ui.getCore().byId("GENINFORECTab").getModel().setProperty("/rows", me.getView().getModel("GENINFORECModel").getData());
+                        sap.ui.getCore().byId("GENINFORECTab").bindRows("/rows");
+                        me._tableRendered = "GENINFORECTab";       
+                        
+                        me.setRowEditMode("GENINFOREC");
+                        me._validationErrors = [];
+                        me._sTableModel = "GENINFOREC";
+                        me._dataMode = "EDIT";
+
+                        me.getView().addDependent(me._INFORECDialog);
+
+                    }
+                    me._INFORECDialog.open();
+
+                    
+                } else {
+                    sap.m.MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_PROCESS"]);
+                }
+            },
+
+            onfragmentCreateInfoRec: function () {
+                var me = this;
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                var oModelIO = this.getOwnerComponent().getModel();
+                var oTable = this.byId("ioMatListTab");
+                var aParam = [],
+                    aParam2 = [];
+                var oParam = {};
+                var oInput = [];
+
+                var oTable = sap.ui.getCore().byId("GENINFORECTab");
+                var infnrData = sap.ui.getCore().byId("GENINFORECTab").getModel().getData().rows;
+                console.log("infnrData", infnrData);
+
+                infnrData.forEach(item => {
+                    oInput.push({
+                        Ekorg: item.PURORG,                                 //PURCHASING ORG
+                        Lifnr: item.VENDORCD,                               //VENDOR CD
+                        Matnr: item.MATNO,                                  //MATERIAL NO
+                        Verkf: item.SALESPERSON,                            //SALES PERSON
+                        Telf1: item.TELNO,                                  //TELEPHONE NO
+                        Meins: item.BASEUOM,                                //BASE UNIT
+                        Bstme: item.ORDERUOM,                               //ORDER UNIT
+                        Umren: item.NUMERATOR,                              //NUMERATOR
+                        Umrez: item.DENOMINATOR,                            //DENOMINATOR
+                        Ekgrp: item.PURGRP,                                 //PURCHASING GROUP
+                        Norbm: "1",                                         //PURCHASE ORDER REQD QTY
+                        Webre: true,                                        // GR BASED IV
+                        Datab: sapDateFormat.format(new Date(item.DATAB)) + "T00:00:00",  //VALID FROM DATE
+                        Datbi: sapDateFormat.format(new Date(item.DATBI)) + "T00:00:00",  //VALID TO DATE
+                        Netpr: item.UNITPRICE,                              //NET PRICE
+                        Waers: item.WAERS,                                  //CURRENCYCD
+                        Peinh: item.PEINH,                                  //PRICE UNIT
+                        Meins2: "",                                         //UNIT OF MEASURE OF 2ND QUANTITY   
+                        // Aplfz: "",                                          //PLANNED DLV TIME
+                        Name1: item.NAME1,                                  //VENDOR NAME
+                        Maktx: item.DESCEN,                               //MATERIAL DESCRIPTION
+                        Purplant: item.PURPLANT                             //PURCHASING
+                    });
+                });
+
+                // console.log(oInput);
+
+                oParam["SBU"] = this._sbu;
+                oParam["N_CreateInfoRecParam"] = oInput;
+                oParam["N_CreateInfoRecReturn"] = [];
+
+                console.log("oParam", oParam);
+                oModel.setUseBatch(false);
+                oModel.create("/CreateInfoRecordSet", oParam, {
+                    method: "POST",
+                    success: async function (oDataReturn, oResponse) {
+                        //assign the materials based on the return
+                        console.log(oDataReturn.N_CreateInfoRecReturn.results);
+
+                        oDataReturn.N_CreateInfoRecReturn.results.forEach(iReturn => {
+                            infnrData.filter(fData => fData.MATNO === iReturn.Matnr)
+                                .forEach(iData => {
+                                    iData.REMARKS = iData.REMARKS + " " + iReturn.Message;
+                                    iData.INFNR = iReturn.Infnr;
+                                })
+                        });
+                        
+                        await oTable.getModel("GENINFORECModel").refresh(true);
+                        await oTable.unbindRows(); // Unbind rows
+                        await oTable.bindRows("/rows"); // Rebind rows
+
+                        me.setRowReadMode("GENINFOREC");
+                        sap.ui.getCore().byId("btnINFNRSubmit").setVisible(false);
+                        sap.ui.getCore().byId("btnINFNRCancel").setVisible(false);
+                        sap.ui.getCore().byId("btnINFNRClose").setVisible(true);
+
+                        me.onRefresh("ioMatList");
+                    },
+                    error: function (err) {
+                        // Common.closeLoadingDialog(me);
+                    }
+                })
+
+
+            },
+
+            onCloseInfoRec: function () {
+                this._INFORECDialog.close();
+                this._INFORECDialog.destroy();
+                this._INFORECDialog = null;
+
+                this.unLock();
+            },
+
+            onCancelInfoRec: function () {
+                this._INFORECDialog.close();
+                this._INFORECDialog.destroy();
+                this._INFORECDialog = null;
+
+                this.unLock();
             },
 
             //******************************************* */

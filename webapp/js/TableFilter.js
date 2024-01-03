@@ -12,7 +12,7 @@ sap.ui.define([
             var me = oThis;
             var oTable = me.byId(sTableId);
 
-            if(sTableId === "SPLITIODETTab" || sTableId === "SPLITIODLVTab") {
+            if(sTableId === "SPLITIODETTab" || sTableId === "SPLITIODLVTab"|| sTableId === "GENINFORECTab") {
                 oTable = sap.ui.getCore().byId(sTableId);
             } else
                 oTable = me.byId(sTableId);

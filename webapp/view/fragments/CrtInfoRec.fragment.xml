@@ -3,8 +3,8 @@
     escapeHandler=".onCancelInfoRec" afterClose=".onCancelInfoRec">
         <Panel width="100%" height="100%" class="sapUiNoContentPadding">
             <!-- Versions Table -->
-            <t:Table id="IOINFORECTab" 
-                    rows="{IOINFORECDataModel>/results}" 
+            <t:Table id="GENINFORECTab" 
+                    rows="{GENINFORECDataModel>/results}" 
                     class="sapUiSizeCompact" 
                     showColumnVisibilityMenu="true" 
                     enableColumnFreeze="true" 
@@ -13,16 +13,17 @@
                     selectionBehavior="RowSelector" 
                     alternateRowColors="true">
                 <t:extension>
-                    <Toolbar>
+                    <!-- <Toolbar>
                         <ToolbarSpacer />
                         <SearchField id="searchFieldInfoRec" placeholder="Filter" value="" search="filterGlobally" width="15rem" />
-                    </Toolbar>
+                    </Toolbar> -->
                 </t:extension>
             </t:Table>
         </Panel>
         <buttons>
-            <Button text="{i18n>Submit}" press="onfragmentCreateInfoRec" tooltip="Submit" />
-            <Button text="{i18n>Cancel}" press="onCancelInforRec" tooltip="Cancel" />
+            <Button id="btnINFNRSubmit" text="{i18n>Submit}" press="onfragmentCreateInfoRec" tooltip="Submit" visible="true" />
+            <Button id="btnINFNRCancel" text="{i18n>Cancel}" press="onCancelInfoRec" tooltip="Cancel" visible="true" />
+            <Button id="btnINFNRClose" text="{i18n>Close}" press="onCloseInfoRec" tooltip="Close" visible="false" />
         </buttons>
     </Dialog>
 </core:FragmentDefinition>
