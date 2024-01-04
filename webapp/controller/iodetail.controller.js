@@ -20128,11 +20128,14 @@ sap.ui.define([
                 var oParam = {};
                 var oInput = [];
 
+                var dateObject;
+
                 var oTable = sap.ui.getCore().byId("GENINFORECTab");
                 var infnrData = sap.ui.getCore().byId("GENINFORECTab").getModel().getData().rows;
                 console.log("infnrData", infnrData);
 
                 infnrData.forEach(item => {
+                    console.log(sapDateFormat.format(new Date(item.DATBI)) + "T00:00:00");
                     oInput.push({
                         Ekorg: item.PURORG,                                 //PURCHASING ORG
                         Lifnr: item.VENDORCD,                               //VENDOR CD
@@ -20146,8 +20149,8 @@ sap.ui.define([
                         Ekgrp: item.PURGRP,                                 //PURCHASING GROUP
                         Norbm: "1",                                         //PURCHASE ORDER REQD QTY
                         Webre: true,                                        // GR BASED IV
-                        Datab: sapDateFormat.format(new Date(item.DATAB)) + "T00:00:00",  //VALID FROM DATE
-                        Datbi: sapDateFormat.format(new Date(item.DATBI)) + "T00:00:00",  //VALID TO DATE
+                        Datab: me.formatDateToYYYYMMDD(new Date(item.DATAB)) + "T00:00:00",  //VALID FROM DATE
+                        Datbi: me.formatDateToYYYYMMDD(new Date(item.DATBI)) + "T00:00:00",  //VALID TO DATE
                         Netpr: item.UNITPRICE,                              //NET PRICE
                         Waers: item.WAERS,                                  //CURRENCYCD
                         Peinh: item.PEINH,                                  //PRICE UNIT
@@ -20158,8 +20161,10 @@ sap.ui.define([
                         Purplant: item.PURPLANT                             //PURCHASING
                     });
                 });
+                
+                console.log(oInput);
 
-                // console.log(oInput);
+                // return;
 
                 oParam["SBU"] = this._sbu;
                 oParam["N_CreateInfoRecParam"] = oInput;
@@ -20198,6 +20203,14 @@ sap.ui.define([
                 })
 
 
+            },
+
+            formatDateToYYYYMMDD(date) {
+                var year = date.getFullYear();
+                var month = ('0' + (date.getMonth() + 1)).slice(-2);
+                var day = ('0' + date.getDate()).slice(-2);
+                
+                return year + '-' + month + '-' + day;
             },
 
             onCloseInfoRec: function () {
