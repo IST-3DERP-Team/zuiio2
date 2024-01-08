@@ -809,6 +809,8 @@ sap.ui.define([
                 if (this._startUpInfo === undefined) {
                     this._startUpInfo = "BAS_CONN";
                 }
+
+                // this._startUpInfo = "BAS_CONN";
             },
 
             getCaptionSet: function () {

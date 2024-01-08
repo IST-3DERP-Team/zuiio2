@@ -117,7 +117,7 @@ sap.ui.define([
                             // }
                             if(that._sbu !== "" && that._sbu !== null && that._sbu !== undefined){
                                 // Common.openLoadingDialog(that);
-                                this.onSearch();
+                                that.onSearch();
                                 // Common.closeLoadingDialog(that);
                             }
                         }
