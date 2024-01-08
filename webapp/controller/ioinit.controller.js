@@ -169,6 +169,10 @@ sap.ui.define([
             },
             
             onColumnUpdated: function (oEvent) {
+                var oTable = oEvent.getSource();
+                var sTabId = oTable.sId.split("--")[oTable.sId.split("--").length - 1];
+                this._sActiveTable = sTabId;
+                
                 this.setActiveRowHighlight();
             },
 

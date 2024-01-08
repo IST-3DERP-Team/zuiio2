@@ -1,8 +1,9 @@
 sap.ui.define([ 
     "sap/ui/model/json/JSONModel" ,
     "sap/ui/model/Filter",
-	"sap/ui/model/FilterOperator"
-], function(JSONModel,Filter,FilterOperator) {
+	"sap/ui/model/FilterOperator",
+    "sap/base/util/uid"
+], function(JSONModel,Filter,FilterOperator,uid) {
 	"use strict";
 
 	return {        
@@ -25,33 +26,101 @@ sap.ui.define([
                 // Loop onto each column and attach Column Menu Open event
                 col.attachColumnMenuOpen(function(oEvent) {
                     //Get Menu associated with column
-                    var oMenu = col.getMenu();                        
-                    var oMenuItem = new sap.ui.unified.MenuItem({
+                    var oMenu = col.getMenu();   
+
+                    var oMenuItemFilter = new sap.ui.unified.MenuItem({
+                        id: col.sId + "-menu-custom-fltr-" + uid(),
                         icon: "sap-icon://filter",
                         text: "Filter",
                         select: function(oEvent) {
-                            // console.log("attachColumnMenuOpen", oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"));
-                            _this.onColFilter(sTableId, oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"), me);
+                            _this.onColFilter(sTableId, oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"), me, true);
                         }
                     })
-                    
+
+                    var oMenuItemClearFilter = new sap.ui.unified.MenuItem({
+                        id: col.sId + "-menu-clear-fltr-" + uid(),
+                        icon: "sap-icon://clear-filter",
+                        text: "Clear Filter",
+                        enabled: _this.isFiltered(sTableId, col.getProperty("name"), "COL", me),
+                        select: function(oEvent) {
+                            _this.onColFilter(sTableId, oEvent.getSource().oParent.oParent.getAggregation("label").getProperty("text"), me, false);
+                            _this.onRemoveColFilter(oEvent, me);
+                            _this.onColFilterConfirm(oEvent, me);
+                        }
+                    })
+
+                    var oMenuItemClearAllFilter = new sap.ui.unified.MenuItem({
+                        id: col.sId + "-menu-clear-all-fltr-" + uid(),
+                        icon: "sap-icon://clear-filter",
+                        text: "Clear All Filters",
+                        enabled: _this.isFiltered(sTableId, col.getProperty("name"), "ALL", me),
+                        select: function(oEvent) {
+                            _this.onColFilterClear(oEvent, me);
+                        }
+                    })
+
+                    var oMenuItemClearSort = new sap.ui.unified.MenuItem({
+                        id: col.sId + "-menu-clear-sorting-" + uid(),
+                        icon: "sap-icon://decline",
+                        text: "Clear Sorting",
+                        enabled: _this.isSorted(sTableId, col.getProperty("name"), me),
+                        select: function(oEvent) {
+                            oTable.getBinding().sort(null);
+                            oTable.getBinding().sort([]);
+
+                            oTable.getColumns().forEach(col => {
+                                if (col.getSorted()) {
+                                    col.setSorted(false);
+                                }
+                            })
+                        }
+                    })
+                   
                     //Create the Menu Item that need to be added
                     setTimeout(() => {
                         var wCustomFilter = false;
-                        oMenu.getItems().forEach(item => {
+                        var iSortIndex = -1;
+
+                        oMenu.getItems().forEach((item, index) => {
                             if (item.sId.indexOf("filter") >= 0) {
                                 oMenu.removeItem(item);
+                            }
+
+                            if (item.sId.indexOf("desc") >= 0) {
+                                iSortIndex = index;
                             }
 
                             if (item.mProperties.text !== undefined && item.mProperties.text === "Filter") {
                                 wCustomFilter = true;
                             }
+
+                            if (item.sId.indexOf("clear-all-fltr") >= 0) {
+                                item.setProperty("enabled", _this.isFiltered(sTableId, col.getAggregation("template").getBindingInfo("text").parts[0].path, "ALL", me));
+                            }
+                            else if (item.sId.indexOf("clear-fltr") >= 0) {
+                                item.setProperty("enabled", _this.isFiltered(sTableId, col.getAggregation("template").getBindingInfo("text").parts[0].path, "COL", me));
+                            }
+                            else if (item.sId.indexOf("clear-sorting") >= 0) {
+                                item.setProperty("enabled", _this.isSorted(sTableId, col.getAggregation("template").getBindingInfo("text").parts[0].path, me));
+                            }
                         })
-                        
+
                         if (!wCustomFilter) {
-                            oMenu.insertItem(oMenuItem, 2);                               
+                            var iCounter = 0;
+
+                            if (oMenuItemClearSort !== -1) {
+                                iCounter++;
+                                oMenu.insertItem(oMenuItemClearSort, iSortIndex + iCounter);
+                            }
+                            
+                            iCounter++;
+                            oMenu.insertItem(oMenuItemFilter, iSortIndex + iCounter);
+                            iCounter++;
+                            oMenu.insertItem(oMenuItemClearFilter, iSortIndex + iCounter);
+                            iCounter++;
+                            oMenu.insertItem(oMenuItemClearAllFilter, iSortIndex + iCounter);
                         }
-                        
+
                         oMenu.setPageSize(oMenu.getItems().length); 
                     }, 10);
                 });
@@ -59,9 +128,6 @@ sap.ui.define([
         },
 
         onColFilter: function(oEvent, sColumnLabel, oThis) {
-
-            // console.log("onColFilter");
-            // console.log(sColumnLabel);
             var me = oThis;
             // var oDDText = me.getView().getModel("ddtext").getData();
             var sTableId = "";
@@ -264,20 +330,23 @@ sap.ui.define([
             // console.log("oColumnValues");
             // console.log(oColumnValues);
             oDialog.getModel().setProperty("/sourceTabId", sTableId);
+            oDialog.getModel().setProperty("/selectedItem", vSelectedItem);
+            oDialog.getModel().setProperty("/selectedColumn", vSelectedColumn);
+            oDialog.getModel().setProperty("/reset", false);
             oDialog.getModel().setProperty("/items", oTableColumns);
             oDialog.getModel().setProperty("/values", oColumnValues);
             oDialog.getModel().setProperty("/currValues", jQuery.extend(true, [], oColumnValues[vSelectedColumn]));
-            oDialog.getModel().setProperty("/rowCount", oColumnValues[vSelectedColumn].length);
-            oDialog.getModel().setProperty("/selectedItem", vSelectedItem);
-            oDialog.getModel().setProperty("/selectedColumn", vSelectedColumn);
-            oDialog.getModel().setProperty("/search", oSearchValues);
-            oDialog.getModel().setProperty("/reset", false);
+            oDialog.getModel().setProperty("/rowCount", oColumnValues[vSelectedColumn].length);            
+            oDialog.getModel().setProperty("/search", oSearchValues);            
             oDialog.getModel().setProperty("/custom", oFilterCustom);
             oDialog.getModel().setProperty("/customColFilterOperator", oFilterCustom[vSelectedColumn].Operator);
             oDialog.getModel().setProperty("/customColFilterFrVal", oFilterCustom[vSelectedColumn].ValFr);
             oDialog.getModel().setProperty("/customColFilterToVal", oFilterCustom[vSelectedColumn].ValTo);
             oDialog.getModel().setProperty("/searchValue", "");
-            oDialog.open();
+            
+            if (show) {
+                oDialog.open();
+            }
 
             var bAddSelection = false;
             var iStartSelection = -1, iEndSelection = -1;
@@ -316,13 +385,10 @@ sap.ui.define([
             if (bFiltered) { oBtnClear.setEnabled(true); }
             else { oBtnClear.setEnabled(false); }
 
-            // console.log(oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems());
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
-                // console.log("getTitle", item);
-                // console.log("286", oTableColumns);
-                // if (oTableColumns.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered) { item.setIcon("sap-icon://filter") }
-                // else { item.setIcon("sap-icon://text-align-justified") }
-                item.setIcon("sap-icon://filter");
+                if (oTableColumns.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered) { item.setIcon("sap-icon://filter") }
+                else { item.setIcon("sap-icon://text-align-justified") }
+                // item.setIcon("sap-icon://filter");
             });
 
             if (vFilterType === "UDF") {
@@ -443,6 +509,29 @@ sap.ui.define([
             })
 
             me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
+            me.setActiveRowHighlight(sSourceTabId);
+
+            //additonal code
+            if (sSourceTabId === "headerTab") {
+                var vActiveRec = me.byId(sSourceTabId).getModel().getData().rows.filter((item,index) => index === 0)[0].COSTCOMPCD;
+
+                if (me.getView().getModel("ui").getProperty("/activeComp") !== vActiveRec) {
+                    me.byId(sSourceTabId).getModel().getData().rows.forEach(item => {
+                        if (item.COSTCOMPCD === vActiveRec) { item.ACTIVE = "X"; }
+                        else { item.ACTIVE = ""; }
+                    });
+
+                    // me.setActiveRowHighlight(sSourceTabId);
+                    me.getView().getModel("ui").setProperty("/activeComp", vActiveRec);
+                    me.getView().getModel("ui").setProperty("/activeCompDisplay", vActiveRec);
+                    me.getDetailData(false);
+                }
+
+                me.getView().getModel("counts").setProperty("/header", me.byId(sSourceTabId).getBinding("rows").aIndices.length);
+            }
+            else if (sSourceTabId === "detailTab") {
+                me.getView().getModel("counts").setProperty("/detail", me.byId(sSourceTabId).getBinding("rows").aIndices.length);
+            }
         },
 
         onColFilterCancel: function(oEvent, oThis) {
@@ -457,9 +546,8 @@ sap.ui.define([
             oDialog.getModel().setProperty("/custom", oDialogModel.getData().custom);
 
             oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => {
-                // console.log("oDialog.getContent()", item);
-                // var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
-                var isFiltered = false;
+                var isFiltered = oDialogModel.getData().items.filter(fItem => fItem.ColumnLabel === item.getTitle())[0].isFiltered;
+                // var isFiltered = false;
                 
                 if (isFiltered) {
                     item.setIcon("sap-icon://filter");
@@ -487,7 +575,6 @@ sap.ui.define([
             var oSourceTableColumns = me.byId(sSourceTabId).getColumns();
             
             aColumnItems.forEach(item => {
-                // console.log("aColumnItems", item);
                 var oColumn = oSourceTableColumns.filter(fItem => fItem.getAggregation("label").getProperty("text") === item.ColumnLabel)[0];                    
                 var aColFilter = [];
                 var oColFilter = null;
@@ -547,6 +634,51 @@ sap.ui.define([
             // console.log(oFilter)
             me.byId(sSourceTabId).getBinding("rows").filter(oFilter, "Application");
             me._colFilters[sSourceTabId] = jQuery.extend(true, {}, oDialog.getModel().getData());
+
+            //additonal code
+            if (oFilter !== "") {
+                if (sSourceTabId === "headerTab") {
+                    if (me.byId(sSourceTabId).getBinding("rows").aIndices.length === 0) {
+                        me.getView().getModel("ui").setProperty("/activeComp", '');
+                        me.getView().getModel("ui").setProperty("/activeCompDisplay", '');
+                        me.getView().getModel("counts").setProperty("/header", 0);
+                        me.getView().getModel("counts").setProperty("/detail", 0);
+
+                        me.byId("detailTab").setModel(new JSONModel({
+                            rows: []
+                        }));
+                    }
+                    else {
+                        var vActiveRec = me.byId(sSourceTabId).getModel().getData().rows.filter((item,index) => index === me.byId(sSourceTabId).getBinding("rows").aIndices[0])[0].COSTCOMPCD;
+
+                        if (me.getView().getModel("ui").getProperty("/activeComp") !== vActiveRec) {
+                            me.byId(sSourceTabId).getModel().getData().rows.forEach(item => {
+                                if (item.COSTCOMPCD === vActiveRec) { item.ACTIVE = "X"; }
+                                else { item.ACTIVE = ""; }
+                            });
+
+                            me.setActiveRowHighlight(sSourceTabId);
+                            me.getView().getModel("ui").setProperty("/activeComp", vActiveRec);
+                            me.getView().getModel("ui").setProperty("/activeCompDisplay", vActiveRec);
+                            me.getDetailData(false);
+                        }
+
+                        me.getView().getModel("counts").setProperty("/header", me.byId(sSourceTabId).getBinding("rows").aIndices.length);
+                    }
+                }
+                else if (sSourceTabId === "detailTab") {
+                    if (me.byId(sSourceTabId).getBinding("rows").aIndices.length === 0) {
+                        me.getView().getModel("counts").setProperty("/detail", 0);
+                    }
+                    else {
+                        me.getView().getModel("counts").setProperty("/detail", me.byId(sSourceTabId).getBinding("rows").aIndices.length);
+                        me.setActiveRowHighlight(sSourceTabId);
+                    }
+                }
+            }
+            else {
+                me.getView().getModel("counts").setProperty("/header", me.byId(sSourceTabId).getModel().getData().rows.length);
+            }
 
             // console.log("sSourceTabId", sSourceTabId);
             if(me.getView().byId(sSourceTabId + "Cnt") !== undefined) {
@@ -1110,5 +1242,68 @@ sap.ui.define([
             }
         },
 
+        removeColFilters: function(sTableId, oThis) {
+            var me = oThis;
+            var oDialog = me._GenericFilterDialog;
+            
+            if (me._colFilters[sTableId] !== undefined) {
+                if (oDialog) {
+                    var aColumnItems = me._colFilters[sTableId].items;
+                    var oColumnValues = me._colFilters[sTableId].values;
+                    var oFilter = "";
+
+                    aColumnItems.forEach(item => {
+                        oColumnValues[item.ColumnName].forEach(val => val.Selected = true)
+                        item.isFiltered = false;
+                    })
+
+                    me.byId(sTableId).getBinding("rows").filter(oFilter, "Application");           
+                    oDialog.getContent()[0].getMasterPages()[0].getContent()[0].getItems().forEach(item => item.setIcon("sap-icon://text-align-justified"));
+
+                    me.byId(sTableId).getColumns().forEach(col => { 
+                        col.setProperty("filtered", false);
+                    })
+                }
+            }
+        },
+
+        isFiltered: function(sTableId, sColumnName, sType, oThis) {
+            var me = oThis;
+            var aColumnItems = undefined;
+            var bFiltered = false;
+
+            if (me._GenericFilterDialog) {
+                if (me._colFilters[sTableId] !== undefined) {
+                    aColumnItems = me._colFilters[sTableId].items;
+
+                    if (sType === "ALL") {
+                        if (aColumnItems.filter(fItem => fItem.isFiltered === true).length > 0) { bFiltered = true; }
+                    }
+                    else {
+                        if (aColumnItems.filter(fItem => fItem.ColumnName === sColumnName && fItem.isFiltered === true).length > 0) { bFiltered = true; }
+                    }
+                }
+            }
+
+            return bFiltered;
+        },
+
+        isSorted: function(sTableId, sColumnName, oThis) {
+            var me = oThis;
+            var bSorted = false;
+
+            console.log("isSorted", sTableId, sColumnName);
+            console.log(me.byId(sTableId).getColumns());
+            me.byId(sTableId).getColumns().forEach(fItem => {
+                console.log(fItem.getProperty("name"));
+            });
+            var oColumnProp = me.byId(sTableId).getColumns().filter(fItem => fItem.getProperty("name") === sColumnName)[0];
+
+            if (oColumnProp.getProperty("sorted")) {
+                bSorted = true;
+            }
+            console.log(oColumnProp)
+            return bSorted;
+        }
 	};
 });
