@@ -30,7 +30,6 @@ sap.ui.define([
         var _shellHash;
         var _shellHome;
         var _splitColumns;
-        var _startUpInfo = {};
 
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
@@ -57,6 +56,9 @@ sap.ui.define([
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
                 that = this;
+
+                var _startUpInfo = {};
+                var defaultID;
 
                 // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
 
@@ -393,6 +395,8 @@ sap.ui.define([
                 // console.log(oEvent);
                 var me = this;
 
+                me.defaultID = "BAS_CONN";
+
                 var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();
                 me.hasSDData = false;
 
@@ -453,6 +457,26 @@ sap.ui.define([
                 this.getVHSet("/DLVIODETCHKSet", "DlvIODetChkModel", false, false);
                 this.getVHSet("/ATTRIBTYPvhSet", "AttribTypModel", false, false);
                 this.getVHSet("/ATTRIBCODEvhSet", "AttribCodesModel", false, false);
+
+                // var oModelStartUp = new sap.ui.model.json.JSONModel();
+                // await oModelStartUp.loadData("/sap/bc/ui2/start_up").then(() => {
+                //     _startUpInfo = oModelStartUp.oData
+                //     console.log(oModelStartUp, oModelStartUp.oData);
+                // });
+
+                var oModelStartUp = new sap.ui.model.json.JSONModel();
+
+                oModelStartUp.loadData("/sap/bc/ui2/start_up").then(
+                    function () {
+                        console.log("Data loaded successfully:", oModelStartUp.getData());
+                        _startUpInfo = oModelStartUp.getData();
+                    }
+                ).catch(
+                    function (error) {
+                        console.error("Error loading data:", error);
+                        _startUpInfo.id = me.defaultID;
+                    }
+                );
 
                 me.SalDocData = this.getOwnerComponent().getModel("routeModel").getProperty("/results");
 
@@ -800,17 +824,15 @@ sap.ui.define([
                 this._aColFilters = [];
                 this._aColSorters = [];
 
-                var oModelStartUp = new sap.ui.model.json.JSONModel();
-                await oModelStartUp.loadData("/sap/bc/ui2/start_up").then(() => {
-                    this._startUpInfo = oModelStartUp.oData
-                    //console.log(oModelStartUp, oModelStartUp.oData);
-                });
+                // var oModelStartUp = new sap.ui.model.json.JSONModel();
+                // await oModelStartUp.loadData("/sap/bc/ui2/start_up").then(() => {
+                //     this._startUpInfo = oModelStartUp.oData;
+                //     //console.log(oModelStartUp, oModelStartUp.oData);
+                // });
 
-                if (this._startUpInfo === undefined) {
-                    this._startUpInfo = "BAS_CONN";
-                }
-
-                // this._startUpInfo = "BAS_CONN";
+                // if (this._startUpInfo === undefined) {
+                //     this._startUpInfo = "BAS_CONN";
+                // }
             },
 
             getCaptionSet: function () {
@@ -11788,6 +11810,11 @@ sap.ui.define([
                                     me._bIOATTRIBChanged = false;
                                     break;
 
+                                case "ioMatList":
+                                    console.log("ioMatList");
+                                    me.onRefresh("ioMatList");
+                                    break;
+
                                 default: break;
                             }
                         }).then(async function () {
@@ -12381,6 +12408,10 @@ sap.ui.define([
                                 case "IOATTRIB":
                                     await me.reloadIOData("IOATTRIBTab", "/IOATTRIBSet");
                                     me._bIOATTRIBChanged = false;
+                                    break;
+                                case "ioMatList":
+                                    console.log("ioMatList");
+                                    me.onRefresh("ioMatList");
                                     break;
 
                                 default: break;
@@ -15405,6 +15436,17 @@ sap.ui.define([
                 var oTableSource = oSource.oParent.oParent;
                 var sTabId = oTableSource.sId.split("--")[oTableSource.sId.split("--").length - 1];
 
+                oSource.getSuggestionItems().forEach(item => {
+                    if (oSource.getSelectedKey() === "" && oSource.getValue() !== "") {
+                        if (oSource.getProperty("textFormatMode") === "ValueKey" && ((item.getProperty("text") + " (" + item.getProperty("key") + ")") === oSource.getValue())) {
+                            oSource.setSelectedKey(item.getProperty("key"));
+                        }
+                        else if ((oSource.getProperty("textFormatMode") === "Value" || oSource.getProperty("textFormatMode") === "Key") && item.getProperty("key") === oSource.getValue()) {
+                            oSource.setSelectedKey(item.getProperty("key"));
+                        }
+                    }
+                })
+
                 // console.log("handleValueHelpChange", sTabId);
 
                 if (sTabId === "IODETTab") {
@@ -16328,19 +16370,15 @@ sap.ui.define([
 
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
                 var oJSONModel = new JSONModel();
-                var id = null;
-                console.log("_startUpInfo", this._startUpInfo);
-                console.log(this._sbu);
-                if (this._startUpInfo !== undefined) {
-                    var id = this._startUpInfo.id; //"NCJOAQUIN" 
+                var id;
+
+                if(this._startUpInfo === undefined) {
+                    id = this.defaultID;
+                } else {
+                    id = this._startUpInfo.id;
                 }
 
-                if (id === null) {
-                    // that.byId("btnCrtInfoRec").setVisible(true);
-                    // return;
-
-                    id = "BAS_CONN";
-                }
+                console.log(id);
 
                 oModel.read("/CreateMatRoleSet", {
                     urlParameters: {
@@ -18943,7 +18981,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            // console.log(arg, oData);
+                            console.log(arg, oData);
                             Common.closeProcessingDialog(me);
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
@@ -20057,7 +20095,8 @@ sap.ui.define([
                             //BUILD DATA BASED ON SELECTED INDICES WHERE MATERIAL NO EXISTS AT INFORECDataModel
                             if (oSelectedIndices.length > 0) {
                                 oSelectedIndices.forEach(item => {
-                                    if((oTable.getModel().getData().rows.at(item).VARIANCE)[0] > 0 &&oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]) {
+                                    // if((oTable.getModel().getData().rows.at(item).VARIANCE)[0] > 0 &&oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]) {
+                                    if(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]) {
                                         //PUSH THE ROW TO BE CREATED WITH INFO RECORD
                                         aSelectedItems.push(oData.results.filter(col => col.MATNO === oTable.getModel().getData().rows.at(item).MATNO)[0]);
                                     }
@@ -20072,7 +20111,7 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                // console.log("aSelectedItems", aSelectedItems);
+                console.log("aSelectedItems", aSelectedItems);
 
                 //USED aSelectedItems as value of table at XML view
                 if(aSelectedItems.length > 0) {
