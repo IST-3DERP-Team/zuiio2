@@ -691,6 +691,7 @@
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
                                     <Button id="btnSubmitMRP" text="{ddtext>/SUBMITMRP}" icon="sap-icon://action" press="onSubmitMRP" tooltip="{ddtext>/SUBMITMRP}" visible="true" />
                                     <Button id="btnAssignMatNo" text="{ddtext>/ASSIGNMATNO}" icon="sap-icon://multiselect-all" press="onAssignMatNo" tooltip="{ddtext>/ASSIGNMATNO}" visible="true" />
+                                    <Button id="btnReqMatMapping" text="{ddtext>/REQMATMAPPING}" icon="sap-icon://multiselect-all" press="onReqMatMapping" tooltip="{ddtext>/REQMATMAPPING}" visible="true" />
                                     <Button id="btnReorderIOMatList" text="{ddtext>/REORDER}" icon="sap-icon://redo" press="onReorder" tooltip="{ddtext>/REORDER}" visible="true" />
                                     <Button id="btnCrtInfoRec" text="{ddtext>/CRTINFOREC}" icon="sap-icon://multiselect-all" press="onCrtInfoRec" tooltip="{ddtext>/CRTINFOREC}" visible="true" />
                                     <Button id="btnExportIOMatList" icon="sap-icon://excel-attachment" press="onExport" tooltip="{ddtext>/EXCELEXPORT}" visible="true">

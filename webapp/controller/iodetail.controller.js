@@ -31,6 +31,9 @@ sap.ui.define([
         var _shellHome;
         var _splitColumns;
 
+        var _startUpInfo = {};
+        var defaultID;
+
         var sIONo = "", sIOItem = "", sDlvSeq = "", sTableName = "", sDeleted = "";
         var sIOPrefix = "", sIODesc = "";
 
@@ -56,9 +59,6 @@ sap.ui.define([
         return Controller.extend("zuiio2.controller.iodetail", {
             onInit: function () {
                 that = this;
-
-                var _startUpInfo = {};
-                var defaultID;
 
                 // sap.ui.getCore().byId("backBtn").mEventRegistry.press[0].fFunction = this._fBackButton;
 
@@ -1125,7 +1125,10 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "CRTINFOREC" });  
 
                 oDDTextParam.push({ CODE: "WARN_NOT_SAME_SALESTERM_GRP" });  
-                oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_PROCESS" });                  
+                oDDTextParam.push({ CODE: "INFO_NO_DATA_TO_PROCESS" });   
+                oDDTextParam.push({ CODE: "REQMATMAPPING" });   
+                oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_MATERIAL" });   
+                oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_REQMATERIAL" });   
 
                 // console.log(oDDTextParam);
 
@@ -11623,6 +11626,161 @@ sap.ui.define([
                 }
             },
 
+            async onBatchSaveReqMatMap(arg, oData) {
+                // arg = source
+                // oData = data collection for Material Mapping
+                var me = this;
+                var oData2 = oData;
+
+                var entitySet = "/";
+                var oModel;
+
+                oData2.forEach(item => {
+
+
+                    entitySet = entitySet + "MainSet";
+                    oModel = me.getOwnerComponent().getModel("ZGW_3DERP_IOMATLIST_SRV");
+                    oModel.setHeaders({ UPDTYP: "REQMATMAP" });
+
+                    oModel.setUseBatch(true);
+                    oModel.setDeferredGroups(["update"]);
+
+                    var mParameters = {
+                        "groupId": "update"
+                    }
+
+                    var centitySet = entitySet;
+
+                    Common.openProcessingDialog(me, "Processing...");
+
+                    entitySet = centitySet + "(";
+                    var param = {};
+                    var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
+                    var itemValue;
+
+                    this._aColumns[arg].forEach(col => {
+                        if (arg === "costHdr" && col.DataType === "DATETIME") {
+                            if (item[col.ColumnName] == null || item[col.ColumnName] == "") itemValue = null;
+                            else itemValue = sapDateFormat.format(new Date(item[col.ColumnName])) + "T00:00:00"
+                        }
+                        //SET FORMAT OF DATE ALIGNED TO ABAP WHEN CREATING PAYLOAD
+                        else if (col.DataType === "DATETIME") {
+                            itemValue = sapDateFormat.format(new Date(item[col.ColumnName]));
+                            // } else if(col.DataType === "BOOLEAN") {
+                            //     itemValue = item[col.ColumnName] === true ? "X" : "";
+                        } else {
+                            itemValue = item[col.ColumnName];
+                        }
+
+                        // //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
+                        // if (arg === "IODLV" || arg === "IODET") {
+                        //     param[col.ColumnName] = itemValue;
+                        // } else if (arg === "IOATTRIB") {
+                        //     if (col.Key === "X")
+                        //         param[col.ColumnName] = itemValue;
+
+                        //     if (col.Editable)
+                        //         param[col.ColumnName] = itemValue;
+                        // }
+                        // //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
+                        // else {
+                        //     if (col.Editable) {
+                        //         param[col.ColumnName] = itemValue;
+                        //     }
+                        // }
+
+                        if (iKeyCount === 1) {
+                            if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
+                                if (col.Key === "X")
+                                    if (col.DictType.indexOf("INT") !== -1)
+                                        entitySet += item[col.ColumnName]
+                                    else
+                                        entitySet += "'" + item[col.ColumnName] + "'"
+                            } else
+                                entitySet += "'" + item[col.ColumnName] + "'"
+                        }
+                        else if (iKeyCount > 1) {
+                            if (arg === "IOATTRIB" || arg === "IODET" || arg === "IODLV") {
+                                if (col.Key === "X") {
+                                    if (col.DictType.indexOf("INT") !== -1)
+                                        entitySet += col.ColumnName + "=" + item[col.ColumnName] + ","
+                                    else
+                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                }
+                            } else
+                                if (col.Key === "X") {
+                                    entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                } else {
+                                    // console.log(arg, col.ColumnName);
+                                    if (arg === "color" && col.ColumnName === "ATTRIBCD") {
+                                        entitySet += col.ColumnName + "='" + item[col.ColumnName] + "',"
+                                    }
+                                }
+                        }
+                    })
+
+                    if (iKeyCount > 1) entitySet = entitySet.substring(0, entitySet.length - 1);
+                    entitySet += ")";
+
+                    // console.log(param);
+                    // console.log(mParameters);
+                    console.log(entitySet, param, mParameters)
+                    // oModel.update(entitySet, param, mParameters);
+
+                    // Common.closeProcessingDialog(me);
+                    // return;
+                });
+
+                var batchPromise = new Promise(function (resolve, reject) {
+                    oModel.attachBatchRequestCompleted(function () {
+                        resolve();
+                    });
+
+                    oModel.attachBatchRequestFailed(function () {
+                        reject(new Error("Batch request failed"));
+                    });
+                })
+
+                oModel.submitChanges({
+                    groupId: "update",
+                    success: function (oData, oResponse) {
+                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                    },
+                    error: function () {
+                    }
+                });
+
+                batchPromise.then(function () {
+                    if (arg === "ioMatList") {
+                        console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
+                        if (me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
+                            me.byId("btnCrtInfoRec").setVisible(true);
+                        else
+                            me.byId("btnCrtInfoRec").setVisible(false);
+
+                    }
+
+                    me.setActiveRowHighlightByTableId(arg + "Tab");
+
+                    if (arg === "color" || arg === "process" || arg === "ioMatList" || arg === "costHdr" || arg === "costDtls") {
+                        if (me._aColFilters.length > 0) { me.setColumnFilters(arg + "Tab"); }
+                        if (me._aColSorters.length > 0) { me.setColumnSorters(arg + "Tab"); }
+                    }
+                }).then(async function () {
+                    switch (arg) {
+                        case "ioMatList":
+                            me.onRefresh("ioMatList");
+                            break;
+
+                        default: break;
+                    }
+                }).then(async function () {
+                    Common.closeProcessingDialog(me);
+                    // await me.unLock();
+                })
+
+            },
+
             async onBatchSave(arg) {
                 // alert("on Save");
                 var me = this;
@@ -16330,6 +16488,7 @@ sap.ui.define([
                             row.PRQTY = row.PRQTY + "";
                             row.VARIANCE = row.VARIANCE + "";
                             row.DELETED = row.DELETED === "X" ? true : false;
+                            row.REQMATNO = row.REQMATNO === "X" ? true : false;
                         });
 
                         me.byId("ioMatListTab").getModel().setProperty("/rows", oData.results);
@@ -16372,10 +16531,10 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var id;
 
-                if(this._startUpInfo === undefined) {
+                if(_startUpInfo === undefined) {
                     id = this.defaultID;
                 } else {
-                    id = this._startUpInfo.id;
+                    id = _startUpInfo.id;
                 }
 
                 console.log(id);
@@ -16389,15 +16548,21 @@ sap.ui.define([
                         console.log("result", result);
                         result = result.filter(a => a.Zresult === "0");
 
+                        console.log("result", result);
                         oJSONModel.setData(result);
                         that.getView().setModel(oJSONModel, "RoleAuthModel");
-                        if (result.length == 0) {
-                            that.byId("btnCrtInfoRec").setVisible(false);
-                            that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", false);
-                        }
-                        else {
+                        if (result.length > 0) {
+                            console.log("result length", result.length);
                             that.byId("btnCrtInfoRec").setVisible(true);
                             that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", true);
+                            console.log("RoleAuthINFNR true", id);
+                            
+                        }
+                        else {
+                            console.log("result length", result.length);
+                            that.byId("btnCrtInfoRec").setVisible(false);
+                            that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", false);
+                            console.log("RoleAuthINFNR false", id);
                         }
                     },
                     error: function () {
@@ -16712,6 +16877,60 @@ sap.ui.define([
                 }
                 else {
                     MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                }
+            },
+
+            onReqMatMapping: async function(oEvent) {
+                var oTable = this.byId("ioMatListTab");
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var oTmpSelectedIndices = [];
+                var aData = oTable.getModel().getData().rows;
+                var aParamNoMat = [];
+                var aParamNoReq = [];
+
+                console.log(aData);
+
+                if (oSelectedIndices.length > 0) {
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach((item, index) => {
+                        // console.log(aData.at(item));
+                        if (aData.at(item).MATNO === "" && aData.at(item).DELETED === false) {
+                            aParamNoMat.push(aData.at(item));
+                        }
+                    })
+
+                    if (aParamNoMat.length > 0) {
+
+                        oSelectedIndices.forEach((item, index) => {
+                            // console.log(aData.at(item));
+                            if (aData.at(item).MATNO === "" && aData.at(item).DELETED === false && aData.at(item).REQMATNO === false) {
+                                aParamNoReq.push(aData.at(item));
+                            }
+                        })
+
+                        if(aParamNoReq.length > 0) {
+                            // alert(aParamNoReq.length);
+
+                            await this.onBatchSaveReqMatMap("ioMatList", aParamNoReq);
+                            this.onRefresh("ioMatList");
+                        } else {
+                            MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_ALL_RECORDS_HAS_REQMATERIAL"]);
+                            return;
+                        }
+                    }
+                    else {
+                        MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_ALL_RECORDS_HAS_MATERIAL"]);
+                        return;
+                    }
+                }
+                else {
+                    MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_SEL_RECORD_TO_PROC"]);
+                    return;
                 }
             },
 
