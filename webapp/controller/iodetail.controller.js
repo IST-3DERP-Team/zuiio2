@@ -128,7 +128,9 @@ sap.ui.define([
                     defShipToCust: '',
                     iostatus: '',
                     currEDISOURCE: false,
-                    RoleAuthINFNR: false
+                    RoleAuthINFNR: false,
+                    ioMatListCnt: 0,
+                    ioMatListCntSel: 0
                 }), "ui2");
 
                 this.getView().setModel(new JSONModel({
@@ -1129,6 +1131,7 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "REQMATMAPPING" });   
                 oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_MATERIAL" });   
                 oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_REQMATERIAL" });   
+                oDDTextParam.push({ CODE: "CASCADE" });                   
 
                 // console.log(oDDTextParam);
 
@@ -9904,6 +9907,7 @@ sap.ui.define([
                                 this.byId("btnEditIOMatList").setVisible(false);
                                 this.byId("btnRefreshIOMatList").setVisible(false);
                                 this.byId("btnExportIOMatList").setVisible(false);
+                                this.byId("btnCascade").setVisible(true);
                                 this.byId("btnSaveIOMatList").setVisible(true);
                                 this.byId("btnCancelIOMatList").setVisible(true);
                                 this.byId("btnReorderIOMatList").setVisible(false);
@@ -10097,6 +10101,7 @@ sap.ui.define([
                         this.byId("btnEditIOMatList").setVisible(true);
                         this.byId("btnRefreshIOMatList").setVisible(true);
                         this.byId("btnExportIOMatList").setVisible(true);
+                        this.byId("btnCascade").setVisible(false);
                         this.byId("btnSaveIOMatList").setVisible(false);
                         this.byId("btnCancelIOMatList").setVisible(false);
                         this.byId("btnReorderIOMatList").setVisible(true);
@@ -15911,6 +15916,7 @@ sap.ui.define([
                             this.byId("btnEditIOMatList").setVisible(true);
                             this.byId("btnRefreshIOMatList").setVisible(true);
                             this.byId("btnExportIOMatList").setVisible(true);
+                            this.byId("btnCascade").setVisible(false);
                             this.byId("btnSaveIOMatList").setVisible(false);
                             this.byId("btnCancelIOMatList").setVisible(false);
                             this.byId("btnReorderIOMatList").setVisible(true);
@@ -16496,7 +16502,7 @@ sap.ui.define([
                         me._tableRendered = "ioMatListTab";
 
                         oText = me.getView().byId("ioMatListTabCnt");
-                        oText.setText(oData.results.length + " item/s");
+                        oText.setText(oData.results.length + " Row(s) - 0 selected");
 
                         TableFilter.applyColFilters(me);
 
@@ -19225,7 +19231,7 @@ sap.ui.define([
                             if (me._aColSorters.length > 0) { me.setColumnSorters(arg + "Tab", aSorters); }
 
                             oText = me.getView().byId("ioMatListTabCnt");
-                            oText.setText(oData.results.length + " item/s");
+                            oText.setText(oData.results.length + " Row(s) - 0 selected");
 
                             me._oModelIOMatList.read('/InfoRecCheckSet', {
                                 success: function (oData2) {
@@ -19646,6 +19652,38 @@ sap.ui.define([
             onFilter: function (oEvent) {
                 var oTable = oEvent.getSource();
                 this.setActiveRowHighlightByTable(oTable);
+            },
+
+            onRowSelectionChange: function (oEvent) {
+                var oTable = oEvent.getSource();
+                var aSelectedIndices = oTable.getSelectedIndices();
+                var aSelectedItems = [];
+    
+                aSelectedIndices.forEach(function (index) {
+                    var oSelectedData = oTable.getContextByIndex(index).getObject();
+                    aSelectedItems.push(oSelectedData);
+                });
+
+                var oBinding = oTable.getBinding("rows");
+
+                // Check if the binding is available (not undefined)
+                if (oBinding) {
+                    // Get the total number of rows in the binding
+                    var iTotalRowCount = oBinding.getLength();
+
+                    console.log("Total Number of Rows:", iTotalRowCount);
+                } else {
+                    console.error("Table binding is undefined. Make sure the table is properly bound to a model.");
+                }
+    
+                console.log("Selected Rows:", oTable, aSelectedItems);
+                // alert(aSelectedItems.length);
+
+
+                // Your custom logic for handling the selected rows
+                var oText;
+                oText = this.getView().byId("ioMatListTabCnt");
+                oText.setText(iTotalRowCount + " Row(s) - " + aSelectedItems.length + " selected");
             },
 
             onFirstVisibleRowChanged: function (oEvent) {
