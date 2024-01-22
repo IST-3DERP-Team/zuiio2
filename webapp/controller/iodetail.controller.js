@@ -398,6 +398,7 @@ sap.ui.define([
                 var me = this;
 
                 me.defaultID = "BAS_CONN";
+                this._aCopyInfo = {};
 
                 var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();
                 me.hasSDData = false;
@@ -7160,6 +7161,7 @@ sap.ui.define([
                     var resultDescription;
 
                     var oModelRelease = this.getOwnerComponent().getModel("ZGW_3DERP_RFC_SRV");
+                    oModelRelease.setHeaders({ UPDTYP: "RELEASE" });
 
                     var batchPromise = new Promise(function (resolve, reject) {
                         oModelRelease.attachBatchRequestCompleted(function () {
@@ -9907,6 +9909,7 @@ sap.ui.define([
                                 this.byId("btnEditIOMatList").setVisible(false);
                                 this.byId("btnRefreshIOMatList").setVisible(false);
                                 this.byId("btnExportIOMatList").setVisible(false);
+                                this.byId("btnReqMatMapping").setVisible(false);
                                 this.byId("btnCascade").setVisible(true);
                                 this.byId("btnSaveIOMatList").setVisible(true);
                                 this.byId("btnCancelIOMatList").setVisible(true);
@@ -10101,6 +10104,7 @@ sap.ui.define([
                         this.byId("btnEditIOMatList").setVisible(true);
                         this.byId("btnRefreshIOMatList").setVisible(true);
                         this.byId("btnExportIOMatList").setVisible(true);
+                        this.byId("btnReqMatMapping").setVisible(true);
                         this.byId("btnCascade").setVisible(false);
                         this.byId("btnSaveIOMatList").setVisible(false);
                         this.byId("btnCancelIOMatList").setVisible(false);
@@ -11786,6 +11790,96 @@ sap.ui.define([
 
             },
 
+            onCascade: function(oEvent) {
+                //var oButton = oEvent.getSource();
+                //var tabName = oButton.data('TableName')
+                //console.log(that._aCopyInfo)
+                if(Object.keys(that._aCopyInfo).length == 0 ){
+                    MessageBox.warning("No data selected.");
+                    return;
+                }
+
+                var sTableId = that._aCopyInfo._sTableId;
+                var lastIndex = that._aCopyInfo._sTableId.lastIndexOf("--");
+                console.log("lastIndex", lastIndex);
+                var parts = sTableId.split("--");
+                sTableId = parts[parts.length - 1];
+                console.log("sTableId", sTableId);
+                var sCopyValue = that._aCopyInfo._sValue;
+                var sColumnName = that._aCopyInfo._sColumnName;
+                var sColCurrency = "CURRENCYCD";
+                var sRowIndex = that._aCopyInfo._sCurrentRowIndex;
+                var oTable = this.getView().byId(sTableId);
+                console.log("onCascade 1", oTable, oTable.getModel().getData());
+                var oData =  oTable.getModel().getData().rows;
+               
+                // Extracting the value using destructuring
+                const { [sColumnName]: extractedValue } = oData[sRowIndex];
+                console.log(extractedValue); // Output:
+
+                if (sColumnName === "VENDORCD" && sTableId === "ioMatListTab") {
+                    const { [sColCurrency]: extractedCurrValue } = oData[sRowIndex];
+                    console.log(extractedCurrValue); // Output:
+
+                    var oSelectedIndices = oTable.getSelectedIndices();
+                    var oTmpSelectedIndices = [];
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+                    oSelectedIndices = oTmpSelectedIndices;
+                    if(oSelectedIndices.length ==0){
+                        MessageBox.warning("No row selected.");
+                        return;
+                    }
+
+                    for (var i = 0; i < oSelectedIndices.length; i++) {
+                        oData[oSelectedIndices[i]][sColumnName] = extractedValue;
+                        oData[oSelectedIndices[i]][sColCurrency] = extractedCurrValue;
+                    }
+                    oTable.getModel().setProperty('/results', oData);
+                } else {
+                    var oSelectedIndices = oTable.getSelectedIndices();
+                    var oTmpSelectedIndices = [];
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+                    oSelectedIndices = oTmpSelectedIndices;
+                    if(oSelectedIndices.length ==0){
+                        MessageBox.warning("No row selected.");
+                        return;
+                    }
+
+                    for (var i = 0; i < oSelectedIndices.length; i++) {
+                        oData[oSelectedIndices[i]][sColumnName] = extractedValue;
+                    }
+                    oTable.getModel().setProperty('/results', oData);
+                }               
+
+                // var oSelectedIndices = oTable.getSelectedIndices();
+                // var oTmpSelectedIndices = [];
+                // oSelectedIndices.forEach(item => {
+                //     oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                // })
+                // oSelectedIndices = oTmpSelectedIndices;
+                // if(oSelectedIndices.length ==0){
+                //     MessageBox.warning("No row selected.");
+                //     return;
+                // }
+
+                // for (var i = 0; i < oSelectedIndices.length; i++) {
+                //     oData[oSelectedIndices[i]][sColumnName] = extractedValue;
+                // }
+                // oTable.getModel().setProperty('/results', oData);
+
+                switch (sTableId) {
+                    case "ioMatList":
+                        this._bIOMatListChanged = true;
+                        break;
+                    default: break;
+                }
+
+            },
+
             async onBatchSave(arg) {
                 // alert("on Save");
                 var me = this;
@@ -12791,6 +12885,12 @@ sap.ui.define([
                 }
                 var me = this;
 
+                var oInputEventDelegate = {
+                    onclick: function(oEvent){
+                        me.onInputClick(oEvent);
+                    },
+                };
+
                 var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
 
                 if (arg === "process") {
@@ -13166,6 +13266,7 @@ sap.ui.define([
                                             });
                                         }
 
+                                        oInput.addEventDelegate(oInputEventDelegate);
                                         col.setTemplate(oInput);
 
                                     } else if (arg === "costHdr") {
@@ -13195,7 +13296,7 @@ sap.ui.define([
                                                         else { return true }
                                                     }
                                                 }
-                                            }));
+                                            }).addEventDelegate(oInputEventDelegate));
                                         }
                                     }
                                     else if (arg === "IODET") {
@@ -13257,7 +13358,7 @@ sap.ui.define([
                                                 ]
                                             });
                                         }
-
+                                        oInput.addEventDelegate(oInputEventDelegate);
                                         col.setTemplate(oInput);
 
                                         // col.setTemplate(new sap.m.Input({
@@ -13320,7 +13421,7 @@ sap.ui.define([
                                                 //         else { return true }
                                                 //     }
                                                 // }
-                                            }));
+                                            })).addEventDelegate(oInputEventDelegate);
                                         } else if (ci.Editable && ci.ColumnName !== "VENDORCD") {
                                             col.setTemplate(new sap.m.Input({
                                                 type: "Text",
@@ -13340,7 +13441,7 @@ sap.ui.define([
                                                     templateShareable: false
                                                 },
                                                 change: this.handleValueHelpChange.bind(this)
-                                            }));
+                                            }).addEventDelegate(oInputEventDelegate));
                                         }
                                     }
                                     else {
@@ -13363,7 +13464,7 @@ sap.ui.define([
                                             },
                                             // suggest: this.handleSuggestion.bind(this),
                                             change: this.handleValueHelpChange.bind(this)
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                 }
                                 else if (arg === "IOATTRIB" && sColName.toUpperCase() === "ATTRIBVAL") {
@@ -13372,7 +13473,7 @@ sap.ui.define([
                                         value: "{" + sColName + "}",
                                         change: this.onInputLiveChange.bind(this),
                                         editable: "{= ${VALUETYP} === 'NumValue' || ${VALUETYP} === 'STRVAL' ? true : false }"
-                                    }));
+                                    }).addEventDelegate(oInputEventDelegate));
                                 }
                                 else if (arg === "IOATTRIB" && sColName.toUpperCase() === "VALUNIT") {
                                     col.setTemplate(new sap.m.Input({
@@ -13380,7 +13481,7 @@ sap.ui.define([
                                         value: "{" + sColName + "}",
                                         change: this.onInputLiveChange.bind(this),
                                         editable: "{= ${VALUETYP} === 'NumValue' ? true : false }"
-                                    }));
+                                    }).addEventDelegate(oInputEventDelegate));
                                 }
                                 else if (ci.DataType === "DATETIME") {
                                     if (arg === "costHdr" && sColName === "CSDATE") {
@@ -13411,7 +13512,7 @@ sap.ui.define([
                                                     else { return true }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                     else if (arg === "IODET") {
                                         col.setTemplate(new sap.m.DatePicker({
@@ -13425,7 +13526,7 @@ sap.ui.define([
                                                     else { return false }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                     else if (arg === "IODLV") {
                                         col.setTemplate(new sap.m.DatePicker({
@@ -13457,14 +13558,14 @@ sap.ui.define([
                                                     }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                     else {
                                         col.setTemplate(new sap.m.DatePicker({
                                             value: arg === "IODET" ? "{path: 'DataModel>" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}" : "{path: '" + ci.ColumnName + "', mandatory: '" + ci.Mandatory + "'}",
                                             displayFormat: "dd/MM/yyyy",
                                             change: this.onInputLiveChange.bind(this)
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                 }
                                 else if (ci.DataType === "NUMBER") {
@@ -13483,7 +13584,7 @@ sap.ui.define([
                                                     else { return true }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                     else if (arg === "IODET" || arg === "SPLITIODET") {
                                         // console.log("IODET", ci.Decimal);
@@ -13521,7 +13622,7 @@ sap.ui.define([
                                                     }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     } else if (arg === "IODLV") {
                                         // console.log("IODET", ci.Decimal);
                                         col.setTemplate(new sap.m.Input({
@@ -13556,7 +13657,7 @@ sap.ui.define([
                                                     }
                                                 }
                                             }
-                                        }));
+                                        }).addEventDelegate(oInputEventDelegate));
                                     }
                                     else if (arg == "costDtls") {
                                         // var bEnabled = true;
@@ -13580,7 +13681,7 @@ sap.ui.define([
                                                 }
                                             }
                                         });
-
+                                        oInput.addEventDelegate(oInputEventDelegate);
                                         col.setTemplate(oInput);
                                     }
                                     else {
@@ -15626,7 +15727,7 @@ sap.ui.define([
                 // console.log("handleValueHelpChange", _sTableModel);
 
                 oSource.getSuggestionItems().forEach(item => {
-                    // console.log(item);
+                    console.log(item);
                     if (item.getProperty("key") === oSource.getValue().trim()) {
                         isInvalid = false;
                         oSource.setValueState(isInvalid ? "Error" : "None");
@@ -15643,6 +15744,24 @@ sap.ui.define([
                             this.getView().getModel("VendorModel").getData().filter(fItem => fItem.Lifnr === oSource.getSelectedKey()).forEach(item => {
                                 // console.log(this.byId("ioMatListTab").getModel());
                                 this.byId("ioMatListTab").getModel().setProperty(sRowPath + "/CURRENCYCD", item.Waers);
+
+                                if(oSource.getBindingInfo("value") !== undefined){
+                                    var sTableId = oSource.oParent.oParent.sId;
+                                    var oTable = this.byId(sTableId);
+                                    //var sModelName = oEvent.srcControl.getBindingInfo("value").parts[0].model;
+                                    var sColumnName = oSource.getBindingInfo("value").parts[0].path;
+                                    var sCurrentRowIndex = +oSource.getBindingContext().sPath.replace("/rows/", "");
+                                    //console.log(oTable.getModel("DataModel").getData().results);
+                                    //console.log(oTable.getContextByIndex(sCurrentRowIndex).getProperty(sColumnName));
+                                    this._aCopyInfo={
+                                        _sTableId :sTableId,
+                                        _sColumnName:sColumnName,
+                                        _sValue : this.byId(this._sTableModel + "Tab").getModel().getProperty(sRowPath + '/' + oSource.getBindingInfo("value").parts[0].path),
+                                        _sCurrentRowIndex : sCurrentRowIndex
+                                    }
+                
+                                    console.log("handleValueHelpChange this._aCopyInfo", this._aCopyInfo);
+                                }
                             })
                         }
                     }
@@ -15916,6 +16035,7 @@ sap.ui.define([
                             this.byId("btnEditIOMatList").setVisible(true);
                             this.byId("btnRefreshIOMatList").setVisible(true);
                             this.byId("btnExportIOMatList").setVisible(true);
+                            this.byId("btnReqMatMapping").setVisible(true);
                             this.byId("btnCascade").setVisible(false);
                             this.byId("btnSaveIOMatList").setVisible(false);
                             this.byId("btnCancelIOMatList").setVisible(false);
@@ -19723,6 +19843,31 @@ sap.ui.define([
             onColumnUpdated: function (oEvent) {
                 var oTable = oEvent.getSource();
                 this.setActiveRowHighlightByTable(oTable);
+            },
+
+            onInputClick: function (oEvent) {
+                // alert("onInputClick");
+                oEvent.preventDefault();
+                this._aCopyInfo={};
+
+                if(oEvent.srcControl.getBindingInfo("value") !== undefined){
+                    var sTableId = oEvent.srcControl.oParent.oParent.sId;
+                    var oTable = this.byId(sTableId);
+                    //var sModelName = oEvent.srcControl.getBindingInfo("value").parts[0].model;
+                    var sColumnName = oEvent.srcControl.getBindingInfo("value").parts[0].path;
+                    var sCurrentRowIndex = +oEvent.srcControl.oParent.getBindingContext().sPath.replace("/rows/", "");
+                    //console.log(oTable.getModel("DataModel").getData().results);
+                    //console.log(oTable.getContextByIndex(sCurrentRowIndex).getProperty(sColumnName));
+                    this._aCopyInfo={
+                        _sTableId :sTableId,
+                        _sColumnName:sColumnName,
+                        _sValue : oEvent.srcControl.getProperty("value"),
+                        _sCurrentRowIndex : sCurrentRowIndex
+                    }
+
+                    console.log("this._aCopyInfo", this._aCopyInfo);
+                }
+
             },
 
             async onKeyUp(oEvent) {

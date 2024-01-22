@@ -687,7 +687,7 @@
                                     <ToolbarSpacer />
                                     <Button id="btnEditIOMatList" icon="sap-icon://edit" press="onEdit('ioMatList')" tooltip="{ddtext>/EDIT}" visible="true" />
                                     <Button id="btnDeleteIOMatList" icon="sap-icon://delete" press="onTagAsDeleted('ioMatList')" tooltip="{ddtext>/DELETE}" visible="true" />
-                                    <Button id="btnCascade" text="{ddtext>/CASCADE}" icon="sap-icon://copy" press="onCascade('ioMatList')" tooltip="{ddtext>/CASCADE}" visible="false" />
+                                    <Button id="btnCascade" text="{ddtext>/CASCADE}" icon="sap-icon://copy" press="onCascade" tooltip="{ddtext>/CASCADE}" visible="false" />
                                     <Button id="btnSaveIOMatList" icon="sap-icon://save" press="onBatchSave('ioMatList')" tooltip="{ddtext>/SAVE}" visible="false" />
                                     <Button id="btnCancelIOMatList" icon="sap-icon://sys-cancel" press="onCancel('ioMatList')" tooltip="{ddtext>/CANCEL}" visible="false" />
                                     <Button id="btnRefreshIOMatList" icon="sap-icon://refresh" press="onRefresh('ioMatList')" tooltip="{ddtext>/REFRESH}" visible="true" />
