@@ -16788,6 +16788,7 @@ sap.ui.define([
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
+                    // var sTextWrapping = context.getObject().WrapText;
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
 
@@ -16878,7 +16879,7 @@ sap.ui.define([
                     if (sColumnDataType === "STRING") {
                         return new sap.ui.table.Column({
                             id: sTabId.replace("Tab", "") + "Col" + sColumnId,
-                            label: new sap.m.Text({ text: sColumnLabel, wrapping: false }),  //sColumnLabel
+                            label: new sap.m.Text({ text: sColumnLabel, wrapping: true }),  //sColumnLabel
                             template: oText,
                             width: sColumnWidth + "px",
                             sortProperty: sColumnId,
@@ -18968,9 +18969,10 @@ sap.ui.define([
                     "SALESTERM": sap.ui.getCore().byId("SALESTERM").getValue(),
                     "CSDATE": sap.ui.getCore().byId("CSDATE").getValue().toString() + "T00:00:00",
                     "COSTSTATUS": sap.ui.getCore().byId("COSTSTATUS").getValue(),
-                    "INDCDT": (sap.ui.getCore().byId("INDCDT").getValue() == null ? null : 
+                    "INDCDT": (sap.ui.getCore().byId("INDCDT").getValue() === null || sap.ui.getCore().byId("INDCDT").getValue() === "" ? null : 
                         sap.ui.getCore().byId("INDCDT").getValue().toString() + "T00:00:00")
                 }
+                // alert("INDCDT", sap.ui.getCore().byId("INDCDT").getValue());
                 // console.log("onSaveCreateCosting", oParam);
                 // return;
 
@@ -18980,6 +18982,8 @@ sap.ui.define([
                 var oSalesTermNew = aSalesTerm.filter(
                     x => x.SALESTERM == sap.ui.getCore().byId("SALESTERM").getValue())[0];
                 var sErrMsg = "";
+
+                console.log(oSalesTermNew);
 
                 if (aCostHdr.length > 0) {
                     for (var i = 0; i < aCostHdr.length; i++) {
@@ -18993,12 +18997,12 @@ sap.ui.define([
                     }
                 }
 
-                if (oSalesTermNew.REQINDCDT == true && oParam.INDCDT == null) {
+                if (oSalesTermNew.REQINDCDT === true && (oParam.INDCDT === null || oParam.INDCDT === undefined || oParam.INDCDT === "T00:00:00")) {
                     sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " +
                             me.getView().getModel("ddtext").getData()["INFO_IS_REQUIRED"] + " for " + 
                             me.getView().getModel("ddtext").getData()["SALESTERM"] + " " + oSalesTermNew.SALESTERM + ".";
                 }
-                else if (oParam.INDCDT != null && Date.parse(oParam.INDCDT) <= Date.parse(new Date())) {
+                else if (oSalesTermNew.REQINDCDT === false && oParam.INDCDT != null && oParam.INDCDT != "T00:00:00" && Date.parse(oParam.INDCDT) <= Date.parse(new Date())) {
                     sErrMsg = me.getView().getModel("ddtext").getData()["INDCDT"] + " " + 
                             me.getView().getModel("ddtext").getData()["INFO_GREATER_CURRENT_DATE"];
                 }
@@ -19007,6 +19011,8 @@ sap.ui.define([
                     MessageBox.information(sErrMsg);
                     return;
                 }
+
+                // return;
 
                 Common.openProcessingDialog(this, "Processing...");
 
@@ -19018,7 +19024,7 @@ sap.ui.define([
                                 "$filter": "IONO eq '" + me._ioNo + "'"
                             },
                             success: function (oReadData) {
-                                Common.openProcessingDialog(me);
+                                // Common.openProcessingDialog(me);
 
                                 oReadData.results.forEach((row, index) => {
                                     if ((index + 1) === oReadData.results.length) {

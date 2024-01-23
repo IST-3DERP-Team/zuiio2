@@ -6,7 +6,7 @@
         id="fragment-createcosting" 
         fragmentName="createcosting">
     <Dialog contentWidth="375px"
-        contentHeight="315px"
+        contentHeight="375px"
         title="Create Costing"
         beforeOpen="beforeOpenCreateCosting"
         afterOpen="afterOpenCreateCosting"
