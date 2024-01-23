@@ -471,7 +471,7 @@ sap.ui.define([
 
                 oModelStartUp.loadData("/sap/bc/ui2/start_up").then(
                     function () {
-                        console.log("Data loaded successfully:", oModelStartUp.getData());
+                        // console.log("Data loaded successfully:", oModelStartUp.getData());
                         _startUpInfo = oModelStartUp.getData();
                     }
                 ).catch(
@@ -2016,7 +2016,7 @@ sap.ui.define([
 
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
-                        console.log("sColumnId", sColumnId);
+                        // console.log("sColumnId", sColumnId);
                         oText.bindText({
                             parts: [
                                 { path: sColumnId }
@@ -2727,6 +2727,7 @@ sap.ui.define([
                         success: function (oData, oResponse) {
                             // console.log("IOATTRIBTYPSet");
                             // console.log(oData);
+                            oData.results.sort((a, b,) => (a.ATTRIBSEQ > b.ATTRIBSEQ ? 1 : -1));
                             me._iosizes = oData.results;
                             resolve();
                         },
@@ -2750,6 +2751,8 @@ sap.ui.define([
 
                 oModel.read("/StyleAttributesSizeSet", {
                     success: function (oData, oResponse) {
+                        oData.results.sort((a, b,) => (a.ATTRIBSEQ > b.ATTRIBSEQ ? -1 : 1));
+                        // console.log("StyleAttributesSizeSet", oData.results);
                         me._iosizes = oData.results;
                     },
                     error: function (err) { }
@@ -3355,7 +3358,7 @@ sap.ui.define([
 
                                     if (arg3 === "GENINFORECTab") {
                                         // console.log("IO Status Data");
-                                        console.log("Column Data - GENINFOREC", oData.results);
+                                        // console.log("Column Data - GENINFOREC", oData.results);
                                     }
 
                                     me._aIOColumns[sTabId.replace("Tab", "")] = oData.results;
@@ -3601,7 +3604,7 @@ sap.ui.define([
                     oEvent.preventDefault();
                 });
 
-                console.log(sTabId, oColumns);
+                // console.log(sTabId, oColumns);
                 TableFilter.updateColumnMenu(sTabId, this);
             },
 
@@ -3763,7 +3766,7 @@ sap.ui.define([
                 oTable.setModel(oJSONModel, "DataModel");
 
                 if (sTabId === "SPLITIODETTab") {
-                    console.log("sap.ui.getCore().byId(sTabId).getModel()", sap.ui.getCore().byId("SPLITIODETTab"));
+                    // console.log("sap.ui.getCore().byId(sTabId).getModel()", sap.ui.getCore().byId("SPLITIODETTab"));
                     sap.ui.getCore().byId(sTabId).getModel("DataModel").setProperty("DataModel>/results", unique);
                     sap.ui.getCore().byId(sTabId).bindRows("DataModel>/results");
                     this._tableRendered = sTabId;
@@ -5239,10 +5242,10 @@ sap.ui.define([
                                 }
 
                                 if (sModelName === "PROCOUTCHK_MODEL")
-                                    console.log(oData.results);
+                                    // console.log(oData.results);
 
                                 oView.setModel(oJSONModel, sModelName);
-                                console.log(sModelName, oView.setModel(oJSONModel, sModelName));
+                                // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
                             },
                             error: function (err) {
                             }
@@ -5264,7 +5267,7 @@ sap.ui.define([
                                     })
                                 }
 
-                                console.log(sModelName, oData.results);
+                                // console.log(sModelName, oData.results);
                                 oJSONModel.setData(oData.results);
                                 oView.setModel(oJSONModel, sModelName);
                                 // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
@@ -6415,7 +6418,7 @@ sap.ui.define([
                     //     let inputValue = this.getView().byId("CUSTDLVDT").getValue();
                     //     console.log(inputValue);
                     //     if (!Date.parse(inputValue)) {
-                    //         console.log("CUSTDLVDT");
+                    //     ("CUSTDLVDT");
                     //         cntBlank++;
                     //     }
 
@@ -7459,11 +7462,11 @@ sap.ui.define([
                                 oParam["N_OpenPR"].forEach(item => item.LOEKZ = item.LOEKZ === true ? "X" : "");
                                 oParam["N_OpenVPO"].forEach(item => item.LOEKZ = item.LOEKZ === true ? "X" : "");
 
-                                console.log(oParam);
+                                // console.log(oParam);
                                 oModel.create("/TransferSet", oParam, {
                                     method: "POST",
                                     success: function (oData, oResponse) {
-                                        console.log(oData);
+                                        // console.log(oData);
                                         Common.closeProcessingDialog(me);
                                         oTable.clearSelection();
 
@@ -8686,7 +8689,7 @@ sap.ui.define([
                         });
 
                         oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
-                        console.log("ProcessSet", oData.results);
+                        // console.log("ProcessSet", oData.results);
 
                         me.byId("processTab").getModel().setProperty("/rows", oData.results);
                         me.byId("processTab").bindRows("/rows");
@@ -10112,7 +10115,7 @@ sap.ui.define([
                         this.byId("btnDeleteIOMatList").setVisible(true);
                         this.byId("btnTabLayoutIOMatList").setVisible(true);
 
-                        console.log(this.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
+                        // console.log(this.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
                         if (this.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
                             this.byId("btnCrtInfoRec").setVisible(true);
                         else
@@ -11761,7 +11764,7 @@ sap.ui.define([
 
                 batchPromise.then(function () {
                     if (arg === "ioMatList") {
-                        console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
+                        // console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
                         if (me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
                             me.byId("btnCrtInfoRec").setVisible(true);
                         else
@@ -12068,7 +12071,7 @@ sap.ui.define([
                                     break;
 
                                 case "ioMatList":
-                                    console.log("ioMatList");
+                                    // console.log("ioMatList");
                                     me.onRefresh("ioMatList");
                                     break;
 
@@ -12357,7 +12360,7 @@ sap.ui.define([
 
                                 // console.log(param);
                                 // console.log(mParameters);
-                                console.log(entitySet, param, mParameters)
+                                // console.log(entitySet, param, mParameters)
                                 oModel.update(entitySet, param, mParameters);
                             })
                         }
@@ -12407,7 +12410,7 @@ sap.ui.define([
                                 me.byId("btnDeleteIOMatList").setVisible(true);
                                 me.byId("btnTabLayoutIOMatList").setVisible(true);
 
-                                console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
+                                // console.log(me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"));
                                 if (me.getView().getModel("ui2").getProperty("/RoleAuthINFNR"))
                                     me.byId("btnCrtInfoRec").setVisible(true);
                                 else
@@ -12480,7 +12483,7 @@ sap.ui.define([
                                                 "$filter": "COMPREF eq '" + item.IONO + item.CSTYPE + item.VERSION.padStart(3, "0") + "' and PLANTCD eq '" + me._prodplant + "'"
                                             },
                                             success: function (oData) {
-                                                console.log("ConfigHdrSet3", oData.results);
+                                                // console.log("ConfigHdrSet3", oData.results);
 
                                                 oData.results.forEach((itemConfig, idxConfig) => {
                                                     if (itemConfig.VALTYP == "F" && itemConfig.STATUSCDCS == "03" && itemConfig.CUSTGRP == "") {
@@ -12667,7 +12670,7 @@ sap.ui.define([
                                     me._bIOATTRIBChanged = false;
                                     break;
                                 case "ioMatList":
-                                    console.log("ioMatList");
+                                    // console.log("ioMatList");
                                     me.onRefresh("ioMatList");
                                     break;
 
@@ -12922,7 +12925,7 @@ sap.ui.define([
                                 iCounter1++;
                                 mVASTypeData[item.PROCESSCD] = oData.results;
 
-                                console.log("mVASTypeData", mVASTypeData);
+                                // console.log("mVASTypeData", mVASTypeData);
 
                                 if (iCounter1 === oTabData.length) {
                                     me.getView().setModel(new JSONModel(mVASTypeData), "VASTYPE_MODEL");
@@ -13135,7 +13138,7 @@ sap.ui.define([
                     // console.log("this._aColumns[arg]", arg, this._aColumns[arg]);
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
-                            console.log(ci);
+                            // console.log(ci);
 
                             if (arg === "SPLITIODET") {
                                 // console.log(ci);
@@ -13146,7 +13149,7 @@ sap.ui.define([
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
 
                                 if (oValueHelp) {
-                                    console.log("ColumnName", ci.ColumnName);
+                                    // console.log("ColumnName", ci.ColumnName);
                                     if (arg === "IODLV" || arg === "SPLITIODLV" || arg === "GENINFOREC" || arg === "ioMatList" || arg === "IOATTRIB" || (arg === "process" && ci.ColumnName !== "VASTYP" && ci.ColumnName !== "ATTRIBCD")) {
                                         var bValueFormatter = false;
                                         var sSuggestItemText = ci.ValueHelp["SuggestionItems"].text;
@@ -13389,9 +13392,9 @@ sap.ui.define([
                                         //     }
                                         // }));
                                     } else if (arg === "process") {
-                                        console.log("oValueHelp", arg, ci.ColumnName);
+                                        // console.log("oValueHelp", arg, ci.ColumnName);
                                         if (ci.Editable && ci.ColumnName === "VENDORCD") {
-                                            console.log(ci.ColumnName);
+                                            // console.log(ci.ColumnName);
                                             col.setTemplate(new sap.m.Input({
                                                 type: "Text",
                                                 value: "{" + sColName + "}",
@@ -13706,7 +13709,7 @@ sap.ui.define([
                                                     { path: 'PROCESSCD' }
                                                 ],
                                                 formatter: function (HASOUTPUT, PROCESSCD) {
-                                                    console.log(HASOUTPUT, PROCESSCD);
+                                                    // console.log(HASOUTPUT, PROCESSCD);
                                                     var xModel = me.getView().getModel("PROCOUTCHK_MODEL");
                                                     var bhasQty = false;
                                                     // console.log(xModel.getData());
@@ -13750,7 +13753,7 @@ sap.ui.define([
                                             }
                                         }));
                                     } else {
-                                        console.log(sColName);
+                                        // console.log(sColName);
                                         col.setTemplate(new sap.m.CheckBox({
                                             // type: sap.m.Checkbox,
                                             textAlign: sap.ui.core.TextAlign.Right,
@@ -15760,7 +15763,7 @@ sap.ui.define([
                                         _sCurrentRowIndex : sCurrentRowIndex
                                     }
                 
-                                    console.log("handleValueHelpChange this._aCopyInfo", this._aCopyInfo);
+                                    // console.log("handleValueHelpChange this._aCopyInfo", this._aCopyInfo);
                                 }
                             })
                         }
@@ -15840,22 +15843,22 @@ sap.ui.define([
 
                     if (this._sTableModel === "process") {
                         if (oSource.getBindingInfo("value").parts[0].path === 'VASTYP') {
-                            console.log(this._sTableModel, this.byId(this._sTableModel + "Tab"));
+                            // console.log(this._sTableModel, this.byId(this._sTableModel + "Tab"));
                             const model = this.byId(this._sTableModel + "Tab").getModel();
-                            console.log("11");
+                            // console.log("11");
                             var oTable = this.getView().byId(this._sTableModel + "Tab");
-                            console.log("22", sRowPath);
-                            console.log("22", model.getProperty(sRowPath + '/VENDORCD'));
+                            // console.log("22", sRowPath);
+                            // console.log("22", model.getProperty(sRowPath + '/VENDORCD'));
                             if (model.getProperty(sRowPath + '/VASTYP') === "") {
-                                console.log("1");
+                                // console.log("1");
                                 oTable.getColumns().forEach((col, idx) => {
-                                    console.log(col);
+                                    // console.log(col);
                                     const columnId = col.getId().replace(this._sTableModel.replace("Tab", "") + "Col", "");
 
                                     switch (columnId) {
                                         case 'VENDORCD': {
-                                            console.log("2", columnId);
-                                            console.log("4", oTable.getRows()[0].getCells()[idx]);
+                                            // console.log("2", columnId);
+                                            // console.log("4", oTable.getRows()[0].getCells()[idx]);
                                             model.setProperty(sRowPath + '/VENDORCD', null);
                                             model.setEditable(sRowPath + '/VENDORCD', false);
                                             // oTable.getRows()[0].getCells()[idx].setProperty("editable", false);
@@ -16671,24 +16674,24 @@ sap.ui.define([
                     },
                     success: function (oData, oResponse) {
                         var result = oData.results;
-                        console.log("result", result);
+                        // console.log("result", result);
                         result = result.filter(a => a.Zresult === "0");
 
-                        console.log("result", result);
+                        // console.log("result", result);
                         oJSONModel.setData(result);
                         that.getView().setModel(oJSONModel, "RoleAuthModel");
                         if (result.length > 0) {
-                            console.log("result length", result.length);
+                            // console.log("result length", result.length);
                             that.byId("btnCrtInfoRec").setVisible(true);
                             that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", true);
-                            console.log("RoleAuthINFNR true", id);
+                            // console.log("RoleAuthINFNR true", id);
                             
                         }
                         else {
-                            console.log("result length", result.length);
+                            // console.log("result length", result.length);
                             that.byId("btnCrtInfoRec").setVisible(false);
                             that.getView().getModel("ui2").setProperty("/RoleAuthINFNR", false);
-                            console.log("RoleAuthINFNR false", id);
+                            // console.log("RoleAuthINFNR false", id);
                         }
                     },
                     error: function () {
@@ -17401,7 +17404,7 @@ sap.ui.define([
                         //WITH SELECTED RECORDS / CHECK VARIANCE : MUST BE <= 0
                         oSelectedIndices2.forEach(item => {
                             if (oTable.getModel().getData().rows.at(item).VARIANCE > 0) {
-                                console.log(item);
+                                // console.log(item);
                                 // oSelectedIndices3.splice(oSelectedIndices3.indexOf(item), 1);
 
                                 oRemoveIndex[oRemoveIndex.length] = item;
@@ -17415,8 +17418,8 @@ sap.ui.define([
                             }
                         }
 
-                        console.log("oSelectedIndices3", oSelectedIndices3);
-                        console.log("oRemoveIndex", oRemoveIndex);
+                        // console.log("oSelectedIndices3", oSelectedIndices3);
+                        // console.log("oRemoveIndex", oRemoveIndex);
                         if (oSelectedIndices3.length <= 0) {
                             MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_REORDER_VARIANCECHECK"]);
                             return;
@@ -18476,7 +18479,7 @@ sap.ui.define([
                 oModel.read("/ColumnsSet", {
                     success: function (oData, oResponse) {
                         if (oData.results.length > 0) {
-                            console.log("ColumnsSet", oData)
+                            // console.log("ColumnsSet", oData)
                             if (oLocColProp[sTabId.replace("Tab", "")] !== undefined) {
                                 oData.results.forEach(item => {
                                     oLocColProp[sTabId.replace("Tab", "")].filter(loc => loc.ColumnName === item.ColumnName)
@@ -19332,7 +19335,7 @@ sap.ui.define([
                             "$filter": "IONO eq '" + vIONo + "'"
                         },
                         success: function (oData, response) {
-                            console.log(arg, oData);
+                            // console.log(arg, oData);
                             Common.closeProcessingDialog(me);
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
                             oData.results.forEach((row, index) => {
@@ -19493,7 +19496,7 @@ sap.ui.define([
                             });
 
                             oData.results.sort((a, b) => (a.SEQNO > b.SEQNO ? 1 : -1));
-                            console.log("ProcessSet", oData.results);
+                            // console.log("ProcessSet", oData.results);
 
                             me.byId("processTab").getModel().setProperty("/rows", oData.results);
                             me.byId("processTab").bindRows("/rows");
@@ -20546,7 +20549,7 @@ sap.ui.define([
 
                         await this.getIODynamicColumns("INFRECLIST", "ZDV_IOINFREC", "GENINFORECTab", oColumns);                        
 
-                        console.log(me.getView().getModel("GENINFORECModel"));
+                        // console.log(me.getView().getModel("GENINFORECModel"));
                         sap.ui.getCore().byId("GENINFORECTab").getModel().setProperty("/rows", me.getView().getModel("GENINFORECModel").getData());
                         sap.ui.getCore().byId("GENINFORECTab").bindRows("/rows");
                         me._tableRendered = "GENINFORECTab";       
@@ -20625,7 +20628,7 @@ sap.ui.define([
                     method: "POST",
                     success: async function (oDataReturn, oResponse) {
                         //assign the materials based on the return
-                        console.log(oDataReturn.N_CreateInfoRecReturn.results);
+                        // console.log(oDataReturn.N_CreateInfoRecReturn.results);
 
                         oDataReturn.N_CreateInfoRecReturn.results.forEach(iReturn => {
                             infnrData.filter(fData => fData.MATNO === iReturn.Matnr)

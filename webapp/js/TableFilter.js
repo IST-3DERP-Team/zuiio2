@@ -1292,17 +1292,17 @@ sap.ui.define([
             var me = oThis;
             var bSorted = false;
 
-            console.log("isSorted", sTableId, sColumnName);
-            console.log(me.byId(sTableId).getColumns());
+            // console.log("isSorted", sTableId, sColumnName);
+            // console.log(me.byId(sTableId).getColumns());
             me.byId(sTableId).getColumns().forEach(fItem => {
-                console.log(fItem.getProperty("name"));
+                // console.log(fItem.getProperty("name"));
             });
             var oColumnProp = me.byId(sTableId).getColumns().filter(fItem => fItem.getProperty("name") === sColumnName)[0];
 
             if (oColumnProp.getProperty("sorted")) {
                 bSorted = true;
             }
-            console.log(oColumnProp)
+            // console.log(oColumnProp)
             return bSorted;
         }
 	};

@@ -320,10 +320,10 @@ sap.ui.define([
                 var sRowPath = oSource.oParent.getBindingContext().sPath;
             }
 
-            console.log("_inputField", this._inputField);
-            console.log("_inputId", this._inputId);
-            console.log("sTabId", sTabId);
-            console.log(sRowPath);
+            // console.log("_inputField", this._inputField);
+            // console.log("_inputId", this._inputId);
+            // console.log("sTabId", sTabId);
+            // console.log(sRowPath);
 
             var aModelData;
 
@@ -346,7 +346,7 @@ sap.ui.define([
             // console.log("sPath", sPath);
             var vh = this.getView().getModel(sPath).getData();
             var aFilters = vColProp[0].ValueHelp.filters;
-            console.log(aFilters)
+            // console.log(aFilters)
 
             // console.log("vh", vh);
             var aColumns = [], oDDTextParam = [];

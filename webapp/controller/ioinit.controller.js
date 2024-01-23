@@ -182,8 +182,8 @@ sap.ui.define([
 
             setActiveRowHighlight() {
                 var oTable = this.byId("IODynTable");
-                console.log("IODynTable", oTable);
-                console.log(oTable.getModel().getData());
+                // console.log("IODynTable", oTable);
+                // console.log(oTable.getModel().getData());
                 setTimeout(() => {
                     var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
 
@@ -199,7 +199,7 @@ sap.ui.define([
 
             onAfterTableRendering: function (oEvent) {
                 if (this._tableRendered !== "") {
-                    console.log("setActiveRowHighlightByTableId", this._tableRendered);
+                    // console.log("setActiveRowHighlightByTableId", this._tableRendered);
                     this.setActiveRowHighlightByTableId(this._tableRendered);
                     this._tableRendered = "";
                 }
@@ -218,12 +218,12 @@ sap.ui.define([
                     // }
 
                     // console.log(oTable);
-                    console.log(arg);
+                    // console.log(arg);
 
-                    console.log("Test", oTable);
+                    // console.log("Test", oTable);
                   
                     if (arg === "IODynTable" && sTableId.indexOf(arg) >= 0) {
-                        console.log(oTable.getModel().getData());
+                        // console.log(oTable.getModel().getData());
                         if (oTable.getModel().getData().length > 0) {
                             var iActiveRowIndex = oTable.getModel().getData().rows.findIndex(item => item.ACTIVE === "X");
                             oTable.getRows().forEach(row => {
@@ -297,11 +297,11 @@ sap.ui.define([
                     var oTable = sap.ui.getCore().byId("IOStyleSelectTab");
                     // console.log(oTable);
                     var oSelectedIndices = oTable.getSelectedIndices();
-                    console.log("getSelectedIndices", oTable.getSelectedIndices());
+                    // console.log("getSelectedIndices", oTable.getSelectedIndices());
                     var oTmpSelectedIndices = [];
                     var aData = oTable.getModel("IOSTYSELDataModel").getData().results;
 
-                    console.log(aData);
+                    // console.log(aData);
                     // console.log(oTable.getBinding("rows"));
                     var oParamData = [];
                     var oParam = {};
@@ -728,9 +728,9 @@ sap.ui.define([
                     }
                 });
 
-                console.log("TableFilter.updateColumnMenu Start");
+                // console.log("TableFilter.updateColumnMenu Start");
                 TableFilter.updateColumnMenu("IODynTable", this);
-                console.log("TableFilter.updateColumnMenu end");
+                // console.log("TableFilter.updateColumnMenu end");
 
                 //remove sort icon of currently sorted column
                 oTable.attachSort(function (oEvent) {
@@ -902,13 +902,13 @@ sap.ui.define([
                 Common.openLoadingDialog(that);
                 
                 try {
-                    console.log("On Search");
+                    // console.log("On Search");
             
                     // Perform asynchronous operations
                     await this.getDynamicTableColumns();
                     await this.getStatistics("/IOSTATISTICSSet");
             
-                    console.log("On Searching");
+                    // console.log("On Searching");
             
                     // Close the loading dialog after the operations are completed
                     Common.closeLoadingDialog(that);
@@ -982,7 +982,7 @@ sap.ui.define([
                 var aFilters = [], aFilter = [], aSmartFilter = [];
 
                 if (oSmartFilter.length > 0)  {
-                    console.log("oSmartFilter", oSmartFilter);
+                    // console.log("oSmartFilter", oSmartFilter);
                     oSmartFilter.forEach(item => {
                         if (item === undefined) {
                             aFilter.push(new Filter(item.sPath, item.sOperator, item.oValue1));
@@ -1020,7 +1020,7 @@ sap.ui.define([
 
                 aSmartFilter.push(new Filter(aFilters, true));
 
-                console.log("aSmartFilter", aSmartFilter);
+                // console.log("aSmartFilter", aSmartFilter);
                 var oText = this.getView().byId("IODynTableCnt");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -1267,9 +1267,9 @@ sap.ui.define([
                     oEvent.preventDefault();
                 })
 
-                console.log("TableFilter.updateColumnMenu Start");
+                // console.log("TableFilter.updateColumnMenu Start");
                 TableFilter.updateColumnMenu("IODynTable", this);
-                console.log("TableFilter.updateColumnMenu end");
+                // console.log("TableFilter.updateColumnMenu end");
             },
 
             columnTemplate: function (sColumnId, sColumnType) {
@@ -1570,7 +1570,7 @@ sap.ui.define([
 
                     var oModel2 = new JSONModel();
                     var oTableStyle = sap.ui.getCore().byId("IOStyleSelectTab");
-                    console.log("oTableStyle", oTableStyle);
+                    // console.log("oTableStyle", oTableStyle);
                     oTableStyle.setModel(oModel2);
                     oTableStyle.attachBrowserEvent('dblclick', function (e) {
                         e.preventDefault();
@@ -1841,7 +1841,7 @@ sap.ui.define([
                     var sColumnSortOrder = context.getObject().SortOrder;
                     var sColumnDataType = context.getObject().DataType;
 
-                    console.log(sColumnLabel, sColumnDataType);
+                    // console.log(sColumnLabel, sColumnDataType);
                     if (sColumnWidth === undefined || sColumnWidth === 0) sColumnWidth = 100;
                     // console.log(sColumnDataType);
 
@@ -2201,7 +2201,7 @@ sap.ui.define([
                 var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
                 var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER_CDS");      
 
-                console.log(vSBU, oModel);
+                // console.log(vSBU, oModel);
 
                 oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
                     urlParameters: {
@@ -2305,7 +2305,7 @@ sap.ui.define([
                 var oJSONModel = new JSONModel();
                 var oView = this.getView();
 
-                console.log("IOCOPYSet", oParam);
+                // console.log("IOCOPYSet", oParam);
 
                 setTimeout(() => {
                     oCopyIOModel.create("/IOCOPYSet", oParam, {
