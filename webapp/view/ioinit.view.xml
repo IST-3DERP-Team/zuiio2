@@ -31,11 +31,13 @@
         <VBox fitContainer="true">
 
         <!-- SMART FILTER BAR-->                
-        <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
-        enableBasicSearch="false" useToolbar="true" useDateRangeType="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged">
+        <!-- <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_StylesPKey"  filterContainerWidth="13rem" 
+        enableBasicSearch="false" useToolbar="true" useDateRangeType="true" showClearOnFB="true" initialized=".onInitialize" assignedFiltersChanged=".onAssignedFiltersChanged"> -->
+         <smartfilterbar:SmartFilterBar id="smartFilterBar" entitySet="ZVB_3DERP_IO_FILTER" search="onSearch" persistencyKey="3DERP_pKey" showClearButton="true" showClearOnFB="true">
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{ddtext>/SBU}"  preventInitialDataFetchInValueHelpDialog="false">
-                    <!-- <smartfilterbar:customControl>
+                <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{ddtext>/SBU}"  preventInitialDataFetchInValueHelpDialog="false"> -->
+                <smartfilterbar:ControlConfiguration key="SBU" label="{ddtext>/SBU}" groupId="_BASIC" mandatory="mandatory" width="50px">
+                    <smartfilterbar:customControl>
                             <ComboBox id="cboxSBU"
                                 selectedKey="{ui>/sbu}"
                                 change="onSBUChange"
@@ -44,7 +46,7 @@
                                 }">
                                 <core:Item key="{SBU}" text="{SBU}" />
                             </ComboBox>       
-                        </smartfilterbar:customControl> -->
+                        </smartfilterbar:customControl>
                 </smartfilterbar:ControlConfiguration>
                 <!-- <smartfilterbar:ControlConfiguration key="SBU" mandatory="mandatory" controlType="dropDownList" filterType="single" groupId="_BASIC" label= "{i18n>SBU}"  preventInitialDataFetchInValueHelpDialog="false">
                      <smartfilterbar:ControlConfiguration key="SBU" label= "{i18n>SBU}" groupId="_BASIC" mandatory="mandatory" width="50px" class="mandatoryFontColor">
@@ -62,7 +64,11 @@
             </smartfilterbar:controlConfiguration>
                     
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SALESGRP}" filterType="multiple" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="SALESGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SALESGRP}" filterType="multiple" displayBehaviour="descriptionAndId" preventInitialDataFetchInValueHelpDialog="false"> -->
+                <smartfilterbar:ControlConfiguration key="SALESGRP" label="{ddtext>/SALESGRP}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffSALESGRP" name="SALESGRP" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSALESGRP"
                                 selectedKey="{ui>/sbu}"
@@ -77,7 +83,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SEASONCD}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="SEASONCD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/SEASONCD}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="SEASONCD" label="{ddtext>/SEASONCD}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffSEASONCD" name="SEASONCD" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                                 <MultiInput id="multiInputSeason"
                                     
@@ -122,7 +132,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="CUSTGRP" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/CUSTGRP}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="CUSTGRP" label="{ddtext>/CUSTGRP}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffCUSTGRP" name="CUSTGRP" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxCUSTGRP"
                                 selectedKey="{ui>/CUSTGRP}"
@@ -137,7 +151,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/PLANT}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="PLANPLANT" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/PLANT}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="PLANPLANT" label="{ddtext>/PLANT}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffPLANPLANT" name="PLANPLANT" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxPLANPLANT"
                                 selectedKey="{ui>/PLANPLANT}"
@@ -153,7 +171,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IOTYPE}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="IOTYPE" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IOTYPE}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="IOTYPE" label="{ddtext>/IOTYPE}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffIOTYPE" name="IOTYPE" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxIOTYPE"
                                 selectedKey="{ui>/IOTYPE}"
@@ -168,7 +190,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/STYLECD}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="STYLECD" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/STYLECD}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="STYLECD" label="{ddtext>/STYLECD}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffSTYLECD" name="STYLECD" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSTYLECD"
                                 selectedKey="{ui>/STYLECD}"
@@ -183,7 +209,11 @@
             </smartfilterbar:controlConfiguration>
 
             <smartfilterbar:controlConfiguration>
-                <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IONO}" preventInitialDataFetchInValueHelpDialog="false">
+                <!-- <smartfilterbar:ControlConfiguration key="IONO" mandatory="notMandatory" groupId="_BASIC" label="{ddtext>/IONO}" preventInitialDataFetchInValueHelpDialog="false"> -->
+                    <smartfilterbar:ControlConfiguration key="IONO" label="{ddtext>/IONO}" groupId="_BASIC" preventInitialDataFetchInValueHelpDialog="false" >
+                    <smartfilterbar:customControl>
+                                <MultiInput id="sffIONO" name="IONO" maxSuggestionWidth="350px"  />
+                            </smartfilterbar:customControl>
                     <!-- <smartfilterbar:customControl>
                             <ComboBox id="cboxSTYLECD"
                                 selectedKey="{ui>/STYLECD}"

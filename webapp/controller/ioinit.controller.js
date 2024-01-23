@@ -8,12 +8,13 @@ sap.ui.define([
     "../control/DynamicTable",
     "sap/ui/model/FilterOperator",
     "sap/ui/core/routing/HashChanger",
-    "../js/TableFilter"
+    "../js/TableFilter",
+    "../js/SmartFilterCustomControl",
 ],
     /**
      * @param {typeof sap.ui.core.mvc.Controller} Controller
      */
-    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger, TableFilter) {
+    function (Controller, Filter, Common, Utils, JSONModel, Spreadsheet, control, FilterOperator, HashChanger, TableFilter, SmartFilterCustomControl) {
         "use strict";
 
         var that;
@@ -32,6 +33,7 @@ sap.ui.define([
             onInit: async function () {
                 that = this;
 
+                this._smartFilterCustomControl = SmartFilterCustomControl;
                 this._tableRendered = "";
                 this._tableFilter = TableFilter;
                 // console.log("this._tableFilter", this._tableFilter);
@@ -62,9 +64,11 @@ sap.ui.define([
                 this._router = oComponent.getRouter();
                 // this._router.getRoute("RouteSalesDocHdr").attachPatternMatched(this._routePatternMatched, this);
 
+                SmartFilterCustomControl.setSmartFilterModel(this);
                 this._Model = this.getOwnerComponent().getModel("ZGW_3DERP_COMMON_SRV");
                 this._oModel = this.getOwnerComponent().getModel();
-                this.setSmartFilterModel();
+                
+                // this.setSmartFilterModel();
 
                 this._aIOColumns = {};
                 this._aColumns = {};
@@ -972,14 +976,57 @@ sap.ui.define([
 
                 //get dynamic data
                 var oJSONDataModel = new sap.ui.model.json.JSONModel();
-                var aFilters = this.getView().byId("smartFilterBar").getFilters();
-                // console.log(aFilters);
+                // var aFilters = this.getView().byId("smartFilterBar").getFilters();
+                var oSmartFilter = this.getView().byId("smartFilterBar").getFilters();
+
+                var aFilters = [], aFilter = [], aSmartFilter = [];
+
+                if (oSmartFilter.length > 0)  {
+                    console.log("oSmartFilter", oSmartFilter);
+                    oSmartFilter.forEach(item => {
+                        if (item === undefined) {
+                            aFilter.push(new Filter(item.sPath, item.sOperator, item.oValue1));
+                        }
+                        else {
+                            aFilters.push(item);
+                        }
+                    })
+
+                    if (aFilter.length > 0) { aFilters.push(new Filter(aFilter, false)); }
+                }
+
+                if (Object.keys(this._oSmartFilterCustomControlProp).length > 0) {
+                    Object.keys(this._oSmartFilterCustomControlProp).forEach(item => {
+                        var oCtrl = this.getView().byId("smartFilterBar").determineControlByName(item);
+
+                        if (oCtrl) {
+                            var aCustomFilter = [];
+    
+                            if (oCtrl.getTokens().length === 1) {
+                                oCtrl.getTokens().map(function(oToken) {
+                                    aFilters.push(new Filter(item, FilterOperator.EQ, oToken.getKey()))
+                                })
+                            }
+                            else if (oCtrl.getTokens().length > 1) {
+                                oCtrl.getTokens().map(function(oToken) {
+                                    aCustomFilter.push(new Filter(item, FilterOperator.EQ, oToken.getKey()))
+                                })
+    
+                                aFilters.push(new Filter(aCustomFilter));
+                            }
+                        }
+                    })
+                }
+
+                aSmartFilter.push(new Filter(aFilters, true));
+
+                console.log("aSmartFilter", aSmartFilter);
                 var oText = this.getView().byId("IODynTableCnt");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
 
                 oModel.read("/IOHDRSet", {
-                    filters: aFilters,
+                    filters: aSmartFilter, //aFilters,
                     success: function (oData, oResponse) {
                         // console.log(oData);
                         oData.results.forEach(item => {
@@ -2071,7 +2118,7 @@ sap.ui.define([
                 }
             },
 
-            onSBUChange: function (oEvent) {
+            onSBUChange2: function (oEvent) {
                 // console.log("onSBUChange");
                 var oFilterData = this._oSmartFilterBar.getFilterData();
                 // console.log(oFilterData);
@@ -2093,6 +2140,68 @@ sap.ui.define([
                 // }
 
                 // return;
+
+                oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
+                            me.getView().setModel(aData, "PlantSH");
+                        }
+                        else {
+                            var aData = new JSONModel({ results: [] });
+                            me.getView().setModel(aData, "PlantSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_SEASON_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
+                            me.getView().setModel(aData, "SeasonSH");
+                        }
+                        else {
+                            var aData = new JSONModel({ results: [] });
+                            me.getView().setModel(aData, "SeasonSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
+                oModel.read("/ZVB_3DERP_IO_SH", {
+                    urlParameters: {
+                        "$filter": "SBU eq '" + vSBU + "'"
+                    },
+                    success: function (oData, oResponse) {
+                        if (oData.results.length > 0) {
+                            var aData = new JSONModel({ results: oData.results.filter(item => item.SBU === vSBU) });
+                            me.getView().setModel(aData, "IOSH");
+                        }
+                        else {
+                            var aData = new JSONModel({ results: [] });
+                            me.getView().setModel(aData, "IOSH");
+                        }
+                    },
+                    error: function (err) { }
+                });
+
+            },
+
+            onSBUChange: function (oEvent) {
+                this._sbuChange = true;
+                
+                var me = this;                
+                var vSBU = this.getView().byId("cboxSBU").getSelectedKey();
+                var oModel = this.getOwnerComponent().getModel("ZVB_3DERP_IO_FILTER_CDS");      
+
+                console.log(vSBU, oModel);
 
                 oModel.read("/ZVB_3DERP_PLANPLANT_SH", {
                     urlParameters: {
