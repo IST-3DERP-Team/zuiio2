@@ -38,7 +38,7 @@ sap.ui.define([
 
                 this.getHeaderData();
 
-                var vIONo = "1000115";
+                var vIONo = "8A01034";
                 this._oModel.read('/AttribSet', { 
                     urlParameters: {
                         "$filter": "IONO eq '" + vIONo + "' and ATTRIBTYP eq 'COLOR'"
