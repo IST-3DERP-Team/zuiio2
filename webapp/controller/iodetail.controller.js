@@ -19801,6 +19801,10 @@ sap.ui.define([
                     var sRowPath = oEvent.getParameters().rowBindingContext.sPath;
 
                     if (oTable.getId().indexOf("costHdrTab") >= 0) {
+
+                        if(this.byId("btnSaveCostHdr").getVisible() === false && this.byId("btnSaveCostDtl").getVisible() === true) {
+                            return;
+                        }
                         var vType = oTable.getModel().getProperty(sRowPath + "/CSTYPE");
                         var vVersion = oTable.getModel().getProperty(sRowPath + "/VERSION");
                         this.getIOCostDetails(vType, vVersion, false);
@@ -20783,10 +20787,11 @@ sap.ui.define([
                     console.log("oParamLock2", oParamLock2);
 
                     var promise = new Promise((resolve, reject) => {
-                        oModelLock2.create("/ZERP_IOCSHDR", oParamLock, {
+                        oModelLock2.create("/ZERP_IOCSHDR", oParamLock2, {
                             method: "POST",
                             success: function (oResultLock) {
-                                oResultLock.IO_MSG.results.forEach(item => {
+                                console.log(oResultLock);
+                                oResultLock.IOCSHDR_MSG.results.forEach(item => {
                                     me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
                                     me.getView().getModel("ui").setProperty("/LockType", item.Type);
                                     me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
@@ -20826,6 +20831,7 @@ sap.ui.define([
                         oModelLock.create("/ZERP_IOHDR", oParamLock, {
                             method: "POST",
                             success: function (oResultLock) {
+                                console.log(oResultLock);
                                 oResultLock.IO_MSG.results.forEach(item => {
                                     me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
                                     me.getView().getModel("ui").setProperty("/LockType", item.Type);
@@ -20876,9 +20882,9 @@ sap.ui.define([
                             })
                         });
 
-                        oParamUnLock2["IOCSHDR_TAB"] = oIO_TAB;
+                        oParamUnLock2["IOCSHDR_TAB"] = oIO_TAB2;
                         oParamUnLock2["iv_count"] = 30;
-                        oParamUnLock2["lock"] = "X",
+                        oParamUnLock2["lock"] = "",
                         oParamUnLock2["IOCSHDR_MSG"] = []
                     }
 
@@ -20891,21 +20897,21 @@ sap.ui.define([
 
                         oParamUnLock2["IOCSHDR_TAB"] = oIO_TAB2;
                         oParamUnLock2["iv_count"] = 30;
-                        oParamUnLock2["lock"] = "X",
+                        oParamUnLock2["lock"] = "",
                         oParamUnLock2["IOCSHDR_MSG"] = []
                     }
 
                     console.log("oParamUnLock2", oParamUnLock2);
 
-                    oModelLock2.create("/ZERP_IOCSHDR", oParamUnLock, {
+                    oModelLock2.create("/ZERP_IOCSHDR", oParamUnLock2, {
                         method: "POST",
                         success: function (oResultLock) {
-                            // console.log(oResultLock);
+                            console.log(oResultLock);
                             oResultLock.IOCSHDR_MSG.results.forEach(item => {
                                 if (item.Type === "S") {
                                     me.getView().getModel("ui").setProperty("/LockType", "");
                                     me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
-                                    me.getView().getModel("ui2").setProperty("/currLockModule", "")
+                                    me.getView().getModel("ui2").setProperty("/currLockModule", "");
                                     // alert(me.getView().getModel("ui").getProperty("/isLocked"));
                                 }
                                 sError += item.Message + ".\r\n ";
@@ -20941,7 +20947,7 @@ sap.ui.define([
                                 if (item.Type === "S") {
                                     me.getView().getModel("ui").setProperty("/LockType", "");
                                     me.getView().getModel("ui").setProperty("/LockMessage", item.Message);
-                                    me.getView().getModel("ui2").setProperty("/currLockModule", "")
+                                    me.getView().getModel("ui2").setProperty("/currLockModule", "");
                                     // alert(me.getView().getModel("ui").getProperty("/isLocked"));
                                 }
                                 sError += item.Message + ".\r\n ";
