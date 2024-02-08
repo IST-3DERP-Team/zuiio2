@@ -400,7 +400,7 @@ sap.ui.define([
                 // console.log(oEvent);
                 var me = this;
 
-                me.defaultID = "BAS_CONN";
+                me.defaultID = "BAS_CONN2";
                 this._aCopyInfo = {};
 
                 var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();
@@ -2016,7 +2016,7 @@ sap.ui.define([
                     })
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
-                    // console.log("oColProp", sTabId, oColProp);
+                    console.log("oColProp", sTabId, oColProp);
 
                     if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
@@ -3371,6 +3371,11 @@ sap.ui.define([
                                     me.setIOTableColumns(sTabId, oData.results);
                                     // Common.closeLoadingDialog();
                                     resolve();
+
+                                    // if(arg1 === "IODLV") {
+                                    //    console.log("_aColumns", me._aColumns[sTabId.replace("Tab", "")]);
+                                    //    console.log("oLocColProp", oLocColProp[sTabId.replace("Tab", "")]);
+                                    // }
                                 }
                             },
                             error: function (err) {
@@ -3390,6 +3395,8 @@ sap.ui.define([
                 var oColumns = arg2;
                 var oTable;
 
+                // console.log("sTabId", sTabId);
+
                 if (sTabId === "SPLITIODLVTab" || sTabId === "SPLITIODETTab" || sTabId === "GENINFORECTab") {
                     oTable = sap.ui.getCore().byId(sTabId);
                 } else {
@@ -3399,7 +3406,8 @@ sap.ui.define([
                 oTable.getModel().setProperty("/columns", oColumns);
 
                 //bind the dynamic column to the table
-                oTable.bindColumns("/columns", function (index, context) {
+                oTable.bindColumns("/columns", function (index, context) {                    
+
                     var sColumnId = context.getObject().ColumnName;
                     var sColumnLabel = context.getObject().ColumnLabel;
 
@@ -3439,7 +3447,11 @@ sap.ui.define([
                     var sColumnVisible = context.getObject().Visible;
                     var sColumnSorted = context.getObject().Sorted;
                     var sColumnSortOrder = context.getObject().SortOrder;
-                    var sColumnDataType = context.getObject().DataType;
+                    var sColumnDataType = sColumnId === "EDISOURCE" ? "BOOLEAN" : context.getObject().DataType;
+
+                    // if(sTabId === "IODLVTab") {
+                    //     console.log(sColumnId, sColumnDataType);
+                    // }
 
 
                     if (sColumnWidth === 0) sColumnWidth = 100;
@@ -3451,13 +3463,27 @@ sap.ui.define([
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
                     // console.log("oColProp", sTabId, oColProp);
 
-                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
+                    // if(sTabId === "IODLVTab"){
+                    //     console.log("oColProp", sTabId, oColProp);
+                    //     console.log(oColProp[0].ValueHelp);
+                    // }
+
+                    if (oColProp && oColProp.length > 0 && oColProp[0].ValueHelp !== undefined && oColProp[0].ValueHelp["items"].text && oColProp[0].ValueHelp["items"].value !== oColProp[0].ValueHelp["items"].text &&
                         oColProp[0].TextFormatMode && oColProp[0].TextFormatMode !== "Key") {
+                            // if(sTabId === "IODLVTab" || sTabId === "IODETTab"){
+                            //     console.log("oColProp", sTabId, oColProp);
+                            //     console.log(oColProp[0].ValueHelp);
+                            //     me.getVHSet("/IOCSSHSet", "CostSheet2Model", false, false);
+                            // }
                         oText.bindText({
                             parts: [
                                 { path: sColumnId }
                             ],
                             formatter: function (sKey) {
+                                    // console.log("formatter: function (sKey) ", oColProp[0].ValueHelp["items"].path);
+                                    // console.log(me.getView());
+                                    // console.log(me.getView().getModel(oColProp[0].ValueHelp["items"].path));
+
                                 var oValue = me.getView().getModel(oColProp[0].ValueHelp["items"].path).getData().filter(v => v[oColProp[0].ValueHelp["items"].value] === sKey);
                                 if (oValue && oValue.length > 0) {
                                     if (oColProp[0].TextFormatMode === "Value") {
@@ -5186,7 +5212,7 @@ sap.ui.define([
                             },
                             success: function (oData, oResponse) {
                                 // console.log(sModelName);
-                                // console.log(oData);
+                                // console.log(sModelName, oData);
 
                                 if (sModelName === "BILLTO_MODEL") {
                                     oData.results.forEach(item => {
@@ -5225,7 +5251,7 @@ sap.ui.define([
                             },
                             success: function (oData, oResponse) {
                                 // console.log(sModelName);
-                                // console.log("sModelName", oData);
+                                console.log(sModelName, oData);
                                 let RELStatFilter = false;
 
                                 if (sModelName === "CostSheet2Model") {
@@ -5235,8 +5261,9 @@ sap.ui.define([
                                     })
                                 }
 
-                                if (sModelName === "CostSheetModel" || sModelName === "DlvIODetChkModel" || sModelName === "IODLVDELVALModel" || sModelName === "PROCOUTCHK_MODEL")
+                                if (sModelName === "CostSheetModel" || sModelName === "DlvIODetChkModel" || sModelName === "IODLVDELVALModel" || sModelName === "PROCOUTCHK_MODEL") {
                                     oJSONModel.setData(oData.results);
+                                }
 
                                 if (sModelName === "CostSheet2Model") {
                                     if (RELStatFilter)
@@ -5245,8 +5272,9 @@ sap.ui.define([
                                         oJSONModel.setData(oData.results);
                                 }
 
-                                if (sModelName === "PROCOUTCHK_MODEL")
+                               // if (sModelName === "PROCOUTCHK_MODEL") {
                                     // console.log("PROCOUTCHK_MODEL", oData.results);
+                            // }
 
                                 oView.setModel(oJSONModel, sModelName);
                                 // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
@@ -12313,6 +12341,7 @@ sap.ui.define([
                         }
                         else {
                             aEditedRows.forEach(item => {
+                                console.log(this._aColumns[arg]);
                                 entitySet = centitySet + "(";
                                 var param = {};
                                 var iKeyCount = this._aColumns[arg].filter(col => col.Key === "X").length;
@@ -12333,14 +12362,16 @@ sap.ui.define([
                                     }
 
                                     //IF IODLV || IODET, INCLUDE KEYS IN PAYLOAD 
-                                    if (arg === "IODLV" || arg === "IODET") {
+                                    if (arg === "IODLV" || arg === "IODET" && col.Editable === true) {
                                         param[col.ColumnName] = itemValue;
                                     } else if (arg === "IOATTRIB") {
-                                        if (col.Key === "X")
+                                        if (col.Key === "X") {
                                             param[col.ColumnName] = itemValue;
+                                        }
 
-                                        if (col.Editable)
+                                        if (col.Editable) {
                                             param[col.ColumnName] = itemValue;
+                                        }
                                     }
                                     //COLLECT EDITABLE FIELDS ONLY FOR OTHER ARG VALUE
                                     else {
@@ -13121,6 +13152,7 @@ sap.ui.define([
                     this._oModelIOCosting.read('/TypeSHSet', {
                         success: function (oData) {
                             me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
+                            // console.log("COSTTYPE_MODEL", oData.results);
                         },
                         error: function (err) { }
                     })
@@ -14677,7 +14709,8 @@ sap.ui.define([
                                         wrapping: false
                                     }));
                                 }
-                                else if (ci.DataType === "BOOLEAN") {
+                                // else 
+                                if (ci.DataType === "BOOLEAN" || (sColName === "EDISOURCE" && arg === "IODLV")) {
                                     col.setTemplate(new sap.m.CheckBox({
                                         selected: arg === "IODET" || arg === "SPLITIODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
                                         // text: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
@@ -14723,7 +14756,8 @@ sap.ui.define([
                                         //tooltip: arg === "IODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}"
                                     }));
                                 }
-                                else if (ci.DataType === "BOOLEAN") {
+                                // else 
+                                if (ci.DataType === "BOOLEAN" || (sColName === "EDISOURCE" && arg === "IODLV")) {
                                     col.setTemplate(new sap.m.CheckBox({
                                         selected: arg === "IODET" || arg === "SPLITIODET" ? "{DataModel>/" + sColName + "}" : "{" + sColName + "}",
                                         wrapping: false,
@@ -18393,6 +18427,7 @@ sap.ui.define([
                     async: false,
                     success: function (oData) {
                         me.getView().setModel(new JSONModel(oData.results), "COSTTYPE_MODEL");
+                        // console.log("COSTTYPE_MODEL", oData.results);
                     },
                     error: function (err) { }
                 })
@@ -20376,7 +20411,7 @@ sap.ui.define([
                 var fileDesc1 = sap.ui.getCore().byId("FileDesc1");
                 var oFileDesc1Param = new sap.m.UploadCollectionParameter({
                     name: "desc1",
-                    value: fileDesc1.getValue()
+                    value: encodeURI(fileDesc1.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc1Param);
                 //fileDesc1.setValue('');
@@ -20385,7 +20420,7 @@ sap.ui.define([
                 var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
                 var oFileDesc2Param = new sap.m.UploadCollectionParameter({
                     name: "desc2",
-                    value: fileDesc2.getValue()
+                    value: encodeURI(fileDesc2.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc2Param);
                 //fileDesc2.setValue('');
@@ -20394,7 +20429,7 @@ sap.ui.define([
                 var fileRemarks = sap.ui.getCore().byId("FileRemarks");
                 var oFileRemarksParam = new sap.m.UploadCollectionParameter({
                     name: "remarks",
-                    value: fileRemarks.getValue()
+                    value: encodeURI(fileRemarks.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileRemarksParam);
                 //fileRemarks.setValue('');

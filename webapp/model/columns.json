@@ -169,12 +169,12 @@
             , "items": {
                 "path": "CostSheet2Model", 
                 "value": "VERSION", 
-                "text": "VERDESC"
+                "text": "VERSION"
             },
             "SuggestionItems": {
                 "path": "CostSheet2Model>/", 
                 "text": "{CostSheet2Model>VERSION}", 
-                "additionalText": "{CostSheet2Model>VERDESC}", 
+                "additionalText": "{CostSheet2Model>VERSION}", 
                 "maxSuggestionWidth": "200px" 
             },
             "columns": "tvh_csversion2"
@@ -207,12 +207,12 @@
                 , "items": {
                     "path": "CostSheet2Model", 
                     "value": "VERSION", 
-                    "text": "VERDESC"
+                    "text": "VERSION"
                 },
                 "SuggestionItems": {
                     "path": "CostSheet2Model>/", 
                     "text": "{CostSheet2Model>VERSION}", 
-                    "additionalText": "{CostSheet2Model>VERDESC}", 
+                    "additionalText": "{CostSheet2Model>VERSION}", 
                     "maxSuggestionWidth": "200px" 
                 },
                 "columns": "tvh_csversion2"
