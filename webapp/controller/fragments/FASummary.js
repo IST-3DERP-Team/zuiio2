@@ -371,11 +371,14 @@ sap.ui.define([
                     "$filter": "IONO eq '" + _thisMain._ioNo + "'"
                 },
                 success: function (data, response) {
-                    //console.log("getFASummary", data)
+                    console.log("getFASummary", data)
 
                     data.results.forEach(item => {
                         if (item.PODATE !== null) item.PODATE = dateFormat.format(item.PODATE);
                         if (item.DELIVERYDT !== null) item.DELIVERYDT = dateFormat.format(item.DELIVERYDT);
+                        if (item.INDCDT !== null) item.INDCDT = dateFormat.format(item.INDCDT);
+                        if (item.DCSENDDT !== null) item.DCSENDDT = dateFormat.format(item.DCSENDDT);
+                        if (item.PLANTRCVDT !== null) item.PLANTRCVDT = dateFormat.format(item.PLANTRCVDT);
                     })
 
                     var oJSONModel = new sap.ui.model.json.JSONModel();
