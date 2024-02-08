@@ -479,7 +479,7 @@ sap.ui.define([
                     }
                 ).catch(
                     function (error) {
-                        console.error("Error loading data:", error);
+                        // console.error("Error loading data:", error);
                         _startUpInfo.id = me.defaultID;
                     }
                 );
@@ -5246,7 +5246,7 @@ sap.ui.define([
                                 }
 
                                 if (sModelName === "PROCOUTCHK_MODEL")
-                                    console.log("PROCOUTCHK_MODEL", oData.results);
+                                    // console.log("PROCOUTCHK_MODEL", oData.results);
 
                                 oView.setModel(oJSONModel, sModelName);
                                 // console.log(sModelName, oView.setModel(oJSONModel, sModelName));
@@ -11857,6 +11857,7 @@ sap.ui.define([
                     for (var i = 0; i < oSelectedIndices.length; i++) {
                         oData[oSelectedIndices[i]][sColumnName] = extractedValue;
                         oData[oSelectedIndices[i]][sColCurrency] = extractedCurrValue;
+                        oData[oSelectedIndices[i]]["EDITED"] = true;
                     }
                     oTable.getModel().setProperty('/results', oData);
                 } else {
@@ -11871,8 +11872,12 @@ sap.ui.define([
                         return;
                     }
 
+                    console.log("oData", oData);
                     for (var i = 0; i < oSelectedIndices.length; i++) {
                         oData[oSelectedIndices[i]][sColumnName] = extractedValue;
+                        
+                        // console.log("oData[oSelectedIndices[i]]", oData[oSelectedIndices[i]]);
+                        oData[oSelectedIndices[i]]["EDITED"] = true;
                     }
                     oTable.getModel().setProperty('/results', oData);
                 }               
@@ -12987,7 +12992,7 @@ sap.ui.define([
                                 iCounter1++;
                                 mVASTypeData[item.PROCESSCD] = oData.results;
 
-                                console.log("mVASTypeData", mVASTypeData);
+                                // console.log("mVASTypeData", mVASTypeData);
 
                                 if (iCounter1 === oTabData.length) {
                                     me.getView().setModel(new JSONModel(mVASTypeData), "VASTYPE_MODEL");
@@ -15753,7 +15758,7 @@ sap.ui.define([
                 // console.log("handleValueHelpChange", _sTableModel);
 
                 oSource.getSuggestionItems().forEach(item => {
-                    console.log(item);
+                    // console.log(item);
                     if (item.getProperty("key") === oSource.getValue().trim()) {
                         isInvalid = false;
                         oSource.setValueState(isInvalid ? "Error" : "None");
@@ -15789,6 +15794,24 @@ sap.ui.define([
                                     // console.log("handleValueHelpChange this._aCopyInfo", this._aCopyInfo);
                                 }
                             })
+                        } else {
+                            if(oSource.getBindingInfo("value") !== undefined){
+                                var sTableId = oSource.oParent.oParent.sId;
+                                var oTable = this.byId(sTableId);
+                                //var sModelName = oEvent.srcControl.getBindingInfo("value").parts[0].model;
+                                var sColumnName = oSource.getBindingInfo("value").parts[0].path;
+                                var sCurrentRowIndex = +oSource.getBindingContext().sPath.replace("/rows/", "");
+                                //console.log(oTable.getModel("DataModel").getData().results);
+                                //console.log(oTable.getContextByIndex(sCurrentRowIndex).getProperty(sColumnName));
+                                this._aCopyInfo={
+                                    _sTableId :sTableId,
+                                    _sColumnName:sColumnName,
+                                    _sValue : this.byId(this._sTableModel + "Tab").getModel().getProperty(sRowPath + '/' + oSource.getBindingInfo("value").parts[0].path),
+                                    _sCurrentRowIndex : sCurrentRowIndex
+                                }
+            
+                                // console.log("handleValueHelpChange this._aCopyInfo", this._aCopyInfo);
+                            }
                         }
                     }
 
@@ -18729,7 +18752,7 @@ sap.ui.define([
                         }
                         else {
                             this.getView().getModel("ui2").setProperty("/currLockModule", arg);
-                            console.log(this.getView().getModel("ui2").getProperty("/currLockModule"));
+                            // console.log(this.getView().getModel("ui2").getProperty("/currLockModule"));
 
                             await this.lock(this);
 
@@ -18781,7 +18804,7 @@ sap.ui.define([
                         await oPromiseResult;
 
                         this.getView().getModel("ui2").setProperty("/currLockModule", arg);
-                        console.log(this.getView().getModel("ui2").getProperty("/currLockModule"));
+                        // console.log(this.getView().getModel("ui2").getProperty("/currLockModule"));
 
                         this.getView().getModel("ui2").setProperty("/cstype", this.byId(arg + "Tab").getModel().getData().rows[0].CSTYPE);
                         this.getView().getModel("ui2").setProperty("/csversion", this.byId(arg + "Tab").getModel().getData().rows[0].VERSION);
@@ -19908,6 +19931,8 @@ sap.ui.define([
                 oEvent.preventDefault();
                 this._aCopyInfo={};
 
+                // console.log("oEvent", oEvent);
+
                 if(oEvent.srcControl.getBindingInfo("value") !== undefined){
                     var sTableId = oEvent.srcControl.oParent.oParent.sId;
                     var oTable = this.byId(sTableId);
@@ -19923,7 +19948,7 @@ sap.ui.define([
                         _sCurrentRowIndex : sCurrentRowIndex
                     }
 
-                    console.log("this._aCopyInfo", this._aCopyInfo);
+                    // console.log("this._aCopyInfo", this._aCopyInfo);
                 }
 
             },
@@ -20571,7 +20596,7 @@ sap.ui.define([
                 });
                 await _promiseResult;
 
-                console.log("aSelectedItems", aSelectedItems);
+                // console.log("aSelectedItems", aSelectedItems);
 
                 //USED aSelectedItems as value of table at XML view
                 if(aSelectedItems.length > 0) {
@@ -20633,10 +20658,10 @@ sap.ui.define([
 
                 var oTable = sap.ui.getCore().byId("GENINFORECTab");
                 var infnrData = sap.ui.getCore().byId("GENINFORECTab").getModel().getData().rows;
-                console.log("infnrData", infnrData);
+                // console.log("infnrData", infnrData);
 
                 infnrData.forEach(item => {
-                    console.log(sapDateFormat.format(new Date(item.DATBI)) + "T00:00:00");
+                    // console.log(sapDateFormat.format(new Date(item.DATBI)) + "T00:00:00");
                     oInput.push({
                         Ekorg: item.PURORG,                                 //PURCHASING ORG
                         Lifnr: item.VENDORCD,                               //VENDOR CD
@@ -20663,7 +20688,7 @@ sap.ui.define([
                     });
                 });
                 
-                console.log(oInput);
+                // console.log(oInput);
 
                 // return;
 
@@ -20671,7 +20696,7 @@ sap.ui.define([
                 oParam["N_CreateInfoRecParam"] = oInput;
                 oParam["N_CreateInfoRecReturn"] = [];
 
-                console.log("oParam", oParam);
+                // console.log("oParam", oParam);
                 oModel.setUseBatch(false);
                 oModel.create("/CreateInfoRecordSet", oParam, {
                     method: "POST",
@@ -20750,14 +20775,14 @@ sap.ui.define([
                 var sError = "";
 
                 var lockedTable = me.getView().getModel("ui2").getProperty("/currLockModule");
-                console.log("lockedTable", lockedTable);
+                // console.log("lockedTable", lockedTable);
 
                 if(lockedTable === "costHdr" || lockedTable === "costDtls") {
                     if(lockedTable === "costHdr") {
-                        console.log("Locked " + lockedTable, me.byId(lockedTable + "Tab").getModel().getData().rows);
+                        // console.log("Locked " + lockedTable, me.byId(lockedTable + "Tab").getModel().getData().rows);
 
                         me.byId(lockedTable + "Tab").getModel().getData().rows.forEach(item => {
-                            console.log("item", item.IONO, item.CSTYPE, item.VERSION);
+                            // console.log("item", item.IONO, item.CSTYPE, item.VERSION);
                             oIO_TAB2.push({
                                 "iono" : item.IONO,
                                 "cstype" : item.CSTYPE,
@@ -20784,13 +20809,13 @@ sap.ui.define([
                         oParamLock2["IOCSHDR_MSG"] = []
                     }
 
-                    console.log("oParamLock2", oParamLock2);
+                    // console.log("oParamLock2", oParamLock2);
 
                     var promise = new Promise((resolve, reject) => {
                         oModelLock2.create("/ZERP_IOCSHDR", oParamLock2, {
                             method: "POST",
                             success: function (oResultLock) {
-                                console.log(oResultLock);
+                                // console.log(oResultLock);
                                 oResultLock.IOCSHDR_MSG.results.forEach(item => {
                                     me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
                                     me.getView().getModel("ui").setProperty("/LockType", item.Type);
@@ -20831,7 +20856,7 @@ sap.ui.define([
                         oModelLock.create("/ZERP_IOHDR", oParamLock, {
                             method: "POST",
                             success: function (oResultLock) {
-                                console.log(oResultLock);
+                                // console.log(oResultLock);
                                 oResultLock.IO_MSG.results.forEach(item => {
                                     me.getOwnerComponent().getModel("LockModel").setData(oResultLock.IO_MSG);
                                     me.getView().getModel("ui").setProperty("/LockType", item.Type);
@@ -20872,7 +20897,7 @@ sap.ui.define([
 
                 if(lockedTable === "costHdr" || lockedTable === "costDtls") {
                     if(lockedTable === "costHdr") {
-                        console.log("Locked " + lockedTable, this.byId(lockedTable + "Tab").getModel().getData().rows);
+                        // console.log("Locked " + lockedTable, this.byId(lockedTable + "Tab").getModel().getData().rows);
 
                         this.byId(lockedTable + "Tab").getModel().getData().rows.forEach(item => {
                             oIO_TAB2.push({
@@ -20901,12 +20926,12 @@ sap.ui.define([
                         oParamUnLock2["IOCSHDR_MSG"] = []
                     }
 
-                    console.log("oParamUnLock2", oParamUnLock2);
+                    // console.log("oParamUnLock2", oParamUnLock2);
 
                     oModelLock2.create("/ZERP_IOCSHDR", oParamUnLock2, {
                         method: "POST",
                         success: function (oResultLock) {
-                            console.log(oResultLock);
+                            // console.log(oResultLock);
                             oResultLock.IOCSHDR_MSG.results.forEach(item => {
                                 if (item.Type === "S") {
                                     me.getView().getModel("ui").setProperty("/LockType", "");
