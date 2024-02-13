@@ -20411,6 +20411,7 @@ sap.ui.define([
                 var fileDesc1 = sap.ui.getCore().byId("FileDesc1");
                 var oFileDesc1Param = new sap.m.UploadCollectionParameter({
                     name: "desc1",
+                    // value: fileDesc1.getValue()
                     value: encodeURI(fileDesc1.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc1Param);
@@ -20420,6 +20421,7 @@ sap.ui.define([
                 var fileDesc2 = sap.ui.getCore().byId("FileDesc2");
                 var oFileDesc2Param = new sap.m.UploadCollectionParameter({
                     name: "desc2",
+                    // value: fileDesc2.getValue()
                     value: encodeURI(fileDesc2.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileDesc2Param);
@@ -20429,6 +20431,7 @@ sap.ui.define([
                 var fileRemarks = sap.ui.getCore().byId("FileRemarks");
                 var oFileRemarksParam = new sap.m.UploadCollectionParameter({
                     name: "remarks",
+                    // value: fileRemarks.getValue()
                     value: encodeURI(fileRemarks.getValue())
                 });
                 oEvent.getParameters().addHeaderParameter(oFileRemarksParam);
