@@ -20449,7 +20449,7 @@ sap.ui.define([
                 //filename selected
                 var oCustomerHeaderSlug = new sap.m.UploadCollectionParameter({
                     name: "slug",
-                    value: oEvent.getParameter("fileName")
+                    value: encodeURI(oEvent.getParameter("fileName"))
                 });
                 oEvent.getParameters().addHeaderParameter(oCustomerHeaderSlug);
 
