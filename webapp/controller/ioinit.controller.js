@@ -982,7 +982,7 @@ sap.ui.define([
                 var aFilters = [], aFilter = [], aSmartFilter = [];
 
                 if (oSmartFilter.length > 0)  {
-                    // console.log("oSmartFilter", oSmartFilter);
+
                     oSmartFilter.forEach(item => {
                         if (item === undefined) {
                             aFilter.push(new Filter(item.sPath, item.sOperator, item.oValue1));
@@ -1018,9 +1018,14 @@ sap.ui.define([
                     })
                 }
 
+                if(this._sbu !== undefined && this._sbu !== "") {
+                    console.log(this._sbu);
+                    aFilters.push(new Filter("SBU", FilterOperator.EQ, this._sbu));
+                }
+                
                 aSmartFilter.push(new Filter(aFilters, true));
 
-                // console.log("aSmartFilter", aSmartFilter);
+                console.log("aSmartFilter", aSmartFilter);
                 var oText = this.getView().byId("IODynTableCnt");
 
                 // this.addDateFilters(aFilters); //date not automatically added to filters
@@ -1028,7 +1033,7 @@ sap.ui.define([
                 oModel.read("/IOHDRSet", {
                     filters: aSmartFilter, //aFilters,
                     success: function (oData, oResponse) {
-                        // console.log(oData);
+                        console.log(oData);
                         oData.results.forEach(item => {
                             // console.log(item.CUSTDLVDT);
                             item.CUSTDLVDT = item.CUSTDLVDT === "0000-00-00" || item.CUSTDLVDT === "    -  -  " ? "" : dateFormat.format(new Date(item.CUSTDLVDT));
