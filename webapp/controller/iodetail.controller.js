@@ -13633,6 +13633,37 @@ sap.ui.define([
                                 else if (ci.DataType === "NUMBER") {
                                     // console.log("a3 NUMBER " + sColName);
                                     if (arg === "ioMatList") {
+                                        if(sColName.toUpperCase() === "PURALLOW") {
+                                            col.setTemplate(new sap.m.Input({
+                                                type: sap.m.InputType.Number,
+                                                textAlign: sap.ui.core.TextAlign.Right,
+                                                value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                                change: this.onNumberLiveChange.bind(this),
+                                                editable: "{= ${PURALEDIT} === '1' ? true : false }",
+                                                enabled: {
+                                                    path: "DELETED",
+                                                    formatter: function (DELETED) {
+                                                        if (DELETED) { return false }
+                                                        else { return true }
+                                                    }
+                                                }
+                                            }).addEventDelegate(oInputEventDelegate));
+                                        } else if (sColName.toUpperCase() === "PURALQTY")  {
+                                            col.setTemplate(new sap.m.Input({
+                                                type: sap.m.InputType.Number,
+                                                textAlign: sap.ui.core.TextAlign.Right,
+                                                value: arg === "IODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
+                                                change: this.onNumberLiveChange.bind(this),
+                                                editable: "{= ${PURALEDIT} === '2' ? true : false }",
+                                                enabled: {
+                                                    path: "DELETED",
+                                                    formatter: function (DELETED) {
+                                                        if (DELETED) { return false }
+                                                        else { return true }
+                                                    }
+                                                }
+                                            }).addEventDelegate(oInputEventDelegate));
+                                        } else {
                                         col.setTemplate(new sap.m.Input({
                                             type: sap.m.InputType.Number,
                                             textAlign: sap.ui.core.TextAlign.Right,
@@ -13647,6 +13678,7 @@ sap.ui.define([
                                                 }
                                             }
                                         }).addEventDelegate(oInputEventDelegate));
+                                    }
                                     }
                                     else if (arg === "IODET" || arg === "SPLITIODET") {
                                         // console.log("IODET", ci.Decimal);
