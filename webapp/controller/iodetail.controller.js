@@ -400,7 +400,7 @@ sap.ui.define([
                 // console.log(oEvent);
                 var me = this;
 
-                me.defaultID = "BAS_CONN2";
+                me.defaultID = "BAS_CONN";
                 this._aCopyInfo = {};
 
                 var lookUpData = this.getOwnerComponent().getModel("LOOKUP_MODEL").getData();

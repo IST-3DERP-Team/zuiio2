@@ -196,6 +196,12 @@
                                                         <Title id="colorTabCnt" class="sapUiTinyMarginBegin"/>
                                                         <!-- <Title text="{i18n>items}" class="sapUiTinyMarginBegin"/> -->
                                                         <ToolbarSpacer/>
+                                                        <Button id="btnNewColor" 
+                                                            type="Ghost" 
+                                                            icon="sap-icon://add" 
+                                                            press="" 
+                                                            tooltip="{ddtext>/NEW}" 
+                                                            visible="true" />
                                                         <Button id="btnEditColor" 
                                                             icon="sap-icon://edit"
                                                             press="onEdit('color')"
