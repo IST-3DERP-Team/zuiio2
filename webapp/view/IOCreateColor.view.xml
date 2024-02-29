@@ -1,0 +1,100 @@
+<mvc:View controllerName="zuiio2.controller.IOCreateColor" displayBlock="true" class="sapUiSizeCompact"  
+    xmlns:mvc="sap.ui.core.mvc" 
+    xmlns:u="sap.uxap" 
+    xmlns="sap.m" 
+    xmlns:l="sap.ui.layout" 
+    xmlns:f="sap.ui.layout.form" 
+    xmlns:core="sap.ui.core" 
+    xmlns:tnt="sap.tnt"
+    xmlns:c="zui3derp.control" 
+    xmlns:uiT="sap.ui.table">
+    <Page showHeader="false" title="Create Color" showNavButton="true" navButtonPress="onNavBack">
+        <VBox fitContainer="true" class="ioassmat">
+        <uiT:Table id="materialListTab"
+                rows="{materialList>/}"
+                class="sapUiTinyMargin"
+                visibleRowCountMode="Auto"
+                showColumnVisibilityMenu="true"
+                enableColumnFreeze="true"
+                selectionMode="MultiToggle"
+                cellClick="onCellClick"
+                sort="onSorted">
+                <uiT:columns>
+                    <uiT:Column width="175px">
+                        <Text text="{ddtext>/MATNO}" />
+                        <uiT:template>
+                            <Input type="Text" 
+                            value="{materialList>MATNO}" 
+                            tooltip="{materialList>MATNO}" 
+                            showValueHelp="true"
+                            valueHelpRequest="handleValueHelp" 
+                            showSuggestion="true"
+                            suggestionItems="{path: 'material>/', length: 10000, templateShareable: false}"
+                            maxSuggestionWidth="500px"
+                            suggest="handleSuggestion"
+                            change="handleValueHelpChange">
+                            <suggestionItems>
+                                <core:ListItem key="{material>MatNo}" text="{material>MatNo}" additionalText="{material>DescEn}" />
+                            </suggestionItems>
+                        </Input>
+                        </uiT:template>
+                    </uiT:Column>
+                    <uiT:Column width="125px">
+                        <Text text="{ddtext>/GMC}" />
+                        <uiT:template>
+                            <Text text="{materialList>GMC}" wrapping="false" tooltip="{materialList>GMC}" />
+                        </uiT:template>
+                    </uiT:Column>
+                    <uiT:Column width="500px">
+                        <Text text="{ddtext>/GMCDESC}" />
+                        <uiT:template>
+                            <Text text="{materialList>GMCDESC}" wrapping="false" tooltip="{materialList>GMCDESC}" />
+                        </uiT:template>
+                    </uiT:Column>
+                    <uiT:Column width="400px">
+                        <Text text="{ddtext>/MATDESC1}" />
+                        <uiT:template>
+                            <Text text="{materialList>MATDESC1}" wrapping="false" tooltip="{materialList>MATDESC1}" />
+                        </uiT:template>
+                    </uiT:Column>
+                    <uiT:Column width="100px">
+                        <Text text="{ddtext>/UOM}" />
+                        <uiT:template>
+                            <Text text="{materialList>UOM}" wrapping="false" tooltip="{materialList>UOM}" />
+                        </uiT:template>
+                    </uiT:Column>
+                </uiT:columns>
+                <uiT:rowSettingsTemplate>
+                    <uiT:RowSettings highlight="{= ${materialList>EDITED} === true ? 'Warning' : null}" />
+                </uiT:rowSettingsTemplate>                
+                <uiT:extension>
+                    <Toolbar>
+                        <Title level="H3" text="{ddtext>/ASSIGNIOCOLOR}" class="sapUiTinyMarginBegin title" />
+                        <!-- <Text text="{ddtext>/ASSIGNSAPMAT}"/> -->
+                        <ToolbarSpacer/>
+                        <Button id="btnAuto" 
+                            icon="sap-icon://complete"
+                            text="{ddtext>/AUTOASSIGNSAPMAT}"
+                            press="onAssignAutomatic"
+                            tooltip="{ddtext>/AUTOASSIGNSAPMAT}"
+                            visible="true"/>
+                        <Button id="btnCreateIOColor" 
+                            icon="sap-icon://create-form"
+                            text="{ddtext>/CREATEIOCOLOR}"
+                            press="onCreateIOColor"
+                            tooltip="{ddtext>/CREATEIOCOLOR}"
+                            visible="true"/>
+                        <Button id="btnSave" 
+                            icon="sap-icon://save"
+                            press="onBatchSaveIOColor"
+                            tooltip="{ddtext>/SAVE}"
+                            visible="true"/>
+                    </Toolbar>  
+                </uiT:extension>
+                <uiT:layoutData>
+                    <FlexItemData growFactor="1" baseSize="0%"/>
+                </uiT:layoutData>
+            </uiT:Table> 
+        </VBox>
+    </Page>
+</mvc:View>

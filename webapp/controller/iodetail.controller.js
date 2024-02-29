@@ -17076,6 +17076,16 @@ sap.ui.define([
                 });
             },
 
+            onCreateColor: async function(oEvent) {
+                var oRouter = sap.ui.core.UIComponent.getRouterFor(this);
+                oRouter.navTo("RouteIOCreateColor", {
+                    iono: this._ioNo,
+                    sbu: this._sbu
+                });
+
+                this.getView().getModel("ui2").setProperty("/icontabfilterkey", "itfSTYLE");
+            },
+
             onAssignMatNo: async function (oEvent) {
                 var oTable = this.byId("ioMatListTab");
                 var oSelectedIndices = oTable.getSelectedIndices();

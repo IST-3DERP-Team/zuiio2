@@ -403,6 +403,14 @@
                     "target": [
                         "TargetIOAssignMaterial"
                     ]
+                },
+                {
+                    "name": "RouteIOCreateColor",
+                    "pattern": "RouteIOCreateColor/{iono}/{sbu}",
+                    "greedy": false,
+                    "target": [
+                        "TargetIOCreateColor"
+                    ]
                 }
             ],
             "targets": {
@@ -426,6 +434,13 @@
                     "clearControlAggregation": false,
                     "viewId": "AssignMaterial",
                     "viewName": "AssignMaterial"
+                },
+                "TargetIOCreateColor": {
+                    "viewType": "XML",
+                    "transition": "slide",
+                    "clearControlAggregation": false,
+                    "viewId": "IOCreateColor",
+                    "viewName": "IOCreateColor"
                 }
             }
         },

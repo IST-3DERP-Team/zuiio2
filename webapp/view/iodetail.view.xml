@@ -199,7 +199,7 @@
                                                         <Button id="btnNewColor" 
                                                             type="Ghost" 
                                                             icon="sap-icon://add" 
-                                                            press="" 
+                                                            press="onCreateColor" 
                                                             tooltip="{ddtext>/NEW}" 
                                                             visible="true" />
                                                         <Button id="btnEditColor" 
