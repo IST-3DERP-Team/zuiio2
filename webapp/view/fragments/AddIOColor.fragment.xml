@@ -26,14 +26,16 @@
 						<Title id="AddIOColorCnt" class="sapUiTinyMarginBegin"/>
 						<ToolbarSpacer/>
 						<ToolbarSeparator/>
-						<Button id="btnADDIOCOLORApply" text="{i18n>Apply}" type="Ghost" icon="sap-icon://add" press="onAddFragment('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
-						<Button id="btnADDIOCOLORNew" type="Ghost" icon="sap-icon://add" press="onAdd('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
+						<Button id="btnADDIOCOLORApply" text="{i18n>Apply}" type="Ghost" icon="sap-icon://add" press="onAddFragment2" tooltip="{ddtext>/NEW}" visible="true" />
+						<Button id="btnADDIOCOLORNew" type="Ghost" icon="sap-icon://add" press="onAddFragment" tooltip="{ddtext>/NEW}" visible="true">
+						<customData>
+                            <core:CustomData key="TableName" value="ADDIOCOLORTab" />
+                        </customData> 
+						</Button>
 						<Button id="btnADDIOCOLORSubmit" text="{i18n>Submit}" press="onfragmentAddIOColor" tooltip="Submit" visible="false" />
 						<Button id="btnADDIOCOLORCancel" text="{i18n>Cancel}" press="onCancelAddIOColor" tooltip="Cancel" visible="false" />
 						<Button id="btnADDIOCOLORClose" text="{i18n>Close}" press="onCloseAddIOColor" tooltip="Close" visible="true" />    
-						<customData>
-                            <core:CustomData key="TableName" value="ADDIOCOLORTab" />
-                        </customData>                         
+						                        
 					</Toolbar>
 				</table:extension>	
 				<table:layoutData>
