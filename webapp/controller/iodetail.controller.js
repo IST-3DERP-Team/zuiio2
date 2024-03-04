@@ -265,6 +265,7 @@ sap.ui.define([
                 this.byId("onIOTransfer").setVisible(csAction === "display" ? false : true);
                 this.byId("onIOAttribEdit").setVisible(csAction === "display" ? false : true);
                 this.byId("btnCreateStyle").setVisible(csAction === "display" ? false : true);
+                this.byId("btnNewColor").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditColor").setVisible(csAction === "display" ? false : true);
                 this.byId("btnNewProcess").setVisible(csAction === "display" ? false : true);
                 this.byId("btnEditProcess").setVisible(csAction === "display" ? false : true);
@@ -3397,7 +3398,7 @@ sap.ui.define([
 
                 // console.log("sTabId", sTabId);
 
-                if (sTabId === "SPLITIODLVTab" || sTabId === "SPLITIODETTab" || sTabId === "GENINFORECTab") {
+                if (sTabId === "SPLITIODLVTab" || sTabId === "SPLITIODETTab" || sTabId === "GENINFORECTab" || sTabId === "ADDIOCOLORTab") {
                     oTable = sap.ui.getCore().byId(sTabId);
                 } else {
                     oTable = this.getView().byId(sTabId);
@@ -7651,6 +7652,88 @@ sap.ui.define([
             //******************************************* */
             // DELIVERY SCHEDULE AND DETAILS (OTHER TABLES)
             //******************************************* */
+            onAddFragment: async function(source) {
+                var arg = source;
+                var me = this;
+
+                let vIONo = this.getView().getModel("ui2").getProperty("/currIONo");
+                this.getView().getModel("ui2").setProperty("/currLockModule", arg);
+
+
+                if(arg === "ADDIOCOLOR") {
+                    sap.ui.getCore().byId("btnADDIOCOLORApply").setVisible(false);
+                    sap.ui.getCore().byId("btnADDIOCOLORNew").setVisible(false);
+                    sap.ui.getCore().byId("btnADDIOCOLORSubmit").setVisible(true);
+                    sap.ui.getCore().byId("btnADDIOCOLORCancel").setVisible(true);
+                    sap.ui.getCore().byId("btnADDIOCOLORClose").setVisible(false);
+                }
+
+                // if (this._dataMode === "NEW") {
+                //     this.addAnotherLine(oEvent);
+                // }
+                // else {
+                    //adding lines to tables via model
+                    this._dataMode = "NEW";
+                    var oButton = oEvent.getSource();
+                    var tabName = oButton.data('TableName')
+                    var oTable = sap.ui.getCore().byId(tabName);
+                    var oModel = oTable.getModel();
+                    var oData = oModel.getData();
+                    oData.forEach(item => item.EDITABLE = "");
+                    var aNewRow = [];
+                    var length = oData.length;
+
+                    if (arg === "ADDIOCOLOR") {
+                        aNewRow = [{
+                            NEW: true, 
+                            EDITABLE: "X",
+                            // ACTIVE: "X",
+                            Attribcd: "",
+                            Attribtyp: "",
+                            Attribval: "",
+                            Casverind: false,
+                            Desc1: "",
+                            Valuetyp: "",
+                            Valunit: ""
+                        }];
+                    }
+                    else if (tabName === "colorsTable") {
+                        var lastSeqno = 0;
+
+                        if (length > 0) {
+                            lastSeqno = Math.max.apply(Math, oData.map(function(o) { return parseInt(o.Sortseq); }));
+                        }
+                        
+                        lastSeqno++;
+                        
+                        var seqno = lastSeqno.toString();
+
+                        aNewRow = [{
+                            NEW: true, 
+                            EDITABLE:"X",
+                            Sortseq: seqno
+                        }];
+                    }
+                    else {
+                        aNewRow = [{NEW: true, EDITABLE: "X"}];
+                    }
+                    
+                    var aDataAfterChange = aNewRow.concat(oData);
+                    oModel.setProperty('/results', aDataAfterChange);
+
+                    if (tabName === "ADDIOCOLOR") {
+                            this.setGeneralAttrEditMode();
+                            this.onGeneralAttrChange();
+                        } else if (tabName === "colorsTable") {
+                            this.setColorCreateMode();
+                            this.onColorChange();
+                        } else if (tabName === "processesTable") {
+                            console.log("add process");
+                            this.setProcessEditMode();
+                            this.onProcessChange();
+                        }
+                // }
+            },
 
             onAdd: async function (source) {
                 var arg = source;
@@ -7746,7 +7829,7 @@ sap.ui.define([
                         this.byId("btnSaveProcess").setVisible(true);
                         this.byId("btnCancelProcess").setVisible(true);
                         this.byId("btnRefreshProcess").setVisible(false);
-                    }
+                    } 
 
                     var oIconTabBar = this.byId("idIconTabBarInlineMode");
                     oIconTabBar.getItems().filter(item => item.getProperty("key") !== oIconTabBar.getSelectedKey())
@@ -8587,6 +8670,7 @@ sap.ui.define([
                 this.byId("onIOTransfer").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("onIOAttribEdit").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnCreateStyle").setVisible(strIOStatus === "CNL" ? false : true);
+                this.byId("btnNewColor").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnEditColor").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnNewProcess").setVisible(strIOStatus === "CNL" ? false : true);
                 this.byId("btnEditProcess").setVisible(strIOStatus === "CNL" ? false : true);
@@ -9465,7 +9549,7 @@ sap.ui.define([
                 var me = this;
                 var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
                 let paramStyle = this.getView().getModel("ui2").getProperty("/currStyleNo");
-                var oText = this.getView().byId("colorTabCnt");
+                // var oText = this.getView().byId("colorTabCnt");
 
                 oModel.setHeaders({
                     // styleno: this._styleNo //"1000000272"
@@ -9477,7 +9561,7 @@ sap.ui.define([
                         me._colors = oData.results;
                         me.getStyleSizes();
 
-                        oText.setText(oData.results.length + " item/s");
+                        // oText.setText(oData.results.length + " item/s");
 
                         TableFilter.applyColFilters(me);
                     },
@@ -9936,6 +10020,7 @@ sap.ui.define([
                         }
                         else {
                             if (arg === "color") {
+                                this.byId("btnNewColor").setVisible(false);
                                 this.byId("btnEditColor").setVisible(false);
                                 this.byId("btnSaveColor").setVisible(true);
                                 this.byId("btnCancelColor").setVisible(true);
@@ -10133,6 +10218,7 @@ sap.ui.define([
                     Common.openLoadingDialog(this);
 
                     if (arg === "color") {
+                        this.byId("btnNewColor").setVisible(true);
                         this.byId("btnEditColor").setVisible(true);
                         this.byId("btnSaveColor").setVisible(false);
                         this.byId("btnCancelColor").setVisible(false);
@@ -16132,6 +16218,7 @@ sap.ui.define([
                     }
                     else {
                         if (this._sTableModel === "color") {
+                            this.byId("btnNewColor").setVisible(true);
                             this.byId("btnEditColor").setVisible(true);
                             this.byId("btnSaveColor").setVisible(false);
                             this.byId("btnCancelColor").setVisible(false);
@@ -20616,6 +20703,112 @@ sap.ui.define([
                 oUploadCollection.removeAllItems();
 
                 this.enableOtherTabs();
+            },
+            //******************************************* */
+            // CREATE IO COLOR - C_IOCOLOR
+            //******************************************* */
+
+            onCrtNewIOColor: async function () { 
+                var me = this;
+                var aSelectedItems = [];
+                var _IOStyModel = this.getOwnerComponent().getModel("ZGW_3DERP_IOSTYLE_SRV");
+                var oView = this.getView();
+                var oJSONModel = new JSONModel();
+                var oJSONModel2 = new JSONModel();
+                let txtCount;
+                var oText = oView.byId("AddIOColorCnt");
+
+                var ioNo = this.getView().getModel("ui2").getProperty("/currIONo");
+
+                _promiseResult = new Promise((resolve, reject) => {
+                    _IOStyModel.read('/AddIOColorSet', {
+                        urlParameters: {
+                            "$filter": "IONO eq '" + ioNo + "'"
+                        },
+                        success: function (oData, response) {
+                            txtCount = oData.results.filter(fItem => fItem.IOSEQ === "000").length + " item/s";
+                            oData.results.sort((a, b,) => (a.SORTSEQ > b.SORTSEQ ? 1 : -1));
+                            oJSONModel.setData(oData.results);
+                            oView.setModel(oJSONModel, "ADDIOCOLOR_MODEL");
+
+                            oJSONModel2.setData(oData.results.filter(fItem => fItem.IOSEQ === "000"));
+                            oView.setModel(oJSONModel2, "ADDIOCOLOR2_MODEL");
+                            resolve();
+                        },
+                        error: function (err) {
+                            resolve();
+                        }
+                    })
+                });
+                await _promiseResult;
+
+                // alert(me.getMaxPropertyValue("ADDIOCOLOR_MODEL", "SORTSEQ"))
+
+                
+
+                if (!me._ADDIOCOLORDialog) {
+                    me._ADDIOCOLORDialog = sap.ui.xmlfragment("zuiio2.view.fragments.AddIOColor", me);
+
+                    var sPath = jQuery.sap.getModulePath("zuiio2", "/model/columns.json");
+
+                    var oModelColumns = new JSONModel();
+                    await oModelColumns.loadData(sPath);
+
+                    var oColumns = oModelColumns.getData();
+                    this._oModelColumns = oModelColumns.getData();
+
+                    var oTable = sap.ui.getCore().byId("ADDIOCOLORTab");
+                    oTable.setModel(new JSONModel({
+                        columns: [],
+                        rows: []
+                    }));
+
+                    await this.getIODynamicColumns("IOCOLORADD", "ZDV_ADDIOCOLOR", "ADDIOCOLORTab", oColumns);                        
+
+                    // console.log(me.getView().getModel("GENINFORECModel"));
+                    sap.ui.getCore().byId("AddIOColorCnt").setText(txtCount);
+                    sap.ui.getCore().byId("ADDIOCOLORTab").getModel().setProperty("/rows", oView.getModel("ADDIOCOLOR2_MODEL").getData());
+                    sap.ui.getCore().byId("ADDIOCOLORTab").bindRows("/rows");
+                    me._tableRendered = "ADDIOCOLORTab";       
+                    me.getView().addDependent(me._ADDIOCOLORDialog);
+
+                }
+                me._ADDIOCOLORDialog.open();
+            },
+
+            onCloseAddIOColor: function () {
+                this._ADDIOCOLORDialog.close();
+                this._ADDIOCOLORDialog.destroy();
+                this._ADDIOCOLORDialog = null;
+
+                // this.unLock();
+            },
+
+            onCancelAddIOColor: function () {
+                this._ADDIOCOLORDialog.close();
+                this._ADDIOCOLORDialog.destroy();
+                this._ADDIOCOLORDialog = null;
+
+                // this.unLock();
+            },
+
+            getMaxPropertyValue(modelName, propertyName) {
+                var oModel = this.getView().getModel(modelName);
+                var aData = oModel.getData();
+            
+                // Use Array.reduce to find the maximum value of a specific property
+                var maxPropertyValue = aData.reduce(function(max, item) {
+                    var propertyValue = item[propertyName];
+            
+                    // Convert to number if the property is not already a number
+                    if (isNaN(propertyValue)) {
+                        propertyValue = parseFloat(propertyValue);
+                    }
+            
+                    return Math.max(max, propertyValue);
+                }, -Infinity);
+            
+                return maxPropertyValue;
             },
 
             //******************************************* */

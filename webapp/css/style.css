@@ -303,5 +303,5 @@ label#container-zuiio2---ioinit--smartFilterBar-filterItem-___INTERNAL_-SEASONCD
 }
 
 .sapMDialogScroll {
-    height: 98%;
+    height: 98% !important;
 }

@@ -1,31 +1,48 @@
-<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:f="sap.ui.layout.form" xmlns:l="sap.ui.layout" xmlns:mvc="sap.ui.core.mvc" class="sapUiSizeCompact" xmlns:tnt="sap.tnt" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:t2="sap.m.Table">
-    <Dialog title="Style Colors" xmlns:c="zuiio2.control" xmlns:t="sap.ui.table" xmlns:tnt="sap.tnt" contentHeight="40%" contentWidth="100%"
-    escapeHandler=".onCancelAddIOColor" afterClose=".onCancelAddIOColor">
-        <Panel width="100%" height="100%" class="sapUiNoContentPadding">
-            <!-- Versions Table -->
-            <t:Table id="ADDIOCOLORTab" 
-                    rows="{ADDIOCOLOR_DataModel>/results}" 
-                    class="sapUiSizeCompact" 
-                    showColumnVisibilityMenu="true" 
-                    enableColumnFreeze="true" 
-                    enableCellFilter="true" 
-                    selectionMode="MultiToggle" 
-                    selectionBehavior="RowSelector" 
-                    alternateRowColors="true">
-                <t:extension>
-                    <!-- <Toolbar>
-                        <ToolbarSpacer />
-                        <SearchField id="searchFieldInfoRec" placeholder="Filter" value="" search="filterGlobally" width="15rem" />
-                    </Toolbar> -->
-                </t:extension>
-            </t:Table>
-        </Panel>
-        <buttons>
-            <Button id="btnADDIOCOLORApply" text="{i18n>Apply}" type="Ghost" icon="sap-icon://add" press="onAdd('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
-            <Button id="btnADDIOCOLORNew" type="Ghost" icon="sap-icon://add" press="onAdd('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
-            <Button id="btnADDIOCOLORSubmit" text="{i18n>Submit}" press="onfragmentAddIOColor" tooltip="Submit" visible="true" />
-            <Button id="btnADDIOCOLORCancel" text="{i18n>Cancel}" press="onCancelAddIOColor" tooltip="Cancel" visible="true" />
-            <Button id="btnADDIOCOLORClose" text="{i18n>Close}" press="onCloseAddIOColor" tooltip="Close" visible="false" />
-        </buttons>
-    </Dialog>
+<core:FragmentDefinition
+	height="100%"
+	xmlns="sap.m"
+	xmlns:table="sap.ui.table"
+	xmlns:core="sap.ui.core"
+	xmlns:js="zuicostcnfg.js">
+    <Dialog 
+		contentWidth="40%"
+        contentHeight="100%"
+        title="Select Style Color"
+        resizable="true"
+        draggable="true"
+        afterOpen="afterOpenCreateGMC"
+		>
+		<VBox fitContainer="true">
+			<table:Table 
+				id="ADDIOCOLORTab"
+				enableColumnReordering="false" 
+				class="stretchTable" 
+				visibleRowCountMode="Auto" 
+				selectionMode="MultiToggle" 
+				selectionBehavior="RowSelector" 
+				alternateRowColors="true">
+				<table:extension>
+					<Toolbar height="35px" class="sapUiTinyMarginBottom">
+						<Title id="AddIOColorCnt" class="sapUiTinyMarginBegin"/>
+						<ToolbarSpacer/>
+						<ToolbarSeparator/>
+						<Button id="btnADDIOCOLORApply" text="{i18n>Apply}" type="Ghost" icon="sap-icon://add" press="onAddFragment('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
+						<Button id="btnADDIOCOLORNew" type="Ghost" icon="sap-icon://add" press="onAdd('ADDIOCOLOR')" tooltip="{ddtext>/NEW}" visible="true" />
+						<Button id="btnADDIOCOLORSubmit" text="{i18n>Submit}" press="onfragmentAddIOColor" tooltip="Submit" visible="false" />
+						<Button id="btnADDIOCOLORCancel" text="{i18n>Cancel}" press="onCancelAddIOColor" tooltip="Cancel" visible="false" />
+						<Button id="btnADDIOCOLORClose" text="{i18n>Close}" press="onCloseAddIOColor" tooltip="Close" visible="true" />    
+						<customData>
+                            <core:CustomData key="TableName" value="ADDIOCOLORTab" />
+                        </customData>                         
+					</Toolbar>
+				</table:extension>	
+				<table:layoutData>
+					<FlexItemData growFactor="1" baseSize="0%"/>
+				</table:layoutData>			
+			</table:Table>
+			<layoutData>
+				<FlexItemData growFactor="1" />
+			</layoutData>	
+		</VBox>
+	</Dialog>
 </core:FragmentDefinition>
