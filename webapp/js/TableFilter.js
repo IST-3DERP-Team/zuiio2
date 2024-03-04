@@ -127,7 +127,7 @@ sap.ui.define([
             });                
         },
 
-        onColFilter: function(oEvent, sColumnLabel, oThis) {
+        onColFilter: function(oEvent, sColumnLabel, oThis, show) {
             var me = oThis;
             // var oDDText = me.getView().getModel("ddtext").getData();
             var sTableId = "";
