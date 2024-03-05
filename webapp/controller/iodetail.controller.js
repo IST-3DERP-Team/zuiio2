@@ -1136,7 +1136,9 @@ sap.ui.define([
                 oDDTextParam.push({ CODE: "REQMATMAPPING" });   
                 oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_MATERIAL" });   
                 oDDTextParam.push({ CODE: "INFO_ALL_RECORDS_HAS_REQMATERIAL" });   
-                oDDTextParam.push({ CODE: "CASCADE" });                   
+                oDDTextParam.push({ CODE: "CASCADE" });      
+                oDDTextParam.push({ CODE: "APPLY" });
+                oDDTextParam.push({ CODE: "SUBMIT" });                   
 
                 // console.log(oDDTextParam);
 
@@ -14687,16 +14689,16 @@ sap.ui.define([
             async setRowEditModeFragment(arg) {
                 var me = this;
                 var oTable;
-                if (arg === "ADDIOCOLORTab") {
-                    oTable = sap.ui.getCore().byId(arg);
+                if (arg === "ADDIOCOLOR") {
+                    oTable = sap.ui.getCore().byId(arg + "Tab");
 
                 }                 
                 var editModeCond = "{= ${EDITABLE} === 'X' ? true : false }";
-                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");                
+                var vIONo = this.getView().getModel("ui2").getProperty("/currIONo");                          
 
                 oTable.getColumns().forEach((col, idx) => {
                     var sColName = "";
-                    var oValueHelp = false;
+                    var oValueHelp = false; 
 
                     if (col.mAggregations.template.mBindingInfos.text !== undefined) {
                         sColName = col.mAggregations.template.mBindingInfos.text.parts[0].path;
@@ -14708,6 +14710,7 @@ sap.ui.define([
                     // console.log("this._aColumns[arg]", arg, this._aColumns[arg]);
                     this._aColumns[arg].filter(item => item.ColumnName === sColName)
                         .forEach(ci => {
+                            console.log(ci);
                             if (ci.Editable || ci.Creatable) {
                                 if (ci.ValueHelp !== undefined) oValueHelp = ci.ValueHelp["show"];
 
@@ -14731,11 +14734,12 @@ sap.ui.define([
 
                                         if (sColName.toUpperCase() === "ATTRIBTYP") {
                                             valueHelpRequestFunction = this.onAttrTypesValueHelp.bind(this);
-                                            editModeCond = "{= ${EDITABLE} === 'X' ? true : false }";
+                                            editModeCond = "{= ${ADDIOCOLOR2_MODEL>EDITABLE} === 'X' ? true : false }";
+                                            editModeCond = "{= ${ADDIOCOLOR2_MODEL>EDITABLE} === 'X' ? true : false }";
                                         }
                                         else if (sColName.toUpperCase() === "ATTRIBCD") {
                                             valueHelpRequestFunction = this.onAttrCodesValueHelp.bind(this);
-                                            editModeCond = "{= ${EDITABLE} === 'X' ? ${Attribtyp} !== '' ? true : false :false }";
+                                            editModeCond = "{= ${ADDIOCOLOR2_MODEL>EDITABLE} === 'X' ? ${Attribtyp} !== '' ? true : false :false }";
                                         }
 
                                         var oInput = new sap.m.Input({
@@ -14914,7 +14918,14 @@ sap.ui.define([
                                             type: sap.m.InputType.Number,
                                             textAlign: sap.ui.core.TextAlign.Right,
                                             value: arg === "IODET" || arg === "SPLITIODET" ? "{path:'DataModel>" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}" : "{path:'" + sColName + "', formatOptions:{ minFractionDigits:" + ci.Decimal + ", maxFractionDigits:" + ci.Decimal + " }, constraints:{ precision:" + ci.Length + ", scale:" + ci.Decimal + " }}",
-                                            change: this.onNumberChange.bind(this)
+                                            change: this.onNumberChange.bind(this),
+                                            enabled: {
+                                                path: "EDITABLE",
+                                                formatter: function (EDITABLE) {
+                                                    if (EDITABLE) { return true }
+                                                    else { return false }
+                                                }
+                                            }
                                         }));
                                     }
                                 }
@@ -14970,10 +14981,10 @@ sap.ui.define([
                                                 maxLength: ci.Length,
                                                 change: this.onInputLiveChange.bind(this),
                                                 enabled: {
-                                                    path: "DELETED",
-                                                    formatter: function (DELETED) {
-                                                        if (DELETED) { return false }
-                                                        else { return true }
+                                                    path: "EDITABLE",
+                                                    formatter: function (EDITABLE) {
+                                                        if (EDITABLE) { return true }
+                                                        else { return false }
                                                     }
                                                 }
                                             }));
@@ -15033,7 +15044,14 @@ sap.ui.define([
                                             type: "Text",
                                             value: "{" + sColName + "}",
                                             maxLength: ci.Length,
-                                            change: this.onInputLiveChange.bind(this)
+                                            change: this.onInputLiveChange.bind(this),
+                                            enabled: {
+                                                path: "EDITABLE",
+                                                formatter: function (EDITABLE) {
+                                                    if (EDITABLE) { return true }
+                                                    else { return false }
+                                                }
+                                            }
                                         }));
                                     }
                                 }
@@ -15440,7 +15458,7 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODET") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel("DataModel").setProperty(sRowPath + '/EDITED', true);
                 }
-                else if (this._sTableModel === "GENINFOREC") {
+                else if (this._sTableModel === "GENINFOREC" || this._sTableModel === "ADDIOCOLOR") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
                 else if (this._sTableModel === "reorder") {
@@ -15867,7 +15885,7 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 } 
-                else if (this._sTableModel === "GENINFOREC") {
+                else if (this._sTableModel === "GENINFOREC" || this._sTableModel === "ADDIOCOLOR") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 } 
                 else if (this._sTableModel === "reorder") {
@@ -15957,7 +15975,7 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
-                else if (this._sTableModel === "GENINFOREC") {
+                else if (this._sTableModel === "GENINFOREC" || this._sTableModel === "ADDIOCOLOR") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
                 else if (this._sTableModel === "reorder") {
@@ -16024,7 +16042,7 @@ sap.ui.define([
                 else if (this._sTableModel === "SPLITIODLV") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
-                else if (this._sTableModel === "GENINFOREC") {
+                else if (this._sTableModel === "GENINFOREC" || this._sTableModel === "ADDIOCOLOR") {
                     sap.ui.getCore().byId(this._sTableModel + "Tab").getModel().setProperty(sRowPath + '/EDITED', true);
                 }
                 else {
@@ -21103,6 +21121,92 @@ sap.ui.define([
                 me._ADDIOCOLORDialog.open();
             },
 
+            onApplyFragment: async function (oEvent) {
+                var me = this;
+                var oButton = oEvent.getSource();
+                var tabName = oButton.data('TableName');
+                var oTable = sap.ui.getCore().byId(tabName);
+                var oSelectedIndices = oTable.getSelectedIndices();
+                var oTmpSelectedIndices = [];
+                var aData = oTable.getModel("ADDIOCOLOR2_MODEL").getData();
+                // var oParamData = {};
+
+                var entitySet = "/";
+                var oModel;
+                // console.log(oSelectedIndices);
+
+                if (oSelectedIndices.length <= 0) {
+                    MessageBox.information("No selected row to process.");
+                    return;
+                }
+
+                if (oSelectedIndices.length > 0) {
+                    Common.openProcessingDialog(me, "Processing...");
+                    entitySet = entitySet + "IOATTRIBSet";
+                    oModel = me.getOwnerComponent().getModel();
+
+                    oModel.setUseBatch(true);
+                    oModel.setDeferredGroups(["create"]);
+
+                    var mParameters = {
+                        "groupId": "create"
+                    }
+
+                    var centitySet = entitySet;
+
+                    oSelectedIndices.forEach(item => {
+                        oTmpSelectedIndices.push(oTable.getBinding("rows").aIndices[item])
+                    })
+
+                    oSelectedIndices = oTmpSelectedIndices;
+
+                    oSelectedIndices.forEach(item => {
+                        // console.log(aData.at(item));
+                        var oParamData = {};
+
+                        oParamData["IONO"] = this.getView().getModel("ui2").getProperty("/currIONo");
+                        oParamData["ATTRIBTYP"] = aData.at(item).ATTRIBTYPE;
+                        oParamData["ATTRIBSEQ"] = aData.at(item).ATTRIBSEQ;
+                        oParamData["ATTRIBCD"] = aData.at(item).ATTRIBCD;
+                        oParamData["DESC1"] = aData.at(item).DESC1;
+                        oParamData["DESC2"] = aData.at(item).DESC2;
+                        oParamData["VALUETYP"] = aData.at(item).VALUETYP;
+
+                        console.log(oParamData);
+                        oModel.create(entitySet, oParamData, mParameters);
+                    });
+                }
+
+                var batchPromise = new Promise(function (resolve, reject) {
+                    oModel.attachBatchRequestCompleted(function () {
+                        resolve();
+                    });
+
+                    oModel.attachBatchRequestFailed(function () {
+                        reject(new Error("Batch request failed"));
+                    });
+                })
+
+                oModel.submitChanges({
+                    groupId: "create",
+                    success: function (oData, oResponse) {
+                        MessageBox.information(me.getView().getModel("ddtext").getData()["INFO_DATA_SAVE"]);
+                    },
+                    error: function () {
+                        Common.closeProcessingDialog(me);
+                    }
+                });
+
+                batchPromise.then(async function () {
+                    await me.getIOADDColorData();
+                }).then(async function () {
+                    me.onRefresh("color");
+                }).then(async function () {
+                    Common.closeProcessingDialog(me);
+                    // await me.unLock();
+                })
+            },
+
             onAddFragment: async function(oEvent) {
                 var me = this;
                 var oButton = oEvent.getSource();
@@ -21191,7 +21295,9 @@ sap.ui.define([
                     sap.ui.getCore().byId("btnADDIOCOLORCancel").setVisible(true);
                     sap.ui.getCore().byId("btnADDIOCOLORClose").setVisible(false);
 
-                    this.setRowEditMode("ADDIOCOLOR");
+                    // this.setRowEditMode("ADDIOCOLOR");
+                    this.setRowEditModeFragment("ADDIOCOLOR");
+                    this._sTableModel = "ADDIOCOLOR";
                     //this.setColorEditModeControls();
 
                     //mark as required fields
@@ -21209,6 +21315,69 @@ sap.ui.define([
                 //set colors table edit flag
                 this._colorChanged = true;
                 this.setChangeStatus(true);
+            },
+
+            onSubmitAddIOColor: function () {
+                var me = this;     
+                var oModel = this.getOwnerComponent().getModel("ZGW_3DERP_SRV");
+                var oTableModel = sap.ui.getCore().byId("ADDIOCOLORTab").getModel();    
+                var oOrigModel = this.getView().getModel("ADDIOCOLOR_MODEL").getData();   
+                var path;
+                var oData = oTableModel.getData().rows.sort((a,b) => (+a.Sortseq) > (+b.Sortseq) ? 1 : -1);
+
+                //? merge two DataModel : then check duplicate SORTSEQ AND DESC1
+
+                var aNewRows = oTableModel.getData().rows.filter(item => item.NEW === true);
+                var iNew = 0;
+
+                if (aNewRows.length > 0) {
+                    //build the headers and payload
+                    var oEntry = {
+                        Styleno: this._styleNo,
+                        Type: "COLOR",
+                        AttributesToItems: []
+                    }
+
+                    aNewRows.forEach(item => { 
+                        var item = {
+                            "Styleno": this._styleNo,
+                            "Attribtyp": "COLOR",
+                            "Attribcd": item["SORTSEQ"],
+                            "Baseind": false,
+                            "Desc1": item["DESC1"],
+                            "Valuetyp": "STRVAL",
+                            "Attribseq": item["SORTSEQ"],
+                            "Sortseq": item["SORTSEQ"],
+                            "Desc2": item["DESC2"]
+                        };
+                        oEntry.AttributesToItems.push(item);
+                    })
+                    
+                    path = "/AttributesGeneralSet";
+                    oModel.setHeaders({
+                        sbu: this._sbu
+                    });
+
+                    oModel.create(path, oEntry, {
+                        method: "POST",
+                        success: function (oData, oResponse) {                            
+                            me.setRowReadMode("ADDIOCOLOR");
+                            me.getIOADDColorData();
+
+                            sap.ui.getCore().byId("btnADDIOCOLORApply").setVisible(true);
+                            sap.ui.getCore().byId("btnADDIOCOLORNew").setVisible(true);
+                            sap.ui.getCore().byId("btnADDIOCOLORSubmit").setVisible(false);
+                            sap.ui.getCore().byId("btnADDIOCOLORCancel").setVisible(false);
+                            sap.ui.getCore().byId("btnADDIOCOLORClose").setVisible(true);
+
+                            Common.closeLoadingDialog(me);
+
+                            MessageBox.information("Saved Successfully");
+                        },
+                        error: function (err) {
+                        }
+                    });
+                }
             },
 
             onCloseAddIOColor: function () {
