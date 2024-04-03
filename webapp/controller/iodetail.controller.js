@@ -3834,7 +3834,7 @@ sap.ui.define([
                     //     text: "{DataModel>" + sColumnId + "}",
                     //     wrapping: false,
                     //     tooltip: sColumnDataType === "BOOLEAN" || sColumnDataType === "NUMBER" ? "" : "DataModel>{" + sColumnId + "}"
-                    // })
+                    // })git sta
 
                     var oColProp = me._aColumns[sTabId.replace("Tab", "")].filter(fItem => fItem.ColumnName === sColumnId);
                     // console.log("oColProp", sTabId, oColProp);
