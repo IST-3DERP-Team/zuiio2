@@ -19954,6 +19954,9 @@ sap.ui.define([
                     this._aColFilters = this.byId(arg + "Tab").getBinding("rows").aFilters;
                     this._aColSorters = this.byId(arg + "Tab").getBinding("rows").aSorters;
 
+                    oText = me.getView().byId("costDtlsTabCnt");
+                    oText.setText(oData.results.length + " item/s");
+
                     if (this.byId("costHdrTab").getModel().getData().rows.length === 0) {
                         MessageBox.information(this.getView().getModel("ddtext").getData()["INFO_NO_DATA_TO_REFRESH"]);
                     }
